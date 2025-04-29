@@ -81,7 +81,64 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Setup complete.");
     }
+    
+    void EnemyAttemptsToBlock(List<CreatureCard> attackers)
+    {
+        List<CreatureCard> availableBlockers = new List<CreatureCard>();
 
+        foreach (var card in enemy.Battlefield)
+        {
+            if (card is CreatureCard c && !c.isTapped && c.blockingThisAttacker == null)
+            {
+                availableBlockers.Add(c);
+            }
+        }
+
+        foreach (var attacker in attackers)
+        {
+            CreatureCard bestBlocker = null;
+
+            foreach (var blocker in availableBlockers)
+            {
+                bool killsAttacker = blocker.power >= attacker.toughness;
+                bool survives = blocker.toughness > attacker.power;
+
+                if (killsAttacker || survives)
+                {
+                    bestBlocker = blocker;
+                    break;
+                }
+            }
+
+            if (bestBlocker != null)
+            {
+                // Assign and resolve combat
+                Debug.Log($"Enemy blocks {attacker.cardName} with {bestBlocker.cardName}");
+
+                bestBlocker.toughness -= attacker.power;
+                attacker.toughness -= bestBlocker.power;
+
+                availableBlockers.Remove(bestBlocker);
+            }
+            else
+            {
+                // No one blocked → deal damage to enemy
+                enemy.Life -= attacker.power;
+                Debug.Log($"{attacker.cardName} hits enemy for {attacker.power} damage!");
+            }
+        }
+
+        DestroyDeadCreatures(player.Battlefield, player.Graveyard, playerGraveyardArea);
+        DestroyDeadCreatures(enemy.Battlefield, enemy.Graveyard, enemyGraveyardArea);
+
+        UpdateUI();
+
+        if (enemy.Life <= 0)
+        {
+            Debug.Log("You won the game!");
+            // TODO: Add victory screen later
+        }
+    }
     public CardVisual FindCardVisual(Card card)
     {
         foreach (var visual in activeCards)
@@ -91,7 +148,6 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
-
     void DestroyDeadCreatures(List<Card> battlefield, List<Card> graveyard, Transform graveyardArea)
     {
         for (int i = battlefield.Count - 1; i >= 0; i--)
@@ -140,7 +196,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     void ResolveCombat()
     {
         Debug.Log("Resolving combat...");
@@ -177,7 +232,6 @@ public class GameManager : MonoBehaviour
         // End blocking phase
         EndEnemyTurn();
     }
-
     public void ConfirmBlocks()
     {
         if (!isBlockingPhase)
@@ -189,34 +243,32 @@ public class GameManager : MonoBehaviour
         confirmBlockersButton.interactable = false; // Immediately disable button
         ResolveCombat();
     }
-
     public void OnLandClicked(CardVisual cardVisual)
     {
-    LandCard land = cardVisual.linkedCard as LandCard;
+        LandCard land = cardVisual.linkedCard as LandCard;
 
-    // Can't untap land if mana already spent
-    if (land.manaUsedThisTurn)
-    {
-        Debug.Log("Mana from this land already used this turn!");
-        return;
-    }
+        // Can't untap land if mana already spent
+        if (land.manaUsedThisTurn)
+        {
+            Debug.Log("Mana from this land already used this turn!");
+            return;
+        }
 
-    if (!land.isTapped)
-    {
-        land.isTapped = true;
-        player.ManaPool += 1;
-    }
-    else
-    {
-        land.isTapped = false;
-        player.ManaPool -= 1;
-        if (player.ManaPool < 0)
-            player.ManaPool = 0;
-    }
+        if (!land.isTapped)
+        {
+            land.isTapped = true;
+            player.ManaPool += 1;
+        }
+        else
+        {
+            land.isTapped = false;
+            player.ManaPool -= 1;
+            if (player.ManaPool < 0)
+                player.ManaPool = 0;
+        }
 
-    UpdateUI();
+        UpdateUI();
     }
-
     void MoveCardToBattlefield(CardVisual cardVisual)
     {
         if (cardVisual.linkedCard is LandCard)
@@ -236,7 +288,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     void MoveEnemyCardToBattlefield(Card card)
     {
         GameObject cardGO = Instantiate(cardPrefab, (card is LandCard) ? enemyLandArea : enemyCreatureArea);
@@ -247,7 +298,6 @@ public class GameManager : MonoBehaviour
 
         visual.UpdateVisual(); // <-- Add this line so that summon sickness is correctly shown immediately!
     }
-
     public void OnCardClicked(CardVisual cardVisual)
     {
         Card card = cardVisual.linkedCard;
@@ -287,7 +337,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     void CreateCardVisual(Card card, Transform parentArea)
     {
         GameObject cardGO = Instantiate(cardPrefab, parentArea);
@@ -295,7 +344,6 @@ public class GameManager : MonoBehaviour
         visual.Setup(card, this);
         activeCards.Add(visual);
     }
-
     void ShuffleDeck(Player player)
     {
         for (int i = 0; i < player.Deck.Count; i++)
@@ -306,7 +354,6 @@ public class GameManager : MonoBehaviour
             player.Deck[randomIndex] = temp;
         }
     }
-
     void EnemyTurn()
     {
         Debug.Log("Enemy Turn!");
@@ -404,7 +451,6 @@ public class GameManager : MonoBehaviour
                 EndEnemyTurn(); // New function you will add
             }
     }
-
     public void TryAssignBlocker(CardVisual cardVisual)
     {
         // 1. Clicked an enemy creature → select as attacker to block
@@ -474,7 +520,6 @@ public class GameManager : MonoBehaviour
             selectedAttacker = null; // Reset attacker selection after assignment
         }
     }
-
     void EndEnemyTurn()
     {
         isBlockingPhase = false;
@@ -498,7 +543,6 @@ public class GameManager : MonoBehaviour
         UpdateUI();
         Debug.Log("Enemy turn ended.");
     }
-
     public void AttackWithCreatures()
     {
         if (!isPlayerTurn)
@@ -507,68 +551,76 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        int totalDamage = 0;
+        List<CreatureCard> attackers = new List<CreatureCard>();
 
         foreach (var card in player.Battlefield)
         {
             if (card is CreatureCard creature && !creature.hasSummoningSickness && !card.isTapped)
             {
-                totalDamage += creature.power;
+                attackers.Add(creature);
                 creature.isTapped = true; // Tap after attack
             }
         }
 
-        if (totalDamage > 0)
+        if (attackers.Count > 0)
         {
-            Debug.Log("Attacking for " + totalDamage + " damage!");
-            enemy.Life -= totalDamage;
-            UpdateUI();
-
-            if (enemy.Life <= 0)
-            {
-                Debug.Log("You won the game!");
-                // Later: show victory screen
-            }
+            Debug.Log($"You're attacking with {attackers.Count} creatures.");
+            EnemyAttemptsToBlock(attackers);
         }
         else
         {
             Debug.Log("No creatures available to attack!");
         }
     }
-
     public void NextTurn()
     {
         if (isBlockingPhase)
         {
             Debug.Log("Auto-resolving combat because player didn't confirm blockers.");
 
-            List<CreatureCard> enemyPotentialBlockers = new List<CreatureCard>();
+            List<CreatureCard> availableBlockers = new List<CreatureCard>();
 
             foreach (var card in enemy.Battlefield)
             {
-                if (card is CreatureCard creature && !creature.isTapped)
+                if (card is CreatureCard c && !c.isTapped && c.blockingThisAttacker == null)
                 {
-                    enemyPotentialBlockers.Add(creature);
+                    availableBlockers.Add(c);
                 }
             }
 
             foreach (var attacker in currentAttackers)
             {
-                if (attacker.blockedByThisBlocker == null && enemyPotentialBlockers.Count > 0)
+                if (attacker.blockedByThisBlocker != null)
+                    continue; // already blocked
+
+                CreatureCard bestBlocker = null;
+
+                foreach (var blocker in availableBlockers)
                 {
-                    CreatureCard blocker = enemyPotentialBlockers[0];
-                    enemyPotentialBlockers.RemoveAt(0);
+                    bool killsAttacker = blocker.power >= attacker.toughness;
+                    bool survives = blocker.toughness > attacker.power;
 
-                    blockingAssignments[attacker] = blocker;
-                    blocker.blockingThisAttacker = attacker;
-                    attacker.blockedByThisBlocker = blocker;
+                    if (killsAttacker || survives)
+                    {
+                        bestBlocker = blocker;
+                        break;
+                    }
+                }
 
-                    Debug.Log("Enemy blocks " + attacker.cardName + " with " + blocker.cardName);
+                if (bestBlocker != null)
+                {
+                    blockingAssignments[attacker] = bestBlocker;
+                    bestBlocker.blockingThisAttacker = attacker;
+                    attacker.blockedByThisBlocker = bestBlocker;
+
+                    availableBlockers.Remove(bestBlocker);
+
+                    Debug.Log($"Enemy blocks {attacker.cardName} with {bestBlocker.cardName}");
                 }
             }
 
             ConfirmBlocks();
-            return; // Important: stop further execution this frame
+            return;
         }
 
         Debug.Log("Ending turn!");
@@ -598,8 +650,6 @@ public class GameManager : MonoBehaviour
         UpdateUI();
         StartNewTurn();
     }
-
-
     void StartNewTurn()
     {
         Debug.Log("Starting new turn!");
@@ -654,7 +704,6 @@ public class GameManager : MonoBehaviour
 
         UpdateUI();
     }
-
     void DrawCard(Player playerDrawing)
     {
         if (playerDrawing.Deck.Count > 0)
@@ -675,7 +724,6 @@ public class GameManager : MonoBehaviour
             Debug.Log(playerDrawing == player ? "You have no cards to draw." : "Enemy has no cards to draw.");
         }
     }
-
     void UpdateUI()
     {
         foreach (var visual in activeCards)

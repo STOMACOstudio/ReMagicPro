@@ -10,8 +10,6 @@ public class Card
 
     public virtual void Play(Player player)
     {
-        // By default, move to battlefield
-        player.Battlefield.Add(this);
-        player.Hand.Remove(this);
+        player.PlayCard(this);
     }
 }
