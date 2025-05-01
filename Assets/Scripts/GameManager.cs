@@ -6,344 +6,130 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public bool isBlockingPhase = false;
-    List<CreatureCard> currentAttackers = new List<CreatureCard>();
-    List<CreatureCard> enemyPotentialBlockers = new List<CreatureCard>();
+    public static GameManager Instance { get; private set; }
+    public CreatureCard selectedAttackerForBlocking = null;
 
-    Dictionary<CreatureCard, CreatureCard> blockingAssignments = new Dictionary<CreatureCard, CreatureCard>();
-
-    CreatureCard selectedAttacker = null;
-
+    public Player humanPlayer;
+    public Player aiPlayer;
     public TMP_Text manaPoolText;
-    public TMP_Text lifeText;
+    public TMP_Text playerLifeText;
     public TMP_Text enemyLifeText;
     public TMP_Text enemyHandText;
-    public GameObject cardPrefab;
+
     public Transform playerHandArea;
+    public Transform playerBattlefieldArea;
     public Transform playerGraveyardArea;
     public Transform playerLandArea;
-    public Transform playerCreatureArea;
-    public Transform enemyLandArea;
-    public Transform enemyGraveyardArea;
-    public Transform enemyCreatureArea;
 
-    public Button confirmBlockersButton;
-    public Button nextTurnButton;
+    public Transform aiBattlefieldArea;
+    public Transform aiGraveyardArea;
+    public Transform aiLandArea;
 
-    Player player;
-    Player enemy;
-    
-    bool landPlayedThisTurn = false;
-    bool isPlayerTurn = true;
+    public GameObject cardPrefab;
 
-    List<CardVisual> activeCards = new List<CardVisual>();
+    public List<CardVisual> activeCardVisuals = new List<CardVisual>();
+    public List<CreatureCard> selectedAttackers = new List<CreatureCard>();
+    public List<CreatureCard> currentAttackers = new List<CreatureCard>();
+
+    public Dictionary<CreatureCard, CreatureCard> blockingAssignments = new Dictionary<CreatureCard, CreatureCard>();
+
+    void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     void Start()
     {
-        player = new Player();
-        enemy = new Player(); // create an enemy
+        humanPlayer = new Player();
+        aiPlayer = new Player();
 
-        confirmBlockersButton.interactable = false;
-        
-        // Player deck
-        player.Deck.Add(new LandCard { cardName = "Forest" });
-        player.Deck.Add(new LandCard { cardName = "Forest" });
-        player.Deck.Add(new LandCard { cardName = "Forest" });
-        player.Deck.Add(new LandCard { cardName = "Forest" });
-        player.Deck.Add(new LandCard { cardName = "Forest" });
-        player.Deck.Add(new CreatureCard { cardName = "Domestic Cat", manaCost = 1, power = 1, toughness = 1, baseToughness = 1 });
-        player.Deck.Add(new CreatureCard { cardName = "Deep Forest Monkeys", manaCost = 2, power = 2, toughness = 2, baseToughness = 2 });
-        player.Deck.Add(new CreatureCard { cardName = "Violent Ape", manaCost = 3, power = 3, toughness = 3, baseToughness = 3 });
+        BuildStartingDeck(humanPlayer);
 
-        // Enemy deck
-        enemy.Deck.Add(new LandCard { cardName = "Mountain" });
-        enemy.Deck.Add(new LandCard { cardName = "Mountain" });
-        enemy.Deck.Add(new LandCard { cardName = "Mountain" });
-        enemy.Deck.Add(new LandCard { cardName = "Mountain" });
-        enemy.Deck.Add(new LandCard { cardName = "Mountain" });
-        enemy.Deck.Add(new CreatureCard { cardName = "Rabid Dog", manaCost = 1, power = 1, toughness = 1, baseToughness = 1 });
-        enemy.Deck.Add(new CreatureCard { cardName = "Wild Ostrich", manaCost = 2, power = 3, toughness = 1, baseToughness = 1 });
-        enemy.Deck.Add(new CreatureCard { cardName = "Goblin Puncher", manaCost = 3, power = 3, toughness = 3, baseToughness = 3 });
+        //BuildStartingDeck(aiPlayer);
+        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
+        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
+        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
+        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
+        aiPlayer.Deck.Add(CardFactory.Create("Flying Pig"));
+        aiPlayer.Deck.Add(CardFactory.Create("Rabid Dog"));
+        aiPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
+        aiPlayer.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        aiPlayer.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        aiPlayer.Deck.Add(CardFactory.Create("Glassmole"));
 
-        //shuffle decks
-        ShuffleDeck(player);
-        ShuffleDeck(enemy);
+        ShuffleDeck(humanPlayer);
+        ShuffleDeck(aiPlayer);
 
         for (int i = 0; i < 5; i++)
         {
-            DrawCard(player);
-            DrawCard(enemy);
+            DrawCard(humanPlayer);
+            DrawCard(aiPlayer);
         }
-
-        enemy.Life = 20; // start enemy at 20 life (same as player)
-
-        UpdateUI();
-
-        Debug.Log("Setup complete.");
     }
-    
-    void EnemyAttemptsToBlock(List<CreatureCard> attackers)
+
+    void BuildStartingDeck(Player player)
     {
-        List<CreatureCard> availableBlockers = new List<CreatureCard>();
+        /*//test white deck
+        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+        humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+        humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+        humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
+        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
+        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
+        
+        //test blue deck
+        humanPlayer.Deck.Add(CardFactory.Create("Island"));
+        humanPlayer.Deck.Add(CardFactory.Create("Island"));
+        humanPlayer.Deck.Add(CardFactory.Create("Island"));
+        humanPlayer.Deck.Add(CardFactory.Create("Island"));
+        humanPlayer.Deck.Add(CardFactory.Create("Island"));
+        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        /*humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+        humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
+        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
+        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
 
-        foreach (var card in enemy.Battlefield)
-        {
-            if (card is CreatureCard c && !c.isTapped && c.blockingThisAttacker == null)
-            {
-                availableBlockers.Add(c);
-            }
-        }
+        /*//test black deck
+        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+        humanPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+        humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+        humanPlayer.Deck.Add(CardFactory.Create("Giant Rat"));
+        humanPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
+        humanPlayer.Deck.Add(CardFactory.Create("Bog Mosquito"));*/
 
-        foreach (var attacker in attackers)
-        {
-            CreatureCard bestBlocker = null;
+        /* //test green deck
+        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+        humanPlayer.Deck.Add(CardFactory.Create("Domestic Cat"));
+        humanPlayer.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        humanPlayer.Deck.Add(CardFactory.Create("Violent Ape"));
+        humanPlayer.Deck.Add(CardFactory.Create("Obstacle"));
+        humanPlayer.Deck.Add(CardFactory.Create("Origin Golem"));*/
 
-            foreach (var blocker in availableBlockers)
-            {
-                bool killsAttacker = blocker.power >= attacker.toughness;
-                bool survives = blocker.toughness > attacker.power;
-
-                if (killsAttacker || survives)
-                {
-                    bestBlocker = blocker;
-                    break;
-                }
-            }
-
-            if (bestBlocker != null)
-            {
-                // Assign and resolve combat
-                Debug.Log($"Enemy blocks {attacker.cardName} with {bestBlocker.cardName}");
-
-                bestBlocker.toughness -= attacker.power;
-                attacker.toughness -= bestBlocker.power;
-
-                availableBlockers.Remove(bestBlocker);
-            }
-            else
-            {
-                // No one blocked → deal damage to enemy
-                enemy.Life -= attacker.power;
-                Debug.Log($"{attacker.cardName} hits enemy for {attacker.power} damage!");
-            }
-        }
-
-        DestroyDeadCreatures(player.Battlefield, player.Graveyard, playerGraveyardArea);
-        DestroyDeadCreatures(enemy.Battlefield, enemy.Graveyard, enemyGraveyardArea);
-
-        UpdateUI();
-
-        if (enemy.Life <= 0)
-        {
-            Debug.Log("You won the game!");
-            // TODO: Add victory screen later
-        }
     }
-    public CardVisual FindCardVisual(Card card)
-    {
-        foreach (var visual in activeCards)
-        {
-            if (visual.linkedCard == card)
-                return visual;
-        }
-        return null;
-    }
-    void DestroyDeadCreatures(List<Card> battlefield, List<Card> graveyard, Transform graveyardArea)
-    {
-        for (int i = battlefield.Count - 1; i >= 0; i--)
-        {
-            if (battlefield[i] is CreatureCard creature && creature.toughness <= 0)
-            {
-                Debug.Log(creature.cardName + " is destroyed!");
 
-                Card card = battlefield[i];
-
-                // ---- Clear blocking links (VERY IMPORTANT) ----
-                if (creature.blockingThisAttacker != null)
-                {
-                    creature.blockingThisAttacker.blockedByThisBlocker = null;
-                    creature.blockingThisAttacker = null;
-                }
-                if (creature.blockedByThisBlocker != null)
-                {
-                    creature.blockedByThisBlocker.blockingThisAttacker = null;
-                    creature.blockedByThisBlocker = null;
-                }
-                // ------------------------------------------------
-
-                // Untap it and reset toughness before graveyard
-                card.isTapped = false;
-
-                if (card is CreatureCard deadCreature)
-                {
-                    deadCreature.toughness = deadCreature.baseToughness;
-                }
-
-                // Move to graveyard
-                battlefield.RemoveAt(i);
-                graveyard.Add(card);
-
-                // Move visual
-                foreach (var visual in activeCards)
-                {
-                    if (visual.linkedCard == card)
-                    {
-                        visual.transform.SetParent(graveyardArea, false);
-                        visual.transform.localPosition = Vector3.zero; // pile cards
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    void ResolveCombat()
-    {
-        Debug.Log("Resolving combat...");
-
-        foreach (var attacker in currentAttackers)
-        {
-            if (blockingAssignments.TryGetValue(attacker, out CreatureCard blocker))
-            {
-                // Blocker and attacker fight
-                blocker.toughness -= attacker.power;
-                attacker.toughness -= blocker.power;
-
-                Debug.Log(blocker.cardName + " and " + attacker.cardName + " battle!");
-            }
-            else
-            {
-                // No blocker ➔ attacker hits player directly
-                player.Life -= attacker.power;
-                Debug.Log(attacker.cardName + " hits player directly for " + attacker.power + " damage!");
-            }
-        }
-
-        // Kill dead creatures
-        DestroyDeadCreatures(player.Battlefield, player.Graveyard, playerGraveyardArea);
-        DestroyDeadCreatures(enemy.Battlefield, enemy.Graveyard, enemyGraveyardArea);
-
-        foreach (var visual in activeCards)
-        {
-            visual.blockingThisAttacker = null;
-            visual.blockedByThisBlocker = null;
-            visual.UpdateVisual(); // Force refresh and disable line
-        }
-
-        // End blocking phase
-        EndEnemyTurn();
-    }
-    public void ConfirmBlocks()
-    {
-        if (!isBlockingPhase)
-        {
-            Debug.LogWarning("Tried to confirm blocks outside of blocking phase!");
-            return;
-        }
-
-        confirmBlockersButton.interactable = false; // Immediately disable button
-        ResolveCombat();
-    }
-    public void OnLandClicked(CardVisual cardVisual)
-    {
-        LandCard land = cardVisual.linkedCard as LandCard;
-
-        // Can't untap land if mana already spent
-        if (land.manaUsedThisTurn)
-        {
-            Debug.Log("Mana from this land already used this turn!");
-            return;
-        }
-
-        if (!land.isTapped)
-        {
-            land.isTapped = true;
-            player.ManaPool += 1;
-        }
-        else
-        {
-            land.isTapped = false;
-            player.ManaPool -= 1;
-            if (player.ManaPool < 0)
-                player.ManaPool = 0;
-        }
-
-        UpdateUI();
-    }
-    void MoveCardToBattlefield(CardVisual cardVisual)
-    {
-        if (cardVisual.linkedCard is LandCard)
-        {
-            cardVisual.transform.SetParent(playerLandArea, false);
-            cardVisual.isInBattlefield = true;
-        }
-        else if (cardVisual.linkedCard is CreatureCard)
-        {
-            cardVisual.transform.SetParent(playerCreatureArea, false);
-            cardVisual.isInBattlefield = true;
-
-            Button button = cardVisual.GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.RemoveAllListeners(); // REMOVE click event temporarily
-            }
-        }
-    }
-    void MoveEnemyCardToBattlefield(Card card)
-    {
-        GameObject cardGO = Instantiate(cardPrefab, (card is LandCard) ? enemyLandArea : enemyCreatureArea);
-        CardVisual visual = cardGO.GetComponent<CardVisual>();
-        visual.Setup(card, this);
-        visual.isInBattlefield = true;
-        activeCards.Add(visual);
-
-        visual.UpdateVisual(); // <-- Add this line so that summon sickness is correctly shown immediately!
-    }
-    public void OnCardClicked(CardVisual cardVisual)
-    {
-        Card card = cardVisual.linkedCard;
-
-        if (card is LandCard)
-        {
-            if (!landPlayedThisTurn)
-            {
-                card.Play(player);
-                landPlayedThisTurn = true;
-                MoveCardToBattlefield(cardVisual);
-                UpdateUI();
-            }
-            else
-            {
-                Debug.Log("You already played a land this turn!");
-            }
-        }
-        else if (card is CreatureCard creature)
-        {
-            if (player.ManaPool >= creature.manaCost)
-            {
-                creature.Play(player);
-                MoveCardToBattlefield(cardVisual);
-                foreach (var bfCard in player.Battlefield)
-                {
-                    if (bfCard is LandCard land && land.isTapped)
-                    {
-                        land.manaUsedThisTurn = true;
-                    }
-                }
-                UpdateUI();
-            }
-            else
-            {
-                Debug.Log("Not enough mana to play creature!");
-            }
-        }
-    }
-    void CreateCardVisual(Card card, Transform parentArea)
-    {
-        GameObject cardGO = Instantiate(cardPrefab, parentArea);
-        CardVisual visual = cardGO.GetComponent<CardVisual>();
-        visual.Setup(card, this);
-        activeCards.Add(visual);
-    }
     void ShuffleDeck(Player player)
     {
         for (int i = 0; i < player.Deck.Count; i++)
@@ -354,386 +140,248 @@ public class GameManager : MonoBehaviour
             player.Deck[randomIndex] = temp;
         }
     }
-    void EnemyTurn()
+
+    public void DrawCard(Player player)
     {
-        Debug.Log("Enemy Turn!");
+        if (player.Deck.Count == 0) return;
+        Card card = player.Deck[0];
+        player.Deck.RemoveAt(0);
+        player.Hand.Add(card);
 
-        // 1. Play land if has one
-        foreach (var card in enemy.Hand)
+        if (player == humanPlayer)
         {
-            if (card is LandCard)
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            visual.Setup(card, this);
+            activeCardVisuals.Add(visual);
+        }
+    }
+
+    public void PlayCard(Player player, CardVisual visual)
+    {
+        Card card = visual.linkedCard;
+
+        if (card is LandCard)
+        {
+            if (player.hasPlayedLandThisTurn)
             {
-                card.Play(enemy);
-                MoveEnemyCardToBattlefield(card);
-                Debug.Log("Enemy played a land.");
-                break;
+                Debug.Log("You already played a land this turn!");
+                return;
             }
+
+            player.Battlefield.Add(card);
+            player.Hand.Remove(card);
+            player.hasPlayedLandThisTurn = true;
+
+            card.OnEnterPlay(player);
+
+            visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
+            visual.isInBattlefield = true;
+            visual.UpdateVisual();
         }
 
-        // 2. Tap lands for mana
-        foreach (var card in enemy.Battlefield)
+        else if (card is CreatureCard creature)
         {
-            if (card is LandCard land && !land.isTapped)
+            if (player.ManaPool >= creature.manaCost)
             {
-                land.TapForMana(enemy);
-            }
-        }
+                player.ManaPool -= creature.manaCost;
+                if (player == humanPlayer) UpdateUI();
+                player.Hand.Remove(card);
+                player.Battlefield.Add(card);
 
-        // 3. Play creature if can afford
-        foreach (var card in enemy.Hand)
-        {
-            if (card is CreatureCard creature && enemy.ManaPool >= creature.manaCost)
-            {
-                creature.Play(enemy);
-                MoveEnemyCardToBattlefield(creature);
-                Debug.Log("Enemy summoned a creature.");
-                UpdateUI(); // Ensures summoning sickness is shown before blockers
-                break;
-            }
-        }
+                card.OnEnterPlay(player); // ✅ Trigger OnEnterPlay
 
-        Debug.Log("Checking enemy creatures to attack:");
-        UpdateUI();
-        foreach (var card in enemy.Battlefield)
-        {
-            if (card is CreatureCard creature)
-            {
-                Debug.Log($"{creature.cardName} - SummoningSickness: {creature.hasSummoningSickness}, Tapped: {creature.isTapped}");
-            }
-        }
+                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                    creature.hasSummoningSickness = false;
+                else
+                    creature.hasSummoningSickness = true;
 
-        // 4. Attack you
-        confirmBlockersButton.interactable = true;
-        currentAttackers.Clear();
-        enemyPotentialBlockers.Clear();
+                if (creature.entersTapped)
+                    creature.isTapped = true;
 
-        foreach (var card in enemy.Battlefield)
-        {
-            if (card is CreatureCard creature && !creature.isTapped)
-            {
-                enemyPotentialBlockers.Add(creature);
-            }
-        }
-
-        foreach (var card in enemy.Battlefield)
-        {
-            if (card is CreatureCard creature && !creature.hasSummoningSickness && !creature.isTapped)
-            {
-                currentAttackers.Add(creature);
-                creature.isTapped = true; // attacker taps when attacking
-            }
-        }
-
-        if (currentAttackers.Count > 0)
-        {
-            Debug.Log("Enemy is attacking you! Choose blockers.");
-            isBlockingPhase = true;
-
-            confirmBlockersButton.interactable = true;  // Already doing this
-            nextTurnButton.interactable = false;     // <<< Add this line
-
-            // Enable clicking player creatures
-            foreach (var visual in activeCards)
-            {
-                if (visual.isInBattlefield && visual.linkedCard is CreatureCard)
-                {
-                    Button button = visual.GetComponent<Button>();
-                    if (button != null)
-                    {
-                        button.onClick.AddListener(visual.OnClick); // Enable creature click
-                    }
-                }
+                visual.transform.SetParent(playerBattlefieldArea, false);
+                visual.isInBattlefield = true;
+                visual.UpdateVisual();
             }
         }
         else
-            {
-                Debug.Log("Enemy has no creatures to attack!");
-                EndEnemyTurn(); // New function you will add
-            }
-    }
-    public void TryAssignBlocker(CardVisual cardVisual)
-    {
-        // 1. Clicked an enemy creature → select as attacker to block
-        if (cardVisual.linkedCard is CreatureCard enemyCreature && enemy.Battlefield.Contains(enemyCreature))
         {
-            if (!currentAttackers.Contains(enemyCreature))
-            {
-                Debug.Log("You must select an attacking creature!");
-                return;
-            }
-
-            selectedAttacker = enemyCreature;
-            Debug.Log("Selected attacker: " + enemyCreature.cardName);
-            return;
-        }
-
-        // 2. Clicked your own creature → assign or unassign as blocker
-        if (cardVisual.linkedCard is CreatureCard playerCreature && player.Battlefield.Contains(playerCreature))
-        {
-            if (playerCreature.isTapped)
-            {
-                Debug.Log("Tapped creatures can't block.");
-                return;
-            }
-
-            // Already blocking someone? → Unassign
-            if (playerCreature.blockingThisAttacker != null)
-            {
-                CreatureCard attacker = playerCreature.blockingThisAttacker;
-                blockingAssignments.Remove(attacker);
-
-                attacker.blockedByThisBlocker = null;
-                playerCreature.blockingThisAttacker = null;
-
-                Debug.Log(playerCreature.cardName + " is no longer blocking " + attacker.cardName);
-
-                CardVisual blockerVisual = FindCardVisual(playerCreature);
-                CardVisual attackerVisual = FindCardVisual(attacker);
-
-                if (blockerVisual != null) blockerVisual.UpdateVisual();
-                if (attackerVisual != null) attackerVisual.UpdateVisual();
-
-                selectedAttacker = null; // <<< added here too after unassign
-                return;
-            }
-
-            // No attacker selected
-            if (selectedAttacker == null)
-            {
-                Debug.Log("No attacker selected. First click on an attacker.");
-                return;
-            }
-
-            // Assign block
-            blockingAssignments[selectedAttacker] = playerCreature;
-            playerCreature.blockingThisAttacker = selectedAttacker;
-            selectedAttacker.blockedByThisBlocker = playerCreature;
-
-            Debug.Log(playerCreature.cardName + " blocks " + selectedAttacker.cardName);
-
-            CardVisual blockerVis = FindCardVisual(playerCreature);
-            CardVisual attackerVis = FindCardVisual(selectedAttacker);
-
-            if (blockerVis != null) blockerVis.UpdateVisual();
-            if (attackerVis != null) attackerVis.UpdateVisual();
-
-            selectedAttacker = null; // Reset attacker selection after assignment
+            Debug.LogWarning("Unhandled card type played: " + card.cardName);
         }
     }
-    void EndEnemyTurn()
-    {
-        isBlockingPhase = false;
-        currentAttackers.Clear();
-        blockingAssignments.Clear();
-        confirmBlockersButton.interactable = false;
-        nextTurnButton.interactable = true;
 
-        foreach (var visual in activeCards)
+
+    public void TapLandForMana(LandCard land, Player player)
+    {
+        if (!land.isTapped)
         {
-            if (visual.isInBattlefield && visual.linkedCard is CreatureCard)
+            land.isTapped = true;
+            player.ManaPool++;
+            if (player == humanPlayer) UpdateUI();
+        }
+    }
+
+    public void SendToGraveyard(Card card, Player owner)
+    {
+        owner.Battlefield.Remove(card);
+        card.OnLeavePlay(owner);
+        owner.Graveyard.Add(card);
+        card.isTapped = false;
+
+        if (card is CreatureCard creature)
+        {
+            creature.hasSummoningSickness = false;
+            creature.toughness = creature.baseToughness;
+            creature.blockingThisAttacker = null;
+            creature.blockedByThisBlocker = null;
+        }
+
+        CardVisual visual = FindCardVisual(card);
+        visual.UpdateVisual();
+
+        if (visual != null)
+        {
+            visual.isInBattlefield = false;
+            visual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            visual.transform.localPosition = Vector3.zero;
+            visual.UpdateVisual();
+        }
+    }
+
+    public void ResolveCombat()
+    {
+        foreach (var attacker in currentAttackers)
+        {
+            CreatureCard blocker = attacker.blockedByThisBlocker;
+
+            if (blocker != null)
             {
-                Button button = visual.GetComponent<Button>();
-                if (button != null)
+                // Blocker and attacker deal damage to each other
+                blocker.toughness -= attacker.power;
+                attacker.toughness -= blocker.power;
+
+                Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
+            }
+            else
+            {
+                // Attacker goes unblocked
+                if (humanPlayer.Battlefield.Contains(attacker))
                 {
-                    button.onClick.RemoveAllListeners(); // Disable creature click
+                    aiPlayer.Life -= attacker.power;
+                    Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+                }
+                else
+                {
+                    humanPlayer.Life -= attacker.power;
+                    Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
                 }
             }
         }
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+
+        // Cleanup combat assignments
+        foreach (var card in humanPlayer.Battlefield)
+        {
+            if (card is CreatureCard c)
+            {
+                c.blockingThisAttacker = null;
+                c.blockedByThisBlocker = null;
+            }
+        }
+        foreach (var card in aiPlayer.Battlefield)
+        {
+            if (card is CreatureCard c)
+            {
+                c.blockingThisAttacker = null;
+                c.blockedByThisBlocker = null;
+            }
+        }
+
+        currentAttackers.Clear();
+        selectedAttackerForBlocking = null;
+
+        UpdateUI();
+    }
+
+    void CheckDeaths(Player player)
+    {
+        List<Card> toGrave = new List<Card>();
+        foreach (var card in player.Battlefield)
+        {
+            if (card is CreatureCard c && c.toughness <= 0)
+            {
+                toGrave.Add(c);
+            }
+        }
+
+        foreach (var card in toGrave)
+        {
+            SendToGraveyard(card, player);
+        }
+    }
+
+    public void ResetPermanents(Player player)
+    {
+        foreach (var card in player.Battlefield)
+        {
+            card.isTapped = false;
+
+            if (card is CreatureCard creature)
+            {
+                creature.hasSummoningSickness = false;
+                creature.toughness = creature.baseToughness;
+                creature.blockingThisAttacker = null;
+                creature.blockedByThisBlocker = null;
+            }
+        }
+
+        player.hasPlayedLandThisTurn = false; // Also reset land play
         
-        UpdateUI();
-        Debug.Log("Enemy turn ended.");
-    }
-    public void AttackWithCreatures()
-    {
-        if (!isPlayerTurn)
-        {
-            Debug.Log("You can't attack during enemy turn!");
-            return;
-        }
-
-        List<CreatureCard> attackers = new List<CreatureCard>();
-
-        foreach (var card in player.Battlefield)
-        {
-            if (card is CreatureCard creature && !creature.hasSummoningSickness && !card.isTapped)
-            {
-                attackers.Add(creature);
-                creature.isTapped = true; // Tap after attack
-            }
-        }
-
-        if (attackers.Count > 0)
-        {
-            Debug.Log($"You're attacking with {attackers.Count} creatures.");
-            EnemyAttemptsToBlock(attackers);
-        }
-        else
-        {
-            Debug.Log("No creatures available to attack!");
-        }
-    }
-    public void NextTurn()
-    {
-        if (isBlockingPhase)
-        {
-            Debug.Log("Auto-resolving combat because player didn't confirm blockers.");
-
-            List<CreatureCard> availableBlockers = new List<CreatureCard>();
-
-            foreach (var card in enemy.Battlefield)
-            {
-                if (card is CreatureCard c && !c.isTapped && c.blockingThisAttacker == null)
-                {
-                    availableBlockers.Add(c);
-                }
-            }
-
-            foreach (var attacker in currentAttackers)
-            {
-                if (attacker.blockedByThisBlocker != null)
-                    continue; // already blocked
-
-                CreatureCard bestBlocker = null;
-
-                foreach (var blocker in availableBlockers)
-                {
-                    bool killsAttacker = blocker.power >= attacker.toughness;
-                    bool survives = blocker.toughness > attacker.power;
-
-                    if (killsAttacker || survives)
-                    {
-                        bestBlocker = blocker;
-                        break;
-                    }
-                }
-
-                if (bestBlocker != null)
-                {
-                    blockingAssignments[attacker] = bestBlocker;
-                    bestBlocker.blockingThisAttacker = attacker;
-                    attacker.blockedByThisBlocker = bestBlocker;
-
-                    availableBlockers.Remove(bestBlocker);
-
-                    Debug.Log($"Enemy blocks {attacker.cardName} with {bestBlocker.cardName}");
-                }
-            }
-
-            ConfirmBlocks();
-            return;
-        }
-
-        Debug.Log("Ending turn!");
-
-        // Clear mana pool
-        if (isPlayerTurn)
-            player.ManaPool = 0;
-        else
-            enemy.ManaPool = 0;
-
-        // Heal damage
-        foreach (var card in player.Battlefield)
-        {
-            if (card is CreatureCard creature)
-                creature.toughness = creature.baseToughness;
-        }
-        foreach (var card in enemy.Battlefield)
-        {
-            if (card is CreatureCard creature)
-                creature.toughness = creature.baseToughness;
-        }
-
-        // Switch turn
-        isPlayerTurn = !isPlayerTurn;
-        Debug.Log(isPlayerTurn ? "It is now YOUR turn!" : "It is now ENEMY turn!");
-
-        UpdateUI();
-        StartNewTurn();
-    }
-    void StartNewTurn()
-    {
-        Debug.Log("Starting new turn!");
-
-        if (isPlayerTurn)
-        {
-            // Draw a card
-            DrawCard(player);
-            
-            // Player untap phase
-            foreach (var card in player.Battlefield)
-            {
-                card.isTapped = false;
-
-                if (card is CreatureCard creature)
-                {
-                    creature.hasSummoningSickness = false;
-                }
-
-                if (card is LandCard land)
-                {
-                    land.manaUsedThisTurn = false; // <<< ADD THIS
-                }
-            }
-
-            player.ManaPool = 0;
-            landPlayedThisTurn = false;
-            Debug.Log("Player untap phase complete.");
-        }
-        else
-        {
-            // Draw a card
-            DrawCard(enemy);
-
-            // Enemy untap phase
-            foreach (var card in enemy.Battlefield)
-            {
-                card.isTapped = false;
-
-                if (card is CreatureCard creature)
-                {
-                    creature.hasSummoningSickness = false;
-                }
-            }
-
-            enemy.ManaPool = 0;
-            Debug.Log("Enemy untap phase complete.");
-
-            // Enemy automatically plays
-            EnemyTurn();
-        }
-
-        UpdateUI();
-    }
-    void DrawCard(Player playerDrawing)
-    {
-        if (playerDrawing.Deck.Count > 0)
-        {
-            Card topCard = playerDrawing.Deck[0];
-            playerDrawing.Deck.RemoveAt(0);
-            playerDrawing.Hand.Add(topCard);
-
-            if (playerDrawing == player)
-            {
-                CreateCardVisual(topCard, playerHandArea); // Player sees drawn cards
-            }
-
-            Debug.Log(playerDrawing == player ? "You draw a card: " + topCard.cardName : "Enemy draws a card.");
-        }
-        else
-        {
-            Debug.Log(playerDrawing == player ? "You have no cards to draw." : "Enemy has no cards to draw.");
-        }
-    }
-    void UpdateUI()
-    {
-        foreach (var visual in activeCards)
+        foreach (var visual in activeCardVisuals)
         {
             visual.UpdateVisual();
         }
 
-        manaPoolText.text = "Mana Pool: " + player.ManaPool;
-        lifeText.text = "Life: " + player.Life;
-        enemyLifeText.text = "Enemy Life: " + enemy.Life;
-        enemyHandText.text = "Enemy Hand: " + enemy.Hand.Count + " cards";
+    }
+    
+    public void ResetDamage(Player player)
+    {
+        foreach (var card in player.Battlefield)
+        {
+            if (card is CreatureCard creature)
+            {
+                creature.toughness = creature.baseToughness;
+            }
+        }
+    }
+
+    public CardVisual FindCardVisual(Card card)
+    {
+        return activeCardVisuals.Find(cv => cv.linkedCard == card);
+    }
+
+    public void UpdateUI()
+    {
+        foreach (var visual in activeCardVisuals)
+        {
+            if (visual.isInBattlefield)
+                visual.UpdateVisual();
+        }
+
+        if (enemyHandText != null)
+            enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
+
+        if (playerLifeText != null)
+            playerLifeText.text = "Life: " + humanPlayer.Life;
+
+        if (enemyLifeText != null)
+            enemyLifeText.text = "Enemy Life: " + aiPlayer.Life;
+
+        if (manaPoolText != null)
+        {
+            manaPoolText.text = "Mana: " + humanPlayer.ManaPool;
+        }
     }
 }

@@ -6,6 +6,8 @@ using TMPro;
 
 public class TurnSystem : MonoBehaviour
 {
+    public static TurnSystem Instance { get; private set; }
+
     public enum TurnPhase
     {
         StartTurn,
@@ -42,6 +44,8 @@ public class TurnSystem : MonoBehaviour
 
     void Start()
     {
+        Instance = this;
+
         nextPhaseButton.onClick.AddListener(NextPhaseButton);
         confirmAttackersButton.onClick.AddListener(ConfirmAttackers);
         confirmBlockersButton.onClick.AddListener(ConfirmBlockers);
@@ -58,6 +62,20 @@ public class TurnSystem : MonoBehaviour
         {
             RunCurrentPhase();
         }
+
+        // Update next phase button dynamically
+        if (nextPhaseButton != null)
+        {
+            bool allowNext = currentPlayer == PlayerType.Human && waitingForPlayerInput &&
+                currentPhase != TurnPhase.ConfirmAttackers && currentPhase != TurnPhase.ConfirmBlockers && currentPhase != TurnPhase.ChooseAttackers;
+            nextPhaseButton.interactable = allowNext;
+
+            TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
+            if (label != null)
+            {
+                label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
+            }
+        }
     }
 
     public void NextPhaseButton()
@@ -71,28 +89,38 @@ public class TurnSystem : MonoBehaviour
         }
     }
 
-public void ConfirmAttackers()
-{
-    if (waitingForPlayerInput)
+    public void ConfirmAttackers()
     {
-        Debug.Log("[UI] Player confirmed attackers");
-        waitingForPlayerInput = false;
-        confirmAttackersButton.gameObject.SetActive(false);
-        AdvancePhase(); // <-- advance immediately
-    }
-}
+        if (waitingForPlayerInput)
+        {
+            Debug.Log("[UI] Player confirmed attackers");
+            waitingForPlayerInput = false;
+            confirmAttackersButton.gameObject.SetActive(false);
 
-public void ConfirmBlockers()
-{
-    if (waitingForPlayerInput)
+            // Use only manually selected attackers
+            GameManager.Instance.currentAttackers.Clear();
+            GameManager.Instance.currentAttackers.AddRange(GameManager.Instance.selectedAttackers);
+            GameManager.Instance.selectedAttackers.Clear();
+
+            foreach (var creature in GameManager.Instance.currentAttackers)
+            {
+                Debug.Log("Attacker declared: " + creature.cardName);
+            }
+
+            AdvancePhase();
+        }
+    }
+
+    public void ConfirmBlockers()
     {
-        Debug.Log("[UI] Player confirmed blockers");
-        waitingForPlayerInput = false;
-        confirmBlockersButton.gameObject.SetActive(false);
-        AdvancePhase(); // <-- advance immediately
+        if (waitingForPlayerInput)
+        {
+            Debug.Log("[UI] Player confirmed blockers");
+            waitingForPlayerInput = false;
+            confirmBlockersButton.gameObject.SetActive(false);
+            AdvancePhase();
+        }
     }
-}
-
 
     void HideAllConfirmButtons()
     {
@@ -110,6 +138,15 @@ public void ConfirmBlockers()
 
     void AdvancePhase()
     {
+        // Empty mana at the end of each phase
+        var player = currentPlayer == PlayerType.Human
+            ? GameManager.Instance.humanPlayer
+            : GameManager.Instance.aiPlayer;
+
+        player.ManaPool = 0;
+        if (currentPlayer == PlayerType.Human)
+            GameManager.Instance.UpdateUI();
+
         currentPhase++;
         RunCurrentPhase();
     }
@@ -119,7 +156,6 @@ public void ConfirmBlockers()
         Debug.Log($"[Phase] {currentPlayer} - {currentPhase}");
 
         string label = $"{currentPlayer} - {currentPhase}";
-        Debug.Log($"[Phase] {label}");
         if (phaseText != null)
             phaseText.text = label;
 
@@ -127,6 +163,9 @@ public void ConfirmBlockers()
         {
             case TurnPhase.Untap:
                 Debug.Log("→ Untapping all permanents.");
+                var p = (currentPlayer == PlayerType.Human) ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer;
+                p.hasPlayedLandThisTurn = false;
+                GameManager.Instance.ResetPermanents(currentPlayer == PlayerType.Human ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer);
                 AdvancePhase();
                 break;
 
@@ -137,6 +176,14 @@ public void ConfirmBlockers()
 
             case TurnPhase.Draw:
                 Debug.Log("→ Drawing a card.");
+                
+                var drawPlayer = currentPlayer == PlayerType.Human
+                    ? GameManager.Instance.humanPlayer
+                    : GameManager.Instance.aiPlayer;
+
+                GameManager.Instance.DrawCard(drawPlayer);
+                GameManager.Instance.UpdateUI(); // ✅ Make UI reflect the draw
+
                 AdvancePhase();
                 break;
 
@@ -150,7 +197,83 @@ public void ConfirmBlockers()
                 else
                 {
                     Debug.Log("→ AI Main Phase: Playing cards.");
+
+                    Player ai = GameManager.Instance.aiPlayer;
+
+                    // Play 1 land if possible
+                    if (!ai.hasPlayedLandThisTurn)
+                    {
+                        for (int i = 0; i < ai.Hand.Count; i++)
+                        {
+                            if (ai.Hand[i] is LandCard)
+                            {
+                                Card land = ai.Hand[i];
+
+                                land.Play(ai);
+                                ai.Hand.Remove(land);
+                                ai.Battlefield.Add(land);
+
+                                GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiLandArea);
+                                CardVisual visual = obj.GetComponent<CardVisual>();
+                                visual.Setup(land, GameManager.Instance);
+                                visual.isInBattlefield = true;
+                                GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                Debug.Log("AI played land: " + land.cardName);
+                                ai.hasPlayedLandThisTurn = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Tap all untapped lands
+                    foreach (var card in ai.Battlefield)
+                    {
+                        if (card is LandCard land && !land.isTapped)
+                        {
+                            GameManager.Instance.TapLandForMana(land, ai);
+                            Debug.Log($"AI taps {land.cardName} for 1 mana.");
+                            GameManager.Instance.FindCardVisual(land)?.UpdateVisual();
+                        }
+                    }
+
+                    Debug.Log($"AI mana pool: {ai.ManaPool}");
+
+                    // Play as many creatures as AI can afford
+                    bool playedAnyCreature = true;
+
+                    while (playedAnyCreature)
+                    {
+                        playedAnyCreature = false;
+
+                        for (int i = 0; i < ai.Hand.Count; i++)
+                        {
+                            if (ai.Hand[i] is CreatureCard creature && ai.ManaPool >= creature.manaCost)
+                            {
+                                Card card = ai.Hand[i];
+
+                                ai.ManaPool -= creature.manaCost;
+                                ai.Hand.Remove(card);
+                                ai.Battlefield.Add(card);
+
+                                GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
+                                CardVisual visual = obj.GetComponent<CardVisual>();
+                                visual.Setup(card, GameManager.Instance);
+                                visual.isInBattlefield = true;
+                                GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
+
+                                Debug.Log($"AI played creature: {card.cardName} (Cost: {creature.manaCost})");
+                                playedAnyCreature = true;
+                                break; // restart loop with updated mana
+                            }
+                        }
+                    }
+
+                    GameManager.Instance.UpdateUI(); // update UI after all actions
                     AdvancePhase();
+                    break;
                 }
                 break;
 
@@ -160,80 +283,145 @@ public void ConfirmBlockers()
                 break;
 
             case TurnPhase.ChooseAttackers:
-        if (currentPlayer == PlayerType.Human)
-        {
-            Debug.Log("→ Choose attackers.");
-            waitingForPlayerInput = true;
-            confirmAttackersButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("→ Skipping attacker choice (AI turn).");
-            AdvancePhase(); // skip to ChooseBlockers
-        }
-        break;
-
-        case TurnPhase.ConfirmAttackers:
-        if (currentPlayer == PlayerType.Human)
-        {
-            if (waitingForPlayerInput)
-            {
-                Debug.Log("→ Confirm attackers.");
-                confirmAttackersButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                AdvancePhase(); // already confirmed, move on
-            }
-        }
-        else
-        {
-            Debug.Log("→ Skipping attacker confirmation (AI turn).");
-            AdvancePhase();
-        }
-        break;
-
-        case TurnPhase.ChooseBlockers:
-            if (currentPlayer == PlayerType.AI)
-            {
-                Debug.Log("→ Player chooses blockers.");
-                waitingForPlayerInput = true;
-                confirmBlockersButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("→ Skipping blocker choice (Player turn).");
-                AdvancePhase(); // skip to Damage
-            }
-            break;
-
-        case TurnPhase.ConfirmBlockers:
-            if (currentPlayer == PlayerType.AI)
-            {
-                if (waitingForPlayerInput)
+                if (currentPlayer == PlayerType.Human)
                 {
-                    Debug.Log("→ Player confirms blockers.");
-                    confirmBlockersButton.gameObject.SetActive(true);
+                    Debug.Log("→ Choose attackers.");
+                    waitingForPlayerInput = true;
+                    confirmAttackersButton.gameObject.SetActive(true);
                 }
                 else
                 {
-                    AdvancePhase(); // already confirmed
+                    Debug.Log("→ AI chooses attackers.");
+                    GameManager.Instance.currentAttackers.Clear();
+
+                    foreach (var card in GameManager.Instance.aiPlayer.Battlefield)
+                    {
+                        if (card is CreatureCard creature &&
+                            !creature.isTapped &&
+                            !creature.hasSummoningSickness &&
+                            !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                        {
+                            if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance)) {
+                                creature.isTapped = true;
+                            }
+
+                            GameManager.Instance.currentAttackers.Add(creature);
+                            Debug.Log($"AI declares attacker: {creature.cardName}");
+
+                            GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                        }
+                    }
+
+                    AdvancePhase(); // skip straight to ConfirmAttackers (AI skips confirm)
                 }
-            }
-            else
-            {
-                Debug.Log("→ Skipping blocker confirmation (Player turn).");
-                AdvancePhase();
-            }
-            break;
+                break;
+
+            case TurnPhase.ConfirmAttackers:
+                if (currentPlayer == PlayerType.Human)
+                {
+                    if (waitingForPlayerInput)
+                    {
+                        Debug.Log("→ Confirm attackers.");
+                        confirmAttackersButton.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        AdvancePhase();
+                    }
+                }
+                else
+                {
+                    Debug.Log("→ Skipping attacker confirmation (AI turn).");
+                    AdvancePhase();
+                }
+                break;
+
+            case TurnPhase.ChooseBlockers:
+                if (currentPlayer == PlayerType.Human)
+                {
+                    Debug.Log("→ AI is assigning blockers as defender.");
+
+                    Player ai = GameManager.Instance.aiPlayer;
+                    Player human = GameManager.Instance.humanPlayer;
+                    var attackers = GameManager.Instance.currentAttackers;
+                    var availableBlockers = new List<CreatureCard>();
+
+                    // Gather untapped blockers that can block
+                    foreach (var card in ai.Battlefield)
+                    {
+                        if (card is CreatureCard c &&
+                            !c.isTapped &&
+                            !c.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                        {
+                            availableBlockers.Add(c);
+                        }
+                    }
+
+                    // Assign blockers to attackers
+                    foreach (var attacker in attackers)
+                    {
+                        foreach (var blocker in availableBlockers)
+                        {
+                            // FLYING rule: can only block flying if blocker has Flying or Reach
+                            if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                                !blocker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                                !blocker.keywordAbilities.Contains(KeywordAbility.Reach))
+                            {
+                                continue; // this blocker can't block this attacker
+                            }
+
+                            GameManager.Instance.blockingAssignments[attacker] = blocker;
+                            blocker.blockingThisAttacker = attacker;
+                            attacker.blockedByThisBlocker = blocker;
+
+                            Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+
+                            availableBlockers.Remove(blocker);
+                            break;
+                        }
+                    }
+
+                    AdvancePhase(); // Proceed to ConfirmBlockers (or Damage)
+                }
+                else
+                {
+                    Debug.Log("→ Player chooses blockers.");
+                    waitingForPlayerInput = true;
+                    confirmBlockersButton.gameObject.SetActive(true);
+                }
+                break;
+
+            case TurnPhase.ConfirmBlockers:
+                if (currentPlayer == PlayerType.AI)
+                {
+                    if (waitingForPlayerInput)
+                    {
+                        Debug.Log("→ Player confirms blockers.");
+                        confirmBlockersButton.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        AdvancePhase();
+                    }
+                }
+                else
+                {
+                    Debug.Log("→ Skipping blocker confirmation (Player turn).");
+                    AdvancePhase();
+                }
+                break;
 
             case TurnPhase.Damage:
                 Debug.Log("→ Resolving combat damage.");
+                GameManager.Instance.ResolveCombat();
                 AdvancePhase();
                 break;
 
             case TurnPhase.EndTurn:
                 Debug.Log("→ Ending turn.");
+                // Heal all creatures at end of turn
+                GameManager.Instance.ResetDamage(GameManager.Instance.humanPlayer);
+                GameManager.Instance.ResetDamage(GameManager.Instance.aiPlayer);
                 BeginTurn(currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human);
                 break;
         }

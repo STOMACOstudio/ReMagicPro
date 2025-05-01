@@ -18,24 +18,138 @@ MonoBehaviour:
     - Assets/Prefab.meta
     - Assets/Prefab/CardPrefab.prefab
     - Assets/Prefab/CardPrefab.prefab.meta
+    - Assets/Resources.meta
+    - Assets/Resources/Art.meta
+    - Assets/Resources/Art/angry_farmer.png
+    - Assets/Resources/Art/angry_farmer.png.meta
+    - Assets/Resources/Art/bog_mosquito.png
+    - Assets/Resources/Art/bog_mosquito.png.meta
+    - Assets/Resources/Art/cactusaur.png
+    - Assets/Resources/Art/cactusaur.png.meta
+    - Assets/Resources/Art/colossal_octopus.png
+    - Assets/Resources/Art/colossal_octopus.png.meta
+    - Assets/Resources/Art/crazy_cat_lady.png
+    - Assets/Resources/Art/crazy_cat_lady.png.meta
+    - Assets/Resources/Art/deep_forest_monkeys.png
+    - Assets/Resources/Art/deep_forest_monkeys.png.meta
+    - Assets/Resources/Art/domestic_cat.png
+    - Assets/Resources/Art/domestic_cat.png.meta
+    - Assets/Resources/Art/dragon_summoner.png
+    - Assets/Resources/Art/dragon_summoner.png.meta
+    - Assets/Resources/Art/drumming_elf.png
+    - Assets/Resources/Art/drumming_elf.png.meta
+    - Assets/Resources/Art/famished_crow.png
+    - Assets/Resources/Art/famished_crow.png.meta
+    - Assets/Resources/Art/fireborn_dragon.png
+    - Assets/Resources/Art/fireborn_dragon.png.meta
+    - Assets/Resources/Art/flying_donkey.png
+    - Assets/Resources/Art/flying_donkey.png.meta
+    - Assets/Resources/Art/flying_pig.png
+    - Assets/Resources/Art/flying_pig.png.meta
+    - Assets/Resources/Art/forest.png
+    - Assets/Resources/Art/forest.png.meta
+    - Assets/Resources/Art/gallant_lord.png
+    - Assets/Resources/Art/gallant_lord.png.meta
+    - Assets/Resources/Art/gentle_giant.png
+    - Assets/Resources/Art/gentle_giant.png.meta
+    - Assets/Resources/Art/giant_crab.png
+    - Assets/Resources/Art/giant_crab.png.meta
+    - Assets/Resources/Art/giant_crow.png
+    - Assets/Resources/Art/giant_crow.png.meta
+    - Assets/Resources/Art/giant_rat.png
+    - Assets/Resources/Art/giant_rat.png.meta
+    - Assets/Resources/Art/glassmole.png
+    - Assets/Resources/Art/glassmole.png.meta
+    - Assets/Resources/Art/goblin_puncher.png
+    - Assets/Resources/Art/goblin_puncher.png.meta
+    - Assets/Resources/Art/great_boulder.png
+    - Assets/Resources/Art/great_boulder.png.meta
+    - Assets/Resources/Art/hamlet_recruiter.png
+    - Assets/Resources/Art/hamlet_recruiter.png.meta
+    - Assets/Resources/Art/island.png
+    - Assets/Resources/Art/island.png.meta
+    - Assets/Resources/Art/limping_corpse.png
+    - Assets/Resources/Art/limping_corpse.png.meta
+    - Assets/Resources/Art/lucky_fisherman.png
+    - Assets/Resources/Art/lucky_fisherman.png.meta
+    - Assets/Resources/Art/mountain.png
+    - Assets/Resources/Art/mountain.png.meta
+    - Assets/Resources/Art/obstacle.png
+    - Assets/Resources/Art/obstacle.png.meta
+    - Assets/Resources/Art/omega_golemoid.png
+    - Assets/Resources/Art/omega_golemoid.png.meta
+    - Assets/Resources/Art/origin_golem.png
+    - Assets/Resources/Art/origin_golem.png.meta
+    - Assets/Resources/Art/plains.png
+    - Assets/Resources/Art/plains.png.meta
+    - Assets/Resources/Art/possessed_innocent.png
+    - Assets/Resources/Art/possessed_innocent.png.meta
+    - Assets/Resources/Art/pure_angel.png
+    - Assets/Resources/Art/pure_angel.png.meta
+    - Assets/Resources/Art/rabid_dog.png
+    - Assets/Resources/Art/rabid_dog.png.meta
+    - Assets/Resources/Art/ratbat.png
+    - Assets/Resources/Art/ratbat.png.meta
+    - Assets/Resources/Art/realm_protector.png
+    - Assets/Resources/Art/realm_protector.png.meta
+    - Assets/Resources/Art/realms_crasher.png
+    - Assets/Resources/Art/realms_crasher.png.meta
+    - Assets/Resources/Art/replicator.png
+    - Assets/Resources/Art/replicator.png.meta
+    - Assets/Resources/Art/sad_clown.png
+    - Assets/Resources/Art/sad_clown.png.meta
+    - Assets/Resources/Art/sharkmen_tribe.png
+    - Assets/Resources/Art/sharkmen_tribe.png.meta
+    - Assets/Resources/Art/skyhunter_unicorn.png
+    - Assets/Resources/Art/skyhunter_unicorn.png.meta
+    - Assets/Resources/Art/skyward_whale.png
+    - Assets/Resources/Art/skyward_whale.png.meta
+    - Assets/Resources/Art/slack_tungo.png
+    - Assets/Resources/Art/slack_tungo.png.meta
+    - Assets/Resources/Art/swamp.png
+    - Assets/Resources/Art/swamp.png.meta
+    - Assets/Resources/Art/thundermare.png
+    - Assets/Resources/Art/thundermare.png.meta
+    - Assets/Resources/Art/violent_ape.png
+    - Assets/Resources/Art/violent_ape.png.meta
+    - Assets/Resources/Art/virgins_procession.png
+    - Assets/Resources/Art/virgins_procession.png.meta
+    - Assets/Resources/Art/wandering_cloud.png
+    - Assets/Resources/Art/wandering_cloud.png.meta
+    - Assets/Resources/Art/wandering_squid.png
+    - Assets/Resources/Art/wandering_squid.png.meta
+    - Assets/Resources/Art/waterbearer.png
+    - Assets/Resources/Art/waterbearer.png.meta
+    - Assets/Resources/Art/wild_ostrich.png
+    - Assets/Resources/Art/wild_ostrich.png.meta
     - Assets/Scenes.meta
     - Assets/Scenes/SampleScene.unity
     - Assets/Scenes/SampleScene.unity.meta
     - Assets/Scripts.meta
     - Assets/Scripts/Card.cs
     - Assets/Scripts/Card.cs.meta
+    - Assets/Scripts/CardData.cs
+    - Assets/Scripts/CardData.cs.meta
+    - Assets/Scripts/CardDatabase.cs
+    - Assets/Scripts/CardDatabase.cs.meta
+    - Assets/Scripts/CardFactory.cs
+    - Assets/Scripts/CardFactory.cs.meta
+    - Assets/Scripts/CardType.cs
+    - Assets/Scripts/CardType.cs.meta
     - Assets/Scripts/CardVisual.cs
     - Assets/Scripts/CardVisual.cs.meta
     - Assets/Scripts/CreatureCard.cs
     - Assets/Scripts/CreatureCard.cs.meta
     - Assets/Scripts/GameManager.cs
     - Assets/Scripts/GameManager.cs.meta
+    - Assets/Scripts/KeywordAbility.cs
+    - Assets/Scripts/KeywordAbility.cs.meta
     - Assets/Scripts/LandCard.cs
     - Assets/Scripts/LandCard.cs.meta
-    - Assets/Scripts/NewBehaviourScript.cs
-    - Assets/Scripts/NewBehaviourScript.cs.meta
     - Assets/Scripts/Player.cs
     - Assets/Scripts/Player.cs.meta
+    - Assets/Scripts/TurnSystem.cs
+    - Assets/Scripts/TurnSystem.cs.meta
     - Assets/TextMesh Pro.meta
     - Assets/TextMesh Pro/Documentation.meta
     - Assets/TextMesh Pro/Documentation/TextMesh Pro User Guide 2016.pdf
@@ -426,7 +540,7 @@ MonoBehaviour:
     - ProjectSettings/VFXManager.asset
     - ProjectSettings/VersionControlSettings.asset
     - 
-    m_Values: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    m_Values: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   RevisionSummary: 
   ChangesSearchValue: 
   SelectedHistoryRevision: 
