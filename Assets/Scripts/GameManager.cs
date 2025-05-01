@@ -53,12 +53,13 @@ public class GameManager : MonoBehaviour
         aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
         aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
         aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Flying Pig"));
-        aiPlayer.Deck.Add(CardFactory.Create("Rabid Dog"));
-        aiPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
-        aiPlayer.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        aiPlayer.Deck.Add(CardFactory.Create("Goblin Puncher"));
-        aiPlayer.Deck.Add(CardFactory.Create("Glassmole"));
+        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
+        aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+        aiPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        aiPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+        aiPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        aiPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        aiPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
 
         ShuffleDeck(humanPlayer);
         ShuffleDeck(aiPlayer);
@@ -88,7 +89,7 @@ public class GameManager : MonoBehaviour
         humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
         humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
         
-        //test blue deck
+        /*//test blue deck
         humanPlayer.Deck.Add(CardFactory.Create("Island"));
         humanPlayer.Deck.Add(CardFactory.Create("Island"));
         humanPlayer.Deck.Add(CardFactory.Create("Island"));
@@ -111,23 +112,22 @@ public class GameManager : MonoBehaviour
         humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
         humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
         humanPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-        humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-        humanPlayer.Deck.Add(CardFactory.Create("Giant Rat"));
-        humanPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
-        humanPlayer.Deck.Add(CardFactory.Create("Bog Mosquito"));*/
+        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));*/
 
-        /* //test green deck
+        ///test green deck
         humanPlayer.Deck.Add(CardFactory.Create("Forest"));
         humanPlayer.Deck.Add(CardFactory.Create("Forest"));
         humanPlayer.Deck.Add(CardFactory.Create("Forest"));
         humanPlayer.Deck.Add(CardFactory.Create("Forest"));
         humanPlayer.Deck.Add(CardFactory.Create("Forest"));
         humanPlayer.Deck.Add(CardFactory.Create("Domestic Cat"));
-        humanPlayer.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        humanPlayer.Deck.Add(CardFactory.Create("Violent Ape"));
-        humanPlayer.Deck.Add(CardFactory.Create("Obstacle"));
-        humanPlayer.Deck.Add(CardFactory.Create("Origin Golem"));*/
-
+        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        humanPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
     }
 
     void ShuffleDeck(Player player)
@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour
                 player.Hand.Remove(card);
                 player.Battlefield.Add(card);
 
-                card.OnEnterPlay(player); // ✅ Trigger OnEnterPlay
+                card.OnEnterPlay(player);
 
                 if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
                     creature.hasSummoningSickness = false;
@@ -224,27 +224,28 @@ public class GameManager : MonoBehaviour
     public void SendToGraveyard(Card card, Player owner)
     {
         owner.Battlefield.Remove(card);
-        card.OnLeavePlay(owner);
-        owner.Graveyard.Add(card);
-        card.isTapped = false;
+        Debug.Log($"{card.cardName} is being sent to the graveyard.");
 
-        if (card is CreatureCard creature)
+        card.OnLeavePlay(owner);
+
+        if (card is CreatureCard creature && card.isToken)
         {
-            creature.hasSummoningSickness = false;
-            creature.toughness = creature.baseToughness;
-            creature.blockingThisAttacker = null;
-            creature.blockedByThisBlocker = null;
+            // Remove from game completely
+            var visual = FindCardVisual(card);
+            if (visual != null)
+                Destroy(visual.gameObject);
+            return;
         }
 
-        CardVisual visual = FindCardVisual(card);
-        visual.UpdateVisual();
+        owner.Graveyard.Add(card);
 
-        if (visual != null)
+        var graveyardVisual = FindCardVisual(card);
+        if (graveyardVisual != null)
         {
-            visual.isInBattlefield = false;
-            visual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-            visual.transform.localPosition = Vector3.zero;
-            visual.UpdateVisual();
+            graveyardVisual.isInBattlefield = false;
+            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            graveyardVisual.transform.localPosition = Vector3.zero;
+            graveyardVisual.UpdateVisual();
         }
     }
 
@@ -335,6 +336,12 @@ public class GameManager : MonoBehaviour
                 creature.blockingThisAttacker = null;
                 creature.blockedByThisBlocker = null;
             }
+
+            var visual = FindCardVisual(card);
+            if (visual != null)
+            {
+                visual.UpdateVisual(); // Just call once, it's enough
+            }
         }
 
         player.hasPlayedLandThisTurn = false; // Also reset land play
@@ -360,6 +367,34 @@ public class GameManager : MonoBehaviour
     public CardVisual FindCardVisual(Card card)
     {
         return activeCardVisuals.Find(cv => cv.linkedCard == card);
+    }
+
+    public void SummonToken(Card tokenCard, Player owner)
+    {
+        if (tokenCard == null)
+        {
+            Debug.LogError("Tried to summon a null token.");
+            return;
+        }
+
+        if (tokenCard is CreatureCard creature)
+        {
+            creature.hasSummoningSickness = true;
+            creature.isTapped = false;
+        }
+
+        owner.Battlefield.Add(tokenCard);
+
+        // Create visual and link it
+        GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+        CardVisual visual = visualGO.GetComponent<CardVisual>();
+
+        visual.Setup(tokenCard, this);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
     }
 
     public void UpdateUI()

@@ -8,6 +8,7 @@ public class CardData
     public string rarity; // e.g. "Common", "Uncommon", "Rare"
     public string color;
     public int manaCost;
+    public bool isToken = false;
     public CardType cardType;
 
     // Only used for creatures

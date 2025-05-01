@@ -99,8 +99,8 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/gentle_giant")
                     });
-                Add(new CardData // Waterbearer
-                {
+                Add(new CardData //Waterbearer
+                    {
                     cardName = "Waterbearer",
                     rarity = "Common",
                     manaCost = 2,
@@ -115,7 +115,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = "Gain 1 life.",
+                            description = "gain 1 life.",
                             effect = (Player owner) =>
                             {
                                 owner.Life += 1;
@@ -126,7 +126,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnDeath,
-                            description = "Gain 1 life.",
+                            description = "gain 1 life.",
                             effect = (Player owner) =>
                             {
                                 owner.Life += 1;
@@ -135,7 +135,7 @@ public static class CardDatabase
                             }
                         }
                     }
-                });
+                    });
                 Add(new CardData //Virgins procession
                     {
                     cardName = "Virgins Procession",
@@ -292,7 +292,7 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = "Draw a card.",
+                                description = "draw a card.",
                                 effect = (Player owner) =>
                                 {
                                     GameManager.Instance.DrawCard(owner);
@@ -405,7 +405,27 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/possessed_innocent")
+                    artwork = Resources.Load<Sprite>("Art/possessed_innocent"),
+                    abilities = new List<CardAbility>
+                    {
+                    new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            description = "create a Demon.",
+                            effect = (Player owner) =>
+                            {
+                                Card demon = CardFactory.Create("Demon Token");
+                                if (demon == null)
+                                {
+                                    Debug.LogError("Failed to spawn Demon Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(demon, owner);
+                            }
+
+                        }
+                    }
                     });
                 Add(new CardData //Lunatic necromancer
                     {
@@ -474,6 +494,20 @@ public static class CardDatabase
                         KeywordAbility.Flying
                     },
                     artwork = Resources.Load<Sprite>("Art/bog_mosquito")
+                    });
+                Add(new CardData // Demon Token
+                    {
+                        cardName = "Demon Token",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "Black",
+                        cardType = CardType.Creature,
+                        power = 5,
+                        toughness = 5,
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
+                        artwork = Resources.Load<Sprite>("Art/demon_token"),
+                        abilities = new List<CardAbility>()
                     });
             //RED
                 Add(new CardData //Rabid dog
@@ -558,7 +592,7 @@ public static class CardDatabase
                     color = "Red",
                     cardType = CardType.Creature,
                     power = 3,
-                    toughness = 2,
+                    toughness = 3,
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock
@@ -655,7 +689,30 @@ public static class CardDatabase
                     power = 2,
                     toughness = 2,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/crazy_cat_lady")
+                    artwork = Resources.Load<Sprite>("Art/crazy_cat_lady"),
+                    abilities = new List<CardAbility>
+                    {
+                    new CardAbility
+                    {
+                        timing = TriggerTiming.OnEnter,
+                        description = "create two Cats.",
+                        effect = (Player owner) =>
+                        {
+                            for (int i = 0; i < 2; i++)
+                            {
+                                Card cat = CardFactory.Create("Cat Token");
+                                if (cat == null)
+                                {
+                                    Debug.LogError("Failed to spawn Cat Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(cat, owner);
+                            }
+                        }
+                    }
+
+                    }
                     });
                 Add(new CardData //Domestic cat
                     {
@@ -723,6 +780,20 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/slack_tungo")
                     });
+                Add(new CardData // Cat Token
+                    {
+                        cardName = "Cat Token",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "Green",
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Reach },
+                        artwork = Resources.Load<Sprite>("Art/cat_token"),
+                        abilities = new List<CardAbility>()
+                    });
             //ARTIFACT
                 Add(new CardData //Origin Golem
                     {
@@ -759,6 +830,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
+                    entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/glassmole")
                     });

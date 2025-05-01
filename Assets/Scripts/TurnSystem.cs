@@ -182,7 +182,7 @@ public class TurnSystem : MonoBehaviour
                     : GameManager.Instance.aiPlayer;
 
                 GameManager.Instance.DrawCard(drawPlayer);
-                GameManager.Instance.UpdateUI(); // ✅ Make UI reflect the draw
+                GameManager.Instance.UpdateUI();
 
                 AdvancePhase();
                 break;
@@ -255,6 +255,7 @@ public class TurnSystem : MonoBehaviour
                                 ai.ManaPool -= creature.manaCost;
                                 ai.Hand.Remove(card);
                                 ai.Battlefield.Add(card);
+                                card.OnEnterPlay(ai);
 
                                 GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
                                 CardVisual visual = obj.GetComponent<CardVisual>();

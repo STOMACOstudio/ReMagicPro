@@ -8,6 +8,7 @@ public class Card
     public string rarity;
     public string color;
     public int manaCost;
+    public bool isToken = false;
     public bool isTapped = false;
     public bool entersTapped = false;
     public Sprite artwork;
@@ -52,9 +53,9 @@ public class Card
         foreach (var ability in abilities)
         {
             if (ability.timing == TriggerTiming.OnEnter)
-                lines.Add("When this creature enters: " + ability.description);
+                lines.Add("When this creature enters, " + ability.description);
             else if (ability.timing == TriggerTiming.OnDeath)
-                lines.Add("When this creature dies: " + ability.description);
+                lines.Add("When this creature dies, " + ability.description);
 
         }
 

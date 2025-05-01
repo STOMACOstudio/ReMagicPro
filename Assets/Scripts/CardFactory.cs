@@ -13,7 +13,7 @@ public static class CardFactory
             return null;
         }
 
-        Card newCard;
+        Card newCard = null;
 
         switch (data.cardType)
         {
@@ -28,8 +28,6 @@ public static class CardFactory
                 creature.baseToughness = data.toughness;
                 creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
                 newCard = creature;
-                newCard.abilities = new List<CardAbility>(data.abilities);
-                Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");
                 break;
 
             default:
@@ -38,12 +36,15 @@ public static class CardFactory
                 break;
         }
 
+        // Shared assignment
         newCard.cardName = data.cardName;
         newCard.manaCost = data.manaCost;
         newCard.artwork = data.artwork;
         newCard.entersTapped = data.entersTapped;
-
         newCard.abilities = new List<CardAbility>(data.abilities);
+        newCard.isToken = data.isToken;
+
+        Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");
 
         return newCard;
     }

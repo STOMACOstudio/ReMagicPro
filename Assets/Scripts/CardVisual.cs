@@ -101,7 +101,6 @@ public class CardVisual : MonoBehaviour
         {
             lineRenderer.enabled = false;
         }
-
     }
 
     public void Setup(Card card, GameManager manager)
