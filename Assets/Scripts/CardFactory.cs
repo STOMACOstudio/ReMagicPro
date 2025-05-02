@@ -27,6 +27,7 @@ public static class CardFactory
                 creature.toughness = data.toughness;
                 creature.baseToughness = data.toughness;
                 creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
+                creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = creature;
                 break;
 

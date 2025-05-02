@@ -22,242 +22,272 @@ public class CardVisual : MonoBehaviour
     public bool isInBattlefield = false;
 
     void Start()
-    {
-        GetComponent<Button>().onClick.AddListener(OnClick);
-    }
+        {
+            GetComponent<Button>().onClick.AddListener(OnClick);
+        }
 
     public void UpdateVisual()
-    {
-        if (!isInBattlefield)
         {
-            lineRenderer.enabled = false;
-            return; // don't do line logic at all if dead
-        }
-
-        if (linkedCard.isTapped)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, -90);
-        }
-        else
-        {
-            transform.rotation = Quaternion.identity;
-        }
-
-        if (linkedCard is CreatureCard creature)
-        {
-            // Show summoning sickness if creature is on the battlefield
-            if (isInBattlefield && creature.hasSummoningSickness)
+            if (linkedCard.isTapped)
             {
-                sicknessText.text = "(@)";
+                transform.rotation = Quaternion.Euler(0, 0, -90);
+            }
+            else
+            {
+                transform.rotation = Quaternion.identity;
+            }
+
+            if (!isInBattlefield)
+            {
+                lineRenderer.enabled = false;
+                return; // don't do line logic at all if dead
+            }
+
+            if (linkedCard is CreatureCard creature)
+            {
+                // Show summoning sickness if creature is on the battlefield
+                if (isInBattlefield && creature.hasSummoningSickness)
+                {
+                    sicknessText.text = "(@)";
+                }
+                else
+                {
+                    sicknessText.text = "";
+                }
+
+                statsText.text = $"{creature.power}/{creature.toughness}";
+
+                List<string> keywords = new List<string>();
+
+                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                    keywords.Add("Haste");
+                if (creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                    keywords.Add("Defender");
+                if (creature.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                    keywords.Add("This creature can't block.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                    keywords.Add("Vigilance.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.Flying))
+                    keywords.Add("Flying.");
+                if (creature.entersTapped)
+                    keywords.Add("This creature enters the battlefield tapped.");
+
+                // Show keyword + triggered ability text together
+                keywordText.text = linkedCard.GetCardText();
             }
             else
             {
                 sicknessText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
             }
 
-            statsText.text = $"{creature.power}/{creature.toughness}";
-
-            List<string> keywords = new List<string>();
-
-            if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                keywords.Add("Haste");
-            if (creature.keywordAbilities.Contains(KeywordAbility.Defender))
-                keywords.Add("Defender");
-            if (creature.keywordAbilities.Contains(KeywordAbility.CantBlock))
-                keywords.Add("This creature can't block.");
-            if (creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                keywords.Add("Vigilance.");
-            if (creature.keywordAbilities.Contains(KeywordAbility.Flying))
-                keywords.Add("Flying.");
-            if (creature.entersTapped)
-                keywords.Add("This creature enters the battlefield tapped.");
-
-            // Show keyword + triggered ability text together
-            keywordText.text = linkedCard.GetCardText();
-        }
-        else
-        {
-            sicknessText.text = "";
-            statsText.text = "";
-            keywordText.text = "";
-        }
-
-        if (linkedCard is CreatureCard c && isInBattlefield)
-        {
-            if (c.blockingThisAttacker != null)
+            if (linkedCard is CreatureCard c && isInBattlefield)
             {
-                lineRenderer.enabled = true;
-                lineRenderer.SetPosition(0, transform.position);
-                var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
-                if (attackerVisual != null)
-                    lineRenderer.SetPosition(1, attackerVisual.transform.position);
+                if (c.blockingThisAttacker != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, transform.position);
+                    var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
+                    if (attackerVisual != null)
+                        lineRenderer.SetPosition(1, attackerVisual.transform.position);
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
             }
             else
             {
                 lineRenderer.enabled = false;
             }
         }
-        else
-        {
-            lineRenderer.enabled = false;
-        }
-    }
 
     public void Setup(Card card, GameManager manager)
-    {
-        linkedCard = card;
-        gameManager = manager;
-        titleText.text = card.cardName;
-        lineRenderer = GetComponent<LineRenderer>();
-        artImage.sprite = linkedCard.artwork;
-
-        sicknessText.text = ""; // Clear at start
-
-        if (linkedCard is CreatureCard creature)
         {
-            costText.text = creature.manaCost.ToString();
-            statsText.text = $"{creature.power}/{creature.toughness}";
+            linkedCard = card;
+            gameManager = manager;
+            titleText.text = card.cardName;
+            lineRenderer = GetComponent<LineRenderer>();
+            artImage.sprite = linkedCard.artwork;
+
+            sicknessText.text = ""; // Clear at start
+
+            if (linkedCard is CreatureCard creature)
+            {
+                costText.text = creature.manaCost.ToString();
+                int displayPower = creature.power + creature.plusOneCounters;
+                int displayToughness = creature.toughness + creature.plusOneCounters;
+                statsText.text = $"{displayPower}/{displayToughness}";
+            }
+            else
+            {
+                costText.text = "";
+                statsText.text = "";
+            }
         }
-        else
-        {
-            costText.text = "";
-            statsText.text = "";
-        }
-    }
 
     public void OnClick()
-    {
-        if (!isInBattlefield && GameManager.Instance.humanPlayer.Hand.Contains(linkedCard) == false)
         {
-            Debug.Log("Cannot play or interact with cards in the graveyard.");
-            return;
-        }
-        // Blocking phase
-        if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseBlockers &&
-            TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI)
-
-        if (linkedCard is CreatureCard clickedCreature)
-        {
-            Player you = GameManager.Instance.humanPlayer;
-            Player enemy = GameManager.Instance.aiPlayer;
-
-            // If you click an attacker first
-            if (enemy.Battlefield.Contains(clickedCreature) &&
-                GameManager.Instance.currentAttackers.Contains(clickedCreature))
+            if (!isInBattlefield && GameManager.Instance.humanPlayer.Hand.Contains(linkedCard) == false)
             {
-                GameManager.Instance.selectedAttackerForBlocking = clickedCreature;
-                Debug.Log($"Selected attacker to block: {clickedCreature.cardName}");
+                Debug.Log("Cannot play or interact with cards in the graveyard.");
                 return;
             }
 
-            // If you click your own untapped creature next
-            if (you.Battlefield.Contains(clickedCreature) &&
-                !clickedCreature.isTapped &&
-                !clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBlock))
-            {
-                var attacker = GameManager.Instance.selectedAttackerForBlocking;
-
-                if (clickedCreature.blockingThisAttacker != null)
+            // TAP-FOR-MANA ability during Main Phase
+                if (linkedCard is CreatureCard creatureForTap &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForTap) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                    creatureForTap.activatedAbilities != null &&
+                    creatureForTap.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
+                    !creatureForTap.isTapped &&
+                    (!creatureForTap.hasSummoningSickness || creatureForTap.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
-                    // Already blocking → remove block
-                    Debug.Log($"{clickedCreature.cardName} stops blocking.");
-                    clickedCreature.blockingThisAttacker.blockedByThisBlocker = null;
-                    clickedCreature.blockingThisAttacker = null;
-                    GameManager.Instance.UpdateUI();
+                    GameManager.Instance.TapCardForMana(creatureForTap);
+                    UpdateVisual();
                     return;
                 }
 
-                if (attacker == null)
+            // Blocking phase
+                if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseBlockers &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI)
+
+                if (linkedCard is CreatureCard clickedCreature)
                 {
-                    Debug.Log("Click an attacking enemy creature first to block.");
+                    Player you = GameManager.Instance.humanPlayer;
+                    Player enemy = GameManager.Instance.aiPlayer;
+
+                    // If you click an attacker first
+                    if (enemy.Battlefield.Contains(clickedCreature) &&
+                        GameManager.Instance.currentAttackers.Contains(clickedCreature))
+                    {
+                        GameManager.Instance.selectedAttackerForBlocking = clickedCreature;
+                        Debug.Log($"Selected attacker to block: {clickedCreature.cardName}");
+                        return;
+                    }
+
+                    // If you click your own untapped creature next
+                    if (you.Battlefield.Contains(clickedCreature) &&
+                        !clickedCreature.isTapped &&
+                        !clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBlock) &&
+                        !(
+                            clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBlockWithoutForest) &&
+                            !you.Battlefield.Exists(card => card is LandCard land && land.cardName.ToLower().Contains("forest"))
+                        ))
+                    {
+                        var attacker = GameManager.Instance.selectedAttackerForBlocking;
+
+                        if (clickedCreature.blockingThisAttacker != null)
+                        {
+                            // Already blocking → remove block
+                            Debug.Log($"{clickedCreature.cardName} stops blocking.");
+                            clickedCreature.blockingThisAttacker.blockedByThisBlocker = null;
+                            clickedCreature.blockingThisAttacker = null;
+                            GameManager.Instance.UpdateUI();
+                            return;
+                        }
+
+                        if (attacker == null)
+                        {
+                            Debug.Log("Click an attacking enemy creature first to block.");
+                            return;
+                        }
+
+                        // Remove previous block from this attacker, if any
+                        if (attacker.blockedByThisBlocker != null)
+                        {
+                            CreatureCard oldBlocker = attacker.blockedByThisBlocker;
+                            oldBlocker.blockingThisAttacker = null;
+                            attacker.blockedByThisBlocker = null;
+
+                            // Force line to disappear on old blocker
+                            var oldVisual = GameManager.Instance.FindCardVisual(oldBlocker);
+                            if (oldVisual != null)
+                                oldVisual.UpdateVisual();
+                        }
+
+                        // Check if this blocker is allowed to block the attacker (Flying rule)
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                            !clickedCreature.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                            !clickedCreature.keywordAbilities.Contains(KeywordAbility.Reach))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} because it lacks Flying or Reach.");
+                            return;
+                        }
+
+                        // Check if blocker is restricted to flying-only
+                        if (clickedCreature.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
+                            !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can only block flying creatures.");
+                            return;
+                        }
+
+                        // Assign the block
+                        clickedCreature.blockingThisAttacker = attacker;
+                        attacker.blockedByThisBlocker = clickedCreature;
+                        GameManager.Instance.selectedAttackerForBlocking = null;
+
+                        Debug.Log($"{clickedCreature.cardName} is blocking {attacker.cardName}");
+                        GameManager.Instance.UpdateUI();
+                        return;
+                    }
+                }
+
+            // Declare attacker
+                if (linkedCard is CreatureCard creature)
+                {
+                    if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseAttackers &&
+                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human)
+                    {
+                        if (GameManager.Instance.selectedAttackers.Contains(creature))
+                        {
+                            // Removing from combat
+                            GameManager.Instance.selectedAttackers.Remove(creature);
+                            if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                                creature.isTapped = false;
+
+                            Debug.Log($"{creature.cardName} removed from attackers.");
+                        }
+                        else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                        {
+                            // Adding to combat
+                            GameManager.Instance.selectedAttackers.Add(creature);
+                            if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                                creature.isTapped = true;
+
+                            Debug.Log($"{creature.cardName} declared as attacker.");
+                        }
+
+                        UpdateVisual();
+                        return;
+                    }
+                }
+
+            // Land usage
+                if (isInBattlefield && linkedCard is LandCard land)
+                {
+                    GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
+                    UpdateVisual();
                     return;
                 }
 
-                // Remove previous block from this attacker, if any
-                if (attacker.blockedByThisBlocker != null)
-                {
-                    CreatureCard oldBlocker = attacker.blockedByThisBlocker;
-                    oldBlocker.blockingThisAttacker = null;
-                    attacker.blockedByThisBlocker = null;
+            // Playing card from hand
+                if (!isInBattlefield)
+                    {
+                        if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human ||
+                            (TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main1 &&
+                            TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main2))
+                        {
+                            Debug.Log("You can only play cards during your own Main Phase.");
+                            return;
+                        }
 
-                    // Force line to disappear on old blocker
-                    var oldVisual = GameManager.Instance.FindCardVisual(oldBlocker);
-                    if (oldVisual != null)
-                        oldVisual.UpdateVisual();
-                }
-
-                // Check if this blocker is allowed to block the attacker (Flying rule)
-                if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                    !clickedCreature.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                    !clickedCreature.keywordAbilities.Contains(KeywordAbility.Reach))
-                {
-                    Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} because it lacks Flying or Reach.");
-                    return;
-                }
-
-                // Assign the block
-                clickedCreature.blockingThisAttacker = attacker;
-                attacker.blockedByThisBlocker = clickedCreature;
-                GameManager.Instance.selectedAttackerForBlocking = null;
-
-                Debug.Log($"{clickedCreature.cardName} is blocking {attacker.cardName}");
-                GameManager.Instance.UpdateUI();
-                return;
-            }
-        }
-
-        // Declare attacker
-        if (linkedCard is CreatureCard creature)
-        {
-            if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseAttackers &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human)
-            {
-                if (GameManager.Instance.selectedAttackers.Contains(creature))
-                {
-                    // Removing from combat
-                    GameManager.Instance.selectedAttackers.Remove(creature);
-                    if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                        creature.isTapped = false;
-
-                    Debug.Log($"{creature.cardName} removed from attackers.");
-                }
-                else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
-                {
-                    // Adding to combat
-                    GameManager.Instance.selectedAttackers.Add(creature);
-                    if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                        creature.isTapped = true;
-
-                    Debug.Log($"{creature.cardName} declared as attacker.");
-                }
-
-                UpdateVisual();
-                return;
-            }
-        }
-
-        // Land usage
-        if (isInBattlefield && linkedCard is LandCard land)
-        {
-            GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
-            UpdateVisual();
-            return;
-        }
-
-        // Playing card from hand
-        if (!isInBattlefield)
-        {
-            if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human ||
-                (TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main1 &&
-                TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main2))
-            {
-                Debug.Log("You can only play cards during your own Main Phase.");
-                return;
-            }
-
-            GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
-            UpdateVisual();
-            return;
-        }
-    } 
+                        GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
+                        UpdateVisual();
+                        return;
+                    }
+        } 
 }

@@ -10,6 +10,7 @@ public class CardData
     public int manaCost;
     public bool isToken = false;
     public CardType cardType;
+    public Sprite artwork;
 
     // Only used for creatures
     public int power;
@@ -19,8 +20,8 @@ public class CardData
     // Passive abilities like Haste, Defender
     public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();
 
-    // Art
-    public Sprite artwork;
+    // Activated abilities like tap for mana
+    public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
 
     // Future: active effects like "on enter" or "on death"
     public List<CardAbility> abilities = new List<CardAbility>();

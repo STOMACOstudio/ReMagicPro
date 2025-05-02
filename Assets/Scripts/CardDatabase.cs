@@ -189,7 +189,27 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/hamlet_recruiter")
+                    artwork = Resources.Load<Sprite>("Art/hamlet_recruiter"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a Human Soldier.",
+                            effect = (Player owner) =>
+                            {
+                                Card humanSoldier = CardFactory.Create("Human Soldier");
+                                if (humanSoldier == null)
+                                {
+                                    Debug.LogError("Failed to spawn Human Soldier Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(humanSoldier, owner);
+                            }
+                        }
+                        
+                    }
                     });
                 Add(new CardData //Skyhunter unicorn
                     {
@@ -219,8 +239,36 @@ public static class CardDatabase
                     {
                         KeywordAbility.Flying
                     },
-                    artwork = Resources.Load<Sprite>("Art/pure_angel")
+                    artwork = Resources.Load<Sprite>("Art/pure_angel"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "gain 5 life.",
+                            effect = (Player owner) =>
+                            {
+                                owner.Life += 5;
+                                GameManager.Instance.UpdateUI();
+                                Debug.Log("Gain 5 life at upkeep.");
+                            }
+                        }
+                    }
                     });
+                Add(new CardData // Human Soldier Token
+                    {
+                        cardName = "Human Soldier",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "White",
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        keywordAbilities = new List<KeywordAbility> { },
+                        artwork = Resources.Load<Sprite>("Art/human_soldier_token")
+                    });
+            
             //BLUE
                 Add(new CardData //Skyward whale
                     {
@@ -272,7 +320,8 @@ public static class CardDatabase
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility>
                     {
-                        KeywordAbility.Flying
+                        KeywordAbility.Flying,
+                        KeywordAbility.CanOnlyBlockFlying
                     },
                     artwork = Resources.Load<Sprite>("Art/wandering_cloud")
                     });
@@ -323,7 +372,29 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/replicator")
+                    artwork = Resources.Load<Sprite>("Art/replicator"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a copy of this creature.",
+                            effect = (Player owner) =>
+                            {
+                                Card replicator = CardFactory.Create("Replicator");
+                                if (replicator == null)
+                                {
+                                    Debug.LogError("Failed to spawn Copy Token — check card database!");
+                                    return;
+                                }
+
+                                replicator.isToken = true;
+                                replicator.manaCost = 0;
+                                GameManager.Instance.SummonToken(replicator, owner);
+                            }
+                        }
+                        
+                    }
                     });
                 Add(new CardData //Sharkmen tribe
                     {
@@ -338,6 +409,21 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
+                Add(new CardData //Undead gorilla
+                    {
+                    cardName = "Undead Gorilla",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = "Black",
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.CantBlockWithoutForest,
+                    },
+                    artwork = Resources.Load<Sprite>("Art/undead_Gorilla")
+                    });
                 Add(new CardData //Rotting whale
                     {
                     cardName = "Rotting Whale",
@@ -393,7 +479,20 @@ public static class CardDatabase
                         KeywordAbility.CantBlock,
                         KeywordAbility.Flying
                     },
-                    artwork = Resources.Load<Sprite>("Art/giant_crow")
+                    artwork = Resources.Load<Sprite>("Art/giant_crow"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "opponent discards a card at random.",
+                            effect = (Player owner) =>
+                            {
+                                Player opponent = GameManager.Instance.GetOpponentOf(owner);
+                                opponent.DiscardRandomCard();
+                            }
+                        }
+                    }
                     });
                 Add(new CardData //Possessed innocent
                     {
@@ -414,7 +513,7 @@ public static class CardDatabase
                             description = "create a Demon.",
                             effect = (Player owner) =>
                             {
-                                Card demon = CardFactory.Create("Demon Token");
+                                Card demon = CardFactory.Create("Demon");
                                 if (demon == null)
                                 {
                                     Debug.LogError("Failed to spawn Demon Token — check card database!");
@@ -437,7 +536,27 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/lunatic_necromancer")
+                    artwork = Resources.Load<Sprite>("Art/lunatic_necromancer"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a tapped Zombie.",
+                            effect = (Player owner) =>
+                            {
+                                Card zombie = CardFactory.Create("Zombie");
+                                if (zombie == null)
+                                {
+                                    Debug.LogError("Failed to spawn Zombie Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(zombie, owner);
+                            }
+                        }
+                        
+                    }
                     });
                 Add(new CardData //Sad clown
                     {
@@ -449,7 +568,30 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/sad_clown")
+                    artwork = Resources.Load<Sprite>("Art/sad_clown"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "opponent discards a card at random.",
+                            effect = (Player owner) =>
+                            {
+                                Player opponent = GameManager.Instance.GetOpponentOf(owner);
+                                opponent.DiscardRandomCard();
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            description = "opponent discards a card at random.",
+                            effect = (Player owner) =>
+                            {
+                                Player opponent = GameManager.Instance.GetOpponentOf(owner);
+                                opponent.DiscardRandomCard();
+                            }
+                        },
+                    }
                     });
                 Add(new CardData //Ratbat
                     {
@@ -463,7 +605,8 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
-                        KeywordAbility.Flying
+                        KeywordAbility.Flying,
+                        KeywordAbility.Lifelink
                     },
                     artwork = Resources.Load<Sprite>("Art/ratbat")
                     });
@@ -491,13 +634,28 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
-                        KeywordAbility.Flying
+                        KeywordAbility.Flying,
+                        KeywordAbility.Lifelink
                     },
                     artwork = Resources.Load<Sprite>("Art/bog_mosquito")
                     });
+                Add(new CardData // Zombie Token
+                    {
+                        cardName = "Zombie",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "Black",
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        entersTapped = true,
+                        keywordAbilities = new List<KeywordAbility> { },
+                        artwork = Resources.Load<Sprite>("Art/zombie_token")
+                    });
                 Add(new CardData // Demon Token
                     {
-                        cardName = "Demon Token",
+                        cardName = "Demon",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -506,8 +664,7 @@ public static class CardDatabase
                         power = 5,
                         toughness = 5,
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
-                        artwork = Resources.Load<Sprite>("Art/demon_token"),
-                        abilities = new List<CardAbility>()
+                        artwork = Resources.Load<Sprite>("Art/demon_token")
                     });
             //RED
                 Add(new CardData //Rabid dog
@@ -552,7 +709,27 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/dragon_summoner")
+                    artwork = Resources.Load<Sprite>("Art/dragon_summoner"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a Dragon.",
+                            effect = (Player owner) =>
+                            {
+                                Card dragon = CardFactory.Create("Dragon");
+                                if (dragon == null)
+                                {
+                                    Debug.LogError("Failed to spawn Dragon Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(dragon, owner);
+                            }
+                        }
+                        
+                    }
                     });
                 Add(new CardData //Great boulder
                     {
@@ -624,7 +801,21 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/village_idiot")
+                    artwork = Resources.Load<Sprite>("Art/village_idiot"),
+                    abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "draw a card, then discard two cards at random.",
+                                effect = (Player owner) =>
+                                {
+                                    GameManager.Instance.DrawCard(owner);
+                                    owner.DiscardRandomCard(2);
+                                    Debug.Log("Village Idiot enters: draw a card an discard 2.");
+                                }
+                            }
+                        }
                     });
                 Add(new CardData //Wild ostrich
                     {
@@ -642,8 +833,59 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/wild_ostrich")
                     });
+                Add(new CardData // Dragon Token
+                    {
+                        cardName = "Dragon",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "Red",
+                        cardType = CardType.Creature,
+                        power = 5,
+                        toughness = 5,
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
+                        artwork = Resources.Load<Sprite>("Art/dragon_token")
+                    });
             //GREEN
-                Add(new CardData //Cactusaurus
+                Add(new CardData //Living tree
+                    {
+                    cardName = "Living Tree",
+                    rarity = "Common",
+                    manaCost = 5,
+                    color = "Green",
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 5,
+                    artwork = Resources.Load<Sprite>("Art/living_tree"),
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Vigilance
+                    },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapForMana
+                    }
+                    });
+                Add(new CardData //Wall of roots
+                    {
+                    cardName = "Wall of Roots",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = "Green",
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 2,
+                    artwork = Resources.Load<Sprite>("Art/wall_of_roots"),
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender
+                    },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapForMana
+                    }
+                    });
+                Add(new CardData //Cactusaurus TO DO TRAMPLE
                     {
                     cardName = "Cactusaurus",
                     rarity = "Common",
@@ -655,7 +897,7 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/cactusaurus")
                     });
-                Add(new CardData //Realms crasher
+                Add(new CardData //Realms crasher TO DO TRAMPLE
                     {
                     cardName = "Realms Crasher",
                     rarity = "Uncommon",
@@ -669,7 +911,7 @@ public static class CardDatabase
                     });
                 Add(new CardData //Drumming elf
                     {
-                    cardName = "Drumming elf",
+                    cardName = "Drumming Elf",
                     rarity = "Uncommon",
                     manaCost = 5,
                     color = "Green",
@@ -677,7 +919,27 @@ public static class CardDatabase
                     power = 2,
                     toughness = 2,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/drumming_elf")
+                    artwork = Resources.Load<Sprite>("Art/drumming_elf"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a Monkey.",
+                            effect = (Player owner) =>
+                            {
+                                Card monkey = CardFactory.Create("Monkey");
+                                if (monkey == null)
+                                {
+                                    Debug.LogError("Failed to spawn Monkey Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(monkey, owner);
+                            }
+                        }
+                        
+                    }
                     });
                 Add(new CardData //Crazy cat lady
                     {
@@ -700,7 +962,7 @@ public static class CardDatabase
                         {
                             for (int i = 0; i < 2; i++)
                             {
-                                Card cat = CardFactory.Create("Cat Token");
+                                Card cat = CardFactory.Create("Cat");
                                 if (cat == null)
                                 {
                                     Debug.LogError("Failed to spawn Cat Token — check card database!");
@@ -782,7 +1044,7 @@ public static class CardDatabase
                     });
                 Add(new CardData // Cat Token
                     {
-                        cardName = "Cat Token",
+                        cardName = "Cat",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -791,8 +1053,20 @@ public static class CardDatabase
                         power = 1,
                         toughness = 1,
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Reach },
-                        artwork = Resources.Load<Sprite>("Art/cat_token"),
-                        abilities = new List<CardAbility>()
+                        artwork = Resources.Load<Sprite>("Art/cat_token")
+                    });
+                Add(new CardData // Monkey Token
+                    {
+                        cardName = "Monkey",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = "Green",
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        keywordAbilities = new List<KeywordAbility> { },
+                        artwork = Resources.Load<Sprite>("Art/monkey_token")
                     });
             //ARTIFACT
                 Add(new CardData //Origin Golem

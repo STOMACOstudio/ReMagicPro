@@ -49,22 +49,23 @@ public class GameManager : MonoBehaviour
         BuildStartingDeck(humanPlayer);
 
         //BuildStartingDeck(aiPlayer);
-        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Mountain"));
-        aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
-        aiPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        aiPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-        aiPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        aiPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        aiPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
+            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
+            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
+            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
+            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
 
         ShuffleDeck(humanPlayer);
         ShuffleDeck(aiPlayer);
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
             DrawCard(humanPlayer);
             DrawCard(aiPlayer);
@@ -72,351 +73,429 @@ public class GameManager : MonoBehaviour
     }
 
     void BuildStartingDeck(Player player)
-    {
-        /*//test white deck
-        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-        humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-        humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
-        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-        humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-        humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
-        humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
-        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
-        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
-        
-        /*//test blue deck
-        humanPlayer.Deck.Add(CardFactory.Create("Island"));
-        humanPlayer.Deck.Add(CardFactory.Create("Island"));
-        humanPlayer.Deck.Add(CardFactory.Create("Island"));
-        humanPlayer.Deck.Add(CardFactory.Create("Island"));
-        humanPlayer.Deck.Add(CardFactory.Create("Island"));
-        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        /*humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
-        humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
-        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
-        humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
+        {
+            //test deck
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+                
 
-        /*//test black deck
-        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-        humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-        humanPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));*/
+            /*//test white deck
+                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
+                humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
+                humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
+                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+                humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
+                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
+            
+            /*//test blue deck
+                humanPlayer.Deck.Add(CardFactory.Create("Island"));
+                humanPlayer.Deck.Add(CardFactory.Create("Island"));
+                humanPlayer.Deck.Add(CardFactory.Create("Island"));
+                humanPlayer.Deck.Add(CardFactory.Create("Island"));
+                humanPlayer.Deck.Add(CardFactory.Create("Island"));
+                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+                /*humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
+                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+                humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
+                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
 
-        ///test green deck
-        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-        humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-        humanPlayer.Deck.Add(CardFactory.Create("Domestic Cat"));
-        humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        humanPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-        humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
-    }
+            /*//test black deck
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));*/
+
+            /*///test green deck
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Domestic Cat"));
+                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
+                humanPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+                humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));*/
+        }
 
     void ShuffleDeck(Player player)
-    {
-        for (int i = 0; i < player.Deck.Count; i++)
         {
-            Card temp = player.Deck[i];
-            int randomIndex = Random.Range(i, player.Deck.Count);
-            player.Deck[i] = player.Deck[randomIndex];
-            player.Deck[randomIndex] = temp;
+            for (int i = 0; i < player.Deck.Count; i++)
+            {
+                Card temp = player.Deck[i];
+                int randomIndex = Random.Range(i, player.Deck.Count);
+                player.Deck[i] = player.Deck[randomIndex];
+                player.Deck[randomIndex] = temp;
+            }
         }
-    }
-
     public void DrawCard(Player player)
-    {
-        if (player.Deck.Count == 0) return;
-        Card card = player.Deck[0];
-        player.Deck.RemoveAt(0);
-        player.Hand.Add(card);
-
-        if (player == humanPlayer)
         {
-            GameObject obj = Instantiate(cardPrefab, playerHandArea);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            visual.Setup(card, this);
-            activeCardVisuals.Add(visual);
+            if (player.Deck.Count == 0) return;
+            Card card = player.Deck[0];
+            player.Deck.RemoveAt(0);
+            player.Hand.Add(card);
+
+            if (player == humanPlayer)
+            {
+                GameObject obj = Instantiate(cardPrefab, playerHandArea);
+                CardVisual visual = obj.GetComponent<CardVisual>();
+                visual.Setup(card, this);
+                activeCardVisuals.Add(visual);
+            }
         }
-    }
 
     public void PlayCard(Player player, CardVisual visual)
-    {
-        Card card = visual.linkedCard;
-
-        if (card is LandCard)
         {
-            if (player.hasPlayedLandThisTurn)
+            Card card = visual.linkedCard;
+
+            if (card is LandCard)
             {
-                Debug.Log("You already played a land this turn!");
-                return;
-            }
+                if (player.hasPlayedLandThisTurn)
+                {
+                    Debug.Log("You already played a land this turn!");
+                    return;
+                }
 
-            player.Battlefield.Add(card);
-            player.Hand.Remove(card);
-            player.hasPlayedLandThisTurn = true;
-
-            card.OnEnterPlay(player);
-
-            visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
-            visual.isInBattlefield = true;
-            visual.UpdateVisual();
-        }
-
-        else if (card is CreatureCard creature)
-        {
-            if (player.ManaPool >= creature.manaCost)
-            {
-                player.ManaPool -= creature.manaCost;
-                if (player == humanPlayer) UpdateUI();
-                player.Hand.Remove(card);
                 player.Battlefield.Add(card);
+                player.Hand.Remove(card);
+                player.hasPlayedLandThisTurn = true;
 
                 card.OnEnterPlay(player);
 
-                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                    creature.hasSummoningSickness = false;
-                else
-                    creature.hasSummoningSickness = true;
-
-                if (creature.entersTapped)
-                    creature.isTapped = true;
-
-                visual.transform.SetParent(playerBattlefieldArea, false);
+                visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
             }
-        }
-        else
-        {
-            Debug.LogWarning("Unhandled card type played: " + card.cardName);
-        }
-    }
 
-
-    public void TapLandForMana(LandCard land, Player player)
-    {
-        if (!land.isTapped)
-        {
-            land.isTapped = true;
-            player.ManaPool++;
-            if (player == humanPlayer) UpdateUI();
-        }
-    }
-
-    public void SendToGraveyard(Card card, Player owner)
-    {
-        owner.Battlefield.Remove(card);
-        Debug.Log($"{card.cardName} is being sent to the graveyard.");
-
-        card.OnLeavePlay(owner);
-
-        if (card is CreatureCard creature && card.isToken)
-        {
-            // Remove from game completely
-            var visual = FindCardVisual(card);
-            if (visual != null)
-                Destroy(visual.gameObject);
-            return;
-        }
-
-        owner.Graveyard.Add(card);
-
-        var graveyardVisual = FindCardVisual(card);
-        if (graveyardVisual != null)
-        {
-            graveyardVisual.isInBattlefield = false;
-            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-            graveyardVisual.transform.localPosition = Vector3.zero;
-            graveyardVisual.UpdateVisual();
-        }
-    }
-
-    public void ResolveCombat()
-    {
-        foreach (var attacker in currentAttackers)
-        {
-            CreatureCard blocker = attacker.blockedByThisBlocker;
-
-            if (blocker != null)
+            else if (card is CreatureCard creature)
             {
-                // Blocker and attacker deal damage to each other
-                blocker.toughness -= attacker.power;
-                attacker.toughness -= blocker.power;
+                if (player.ManaPool >= creature.manaCost)
+                {
+                    player.ManaPool -= creature.manaCost;
+                    if (player == humanPlayer) UpdateUI();
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
 
-                Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
+                    card.OnEnterPlay(player);
+
+                    if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                        creature.hasSummoningSickness = false;
+                    else
+                        creature.hasSummoningSickness = true;
+
+                    if (creature.entersTapped)
+                        creature.isTapped = true;
+
+                    visual.transform.SetParent(playerBattlefieldArea, false);
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                }
             }
             else
             {
-                // Attacker goes unblocked
-                if (humanPlayer.Battlefield.Contains(attacker))
+                Debug.LogWarning("Unhandled card type played: " + card.cardName);
+            }
+        }
+
+    public void TapLandForMana(LandCard land, Player player)
+        {
+            if (!land.isTapped)
+            {
+                land.isTapped = true;
+                player.ManaPool++;
+                if (player == humanPlayer) UpdateUI();
+            }
+        }
+
+    public void SendToGraveyard(Card card, Player owner)
+        {
+            bool diedFromBattlefield = owner.Battlefield.Contains(card);
+
+            owner.Battlefield.Remove(card);
+            Debug.Log($"{card.cardName} is being sent to the graveyard.");
+            card.isTapped = false;
+
+            if (diedFromBattlefield)
                 {
-                    aiPlayer.Life -= attacker.power;
-                    Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+                    card.OnLeavePlay(owner);
+                }
+            
+            CardVisual visual = FindCardVisual(card);
+
+            if (card is CreatureCard creature && card.isToken)
+            {
+                // Remove from game completely
+                //var visual = FindCardVisual(card);
+                if (visual != null)
+                {
+                    activeCardVisuals.Remove(visual);
+                    Destroy(visual.gameObject);
+                }
+
+                return;
+            }
+
+            if (visual == null)
+            {
+                GameObject visualGO = Instantiate(cardPrefab,
+                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                visual = visualGO.GetComponent<CardVisual>();
+                visual.Setup(card, this);
+                visual.isInBattlefield = false;
+                activeCardVisuals.Add(visual);
+            }
+            owner.Graveyard.Add(card);
+
+            var graveyardVisual = FindCardVisual(card);
+            if (graveyardVisual != null)
+            {
+                graveyardVisual.isInBattlefield = false;
+                graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                graveyardVisual.transform.localPosition = Vector3.zero;
+                graveyardVisual.UpdateVisual();
+            }
+        }
+
+    public void ResolveCombat()
+        {
+            foreach (var attacker in currentAttackers)
+            {
+                CreatureCard blocker = attacker.blockedByThisBlocker;
+
+                if (blocker != null)
+                {
+                    // Blocker and attacker deal damage to each other
+                    blocker.toughness -= attacker.power;
+                    attacker.toughness -= blocker.power;
+
+                    Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
+
+                    // Lifelink: gain life equal to damage dealt to blocker
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                    {
+                        Player owner = GetOwnerOfCard(attacker);
+                        owner.Life += attacker.power;
+                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to {owner}.");
+                    }
                 }
                 else
                 {
-                    humanPlayer.Life -= attacker.power;
-                    Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
+                    // Attacker goes unblocked
+                    if (humanPlayer.Battlefield.Contains(attacker))
+                    {
+                        aiPlayer.Life -= attacker.power;
+                        Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+
+                        // Lifelink: gain life equal to damage dealt to AI
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            humanPlayer.Life += attacker.power;
+                            Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to Human.");
+                        }
+                    }
+                    else
+                    {
+                        humanPlayer.Life -= attacker.power;
+                        Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
+
+                        // Lifelink: gain life equal to damage dealt to Human
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            aiPlayer.Life += attacker.power;
+                            Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
+                        }
+                    }
+                }
+            }
+
+            CheckDeaths(humanPlayer);
+            CheckDeaths(aiPlayer);
+
+            // Cleanup combat assignments
+            foreach (var card in humanPlayer.Battlefield)
+            {
+                if (card is CreatureCard c)
+                {
+                    c.blockingThisAttacker = null;
+                    c.blockedByThisBlocker = null;
+                }
+            }
+            foreach (var card in aiPlayer.Battlefield)
+            {
+                if (card is CreatureCard c)
+                {
+                    c.blockingThisAttacker = null;
+                    c.blockedByThisBlocker = null;
+                }
+            }
+
+            currentAttackers.Clear();
+            selectedAttackerForBlocking = null;
+
+            UpdateUI();
+        }
+
+    void CheckDeaths(Player player)
+        {
+            List<Card> toGrave = new List<Card>();
+            foreach (var card in player.Battlefield)
+            {
+                if (card is CreatureCard c && c.toughness <= 0)
+                {
+                    toGrave.Add(c);
+                }
+            }
+
+            foreach (var card in toGrave)
+            {
+                SendToGraveyard(card, player);
+            }
+        }
+
+    public void ResetPermanents(Player player)
+        {
+            foreach (var card in player.Battlefield)
+            {
+                card.isTapped = false;
+
+                if (card is CreatureCard creature)
+                {
+                    creature.hasSummoningSickness = false;
+                    creature.toughness = creature.baseToughness;
+                    creature.blockingThisAttacker = null;
+                    creature.blockedByThisBlocker = null;
+                }
+
+                var visual = FindCardVisual(card);
+                if (visual != null)
+                {
+                    visual.UpdateVisual(); // Just call once, it's enough
+                }
+            }
+
+            player.hasPlayedLandThisTurn = false; // Also reset land play
+            
+            foreach (var visual in activeCardVisuals)
+            {
+                visual.UpdateVisual();
+            }
+
+        }
+    
+    public void ResetDamage(Player player)
+        {
+            foreach (var card in player.Battlefield)
+            {
+                if (card is CreatureCard creature)
+                {
+                    creature.toughness = creature.baseToughness;
                 }
             }
         }
 
-        CheckDeaths(humanPlayer);
-        CheckDeaths(aiPlayer);
-
-        // Cleanup combat assignments
-        foreach (var card in humanPlayer.Battlefield)
-        {
-            if (card is CreatureCard c)
-            {
-                c.blockingThisAttacker = null;
-                c.blockedByThisBlocker = null;
-            }
-        }
-        foreach (var card in aiPlayer.Battlefield)
-        {
-            if (card is CreatureCard c)
-            {
-                c.blockingThisAttacker = null;
-                c.blockedByThisBlocker = null;
-            }
-        }
-
-        currentAttackers.Clear();
-        selectedAttackerForBlocking = null;
-
-        UpdateUI();
-    }
-
-    void CheckDeaths(Player player)
-    {
-        List<Card> toGrave = new List<Card>();
-        foreach (var card in player.Battlefield)
-        {
-            if (card is CreatureCard c && c.toughness <= 0)
-            {
-                toGrave.Add(c);
-            }
-        }
-
-        foreach (var card in toGrave)
-        {
-            SendToGraveyard(card, player);
-        }
-    }
-
-    public void ResetPermanents(Player player)
-    {
-        foreach (var card in player.Battlefield)
-        {
-            card.isTapped = false;
-
-            if (card is CreatureCard creature)
-            {
-                creature.hasSummoningSickness = false;
-                creature.toughness = creature.baseToughness;
-                creature.blockingThisAttacker = null;
-                creature.blockedByThisBlocker = null;
-            }
-
-            var visual = FindCardVisual(card);
-            if (visual != null)
-            {
-                visual.UpdateVisual(); // Just call once, it's enough
-            }
-        }
-
-        player.hasPlayedLandThisTurn = false; // Also reset land play
-        
-        foreach (var visual in activeCardVisuals)
-        {
-            visual.UpdateVisual();
-        }
-
-    }
-    
-    public void ResetDamage(Player player)
-    {
-        foreach (var card in player.Battlefield)
-        {
-            if (card is CreatureCard creature)
-            {
-                creature.toughness = creature.baseToughness;
-            }
-        }
-    }
-
     public CardVisual FindCardVisual(Card card)
-    {
-        return activeCardVisuals.Find(cv => cv.linkedCard == card);
-    }
+        {
+            return activeCardVisuals.Find(cv => cv.linkedCard == card);
+        }
 
     public void SummonToken(Card tokenCard, Player owner)
-    {
-        if (tokenCard == null)
         {
-            Debug.LogError("Tried to summon a null token.");
-            return;
-        }
+            if (tokenCard == null)
+            {
+                Debug.LogError("Tried to summon a null token.");
+                return;
+            }
 
-        if (tokenCard is CreatureCard creature)
+            if (tokenCard is CreatureCard creature)
+            {
+                creature.hasSummoningSickness = true;
+                creature.isTapped = creature.entersTapped;
+            }
+
+            owner.Battlefield.Add(tokenCard);
+
+            // Create visual and link it
+            GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+            CardVisual visual = visualGO.GetComponent<CardVisual>();
+
+            visual.Setup(tokenCard, this);
+            visual.isInBattlefield = true;
+            activeCardVisuals.Add(visual);
+            visual.UpdateVisual();
+
+            tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
+        }
+    public Player GetOpponentOf(Player player)
+            {
+                return player == humanPlayer ? aiPlayer : humanPlayer;
+            }
+
+    public void TapCardForMana(CreatureCard creature)
         {
-            creature.hasSummoningSickness = true;
-            creature.isTapped = false;
+            if (!creature.isTapped)
+            {
+                creature.isTapped = true;
+                humanPlayer.ManaPool++;
+                UpdateUI();
+            }
         }
+    public Player GetOwnerOfCard(Card card)
+        {
+            if (humanPlayer.Battlefield.Contains(card)) return humanPlayer;
+            if (aiPlayer.Battlefield.Contains(card)) return aiPlayer;
 
-        owner.Battlefield.Add(tokenCard);
-
-        // Create visual and link it
-        GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
-        CardVisual visual = visualGO.GetComponent<CardVisual>();
-
-        visual.Setup(tokenCard, this);
-        visual.isInBattlefield = true;
-        activeCardVisuals.Add(visual);
-        visual.UpdateVisual();
-
-        tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
-    }
+            Debug.LogWarning($"[GetOwnerOfCard] Couldn't find owner of {card.cardName}");
+            return null;
+        }   
 
     public void UpdateUI()
-    {
-        foreach (var visual in activeCardVisuals)
         {
-            if (visual.isInBattlefield)
-                visual.UpdateVisual();
+            foreach (var visual in activeCardVisuals)
+            {
+                if (visual.isInBattlefield)
+                    visual.UpdateVisual();
+            }
+
+            if (enemyHandText != null)
+                enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
+
+            if (playerLifeText != null)
+                playerLifeText.text = "Life: " + humanPlayer.Life;
+
+            if (enemyLifeText != null)
+                enemyLifeText.text = "Enemy Life: " + aiPlayer.Life;
+
+            if (manaPoolText != null)
+            {
+                manaPoolText.text = "Mana: " + humanPlayer.ManaPool;
+            }
         }
-
-        if (enemyHandText != null)
-            enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
-
-        if (playerLifeText != null)
-            playerLifeText.text = "Life: " + humanPlayer.Life;
-
-        if (enemyLifeText != null)
-            enemyLifeText.text = "Enemy Life: " + aiPlayer.Life;
-
-        if (manaPoolText != null)
-        {
-            manaPoolText.text = "Mana: " + humanPlayer.ManaPool;
-        }
-    }
 }

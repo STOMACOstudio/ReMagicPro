@@ -5,6 +5,15 @@ public enum KeywordAbility
     CantBlock,
     Vigilance,
     Flying,
-    Reach
+    Reach,
+    CanOnlyBlockFlying,
+    Lifelink,
+    CantBlockWithoutForest,
     // Add more like Flying, FirstStrike later
+}
+
+public enum ActivatedAbility
+{
+    TapForMana,
+    // etc.
 }
