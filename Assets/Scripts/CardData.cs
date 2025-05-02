@@ -17,6 +17,13 @@ public class CardData
     public int toughness;
     public bool entersTapped = false;
 
+    //For sorceries
+    public int lifeToGain; // Optional, default to 0
+    public int lifeToLoseForOpponent;
+    public int lifeLossForBothPlayers;
+    public int cardsToDraw;
+    public int cardsToDiscard;
+
     // Passive abilities like Haste, Defender
     public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();
 

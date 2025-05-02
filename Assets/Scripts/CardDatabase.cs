@@ -1123,6 +1123,62 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/obstacle")
                     });
+
+    // Sorceries
+        //WHITE
+            Add(new CardData { //Candlelight
+                cardName = "Candlelight",
+                cardType = CardType.Sorcery,
+                manaCost = 1,
+                color = "White",
+                lifeToGain = 4,
+                artwork = Resources.Load<Sprite>("Art/Candlelight"),
+                abilities = new List<CardAbility>(),
+                });
+            Add(new CardData { //Solid prayer
+                cardName = "Solid Prayer",
+                cardType = CardType.Sorcery,
+                manaCost = 2,
+                color = "White",
+                lifeToGain = 7,
+                artwork = Resources.Load<Sprite>("Art/solid_prayer"),
+                abilities = new List<CardAbility>(),
+                });
+        //BLUE
+            Add(new CardData { //Blast of knowledge
+                cardName = "Blast of Knowledge",
+                cardType = CardType.Sorcery,
+                manaCost = 5,
+                color = "Blue",
+                cardsToDraw = 3,
+                artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
+                });
+        //BLACK
+            Add(new CardData { //Witches rite
+                cardName = "Witches Rite",
+                cardType = CardType.Sorcery,
+                manaCost = 1,
+                color = "Black",
+                lifeToLoseForOpponent = 3,
+                artwork = Resources.Load<Sprite>("Art/witches_rite"),
+                });
+            Add(new CardData { //Communed rot
+                cardName = "Communed Rot",
+                cardType = CardType.Sorcery,
+                manaCost = 2,
+                color = "Black",
+                lifeLossForBothPlayers = 4,
+                artwork = Resources.Load<Sprite>("Art/communed_rot"),
+                });
+            Add(new CardData
+                {
+                    cardName = "Forget",
+                    cardType = CardType.Sorcery,
+                    manaCost = 1,
+                    color = "Black",
+                    artwork = Resources.Load<Sprite>("Art/forget"),
+                    cardsToDiscard = 1,
+                });
     }
 
     private static void Add(CardData data)

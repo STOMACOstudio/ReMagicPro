@@ -59,7 +59,7 @@ public class TurnSystem : MonoBehaviour
 
     void Update()
         {
-            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput)
+            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
             {
                 RunCurrentPhase();
             }
@@ -67,9 +67,16 @@ public class TurnSystem : MonoBehaviour
             // Update next phase button dynamically
             if (nextPhaseButton != null)
             {
-                bool allowNext = currentPlayer == PlayerType.Human && waitingForPlayerInput &&
-                    currentPhase != TurnPhase.ConfirmAttackers && currentPhase != TurnPhase.ConfirmBlockers && currentPhase != TurnPhase.ChooseAttackers;
+                bool allowNext = currentPlayer == PlayerType.Human &&
+                                waitingForPlayerInput &&
+                                !GameManager.Instance.isStackBusy &&
+                                currentPhase != TurnPhase.ConfirmAttackers &&
+                                currentPhase != TurnPhase.ConfirmBlockers &&
+                                currentPhase != TurnPhase.ChooseAttackers;
+
                 nextPhaseButton.interactable = allowNext;
+
+
 
                 TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
                 if (label != null)
@@ -155,6 +162,12 @@ public class TurnSystem : MonoBehaviour
     void RunCurrentPhase()
         {
             Debug.Log($"[Phase] {currentPlayer} - {currentPhase}");
+
+            if (GameManager.Instance.isStackBusy)
+            {
+                Debug.Log("Stack is busy — AI is waiting.");
+                return;
+            }
 
             string label = $"{currentPlayer} - {currentPhase}";
             if (phaseText != null)
@@ -256,19 +269,19 @@ public class TurnSystem : MonoBehaviour
 
                         Debug.Log($"AI mana pool: {ai.ManaPool}");
 
-                        // Play as many creatures as AI can afford
-                        bool playedAnyCreature = true;
+                        // Play as many cards as AI can afford
+                        bool playedCard = true;
 
-                        while (playedAnyCreature)
+                        while (playedCard && !GameManager.Instance.isStackBusy)
                         {
-                            playedAnyCreature = false;
+                            playedCard = false;
 
                             for (int i = 0; i < ai.Hand.Count; i++)
                             {
-                                if (ai.Hand[i] is CreatureCard creature && ai.ManaPool >= creature.manaCost)
-                                {
-                                    Card card = ai.Hand[i];
+                                Card card = ai.Hand[i];
 
+                                if (card is CreatureCard creature && ai.ManaPool >= creature.manaCost)
+                                {
                                     ai.ManaPool -= creature.manaCost;
                                     ai.Hand.Remove(card);
                                     ai.Battlefield.Add(card);
@@ -282,15 +295,36 @@ public class TurnSystem : MonoBehaviour
 
                                     creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
 
-                                    Debug.Log($"AI played creature: {card.cardName} (Cost: {creature.manaCost})");
-                                    playedAnyCreature = true;
-                                    break; // restart loop with updated mana
+                                    Debug.Log($"AI played creature: {card.cardName}");
+                                    playedCard = true;
+                                    break;
+                                }
+                                else if (card is SorceryCard sorcery && ai.ManaPool >= sorcery.manaCost)
+                                {
+                                    GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
+                                    CardVisual visual = obj.GetComponent<CardVisual>();
+                                    visual.Setup(sorcery, GameManager.Instance);
+                                    GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                    GameManager.Instance.PlayCard(ai, visual);
+                                    Debug.Log($"AI cast sorcery: {sorcery.cardName}");
+
+                                    playedCard = true;
+                                    break;
                                 }
                             }
                         }
 
                         GameManager.Instance.UpdateUI(); // update UI after all actions
-                        AdvancePhase();
+                        if (GameManager.Instance.isStackBusy)
+                        {
+                            Debug.Log("AI cast a sorcery — waiting for resolution before advancing phase.");
+                            StartCoroutine(WaitAndAdvancePhase());
+                        }
+                        else
+                        {
+                            AdvancePhase();
+                        }
                         break;
                     }
                     break;
@@ -444,4 +478,10 @@ public class TurnSystem : MonoBehaviour
                     break;
             }
         }
+        private IEnumerator WaitAndAdvancePhase()
+            {
+                yield return new WaitUntil(() => !GameManager.Instance.isStackBusy);
+                AdvancePhase();
+            }
+
 }

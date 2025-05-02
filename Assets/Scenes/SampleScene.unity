@@ -155,7 +155,7 @@ RectTransform:
   m_Children:
   - {fileID: 2097620878}
   m_Father: {fileID: 640309175}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -244,6 +244,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100762446}
   m_CullTransparentMesh: 1
+--- !u!1 &342265606
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 342265607}
+  - component: {fileID: 342265608}
+  m_Layer: 0
+  m_Name: StackArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &342265607
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342265606}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -27.586174}
+  m_LocalScale: {x: 1.9793816, y: 1.9793816, z: 1.9793816}
+  m_Children: []
+  m_Father: {fileID: 640309175}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 889.34, y: -149.99}
+  m_SizeDelta: {x: 97.07, y: 133.25}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &342265608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342265606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &434315465
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,6 +822,7 @@ RectTransform:
   - {fileID: 1850274264}
   - {fileID: 513159183}
   - {fileID: 1789848032}
+  - {fileID: 342265607}
   - {fileID: 100762447}
   - {fileID: 1269708709}
   - {fileID: 1639133044}
@@ -927,7 +990,7 @@ RectTransform:
   m_Children:
   - {fileID: 1559093899}
   m_Father: {fileID: 640309175}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1383,11 +1446,13 @@ MonoBehaviour:
   playerBattlefieldArea: {fileID: 1478677560}
   playerGraveyardArea: {fileID: 1564124844}
   playerLandArea: {fileID: 694764205}
+  stackZone: {fileID: 342265607}
   aiBattlefieldArea: {fileID: 612636613}
   aiGraveyardArea: {fileID: 1586552183}
   aiLandArea: {fileID: 1177050440}
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
   activeCardVisuals: []
+  isStackBusy: 0
 --- !u!4 &1539663350
 Transform:
   m_ObjectHideFlags: 0
@@ -1730,7 +1795,7 @@ RectTransform:
   m_Children:
   - {fileID: 1423938178}
   m_Father: {fileID: 640309175}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

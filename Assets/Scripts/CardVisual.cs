@@ -119,11 +119,38 @@ public class CardVisual : MonoBehaviour
                 int displayPower = creature.power + creature.plusOneCounters;
                 int displayToughness = creature.toughness + creature.plusOneCounters;
                 statsText.text = $"{displayPower}/{displayToughness}";
+                keywordText.text = linkedCard.GetCardText();
+            }
+            else if (linkedCard is SorceryCard sorcery)
+            {
+                costText.text = sorcery.manaCost.ToString();
+                statsText.text = "";
+                sicknessText.text = "";
+
+                string rules = "";
+
+                if (sorcery.lifeToGain > 0)
+                    rules += $"Gain {sorcery.lifeToGain} life.\n";
+                if (sorcery.lifeToLoseForOpponent > 0)
+                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
+
+                if (sorcery.lifeLossForBothPlayers > 0)
+                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
+
+                if (sorcery.cardsToDraw > 0)
+                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
+
+                if (sorcery.cardsToDiscard > 0)
+                    rules += $"Opponent discards {sorcery.cardsToDiscard} card(s) at random.\n";
+
+                keywordText.text = rules.Trim();
             }
             else
             {
+                // Default fallback for other card types
                 costText.text = "";
                 statsText.text = "";
+                keywordText.text = "";
             }
         }
 

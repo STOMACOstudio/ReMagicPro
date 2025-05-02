@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public Transform playerBattlefieldArea;
     public Transform playerGraveyardArea;
     public Transform playerLandArea;
+    public Transform stackZone;
 
     public Transform aiBattlefieldArea;
     public Transform aiGraveyardArea;
@@ -33,44 +34,52 @@ public class GameManager : MonoBehaviour
 
     public Dictionary<CreatureCard, CreatureCard> blockingAssignments = new Dictionary<CreatureCard, CreatureCard>();
 
+    public bool isStackBusy = false;
+
     void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
+        {
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
+        }
 
     void Start()
-    {
-        humanPlayer = new Player();
-        aiPlayer = new Player();
-
-        BuildStartingDeck(humanPlayer);
-
-        //BuildStartingDeck(aiPlayer);
-            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
-            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
-            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
-            aiPlayer.Deck.Add(CardFactory.Create("Forest"));
-            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-            aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-            aiPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-
-        ShuffleDeck(humanPlayer);
-        ShuffleDeck(aiPlayer);
-
-        for (int i = 0; i < 7; i++)
         {
-            DrawCard(humanPlayer);
-            DrawCard(aiPlayer);
+            humanPlayer = new Player();
+            aiPlayer = new Player();
+
+            BuildStartingDeck(humanPlayer);
+
+            //BuildStartingDeck(aiPlayer);
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
+                aiPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
+                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
+                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
+                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
+
+            ShuffleDeck(humanPlayer);
+            ShuffleDeck(aiPlayer);
+
+            for (int i = 0; i < 7; i++)
+            {
+                DrawCard(humanPlayer);
+                DrawCard(aiPlayer);
+            }
         }
-    }
 
     void BuildStartingDeck(Player player)
         {
@@ -79,14 +88,21 @@ public class GameManager : MonoBehaviour
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
                 humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
-                humanPlayer.Deck.Add(CardFactory.Create("Undead Gorilla"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
+                humanPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
+                humanPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
+                humanPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
+                humanPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
+                humanPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+                humanPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+                humanPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
                 
 
             /*//test white deck
@@ -174,6 +190,12 @@ public class GameManager : MonoBehaviour
 
     public void PlayCard(Player player, CardVisual visual)
         {
+            if (isStackBusy)
+            {
+                Debug.Log("A spell is already on the stack. Please wait.");
+                return;
+            }
+
             Card card = visual.linkedCard;
 
             if (card is LandCard)
@@ -219,6 +241,28 @@ public class GameManager : MonoBehaviour
                     visual.UpdateVisual();
                 }
             }
+
+            else if (card is SorceryCard sorcery)
+            {
+                if (player.ManaPool >= sorcery.manaCost)
+                {
+                    isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
+                    player.ManaPool -= sorcery.manaCost;
+                    player.Hand.Remove(card);
+                    UpdateUI();
+
+                    // Move visual to the stack zone
+                    visual.transform.SetParent(stackZone, false);
+                    visual.transform.localPosition = Vector3.zero;
+
+                    StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
+                }
+                else
+                {
+                    Debug.Log("Not enough mana to cast this sorcery.");
+                }
+            }
+
             else
             {
                 Debug.LogWarning("Unhandled card type played: " + card.cardName);
@@ -425,7 +469,16 @@ public class GameManager : MonoBehaviour
         {
             return activeCardVisuals.Find(cv => cv.linkedCard == card);
         }
+    private IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
+        {
+            yield return new WaitForSeconds(2f);
 
+            sorcery.ResolveEffect(caster);
+            SendToGraveyard(sorcery, caster);
+            UpdateUI();
+
+            isStackBusy = false; // UNBLOCK ON RESOLVE
+        }
     public void SummonToken(Card tokenCard, Player owner)
         {
             if (tokenCard == null)

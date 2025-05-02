@@ -26,6 +26,8 @@ MonoBehaviour:
     - Assets/Resources/Art/bog_mosquito.png.meta
     - Assets/Resources/Art/cactusaur.png
     - Assets/Resources/Art/cactusaur.png.meta
+    - Assets/Resources/Art/cat_token.png
+    - Assets/Resources/Art/cat_token.png.meta
     - Assets/Resources/Art/colossal_octopus.png
     - Assets/Resources/Art/colossal_octopus.png.meta
     - Assets/Resources/Art/crazy_cat_lady.png
@@ -36,8 +38,12 @@ MonoBehaviour:
     - Assets/Resources/Art/demon_token.png.meta
     - Assets/Resources/Art/domestic_cat.png
     - Assets/Resources/Art/domestic_cat.png.meta
+    - Assets/Resources/Art/dragon_summoner 1.png
+    - Assets/Resources/Art/dragon_summoner 1.png.meta
     - Assets/Resources/Art/dragon_summoner.png
     - Assets/Resources/Art/dragon_summoner.png.meta
+    - Assets/Resources/Art/dragon_token.png
+    - Assets/Resources/Art/dragon_token.png.meta
     - Assets/Resources/Art/drumming_elf.png
     - Assets/Resources/Art/drumming_elf.png.meta
     - Assets/Resources/Art/famished_crow.png
@@ -68,12 +74,20 @@ MonoBehaviour:
     - Assets/Resources/Art/great_boulder.png.meta
     - Assets/Resources/Art/hamlet_recruiter.png
     - Assets/Resources/Art/hamlet_recruiter.png.meta
+    - Assets/Resources/Art/human_soldier_token.png
+    - Assets/Resources/Art/human_soldier_token.png.meta
     - Assets/Resources/Art/island.png
     - Assets/Resources/Art/island.png.meta
     - Assets/Resources/Art/limping_corpse.png
     - Assets/Resources/Art/limping_corpse.png.meta
+    - Assets/Resources/Art/living_tree.png
+    - Assets/Resources/Art/living_tree.png.meta
     - Assets/Resources/Art/lucky_fisherman.png
     - Assets/Resources/Art/lucky_fisherman.png.meta
+    - Assets/Resources/Art/lunatic_necromancer.png
+    - Assets/Resources/Art/lunatic_necromancer.png.meta
+    - Assets/Resources/Art/monkey_token.png
+    - Assets/Resources/Art/monkey_token.png.meta
     - Assets/Resources/Art/mountain.png
     - Assets/Resources/Art/mountain.png.meta
     - Assets/Resources/Art/obstacle.png
@@ -98,6 +112,8 @@ MonoBehaviour:
     - Assets/Resources/Art/realms_crasher.png.meta
     - Assets/Resources/Art/replicator.png
     - Assets/Resources/Art/replicator.png.meta
+    - Assets/Resources/Art/rotting_whale.png
+    - Assets/Resources/Art/rotting_whale.png.meta
     - Assets/Resources/Art/sad_clown.png
     - Assets/Resources/Art/sad_clown.png.meta
     - Assets/Resources/Art/sharkmen_tribe.png
@@ -112,10 +128,16 @@ MonoBehaviour:
     - Assets/Resources/Art/swamp.png.meta
     - Assets/Resources/Art/thundermare.png
     - Assets/Resources/Art/thundermare.png.meta
+    - Assets/Resources/Art/undead_gorilla.png
+    - Assets/Resources/Art/undead_gorilla.png.meta
+    - Assets/Resources/Art/village_idiot.png
+    - Assets/Resources/Art/village_idiot.png.meta
     - Assets/Resources/Art/violent_ape.png
     - Assets/Resources/Art/violent_ape.png.meta
     - Assets/Resources/Art/virgins_procession.png
     - Assets/Resources/Art/virgins_procession.png.meta
+    - Assets/Resources/Art/wall_of_roots.png
+    - Assets/Resources/Art/wall_of_roots.png.meta
     - Assets/Resources/Art/wandering_cloud.png
     - Assets/Resources/Art/wandering_cloud.png.meta
     - Assets/Resources/Art/wandering_squid.png
@@ -124,6 +146,8 @@ MonoBehaviour:
     - Assets/Resources/Art/waterbearer.png.meta
     - Assets/Resources/Art/wild_ostrich.png
     - Assets/Resources/Art/wild_ostrich.png.meta
+    - Assets/Resources/Art/zombie_token.png
+    - Assets/Resources/Art/zombie_token.png.meta
     - Assets/Scenes.meta
     - Assets/Scenes/SampleScene.unity
     - Assets/Scenes/SampleScene.unity.meta
@@ -544,7 +568,7 @@ MonoBehaviour:
     - ProjectSettings/VFXManager.asset
     - ProjectSettings/VersionControlSettings.asset
     - 
-    m_Values: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    m_Values: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   RevisionSummary: 
   ChangesSearchValue: 
   SelectedHistoryRevision: 

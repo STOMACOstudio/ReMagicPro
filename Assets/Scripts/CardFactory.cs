@@ -30,6 +30,15 @@ public static class CardFactory
                 creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = creature;
                 break;
+            case CardType.Sorcery:
+                SorceryCard sorcery = new SorceryCard();
+                sorcery.lifeToGain = data.lifeToGain;
+                sorcery.lifeToLoseForOpponent = data.lifeToLoseForOpponent;
+                sorcery.lifeLossForBothPlayers = data.lifeLossForBothPlayers;
+                sorcery.cardsToDraw = data.cardsToDraw;
+                sorcery.cardsToDiscard = data.cardsToDiscard;
+                newCard = sorcery;
+                break;
 
             default:
                 Debug.LogWarning("Unsupported card type: " + data.cardType);
