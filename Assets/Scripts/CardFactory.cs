@@ -19,6 +19,7 @@ public static class CardFactory
         {
             case CardType.Land:
                 newCard = new LandCard();
+                newCard.entersTapped = data.entersTapped;
                 break;
 
             case CardType.Creature:
@@ -26,6 +27,7 @@ public static class CardFactory
                 creature.power = data.power;
                 creature.toughness = data.toughness;
                 creature.baseToughness = data.toughness;
+                creature.entersTapped = data.entersTapped;
                 creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
                 creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = creature;
@@ -36,7 +38,11 @@ public static class CardFactory
                 sorcery.lifeToLoseForOpponent = data.lifeToLoseForOpponent;
                 sorcery.lifeLossForBothPlayers = data.lifeLossForBothPlayers;
                 sorcery.cardsToDraw = data.cardsToDraw;
-                sorcery.cardsToDiscard = data.cardsToDiscard;
+                sorcery.cardsToDiscardorDraw = data.cardsToDiscardorDraw;
+                sorcery.eachPlayerGainLifeEqualToLands = data.eachPlayerGainLifeEqualToLands;
+                sorcery.typeOfPermanentToDestroyAll = data.typeOfPermanentToDestroyAll;
+                sorcery.exileAllCreaturesFromGraveyards = data.exileAllCreaturesFromGraveyards;
+                sorcery.damageToEachCreatureAndPlayer = data.damageToEachCreatureAndPlayer;
                 newCard = sorcery;
                 break;
 

@@ -17,6 +17,12 @@ public class Player
             if (!Hand.Contains(card)) return;
 
             Hand.Remove(card);
+            
+            if (card.entersTapped)
+            {
+                card.isTapped = true;
+                Debug.Log($"{card.cardName} enters the battlefield tapped.");
+            }
             Battlefield.Add(card);
             Debug.Log($"{card.cardName} is entering the battlefield.");
             card.OnEnterPlay(this);

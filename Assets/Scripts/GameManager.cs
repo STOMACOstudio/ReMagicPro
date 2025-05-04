@@ -60,16 +60,20 @@ public class GameManager : MonoBehaviour
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-                aiPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
-                aiPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
-                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
-                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
-                aiPlayer.Deck.Add(CardFactory.Create("Forget"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
+                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
 
             ShuffleDeck(humanPlayer);
             ShuffleDeck(aiPlayer);
@@ -84,26 +88,26 @@ public class GameManager : MonoBehaviour
     void BuildStartingDeck(Player player)
         {
             //test deck
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forget"));
-                humanPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
-                humanPlayer.Deck.Add(CardFactory.Create("Witches Rite"));
-                humanPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
-                humanPlayer.Deck.Add(CardFactory.Create("Communed Rot"));
-                humanPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-                humanPlayer.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-                humanPlayer.Deck.Add(CardFactory.Create("Giant Crow"));
-                
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
+                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
+                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
+                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
+                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
+                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
+                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
+                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
+                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
+                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));              
 
             /*//test white deck
                 humanPlayer.Deck.Add(CardFactory.Create("Plains"));
@@ -233,8 +237,11 @@ public class GameManager : MonoBehaviour
                     else
                         creature.hasSummoningSickness = true;
 
-                    if (creature.entersTapped)
-                        creature.isTapped = true;
+                    if (card.entersTapped)
+                    {
+                        card.isTapped = true;
+                        Debug.Log($"{card.cardName} enters tapped.");
+                    }
 
                     visual.transform.SetParent(playerBattlefieldArea, false);
                     visual.isInBattlefield = true;
@@ -407,7 +414,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
         }
 
-    void CheckDeaths(Player player)
+    public void CheckDeaths(Player player)
         {
             List<Card> toGrave = new List<Card>();
             foreach (var card in player.Battlefield)

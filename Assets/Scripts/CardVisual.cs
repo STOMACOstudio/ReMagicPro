@@ -116,8 +116,8 @@ public class CardVisual : MonoBehaviour
             if (linkedCard is CreatureCard creature)
             {
                 costText.text = creature.manaCost.ToString();
-                int displayPower = creature.power + creature.plusOneCounters;
-                int displayToughness = creature.toughness + creature.plusOneCounters;
+                int displayPower = creature.power;
+                int displayToughness = creature.toughness;
                 statsText.text = $"{displayPower}/{displayToughness}";
                 keywordText.text = linkedCard.GetCardText();
             }
@@ -133,15 +133,33 @@ public class CardVisual : MonoBehaviour
                     rules += $"Gain {sorcery.lifeToGain} life.\n";
                 if (sorcery.lifeToLoseForOpponent > 0)
                     rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
-
                 if (sorcery.lifeLossForBothPlayers > 0)
                     rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
-
                 if (sorcery.cardsToDraw > 0)
                     rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
-
-                if (sorcery.cardsToDiscard > 0)
-                    rules += $"Opponent discards {sorcery.cardsToDiscard} card(s) at random.\n";
+                if (sorcery.cardsToDiscardorDraw > 0)
+                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
+                if (sorcery.eachPlayerGainLifeEqualToLands)
+                    rules += $"Each player gains life equal to the number of lands they control.\n";
+                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
+                    {
+                        string typeStr = "permanents";
+                        switch (sorcery.typeOfPermanentToDestroyAll)
+                        {
+                            case SorceryCard.PermanentTypeToDestroy.Land:
+                                typeStr = "lands";
+                                break;
+                            case SorceryCard.PermanentTypeToDestroy.Creature:
+                                typeStr = "creatures";
+                                break;
+                            // Add more types if needed
+                        }
+                        rules += $"Destroy all {typeStr}.\n";
+                    }
+                if (sorcery.exileAllCreaturesFromGraveyards)
+                    rules += "Exile all creature cards from all graveyards.\n";
+                if (sorcery.damageToEachCreatureAndPlayer > 0)
+                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
 
                 keywordText.text = rules.Trim();
             }

@@ -7,11 +7,8 @@ public class CreatureCard : Card
     public int power;
     public int toughness; // <<< CURRENT TOUGHNESS (changing)
     public int baseToughness; // <<< ORIGINAL TOUGHNESS (never changes)
-    public int CurrentPower => power + plusOneCounters;
-    public int CurrentToughness => toughness + plusOneCounters;
     public int damageTaken = 0;
     public bool hasSummoningSickness = true;
-    public int plusOneCounters = 0;
 
     public CreatureCard blockingThisAttacker;  // If this is a blocker
     public CreatureCard blockedByThisBlocker;  // If this is an attacker

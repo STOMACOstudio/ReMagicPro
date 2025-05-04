@@ -1128,6 +1128,7 @@ public static class CardDatabase
         //WHITE
             Add(new CardData { //Candlelight
                 cardName = "Candlelight",
+                rarity = "Common",
                 cardType = CardType.Sorcery,
                 manaCost = 1,
                 color = "White",
@@ -1137,6 +1138,7 @@ public static class CardDatabase
                 });
             Add(new CardData { //Solid prayer
                 cardName = "Solid Prayer",
+                rarity = "Common",
                 cardType = CardType.Sorcery,
                 manaCost = 2,
                 color = "White",
@@ -1144,9 +1146,20 @@ public static class CardDatabase
                 artwork = Resources.Load<Sprite>("Art/solid_prayer"),
                 abilities = new List<CardAbility>(),
                 });
+            Add(new CardData
+                {
+                    cardName = "Deny the Afterlife",
+                    rarity = "Uncommon",
+                    cardType = CardType.Sorcery,
+                    manaCost = 1,
+                    color = "White",
+                    artwork = Resources.Load<Sprite>("Art/deny_the_afterlife"),
+                    exileAllCreaturesFromGraveyards = true
+                });
         //BLUE
             Add(new CardData { //Blast of knowledge
                 cardName = "Blast of Knowledge",
+                rarity = "Common",
                 cardType = CardType.Sorcery,
                 manaCost = 5,
                 color = "Blue",
@@ -1156,6 +1169,7 @@ public static class CardDatabase
         //BLACK
             Add(new CardData { //Witches rite
                 cardName = "Witches Rite",
+                rarity = "Common",
                 cardType = CardType.Sorcery,
                 manaCost = 1,
                 color = "Black",
@@ -1164,21 +1178,64 @@ public static class CardDatabase
                 });
             Add(new CardData { //Communed rot
                 cardName = "Communed Rot",
+                rarity = "Rare",
                 cardType = CardType.Sorcery,
                 manaCost = 2,
                 color = "Black",
                 lifeLossForBothPlayers = 4,
                 artwork = Resources.Load<Sprite>("Art/communed_rot"),
                 });
-            Add(new CardData
+            Add(new CardData //Forget
                 {
                     cardName = "Forget",
+                    rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
                     color = "Black",
                     artwork = Resources.Load<Sprite>("Art/forget"),
-                    cardsToDiscard = 1,
+                    cardsToDiscardorDraw = 1,
                 });
+            Add(new CardData //Massacre
+                {
+                    cardName = "Massacre",
+                    rarity = "Rare",
+                    cardType = CardType.Sorcery,
+                    manaCost = 4,
+                    color = "Black",
+                    artwork = Resources.Load<Sprite>("Art/massacre"),
+                    typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
+                });
+        // RED
+            Add(new CardData //Moonfall
+                {
+                    cardName = "Moonfall",
+                    rarity = "Rare",
+                    cardType = CardType.Sorcery,
+                    manaCost = 4,
+                    color = "Red",
+                    artwork = Resources.Load<Sprite>("Art/moonfall"),
+                    typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Land,
+                });
+            Add(new CardData
+                {
+                    cardName = "Fire Spirals",
+                    cardType = CardType.Sorcery,
+                    manaCost = 3,
+                    color = "Red",
+                    artwork = Resources.Load<Sprite>("Art/fire_spirals"),
+                    damageToEachCreatureAndPlayer = 2
+                });
+        // GREEN
+                Add(new CardData { //Feast
+                    cardName = "Feast",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 1,
+                    color = "Green",
+                    eachPlayerGainLifeEqualToLands = true,
+                    artwork = Resources.Load<Sprite>("Art/feast"),
+                    });
+
     }
 
     private static void Add(CardData data)

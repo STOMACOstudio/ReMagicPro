@@ -241,7 +241,7 @@ public class TurnSystem : MonoBehaviour
 
                                     land.Play(ai);
                                     ai.Hand.Remove(land);
-                                    ai.Battlefield.Add(land);
+                                    //ai.Battlefield.Add(land);
 
                                     GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiLandArea);
                                     CardVisual visual = obj.GetComponent<CardVisual>();
@@ -286,6 +286,12 @@ public class TurnSystem : MonoBehaviour
                                     ai.Hand.Remove(card);
                                     ai.Battlefield.Add(card);
                                     card.OnEnterPlay(ai);
+
+                                    if (card.entersTapped)
+                                    {
+                                        card.isTapped = true;
+                                        Debug.Log($"{card.cardName} (AI) enters tapped.");
+                                    }
 
                                     GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
                                     CardVisual visual = obj.GetComponent<CardVisual>();

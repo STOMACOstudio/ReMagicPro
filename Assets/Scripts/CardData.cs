@@ -8,7 +8,6 @@ public class CardData
     public string rarity; // e.g. "Common", "Uncommon", "Rare"
     public string color;
     public int manaCost;
-    public bool isToken = false;
     public CardType cardType;
     public Sprite artwork;
 
@@ -16,13 +15,19 @@ public class CardData
     public int power;
     public int toughness;
     public bool entersTapped = false;
+    public bool isToken = false;
 
     //For sorceries
     public int lifeToGain; // Optional, default to 0
     public int lifeToLoseForOpponent;
     public int lifeLossForBothPlayers;
     public int cardsToDraw;
-    public int cardsToDiscard;
+    public int cardsToDiscardorDraw;
+    public bool eachPlayerGainLifeEqualToLands;
+    public int damageToEachCreatureAndPlayer;
+    public bool exileAllCreaturesFromGraveyards = false;
+
+    public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;
 
     // Passive abilities like Haste, Defender
     public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();

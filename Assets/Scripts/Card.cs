@@ -18,6 +18,12 @@ public class Card
 
     public virtual void Play(Player player)
         {
+            if (entersTapped)
+            {
+                isTapped = true;
+                Debug.Log($"{cardName} enters tapped.");
+            }
+
             player.PlayCard(this);
         }
 
@@ -61,6 +67,8 @@ public class Card
                     lines.Add("This creature can't block.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.CantBlockWithoutForest))
                     lines.Add("This creature can't block if you don't control a forest.");
+                if (entersTapped)
+                    lines.Add("This creature enters the battlefield tapped.");
 
                 // Activated abilities
                 if (creature.activatedAbilities != null)
