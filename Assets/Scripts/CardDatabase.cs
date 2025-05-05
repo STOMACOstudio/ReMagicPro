@@ -1083,6 +1083,7 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/monkey_token")
                     });
             //ARTIFACT
+            
                 Add(new CardData //Origin Golem
                     {
                     cardName = "Origin Golem",
@@ -1137,6 +1138,40 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/obstacle")
                     });
+                Add(new CardData //Autonomous miner
+                    { 
+                    cardName = "Autonomous Miner",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = "None",
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    manaToPayToActivate = 3,
+                    tokenToCreate = "Miner",
+                    activatedAbilities = new List<ActivatedAbility> {
+                        ActivatedAbility.TapToCreateToken
+                    },
+                    artwork = Resources.Load<Sprite>("Art/autonomous_miner")
+                    });
+                Add(new CardData //Miner token
+                    {
+                    cardName = "Miner",
+                    rarity = "Token",
+                    manaCost = 0,
+                    color = "None",
+                    isToken = true,
+                    entersTapped = true,
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    manaToPayToActivate = 3,
+                    tokenToCreate = "Miner",
+                    activatedAbilities = new List<ActivatedAbility> {
+                        ActivatedAbility.TapToCreateToken
+                    },
+                    artwork = Resources.Load<Sprite>("Art/autonomous_miner")
+                });
 
         // Sorceries
             //WHITE
@@ -1251,105 +1286,105 @@ public static class CardDatabase
                     });
 
         // Artifacts
-        Add(new CardData // Potion of knowledge
-            {
-                cardName = "Potion of Knowledge",
-                rarity = "Common",
-                manaCost = 1,
-                color = "None",
-                cardType = CardType.Artifact,
-                entersTapped = true,
-                cardsToDraw = 2,
-                manaToPayToActivate = 5,
-                activatedAbilities = new List<ActivatedAbility>
+            Add(new CardData // Potion of knowledge
                 {
-                    ActivatedAbility.SacrificeToDrawCards
-                },
-                artwork = Resources.Load<Sprite>("Art/potion_of_knowledge")
-            });
-        Add(new CardData // Potion of health
-            {
-                cardName = "Potion of Health",
-                rarity = "Common",
-                manaCost = 1,
-                color = "None",
-                cardType = CardType.Artifact,
-                entersTapped = true,
-                lifeToGain = 3,
-                manaToPayToActivate = 2,
-                activatedAbilities = new List<ActivatedAbility>
-                {
-                    ActivatedAbility.SacrificeForLife
-                },
-                artwork = Resources.Load<Sprite>("Art/potion_of_health")
-            });
-            Add(new CardData // Potion of mana
-                {
-                    cardName = "Potion of Mana",
+                    cardName = "Potion of Knowledge",
                     rarity = "Common",
                     manaCost = 1,
                     color = "None",
                     cardType = CardType.Artifact,
                     entersTapped = true,
-                    manaToGain = 3,
+                    cardsToDraw = 2,
+                    manaToPayToActivate = 5,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.SacrificeToDrawCards
+                    },
+                    artwork = Resources.Load<Sprite>("Art/potion_of_knowledge")
+                });
+            Add(new CardData // Potion of health
+                {
+                    cardName = "Potion of Health",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = "None",
+                    cardType = CardType.Artifact,
+                    entersTapped = true,
+                    lifeToGain = 3,
                     manaToPayToActivate = 2,
                     activatedAbilities = new List<ActivatedAbility>
                     {
-                        ActivatedAbility.SacrificeForMana
+                        ActivatedAbility.SacrificeForLife
                     },
-                    artwork = Resources.Load<Sprite>("Art/potion_of_mana")
+                    artwork = Resources.Load<Sprite>("Art/potion_of_health")
                 });
-            Add(new CardData //Stone of plague
-                {
-                    cardName = "Stone of Plague",
-                    rarity = "Uncommon",
-                    manaCost = 4,
-                    color = "None",
-                    cardType = CardType.Artifact,
-                    plagueAmount = 1,
-                    activatedAbilities = new List<ActivatedAbility>
+                Add(new CardData // Potion of mana
                     {
-                        ActivatedAbility.TapToPlague
-                    },
-                    artwork = Resources.Load<Sprite>("Art/stone_of_plague")
-                });
+                        cardName = "Potion of Mana",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = "None",
+                        cardType = CardType.Artifact,
+                        entersTapped = true,
+                        manaToGain = 3,
+                        manaToPayToActivate = 2,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.SacrificeForMana
+                        },
+                        artwork = Resources.Load<Sprite>("Art/potion_of_mana")
+                    });
+                Add(new CardData //Stone of plague
+                    {
+                        cardName = "Stone of Plague",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = "None",
+                        cardType = CardType.Artifact,
+                        plagueAmount = 1,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapToPlague
+                        },
+                        artwork = Resources.Load<Sprite>("Art/stone_of_plague")
+                    });
 
-            Add(new CardData //Mana rock
-                {
-                    cardName = "Mana Rock",
-                    rarity = "Common",
-                    manaCost = 3,
-                    color = "None",
-                    cardType = CardType.Artifact,
-                    entersTapped = true,
-                    activatedAbilities = new List<ActivatedAbility> {
-                        ActivatedAbility.TapForMana
-                    },
-                    artwork = Resources.Load<Sprite>("Art/mana_rock")
-                });
+                Add(new CardData //Mana rock
+                    {
+                        cardName = "Mana Rock",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = "None",
+                        cardType = CardType.Artifact,
+                        entersTapped = true,
+                        activatedAbilities = new List<ActivatedAbility> {
+                            ActivatedAbility.TapForMana
+                        },
+                        artwork = Resources.Load<Sprite>("Art/mana_rock")
+                    });
 
-            Add(new CardData
-                {
-                    cardName = "Crystallium",
-                    manaCost = 1,
-                    cardType = CardType.Artifact,
-                    activatedAbilities = new List<ActivatedAbility> {
-                        ActivatedAbility.TapAndSacrificeForMana
-                    },
-                    artwork = Resources.Load<Sprite>("Art/crystallium")
-                });
-            Add(new CardData //Bonfire
-                {
-                    cardName = "Bonfire",
-                    rarity = "Common",
-                    manaCost = 2,
-                    color = "None",
-                    cardType = CardType.Artifact,
-                    activatedAbilities = new List<ActivatedAbility> {
-                        ActivatedAbility.TapToGainLife
-                    },
-                    artwork = Resources.Load<Sprite>("Art/bonfire")
-                });
+                Add(new CardData
+                    {
+                        cardName = "Crystallium",
+                        manaCost = 1,
+                        cardType = CardType.Artifact,
+                        activatedAbilities = new List<ActivatedAbility> {
+                            ActivatedAbility.TapAndSacrificeForMana
+                        },
+                        artwork = Resources.Load<Sprite>("Art/crystallium")
+                    });
+                Add(new CardData //Bonfire
+                    {
+                        cardName = "Bonfire",
+                        rarity = "Common",
+                        manaCost = 2,
+                        color = "None",
+                        cardType = CardType.Artifact,
+                        activatedAbilities = new List<ActivatedAbility> {
+                            ActivatedAbility.TapToGainLife
+                        },
+                        artwork = Resources.Load<Sprite>("Art/bonfire")
+                    });
     }
 
     private static void Add(CardData data)

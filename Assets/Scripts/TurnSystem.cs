@@ -394,11 +394,40 @@ public class TurnSystem : MonoBehaviour
                         {
                             if (card is CreatureCard creature &&
                                 !creature.isTapped &&
-                                !creature.hasSummoningSickness &&
-                                creature.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife))
+                                (!creature.hasSummoningSickness || creature.keywordAbilities.Contains(KeywordAbility.Haste)))
                             {
-                                GameManager.Instance.TapToLoseLife(creature);
-                                GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                // TAP TO LOSE LIFE
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife))
+                                {
+                                    GameManager.Instance.TapToLoseLife(creature);
+                                    GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                }
+
+                                // TAP TO CREATE MINER
+                                else if (creature.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken))
+                                {
+                                    int cost = creature.manaToPayToActivate;
+                                    if (ai.ManaPool >= cost)
+                                    {
+                                        ai.ManaPool -= cost;
+                                        creature.isTapped = true;
+
+                                        string tokenName = creature.tokenToCreate;
+                                        Card token = CardFactory.Create(tokenName);
+                                        if (token != null)
+                                        {
+                                            GameManager.Instance.SummonToken(token, ai);
+                                            Debug.Log($"AI created a {tokenName} token.");
+                                        }
+                                        else
+                                        {
+                                            Debug.LogError($"AI failed to create token: {tokenName}");
+                                        }
+
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    }
+                                }
+                                // Add more AI abilities here in the future...
                             }
                         }
 

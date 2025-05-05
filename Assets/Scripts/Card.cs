@@ -18,6 +18,8 @@ public class Card
     public int manaToPayToActivate;
     public int cardsToDraw;
 
+    public string tokenToCreate;
+
     public Sprite artwork;
 
     public Player owner;
@@ -95,6 +97,9 @@ public class Card
                                     break;
                                 case ActivatedAbility.TapToLoseLife:
                                     lines.Add($"Tap: Your opponent loses {creature.tapLifeLossAmount} life.");
+                                    break;
+                                case ActivatedAbility.TapToCreateToken:
+                                    lines.Add($"{creature.manaToPayToActivate}TAP: Create a {tokenToCreate} token.");
                                     break;
                             }
                         }

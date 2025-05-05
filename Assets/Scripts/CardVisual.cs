@@ -213,7 +213,44 @@ public class CardVisual : MonoBehaviour
                     UpdateVisual();
                     return;
                 }
+                
+            // TAP-TO-CREATE-TOKEN generic ability
+                if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken) &&
+                    linkedCard is CreatureCard tokenSpawner &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                    (!tokenSpawner.hasSummoningSickness || tokenSpawner.keywordAbilities.Contains(KeywordAbility.Haste)))
+                {
+                    int cost = linkedCard.manaToPayToActivate;
+                    if (GameManager.Instance.humanPlayer.ManaPool >= cost)
+                    {
+                        GameManager.Instance.humanPlayer.ManaPool -= cost;
+                        linkedCard.isTapped = true;
 
+                        string tokenName = linkedCard.tokenToCreate;
+                        Card token = CardFactory.Create(tokenName);
+                        if (token != null)
+                        {
+                            GameManager.Instance.SummonToken(token, GameManager.Instance.humanPlayer);
+                            Debug.Log($"{linkedCard.cardName} created a {tokenName} token.");
+                        }
+                        else
+                        {
+                            Debug.LogError($"Failed to create token: {tokenName}");
+                        }
+
+                        GameManager.Instance.UpdateUI();
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate token creation.");
+                    }
+
+                    return;
+                }
             // TAP-TO-LOSE-LIFE ability during Main Phase
                 if (linkedCard is CreatureCard creatureForDrain &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&

@@ -29,6 +29,8 @@ public static class CardFactory
                 creature.baseToughness = data.toughness;
                 creature.entersTapped = data.entersTapped;
                 creature.tapLifeLossAmount = data.tapLifeLossAmount;
+                creature.manaToPayToActivate = data.manaToPayToActivate;
+                creature.tokenToCreate = data.tokenToCreate;
                 creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
                 creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = creature;

@@ -17,6 +17,7 @@ public class CardData
     public int tapLifeLossAmount;
     public bool entersTapped = false;
     public bool isToken = false;
+    public string tokenToCreate;
 
     //noncreature artifacts
     public enum ArtifactEffect
