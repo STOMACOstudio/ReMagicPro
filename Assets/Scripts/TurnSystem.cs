@@ -256,6 +256,30 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
+                        // Tap all untapped artifacts that produce mana
+                        foreach (var card in ai.Battlefield.ToList())
+                        {
+                            if (card is ArtifactCard artifact && !artifact.isTapped)
+                            {
+                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana))
+                                {
+                                    artifact.isTapped = true;
+                                    ai.ManaPool++;
+                                    Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                }
+
+                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana))
+                                {
+                                    artifact.isTapped = true;
+                                    ai.ManaPool++;
+                                    GameManager.Instance.SendToGraveyard(artifact, ai);
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    Debug.Log($"AI taps and sacrifices {artifact.cardName} for 1 mana.");
+                                }
+                            }
+                        }
+                        
                         // Tap all untapped lands
                         foreach (var card in ai.Battlefield)
                         {
@@ -266,6 +290,19 @@ public class TurnSystem : MonoBehaviour
                                 GameManager.Instance.FindCardVisual(land)?.UpdateVisual();
                             }
                         }
+
+                        /*foreach (var card in ai.Battlefield)
+                        {
+                            if (card is ArtifactCard artifact &&
+                                artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
+                                !artifact.isTapped)
+                            {
+                                artifact.isTapped = true;
+                                ai.ManaPool++;
+                                Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
+                                GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                            }
+                        }*/
 
                         Debug.Log($"AI mana pool: {ai.ManaPool}");
 
@@ -279,7 +316,7 @@ public class TurnSystem : MonoBehaviour
                             for (int i = 0; i < ai.Hand.Count; i++)
                             {
                                 Card card = ai.Hand[i];
-
+                                
                                 if (card is CreatureCard creature && ai.ManaPool >= creature.manaCost)
                                 {
                                     ai.ManaPool -= creature.manaCost;
@@ -318,6 +355,55 @@ public class TurnSystem : MonoBehaviour
                                     playedCard = true;
                                     break;
                                 }
+                                else if (card is ArtifactCard artifact && ai.ManaPool >= artifact.manaCost)
+                                {
+                                    ai.ManaPool -= artifact.manaCost;
+                                    ai.Hand.Remove(card);
+                                    ai.Battlefield.Add(card);
+                                    card.OnEnterPlay(ai);
+
+                                    if (card.entersTapped)
+                                    {
+                                        card.isTapped = true;
+                                        Debug.Log($"{card.cardName} (AI) enters tapped.");
+                                    }
+
+                                    GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiArtifactArea);
+                                    CardVisual visual = obj.GetComponent<CardVisual>();
+                                    visual.Setup(card, GameManager.Instance);
+                                    visual.isInBattlefield = true;
+                                    GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                    Debug.Log($"AI played artifact: {card.cardName}");
+                                    playedCard = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        foreach (var card in ai.Battlefield)
+                        {
+                            if (card is CreatureCard creature &&
+                                !creature.isTapped &&
+                                !creature.hasSummoningSickness &&
+                                creature.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife))
+                            {
+                                GameManager.Instance.TapToLoseLife(creature);
+                                GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                            }
+                        }
+
+                        foreach (var card in ai.Battlefield)
+                        {
+                            if (card is ArtifactCard artifact &&
+                                !artifact.isTapped &&
+                                artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
+                            {
+                                artifact.isTapped = true;
+                                ai.Life += 1;
+                                Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
+                                GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                GameManager.Instance.UpdateUI();
                             }
                         }
 

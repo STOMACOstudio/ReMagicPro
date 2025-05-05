@@ -13,6 +13,8 @@ public class Card
     public bool entersTapped = false;
     public Sprite artwork;
 
+    public Player owner;
+
     public List<CardAbility> abilities = new List<CardAbility>();
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
 
@@ -84,11 +86,39 @@ public class Card
                                 case ActivatedAbility.TapForMana:
                                     lines.Add("Tap: Add 1 mana.");
                                     break;
+                                case ActivatedAbility.TapToLoseLife:
+                                    lines.Add($"Tap: Your opponent loses {creature.tapLifeLossAmount} life.");
+                                    break;
                             }
                         }
                     }
                 }
 
+            if (this is ArtifactCard artifact)
+            {
+                if (entersTapped)
+                    lines.Add("This card enters the battlefield tapped.");
+
+                if (activatedAbilities != null)
+                {
+                    foreach (var activated in activatedAbilities)
+                    {
+                        switch (activated)
+                        {
+                            case ActivatedAbility.TapForMana:
+                                lines.Add("Tap: Add 1 mana.");
+                                break;
+                            case ActivatedAbility.TapToGainLife:
+                                lines.Add("Tap: Gain 1 life.");
+                                break;
+                            case ActivatedAbility.TapAndSacrificeForMana:
+                                lines.Add("Tap, sacrifice: Add 1 mana.");
+                                break;
+                            // Add more if needed
+                        }
+                    }
+                }
+            }
             // Triggered abilities — shared across all cards
             foreach (var ability in abilities)
             {

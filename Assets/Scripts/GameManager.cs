@@ -20,11 +20,15 @@ public class GameManager : MonoBehaviour
     public Transform playerBattlefieldArea;
     public Transform playerGraveyardArea;
     public Transform playerLandArea;
-    public Transform stackZone;
+    public Transform playerArtifactArea;
+
+    public Transform stackZone; //shared zone
 
     public Transform aiBattlefieldArea;
     public Transform aiGraveyardArea;
     public Transform aiLandArea;
+    public Transform aiArtifactArea;
+
 
     public GameObject cardPrefab;
 
@@ -54,26 +58,9 @@ public class GameManager : MonoBehaviour
             //BuildStartingDeck(aiPlayer);
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-                aiPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-                aiPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                aiPlayer.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
+                aiPlayer.Deck.Add(CardFactory.Create("Crystallium"));
+                aiPlayer.Deck.Add(CardFactory.Create("Crystallium"));
 
             ShuffleDeck(humanPlayer);
             ShuffleDeck(aiPlayer);
@@ -92,22 +79,10 @@ public class GameManager : MonoBehaviour
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
-                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
-                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
-                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
-                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
-                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
-                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));
-                humanPlayer.Deck.Add(CardFactory.Create("Great Boulder"));
-                humanPlayer.Deck.Add(CardFactory.Create("Fire Spirals"));
-                humanPlayer.Deck.Add(CardFactory.Create("Limping Corpse"));              
+                humanPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
+                humanPlayer.Deck.Add(CardFactory.Create("Crystallium"));
+                humanPlayer.Deck.Add(CardFactory.Create("Bonfire"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mana Rock"));            
 
             /*//test white deck
                 humanPlayer.Deck.Add(CardFactory.Create("Plains"));
@@ -226,6 +201,7 @@ public class GameManager : MonoBehaviour
                 if (player.ManaPool >= creature.manaCost)
                 {
                     player.ManaPool -= creature.manaCost;
+                    card.owner = player;
                     if (player == humanPlayer) UpdateUI();
                     player.Hand.Remove(card);
                     player.Battlefield.Add(card);
@@ -255,6 +231,7 @@ public class GameManager : MonoBehaviour
                 {
                     isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
                     player.ManaPool -= sorcery.manaCost;
+                    card.owner = player;
                     player.Hand.Remove(card);
                     UpdateUI();
 
@@ -269,7 +246,39 @@ public class GameManager : MonoBehaviour
                     Debug.Log("Not enough mana to cast this sorcery.");
                 }
             }
+            else if (card is ArtifactCard artifact)
+            {
+                if (player.ManaPool >= artifact.manaCost)
+                {
+                    player.ManaPool -= artifact.manaCost;
+                    card.owner = player;
+                    if (player == humanPlayer) UpdateUI();
 
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
+                    card.OnEnterPlay(player);
+
+                    if (artifact.entersTapped)
+                    {
+                        artifact.isTapped = true;
+                        Debug.Log($"{artifact.cardName} enters tapped.");
+                    }
+
+                    // Move to battlefield area visually
+                    Transform visualParent = player == humanPlayer
+                        ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
+                        : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
+
+                    visual.transform.SetParent(visualParent, false);
+
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                }
+                else
+                {
+                    Debug.Log("Not enough mana to play this artifact.");
+                }
+            }
             else
             {
                 Debug.LogWarning("Unhandled card type played: " + card.cardName);
@@ -527,6 +536,21 @@ public class GameManager : MonoBehaviour
                 UpdateUI();
             }
         }
+
+    public void TapToLoseLife(CreatureCard creature)
+        {
+            if (creature.isTapped || creature.hasSummoningSickness)
+                return;
+
+            creature.isTapped = true;
+
+            Player opponent = GetOpponentOf(GetOwnerOfCard(creature));
+            opponent.Life -= creature.tapLifeLossAmount;
+
+            Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
+            UpdateUI();
+        }
+    
     public Player GetOwnerOfCard(Card card)
         {
             if (humanPlayer.Battlefield.Contains(card)) return humanPlayer;

@@ -14,8 +14,20 @@ public class CardData
     // Only used for creatures
     public int power;
     public int toughness;
+    public int tapLifeLossAmount;
     public bool entersTapped = false;
     public bool isToken = false;
+
+    //noncreature artifacts
+    public enum ArtifactEffect
+        {
+            None,
+            TapForMana,
+            TapToGainLife,
+            TapAndSacrificeForMana
+        }
+
+    public ArtifactEffect artifactEffect = ArtifactEffect.None;
 
     //For sorceries
     public int lifeToGain; // Optional, default to 0

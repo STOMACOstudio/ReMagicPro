@@ -15,5 +15,8 @@ public enum KeywordAbility
 public enum ActivatedAbility
 {
     TapForMana,
+    TapToLoseLife,
+    TapAndSacrificeForMana,
+    TapToGainLife
     // etc.
 }

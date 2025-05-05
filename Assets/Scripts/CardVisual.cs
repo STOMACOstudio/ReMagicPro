@@ -79,7 +79,7 @@ public class CardVisual : MonoBehaviour
             {
                 sicknessText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                keywordText.text = linkedCard.GetCardText();
             }
 
             if (linkedCard is CreatureCard c && isInBattlefield)
@@ -163,6 +163,12 @@ public class CardVisual : MonoBehaviour
 
                 keywordText.text = rules.Trim();
             }
+            else if (linkedCard is ArtifactCard artifact)
+            {
+                costText.text = artifact.manaCost.ToString();
+                statsText.text = "";
+                keywordText.text = artifact.GetCardText();
+            }
             else
             {
                 // Default fallback for other card types
@@ -181,7 +187,7 @@ public class CardVisual : MonoBehaviour
             }
 
             // TAP-FOR-MANA ability during Main Phase
-                if (linkedCard is CreatureCard creatureForTap &&
+                /*if (linkedCard is CreatureCard creatureForTap &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForTap) &&
                     TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
@@ -191,6 +197,64 @@ public class CardVisual : MonoBehaviour
                     (!creatureForTap.hasSummoningSickness || creatureForTap.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
                     GameManager.Instance.TapCardForMana(creatureForTap);
+                    UpdateVisual();
+                    return;
+                }*/
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.humanPlayer.ManaPool++;
+                    GameManager.Instance.UpdateUI();
+                    UpdateVisual();
+                    return;
+                }
+
+            // TAP-TO-LOSE-LIFE ability during Main Phase
+                if (linkedCard is CreatureCard creatureForDrain &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                    creatureForDrain.activatedAbilities != null &&
+                    creatureForDrain.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife) &&
+                    !creatureForDrain.isTapped &&
+                    (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
+                {
+                    GameManager.Instance.TapToLoseLife(creatureForDrain);
+                    UpdateVisual();
+                    return;
+                }
+            
+            // TAP-AND-SACRIFICE-FOR-MANA during Main Phase
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.humanPlayer.ManaPool++;
+                    GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                    GameManager.Instance.UpdateUI();
+                    return;
+                }
+            
+            // TAP-TO-GAIN-LIFE ability during Main Phase
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToGainLife) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.humanPlayer.Life += 1;
+                    GameManager.Instance.UpdateUI();
                     UpdateVisual();
                     return;
                 }

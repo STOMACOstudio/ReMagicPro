@@ -8,6 +8,7 @@ public class CreatureCard : Card
     public int toughness; // <<< CURRENT TOUGHNESS (changing)
     public int baseToughness; // <<< ORIGINAL TOUGHNESS (never changes)
     public int damageTaken = 0;
+    public int tapLifeLossAmount;
     public bool hasSummoningSickness = true;
 
     public CreatureCard blockingThisAttacker;  // If this is a blocker

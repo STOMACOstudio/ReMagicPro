@@ -28,6 +28,7 @@ public static class CardFactory
                 creature.toughness = data.toughness;
                 creature.baseToughness = data.toughness;
                 creature.entersTapped = data.entersTapped;
+                creature.tapLifeLossAmount = data.tapLifeLossAmount;
                 creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
                 creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = creature;
@@ -44,6 +45,12 @@ public static class CardFactory
                 sorcery.exileAllCreaturesFromGraveyards = data.exileAllCreaturesFromGraveyards;
                 sorcery.damageToEachCreatureAndPlayer = data.damageToEachCreatureAndPlayer;
                 newCard = sorcery;
+                break;
+            case CardType.Artifact:
+                ArtifactCard artifact = new ArtifactCard();
+                artifact.entersTapped = data.entersTapped;
+                artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
+                newCard = artifact;
                 break;
 
             default:
