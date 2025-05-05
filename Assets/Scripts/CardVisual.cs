@@ -228,21 +228,65 @@ public class CardVisual : MonoBehaviour
                     UpdateVisual();
                     return;
                 }
+
+            // TAP-TO-PLAGUE ability during Main Phase
+                if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlague) &&
+                !linkedCard.isTapped &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+            {
+                linkedCard.isTapped = true;
+                GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
+                GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
+                GameManager.Instance.UpdateUI();
+                UpdateVisual();
+                Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
+                return;
+            }
             
-            // TAP-AND-SACRIFICE-FOR-MANA during Main Phase
+            // TAP-AND-SACRIFICE-FOR-MANA or SACRIFICE-FOR-MANA during Main Phase
                 if (linkedCard.activatedAbilities != null &&
-                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana) &&
+                    (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana) ||
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana)) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
                     TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
                 {
-                    linkedCard.isTapped = true;
-                    GameManager.Instance.humanPlayer.ManaPool++;
-                    GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
-                    GameManager.Instance.UpdateUI();
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+
+                    // Check for SacrificeForMana with cost
+                    if (linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana))
+                    {
+                        if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
+                        {
+                            GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
+                            GameManager.Instance.humanPlayer.ManaPool += artifact.manaToGain;
+                            linkedCard.isTapped = true;
+                            GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                            GameManager.Instance.UpdateUI();
+                            UpdateVisual();
+                            Debug.Log($"{linkedCard.cardName} activated: +{artifact.manaToGain} mana.");
+                        }
+                        else
+                        {
+                            Debug.Log("Not enough mana for ability.");
+                        }
+                    }
+                    else // TapAndSacrificeForMana (no cost, gain 1 mana)
+                    {
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.humanPlayer.ManaPool++;
+                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        GameManager.Instance.UpdateUI();
+                        UpdateVisual();
+                        Debug.Log($"{linkedCard.cardName} sacrificed: +1 mana.");
+                    }
+
                     return;
                 }
+
             
             // TAP-TO-GAIN-LIFE ability during Main Phase
                 if (linkedCard.activatedAbilities != null &&
@@ -256,6 +300,34 @@ public class CardVisual : MonoBehaviour
                     GameManager.Instance.humanPlayer.Life += 1;
                     GameManager.Instance.UpdateUI();
                     UpdateVisual();
+                    return;
+                }
+
+            // SACRIFICE-FOR-LIFE during Main Phase
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForLife) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+
+                    if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
+                    {
+                        GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
+                        GameManager.Instance.humanPlayer.Life += artifact.lifeToGain;
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        GameManager.Instance.UpdateUI();
+                        UpdateVisual();
+                        Debug.Log($"{linkedCard.cardName} activated: Gain {artifact.lifeToGain} life.");
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana for ability.");
+                    }
+
                     return;
                 }
 

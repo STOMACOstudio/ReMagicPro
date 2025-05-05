@@ -11,6 +11,12 @@ public class Card
     public bool isToken = false;
     public bool isTapped = false;
     public bool entersTapped = false;
+
+    public int plagueAmount;
+    public int manaToGain;
+    public int lifeToGain;
+    public int manaToPayToActivate;
+
     public Sprite artwork;
 
     public Player owner;
@@ -110,11 +116,20 @@ public class Card
                                 break;
                             case ActivatedAbility.TapToGainLife:
                                 lines.Add("Tap: Gain 1 life.");
+                                //lines.Add($"Tap: Gain {plagueAmount} life.");
                                 break;
                             case ActivatedAbility.TapAndSacrificeForMana:
                                 lines.Add("Tap, sacrifice: Add 1 mana.");
                                 break;
-                            // Add more if needed
+                            case ActivatedAbility.TapToPlague:
+                                lines.Add($"Tap: Each player loses {plagueAmount} life.");
+                                break;
+                            case ActivatedAbility.SacrificeForMana:
+                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Add {manaToGain}.");
+                                break;
+                            case ActivatedAbility.SacrificeForLife:
+                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Gain {lifeToGain} life.");
+                                break;
                         }
                     }
                 }

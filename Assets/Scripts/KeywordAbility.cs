@@ -17,6 +17,9 @@ public enum ActivatedAbility
     TapForMana,
     TapToLoseLife,
     TapAndSacrificeForMana,
-    TapToGainLife
+    SacrificeForMana,
+    SacrificeForLife,
+    TapToGainLife,
+    TapToPlague,
     // etc.
 }

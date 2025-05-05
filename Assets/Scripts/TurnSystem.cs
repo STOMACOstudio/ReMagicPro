@@ -255,30 +255,6 @@ public class TurnSystem : MonoBehaviour
                                 }
                             }
                         }
-
-                        // Tap all untapped artifacts that produce mana
-                        foreach (var card in ai.Battlefield.ToList())
-                        {
-                            if (card is ArtifactCard artifact && !artifact.isTapped)
-                            {
-                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana))
-                                {
-                                    artifact.isTapped = true;
-                                    ai.ManaPool++;
-                                    Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
-                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                }
-
-                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana))
-                                {
-                                    artifact.isTapped = true;
-                                    ai.ManaPool++;
-                                    GameManager.Instance.SendToGraveyard(artifact, ai);
-                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                    Debug.Log($"AI taps and sacrifices {artifact.cardName} for 1 mana.");
-                                }
-                            }
-                        }
                         
                         // Tap all untapped lands
                         foreach (var card in ai.Battlefield)
@@ -291,18 +267,51 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
-                        /*foreach (var card in ai.Battlefield)
+                        Debug.Log($"AI mana pool: {ai.ManaPool}");
+
+                        // Handle all artifact abilities that produce mana
+                        foreach (var card in ai.Battlefield.ToList())
                         {
-                            if (card is ArtifactCard artifact &&
-                                artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
-                                !artifact.isTapped)
+                            if (card is ArtifactCard artifact && !artifact.isTapped)
                             {
-                                artifact.isTapped = true;
-                                ai.ManaPool++;
-                                Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
-                                GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                // Tap: Add 1 mana
+                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana))
+                                {
+                                    artifact.isTapped = true;
+                                    ai.ManaPool++;
+                                    Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                }
+
+                                // Tap and Sacrifice: Add 1 mana
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana))
+                                {
+                                    artifact.isTapped = true;
+                                    ai.ManaPool++;
+                                    GameManager.Instance.SendToGraveyard(artifact, ai);
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    Debug.Log($"AI taps and sacrifices {artifact.cardName} for 1 mana.");
+                                }
+
+                                // Pay mana, Tap and Sacrifice: Add N mana
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana))
+                                {
+                                    if (ai.ManaPool >= artifact.manaToPayToActivate)
+                                    {
+                                        ai.ManaPool -= artifact.manaToPayToActivate;
+                                        artifact.isTapped = true;
+                                        ai.ManaPool += artifact.manaToGain;
+                                        GameManager.Instance.SendToGraveyard(artifact, ai);
+                                        GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                        Debug.Log($"AI pays {artifact.manaToPayToActivate}, taps and sacrifices {artifact.cardName} to gain {artifact.manaToGain} mana.");
+                                    }
+                                    else
+                                    {
+                                        Debug.Log($"AI can't activate {artifact.cardName}: not enough mana ({ai.ManaPool}/{artifact.manaToPayToActivate}).");
+                                    }
+                                }
                             }
-                        }*/
+                        }
 
                         Debug.Log($"AI mana pool: {ai.ManaPool}");
 
@@ -393,17 +402,38 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
-                        foreach (var card in ai.Battlefield)
+                        foreach (var card in ai.Battlefield.ToList()) // .ToList() because we may remove during iteration
                         {
-                            if (card is ArtifactCard artifact &&
-                                !artifact.isTapped &&
-                                artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
+                            if (card is ArtifactCard artifact && !artifact.isTapped)
                             {
-                                artifact.isTapped = true;
-                                ai.Life += 1;
-                                Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
-                                GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                GameManager.Instance.UpdateUI();
+                                if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
+                                {
+                                    artifact.isTapped = true;
+                                    ai.Life += 1;
+                                    Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    GameManager.Instance.UpdateUI();
+                                }
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
+                                {
+                                    artifact.isTapped = true;
+                                    GameManager.Instance.humanPlayer.Life -= artifact.plagueAmount;
+                                    GameManager.Instance.aiPlayer.Life -= artifact.plagueAmount;
+                                    Debug.Log($"AI taps {artifact.cardName}: Both players lose {artifact.plagueAmount} life.");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    GameManager.Instance.UpdateUI();
+                                }
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeForLife) &&
+                                        ai.ManaPool >= artifact.manaToPayToActivate)
+                                {
+                                    ai.ManaPool -= artifact.manaToPayToActivate;
+                                    ai.Life += artifact.lifeToGain;
+                                    artifact.isTapped = true;
+                                    GameManager.Instance.SendToGraveyard(artifact, ai);
+                                    Debug.Log($"AI sacrifices {artifact.cardName} to gain {artifact.lifeToGain} life.");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    GameManager.Instance.UpdateUI();
+                                }
                             }
                         }
 

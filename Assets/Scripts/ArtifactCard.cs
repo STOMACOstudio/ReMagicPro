@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ArtifactCard : Card
 {
-    //public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
 
     public void Tap()
     {
@@ -27,6 +26,18 @@ public class ArtifactCard : Card
                 case ActivatedAbility.TapAndSacrificeForMana:
                     owner.ManaPool += 1;
                     GameManager.Instance.SendToGraveyard(this, owner);
+                    break;
+                case ActivatedAbility.SacrificeForLife:
+                    if (owner.ManaPool >= manaToPayToActivate)
+                    {
+                        owner.ManaPool -= manaToPayToActivate;
+                        owner.Life += lifeToGain;
+                        GameManager.Instance.SendToGraveyard(this, owner);
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate SacrificeForLife.");
+                    }
                     break;
             }
         }

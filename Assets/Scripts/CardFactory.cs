@@ -49,6 +49,10 @@ public static class CardFactory
             case CardType.Artifact:
                 ArtifactCard artifact = new ArtifactCard();
                 artifact.entersTapped = data.entersTapped;
+                artifact.plagueAmount = data.plagueAmount;
+                artifact.manaToGain = data.manaToGain;
+                artifact.lifeToGain = data.lifeToGain;
+                artifact.manaToPayToActivate = data.manaToPayToActivate;
                 artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = artifact;
                 break;

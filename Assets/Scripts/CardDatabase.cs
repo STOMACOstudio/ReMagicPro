@@ -1251,6 +1251,53 @@ public static class CardDatabase
                     });
 
         // Artifacts
+        Add(new CardData // Potion of health
+            {
+                cardName = "Potion of Health",
+                rarity = "Common",
+                manaCost = 1,
+                color = "None",
+                cardType = CardType.Artifact,
+                entersTapped = true,
+                lifeToGain = 3,
+                manaToPayToActivate = 2,
+                activatedAbilities = new List<ActivatedAbility>
+                {
+                    ActivatedAbility.SacrificeForLife
+                },
+                artwork = Resources.Load<Sprite>("Art/potion_of_health")
+            });
+            Add(new CardData // Potion of mana
+                {
+                    cardName = "Potion of Mana",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = "None",
+                    cardType = CardType.Artifact,
+                    entersTapped = true,
+                    manaToGain = 3,
+                    manaToPayToActivate = 2,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.SacrificeForMana
+                    },
+                    artwork = Resources.Load<Sprite>("Art/potion_of_mana")
+                });
+            Add(new CardData //Stone of plague
+                {
+                    cardName = "Stone of Plague",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = "None",
+                    cardType = CardType.Artifact,
+                    plagueAmount = 1,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapToPlague
+                    },
+                    artwork = Resources.Load<Sprite>("Art/stone_of_plague")
+                });
+
             Add(new CardData //Mana rock
                 {
                     cardName = "Mana Rock",

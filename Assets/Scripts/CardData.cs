@@ -28,15 +28,18 @@ public class CardData
         }
 
     public ArtifactEffect artifactEffect = ArtifactEffect.None;
+    public int plagueAmount;
 
     //For sorceries
-    public int lifeToGain; // Optional, default to 0
+    public int lifeToGain;
     public int lifeToLoseForOpponent;
     public int lifeLossForBothPlayers;
     public int cardsToDraw;
     public int cardsToDiscardorDraw;
-    public bool eachPlayerGainLifeEqualToLands;
     public int damageToEachCreatureAndPlayer;
+    public int manaToGain;
+    public int manaToPayToActivate;
+    public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
 
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;

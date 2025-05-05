@@ -20,22 +20,36 @@ MonoBehaviour:
     - Assets/Prefab/CardPrefab.prefab.meta
     - Assets/Resources.meta
     - Assets/Resources/Art.meta
+    - Assets/Resources/Art/20250424_0042_Fantasy Potion Art_simple_compose_01jsjd0fjbe5m8cs0mc7bcaxd1.png
+    - Assets/Resources/Art/20250424_0042_Fantasy Potion Art_simple_compose_01jsjd0fjbe5m8cs0mc7bcaxd1.png.meta
     - Assets/Resources/Art/angry_farmer.png
     - Assets/Resources/Art/angry_farmer.png.meta
+    - Assets/Resources/Art/blast_of_knowledge.png
+    - Assets/Resources/Art/blast_of_knowledge.png.meta
     - Assets/Resources/Art/bog_mosquito.png
     - Assets/Resources/Art/bog_mosquito.png.meta
+    - Assets/Resources/Art/bonfire.png
+    - Assets/Resources/Art/bonfire.png.meta
     - Assets/Resources/Art/cactusaur.png
     - Assets/Resources/Art/cactusaur.png.meta
+    - Assets/Resources/Art/candlelight.png
+    - Assets/Resources/Art/candlelight.png.meta
     - Assets/Resources/Art/cat_token.png
     - Assets/Resources/Art/cat_token.png.meta
     - Assets/Resources/Art/colossal_octopus.png
     - Assets/Resources/Art/colossal_octopus.png.meta
+    - Assets/Resources/Art/communed_rot.png
+    - Assets/Resources/Art/communed_rot.png.meta
     - Assets/Resources/Art/crazy_cat_lady.png
     - Assets/Resources/Art/crazy_cat_lady.png.meta
+    - Assets/Resources/Art/crystallium.png
+    - Assets/Resources/Art/crystallium.png.meta
     - Assets/Resources/Art/deep_forest_monkeys.png
     - Assets/Resources/Art/deep_forest_monkeys.png.meta
     - Assets/Resources/Art/demon_token.png
     - Assets/Resources/Art/demon_token.png.meta
+    - Assets/Resources/Art/deny_the_afterlife.png
+    - Assets/Resources/Art/deny_the_afterlife.png.meta
     - Assets/Resources/Art/domestic_cat.png
     - Assets/Resources/Art/domestic_cat.png.meta
     - Assets/Resources/Art/dragon_summoner 1.png
@@ -46,16 +60,26 @@ MonoBehaviour:
     - Assets/Resources/Art/dragon_token.png.meta
     - Assets/Resources/Art/drumming_elf.png
     - Assets/Resources/Art/drumming_elf.png.meta
+    - Assets/Resources/Art/explosion.png
+    - Assets/Resources/Art/explosion.png.meta
     - Assets/Resources/Art/famished_crow.png
     - Assets/Resources/Art/famished_crow.png.meta
+    - Assets/Resources/Art/feast.png
+    - Assets/Resources/Art/feast.png.meta
+    - Assets/Resources/Art/fire_spirals.png
+    - Assets/Resources/Art/fire_spirals.png.meta
     - Assets/Resources/Art/fireborn_dragon.png
     - Assets/Resources/Art/fireborn_dragon.png.meta
+    - Assets/Resources/Art/flame_hatchet.png
+    - Assets/Resources/Art/flame_hatchet.png.meta
     - Assets/Resources/Art/flying_donkey.png
     - Assets/Resources/Art/flying_donkey.png.meta
     - Assets/Resources/Art/flying_pig.png
     - Assets/Resources/Art/flying_pig.png.meta
     - Assets/Resources/Art/forest.png
     - Assets/Resources/Art/forest.png.meta
+    - Assets/Resources/Art/forget.png
+    - Assets/Resources/Art/forget.png.meta
     - Assets/Resources/Art/gallant_lord.png
     - Assets/Resources/Art/gallant_lord.png.meta
     - Assets/Resources/Art/gentle_giant.png
@@ -86,8 +110,14 @@ MonoBehaviour:
     - Assets/Resources/Art/lucky_fisherman.png.meta
     - Assets/Resources/Art/lunatic_necromancer.png
     - Assets/Resources/Art/lunatic_necromancer.png.meta
+    - Assets/Resources/Art/mana_rock.png
+    - Assets/Resources/Art/mana_rock.png.meta
+    - Assets/Resources/Art/massacre.png
+    - Assets/Resources/Art/massacre.png.meta
     - Assets/Resources/Art/monkey_token.png
     - Assets/Resources/Art/monkey_token.png.meta
+    - Assets/Resources/Art/moonfall.png
+    - Assets/Resources/Art/moonfall.png.meta
     - Assets/Resources/Art/mountain.png
     - Assets/Resources/Art/mountain.png.meta
     - Assets/Resources/Art/obstacle.png
@@ -100,6 +130,10 @@ MonoBehaviour:
     - Assets/Resources/Art/plains.png.meta
     - Assets/Resources/Art/possessed_innocent.png
     - Assets/Resources/Art/possessed_innocent.png.meta
+    - Assets/Resources/Art/potion_of_health.png
+    - Assets/Resources/Art/potion_of_health.png.meta
+    - Assets/Resources/Art/potion_of_mana.png
+    - Assets/Resources/Art/potion_of_mana.png.meta
     - Assets/Resources/Art/pure_angel.png
     - Assets/Resources/Art/pure_angel.png.meta
     - Assets/Resources/Art/rabid_dog.png
@@ -112,6 +146,8 @@ MonoBehaviour:
     - Assets/Resources/Art/realms_crasher.png.meta
     - Assets/Resources/Art/replicator.png
     - Assets/Resources/Art/replicator.png.meta
+    - Assets/Resources/Art/rolling_thoughts.png
+    - Assets/Resources/Art/rolling_thoughts.png.meta
     - Assets/Resources/Art/rotting_whale.png
     - Assets/Resources/Art/rotting_whale.png.meta
     - Assets/Resources/Art/sad_clown.png
@@ -124,6 +160,12 @@ MonoBehaviour:
     - Assets/Resources/Art/skyward_whale.png.meta
     - Assets/Resources/Art/slack_tungo.png
     - Assets/Resources/Art/slack_tungo.png.meta
+    - Assets/Resources/Art/solid_prayer.png
+    - Assets/Resources/Art/solid_prayer.png.meta
+    - Assets/Resources/Art/spear_of_light.png
+    - Assets/Resources/Art/spear_of_light.png.meta
+    - Assets/Resources/Art/stone_of_plague.png
+    - Assets/Resources/Art/stone_of_plague.png.meta
     - Assets/Resources/Art/swamp.png
     - Assets/Resources/Art/swamp.png.meta
     - Assets/Resources/Art/thundermare.png
@@ -144,14 +186,22 @@ MonoBehaviour:
     - Assets/Resources/Art/wandering_squid.png.meta
     - Assets/Resources/Art/waterbearer.png
     - Assets/Resources/Art/waterbearer.png.meta
+    - Assets/Resources/Art/whip_of_thors.png
+    - Assets/Resources/Art/whip_of_thors.png.meta
+    - Assets/Resources/Art/wicked_witch.png
+    - Assets/Resources/Art/wicked_witch.png.meta
     - Assets/Resources/Art/wild_ostrich.png
     - Assets/Resources/Art/wild_ostrich.png.meta
+    - Assets/Resources/Art/witches_rite.png
+    - Assets/Resources/Art/witches_rite.png.meta
     - Assets/Resources/Art/zombie_token.png
     - Assets/Resources/Art/zombie_token.png.meta
     - Assets/Scenes.meta
     - Assets/Scenes/SampleScene.unity
     - Assets/Scenes/SampleScene.unity.meta
     - Assets/Scripts.meta
+    - Assets/Scripts/ArtifactCard.cs
+    - Assets/Scripts/ArtifactCard.cs.meta
     - Assets/Scripts/Card.cs
     - Assets/Scripts/Card.cs.meta
     - Assets/Scripts/CardAbility.cs
@@ -176,6 +226,8 @@ MonoBehaviour:
     - Assets/Scripts/LandCard.cs.meta
     - Assets/Scripts/Player.cs
     - Assets/Scripts/Player.cs.meta
+    - Assets/Scripts/SorceryCard.cs
+    - Assets/Scripts/SorceryCard.cs.meta
     - Assets/Scripts/TurnSystem.cs
     - Assets/Scripts/TurnSystem.cs.meta
     - Assets/TextMesh Pro.meta
@@ -568,7 +620,7 @@ MonoBehaviour:
     - ProjectSettings/VFXManager.asset
     - ProjectSettings/VersionControlSettings.asset
     - 
-    m_Values: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    m_Values: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   RevisionSummary: 
   ChangesSearchValue: 
   SelectedHistoryRevision: 
