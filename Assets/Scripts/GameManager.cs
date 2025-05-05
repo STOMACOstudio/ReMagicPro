@@ -59,20 +59,24 @@ public class GameManager : MonoBehaviour
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
-                aiPlayer.Deck.Add(CardFactory.Create("Crystallium"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Mana"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Mana"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Mana"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Mana"));
-                aiPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
-                aiPlayer.Deck.Add(CardFactory.Create("Stone of Plague"));
-                aiPlayer.Deck.Add(CardFactory.Create("Stone of Plague"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bonfire"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bonfire"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Health"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Health"));
-                aiPlayer.Deck.Add(CardFactory.Create("Potion of Health"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
 
             ShuffleDeck(humanPlayer);
             ShuffleDeck(aiPlayer);
@@ -91,6 +95,10 @@ public class GameManager : MonoBehaviour
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
                 humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
+                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
                 humanPlayer.Deck.Add(CardFactory.Create("Bonfire"));
                 humanPlayer.Deck.Add(CardFactory.Create("Bonfire"));
                 humanPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
@@ -100,9 +108,9 @@ public class GameManager : MonoBehaviour
                 humanPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
                 humanPlayer.Deck.Add(CardFactory.Create("Potion of Mana"));
                 humanPlayer.Deck.Add(CardFactory.Create("Potion of Mana")); 
-                humanPlayer.Deck.Add(CardFactory.Create("Potion of Health")); 
-                humanPlayer.Deck.Add(CardFactory.Create("Potion of Health"));
-                humanPlayer.Deck.Add(CardFactory.Create("Potion of Health"));               
+                humanPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge")); 
+                humanPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                humanPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));               
 
             /*//test white deck
                 humanPlayer.Deck.Add(CardFactory.Create("Plains"));

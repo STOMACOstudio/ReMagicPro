@@ -434,6 +434,20 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                     GameManager.Instance.UpdateUI();
                                 }
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards) &&
+                                        ai.ManaPool >= artifact.manaToPayToActivate)
+                                {
+                                    ai.ManaPool -= artifact.manaToPayToActivate;
+                                    artifact.isTapped = true;
+                                    for (int i = 0; i < artifact.cardsToDraw; i++)
+                                    {
+                                        GameManager.Instance.DrawCard(ai);
+                                    }
+                                    GameManager.Instance.SendToGraveyard(artifact, ai);
+                                    Debug.Log($"AI sacrifices {artifact.cardName} to draw {artifact.cardsToDraw} card(s).");
+                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    GameManager.Instance.UpdateUI();
+                                }
                             }
                         }
 

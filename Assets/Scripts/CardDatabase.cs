@@ -1251,6 +1251,22 @@ public static class CardDatabase
                     });
 
         // Artifacts
+        Add(new CardData // Potion of knowledge
+            {
+                cardName = "Potion of Knowledge",
+                rarity = "Common",
+                manaCost = 1,
+                color = "None",
+                cardType = CardType.Artifact,
+                entersTapped = true,
+                cardsToDraw = 2,
+                manaToPayToActivate = 5,
+                activatedAbilities = new List<ActivatedAbility>
+                {
+                    ActivatedAbility.SacrificeToDrawCards
+                },
+                artwork = Resources.Load<Sprite>("Art/potion_of_knowledge")
+            });
         Add(new CardData // Potion of health
             {
                 cardName = "Potion of Health",

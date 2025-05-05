@@ -330,6 +330,39 @@ public class CardVisual : MonoBehaviour
 
                     return;
                 }
+            
+            // SACRIFICE-TO-DRAW-CARDS during Main Phase
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+
+                    if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
+                    {
+                        GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
+
+                        for (int i = 0; i < artifact.cardsToDraw; i++)
+                        {
+                            GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
+                        }
+                        
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        GameManager.Instance.UpdateUI();
+                        UpdateVisual();
+                        Debug.Log($"{linkedCard.cardName} activated: Draw {artifact.cardsToDraw} cards.");
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana for ability.");
+                    }
+
+                    return;
+                }
 
             // Blocking phase
                 if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseBlockers &&

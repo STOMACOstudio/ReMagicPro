@@ -21,5 +21,6 @@ public enum ActivatedAbility
     SacrificeForLife,
     TapToGainLife,
     TapToPlague,
+    SacrificeToDrawCards,
     // etc.
 }

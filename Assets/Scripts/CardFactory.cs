@@ -52,6 +52,7 @@ public static class CardFactory
                 artifact.plagueAmount = data.plagueAmount;
                 artifact.manaToGain = data.manaToGain;
                 artifact.lifeToGain = data.lifeToGain;
+                artifact.cardsToDraw = data.cardsToDraw;
                 artifact.manaToPayToActivate = data.manaToPayToActivate;
                 artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 newCard = artifact;

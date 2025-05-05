@@ -9,7 +9,6 @@ public class SorceryCard : Card
     //public int lifeToGain = 0;
     public int lifeToLoseForOpponent = 0;
     public int lifeLossForBothPlayers = 0;
-    public int cardsToDraw = 0;
     public int cardsToDiscardorDraw = 0;
     public int damageToEachCreatureAndPlayer = 0;
     public bool eachPlayerGainLifeEqualToLands = false;

@@ -16,6 +16,7 @@ public class Card
     public int manaToGain;
     public int lifeToGain;
     public int manaToPayToActivate;
+    public int cardsToDraw;
 
     public Sprite artwork;
 
@@ -129,6 +130,9 @@ public class Card
                                 break;
                             case ActivatedAbility.SacrificeForLife:
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Gain {lifeToGain} life.");
+                                break;
+                            case ActivatedAbility.SacrificeToDrawCards:
+                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Draw {cardsToDraw} card(s).");
                                 break;
                         }
                     }

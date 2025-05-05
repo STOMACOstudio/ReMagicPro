@@ -24,21 +24,21 @@ public class CardData
             None,
             TapForMana,
             TapToGainLife,
-            TapAndSacrificeForMana
+            TapAndSacrificeForMana,
         }
 
     public ArtifactEffect artifactEffect = ArtifactEffect.None;
     public int plagueAmount;
+    public int cardsToDraw;
+    public int manaToPayToActivate;
 
     //For sorceries
     public int lifeToGain;
     public int lifeToLoseForOpponent;
     public int lifeLossForBothPlayers;
-    public int cardsToDraw;
     public int cardsToDiscardorDraw;
     public int damageToEachCreatureAndPlayer;
     public int manaToGain;
-    public int manaToPayToActivate;
     public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
 
