@@ -15,17 +15,26 @@ MonoBehaviour:
   SimpleSelectedItems:
     m_Keys:
     - .collabignore
+    - Assets/Font.meta
+    - Assets/Font/GrobeDeutschmeister SDF.asset
+    - Assets/Font/GrobeDeutschmeister SDF.asset.meta
+    - Assets/Font/GrobeDeutschmeister.ttf
+    - Assets/Font/GrobeDeutschmeister.ttf.meta
+    - Assets/Font/Title_ShimmerMaterial.mat
+    - Assets/Font/Title_ShimmerMaterial.mat.meta
     - Assets/Prefab.meta
     - Assets/Prefab/CardPrefab.prefab
     - Assets/Prefab/CardPrefab.prefab.meta
     - Assets/Resources.meta
     - Assets/Resources/Art.meta
-    - Assets/Resources/Art/20250424_0042_Fantasy Potion Art_simple_compose_01jsjd0fjbe5m8cs0mc7bcaxd1.png
-    - Assets/Resources/Art/20250424_0042_Fantasy Potion Art_simple_compose_01jsjd0fjbe5m8cs0mc7bcaxd1.png.meta
     - Assets/Resources/Art/angry_farmer.png
     - Assets/Resources/Art/angry_farmer.png.meta
+    - Assets/Resources/Art/autonomous_miner.png
+    - Assets/Resources/Art/autonomous_miner.png.meta
     - Assets/Resources/Art/blast_of_knowledge.png
     - Assets/Resources/Art/blast_of_knowledge.png.meta
+    - Assets/Resources/Art/bog_crocodile.png
+    - Assets/Resources/Art/bog_crocodile.png.meta
     - Assets/Resources/Art/bog_mosquito.png
     - Assets/Resources/Art/bog_mosquito.png.meta
     - Assets/Resources/Art/bonfire.png
@@ -132,6 +141,8 @@ MonoBehaviour:
     - Assets/Resources/Art/possessed_innocent.png.meta
     - Assets/Resources/Art/potion_of_health.png
     - Assets/Resources/Art/potion_of_health.png.meta
+    - Assets/Resources/Art/potion_of_knowledge.png
+    - Assets/Resources/Art/potion_of_knowledge.png.meta
     - Assets/Resources/Art/potion_of_mana.png
     - Assets/Resources/Art/potion_of_mana.png.meta
     - Assets/Resources/Art/pure_angel.png
@@ -146,6 +157,8 @@ MonoBehaviour:
     - Assets/Resources/Art/realms_crasher.png.meta
     - Assets/Resources/Art/replicator.png
     - Assets/Resources/Art/replicator.png.meta
+    - Assets/Resources/Art/river_crocodile.png
+    - Assets/Resources/Art/river_crocodile.png.meta
     - Assets/Resources/Art/rolling_thoughts.png
     - Assets/Resources/Art/rolling_thoughts.png.meta
     - Assets/Resources/Art/rotting_whale.png
@@ -164,6 +177,8 @@ MonoBehaviour:
     - Assets/Resources/Art/solid_prayer.png.meta
     - Assets/Resources/Art/spear_of_light.png
     - Assets/Resources/Art/spear_of_light.png.meta
+    - Assets/Resources/Art/sphynx_lynx.png
+    - Assets/Resources/Art/sphynx_lynx.png.meta
     - Assets/Resources/Art/stone_of_plague.png
     - Assets/Resources/Art/stone_of_plague.png.meta
     - Assets/Resources/Art/swamp.png
@@ -196,9 +211,13 @@ MonoBehaviour:
     - Assets/Resources/Art/witches_rite.png.meta
     - Assets/Resources/Art/zombie_token.png
     - Assets/Resources/Art/zombie_token.png.meta
+    - Assets/Resources/menu_background_01.png
+    - Assets/Resources/menu_background_01.png.meta
     - Assets/Scenes.meta
-    - Assets/Scenes/SampleScene.unity
-    - Assets/Scenes/SampleScene.unity.meta
+    - Assets/Scenes/GameScene.unity
+    - Assets/Scenes/GameScene.unity.meta
+    - Assets/Scenes/MainMenu.unity
+    - Assets/Scenes/MainMenu.unity.meta
     - Assets/Scripts.meta
     - Assets/Scripts/ArtifactCard.cs
     - Assets/Scripts/ArtifactCard.cs.meta
@@ -224,10 +243,16 @@ MonoBehaviour:
     - Assets/Scripts/KeywordAbility.cs.meta
     - Assets/Scripts/LandCard.cs
     - Assets/Scripts/LandCard.cs.meta
+    - Assets/Scripts/MainMenuController.cs
+    - Assets/Scripts/MainMenuController.cs.meta
     - Assets/Scripts/Player.cs
     - Assets/Scripts/Player.cs.meta
+    - Assets/Scripts/ShimmerOnHover.cs
+    - Assets/Scripts/ShimmerOnHover.cs.meta
     - Assets/Scripts/SorceryCard.cs
     - Assets/Scripts/SorceryCard.cs.meta
+    - Assets/Scripts/TorchlightShimmer.cs
+    - Assets/Scripts/TorchlightShimmer.cs.meta
     - Assets/Scripts/TurnSystem.cs
     - Assets/Scripts/TurnSystem.cs.meta
     - Assets/TextMesh Pro.meta
@@ -620,7 +645,7 @@ MonoBehaviour:
     - ProjectSettings/VFXManager.asset
     - ProjectSettings/VersionControlSettings.asset
     - 
-    m_Values: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    m_Values: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   RevisionSummary: 
   ChangesSearchValue: 
   SelectedHistoryRevision: 
