@@ -31,8 +31,13 @@ public static class CardFactory
                 creature.tapLifeLossAmount = data.tapLifeLossAmount;
                 creature.manaToPayToActivate = data.manaToPayToActivate;
                 creature.tokenToCreate = data.tokenToCreate;
-                creature.keywordAbilities = new List<KeywordAbility>(data.keywordAbilities);
-                creature.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
+                creature.abilityToGain = data.abilityToGain;
+                creature.keywordAbilities = data.keywordAbilities != null
+                    ? new List<KeywordAbility>(data.keywordAbilities)
+                    : new List<KeywordAbility>();
+                creature.activatedAbilities = data.activatedAbilities != null
+                    ? new List<ActivatedAbility>(data.activatedAbilities)
+                    : new List<ActivatedAbility>();
                 newCard = creature;
                 break;
             case CardType.Sorcery:

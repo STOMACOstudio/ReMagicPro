@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CardVisual : MonoBehaviour
 {
@@ -180,6 +181,7 @@ public class CardVisual : MonoBehaviour
 
     public void OnClick()
         {
+
             if (!isInBattlefield && GameManager.Instance.humanPlayer.Hand.Contains(linkedCard) == false)
             {
                 Debug.Log("Cannot play or interact with cards in the graveyard.");
@@ -213,6 +215,27 @@ public class CardVisual : MonoBehaviour
                     UpdateVisual();
                     return;
                 }
+
+            // PAY-TO-GAIN-ABILITY during Main Phase
+                if (linkedCard is CreatureCard abilityCreature &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(abilityCreature) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                abilityCreature.activatedAbilities != null &&
+                abilityCreature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
+            {
+                if (GameManager.Instance.humanPlayer.ManaPool >= abilityCreature.manaToPayToActivate)
+                {
+                    GameManager.Instance.PayToGainAbility(abilityCreature);
+                    UpdateVisual();
+                }
+                else
+                {
+                    Debug.Log($"Not enough mana to activate {abilityCreature.cardName}'s ability.");
+                }
+                return;
+            }
+
                 
             // TAP-TO-CREATE-TOKEN generic ability
                 if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken) &&
@@ -272,15 +295,15 @@ public class CardVisual : MonoBehaviour
                 GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
                 TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                 (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
-            {
-                linkedCard.isTapped = true;
-                GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
-                GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
-                GameManager.Instance.UpdateUI();
-                UpdateVisual();
-                Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
-                return;
-            }
+                {
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
+                    GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
+                    GameManager.Instance.UpdateUI();
+                    UpdateVisual();
+                    Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
+                    return;
+                }
             
             // TAP-AND-SACRIFICE-FOR-MANA or SACRIFICE-FOR-MANA during Main Phase
                 if (linkedCard.activatedAbilities != null &&
@@ -467,7 +490,7 @@ public class CardVisual : MonoBehaviour
                             Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} because it lacks Flying or Reach.");
                             return;
                         }
-
+                    
                         // Check if blocker is restricted to flying-only
                         if (clickedCreature.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
                             !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
@@ -475,7 +498,13 @@ public class CardVisual : MonoBehaviour
                             Debug.Log($"{clickedCreature.cardName} can only block flying creatures.");
                             return;
                         }
-
+                        // Check if attacker is unblockable due to landwalk
+                        if (IsLandwalkPreventingBlock(attacker, you))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} due to landwalk.");
+                            return;
+                        }
+                        
                         // Assign the block
                         clickedCreature.blockingThisAttacker = attacker;
                         attacker.blockedByThisBlocker = clickedCreature;
@@ -540,5 +569,28 @@ public class CardVisual : MonoBehaviour
                         UpdateVisual();
                         return;
                     }
-        } 
+        }
+
+        private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
+            {
+                    foreach (var ability in attacker.keywordAbilities)
+                    {
+                        if (ability == KeywordAbility.Plainswalk &&
+                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("plains")))
+                            return true;
+                        if (ability == KeywordAbility.Islandwalk &&
+                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("island")))
+                            return true;
+                        if (ability == KeywordAbility.Swampwalk &&
+                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("swamp")))
+                            return true;
+                        if (ability == KeywordAbility.Mountainwalk &&
+                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("mountain")))
+                            return true;
+                        if (ability == KeywordAbility.Forestwalk &&
+                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("forest")))
+                            return true;
+                    }
+                    return false;
+            } 
 }

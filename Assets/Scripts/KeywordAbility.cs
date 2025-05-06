@@ -1,5 +1,6 @@
 public enum KeywordAbility
 {
+    None,
     Haste,
     Defender,
     CantBlock,
@@ -9,6 +10,11 @@ public enum KeywordAbility
     CanOnlyBlockFlying,
     Lifelink,
     CantBlockWithoutForest,
+    Plainswalk,
+    Islandwalk,
+    Swampwalk,
+    Mountainwalk,
+    Forestwalk
     // Add more like Flying, FirstStrike later
 }
 
@@ -22,6 +28,7 @@ public enum ActivatedAbility
     TapToGainLife,
     TapToPlague,
     SacrificeToDrawCards,
-    TapToCreateToken
+    TapToCreateToken,
+    PayToGainAbility,
     // etc.
 }

@@ -427,7 +427,15 @@ public class TurnSystem : MonoBehaviour
                                         GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                     }
                                 }
-                                // Add more AI abilities here in the future...
+
+                                //GAIN ABILITY
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
+                                    !creature.keywordAbilities.Contains(creature.abilityToGain) &&
+                                    ai.ManaPool >= creature.manaToPayToActivate)
+                                {
+                                    GameManager.Instance.PayToGainAbility(creature);
+                                    GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                }
                             }
                         }
 
@@ -586,6 +594,13 @@ public class TurnSystem : MonoBehaviour
                                 {
                                     continue; // this blocker can't block this attacker
                                 }
+                                
+                                // LANDWALK rule: attacker is unblockable if AI controls matching land
+                                if (IsLandwalkPreventingBlock(attacker, ai))
+                                {
+                                    Debug.Log($"AI can't block {attacker.cardName} due to landwalk.");
+                                    continue;
+                                }
 
                                 GameManager.Instance.blockingAssignments[attacker] = blocker;
                                 blocker.blockingThisAttacker = attacker;
@@ -636,17 +651,67 @@ public class TurnSystem : MonoBehaviour
 
                 case TurnPhase.EndTurn:
                     Debug.Log("→ Ending turn.");
-                    // Heal all creatures at end of turn
+
+                    // Heal all creatures
                     GameManager.Instance.ResetDamage(GameManager.Instance.humanPlayer);
                     GameManager.Instance.ResetDamage(GameManager.Instance.aiPlayer);
+
+                    // Reference the correct player before swapping turn
+                    Player endingPlayer = currentPlayer == PlayerType.Human
+                        ? GameManager.Instance.humanPlayer
+                        : GameManager.Instance.aiPlayer;
+
+                    // Remove temporary keyword abilities
+                    foreach (var card in endingPlayer.Battlefield)
+                    {
+                        if (card is CreatureCard creature &&
+                            creature.activatedAbilities != null &&
+                            creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
+                        {
+                            if (creature.keywordAbilities.Contains(creature.abilityToGain))
+                            {
+                                creature.keywordAbilities.Remove(creature.abilityToGain);
+                                var visual = GameManager.Instance.FindCardVisual(card);
+                                if (visual != null)
+                                    visual.UpdateVisual();
+                                Debug.Log($"{creature.cardName} loses {creature.abilityToGain} at end of turn.");
+                            }
+                        }
+                    }
+
+                    // Only after cleanup, begin next turn
                     BeginTurn(currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human);
                     break;
             }
         }
+
         private IEnumerator WaitAndAdvancePhase()
             {
                 yield return new WaitUntil(() => !GameManager.Instance.isStackBusy);
                 AdvancePhase();
+            }
+        
+        private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
+            {
+                foreach (var ability in attacker.keywordAbilities)
+                {
+                    if (ability == KeywordAbility.Plainswalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("plains")))
+                        return true;
+                    if (ability == KeywordAbility.Islandwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("island")))
+                        return true;
+                    if (ability == KeywordAbility.Swampwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("swamp")))
+                        return true;
+                    if (ability == KeywordAbility.Mountainwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("mountain")))
+                        return true;
+                    if (ability == KeywordAbility.Forestwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("forest")))
+                        return true;
+                }
+                return false;
             }
 
 }

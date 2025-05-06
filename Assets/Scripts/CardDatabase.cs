@@ -409,6 +409,22 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
+                Add(new CardData //Bog crocodile
+                        {
+                        cardName = "Bog Crocodile",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = "Black",
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 3,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Swampwalk,
+                            KeywordAbility.Forestwalk,
+                        },
+                        artwork = Resources.Load<Sprite>("Art/bog_crocodile")
+                        });
                 Add(new CardData //Undead gorilla
                     {
                     cardName = "Undead Gorilla",
@@ -861,6 +877,22 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/dragon_token")
                     });
             //GREEN
+                Add(new CardData //River crocodile
+                        {
+                        cardName = "River Crocodile",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = "Green",
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 3,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Islandwalk,
+                            KeywordAbility.Swampwalk,
+                        },
+                        artwork = Resources.Load<Sprite>("Art/river_crocodile")
+                        });
                 Add(new CardData //Living tree
                     {
                     cardName = "Living Tree",
@@ -1083,7 +1115,23 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/monkey_token")
                     });
             //ARTIFACT
-            
+                Add(new CardData //Sphyx lynx
+                    {
+                    cardName = "Sphynx Lynx",
+                    rarity = "Common",
+                    manaCost = 6,
+                    color = "None",
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    manaToPayToActivate = 4,
+                    abilityToGain = KeywordAbility.Flying,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.PayToGainAbility
+                    },
+                    artwork = Resources.Load<Sprite>("Art/sphynx_lynx")
+                    });
                 Add(new CardData //Origin Golem
                     {
                     cardName = "Origin Golem",

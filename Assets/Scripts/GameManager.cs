@@ -66,14 +66,10 @@ public class GameManager : MonoBehaviour
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
                 aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));
-                aiPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));
-                aiPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));
-                aiPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));
+                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
 
             ShuffleDeck(humanPlayer);
             ShuffleDeck(aiPlayer);
@@ -88,18 +84,20 @@ public class GameManager : MonoBehaviour
     void BuildStartingDeck(Player player)
         {
             //test deck
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Mountain"));
-                humanPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));
-                humanPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));    
-                humanPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));    
-                humanPlayer.Deck.Add(CardFactory.Create("Autonomous Miner"));            
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
+                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));
+                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));    
+                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));         
 
             /*//test white deck
                 humanPlayer.Deck.Add(CardFactory.Create("Plains"));
@@ -565,6 +563,23 @@ public class GameManager : MonoBehaviour
             opponent.Life -= creature.tapLifeLossAmount;
 
             Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
+            UpdateUI();
+        }
+    public void PayToGainAbility(CreatureCard creature)
+        {
+            if (creature.isTapped) return;
+
+            Player owner = GetOwnerOfCard(creature);
+            if (owner.ManaPool < creature.manaToPayToActivate)
+            {
+                Debug.Log($"{creature.cardName} can't activate: not enough mana.");
+                return;
+            }
+
+            owner.ManaPool -= creature.manaToPayToActivate;
+            creature.keywordAbilities.Add(creature.abilityToGain); // TEMP grant
+            Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
+
             UpdateUI();
         }
     

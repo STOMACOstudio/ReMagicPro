@@ -101,6 +101,9 @@ public class Card
                                 case ActivatedAbility.TapToCreateToken:
                                     lines.Add($"{creature.manaToPayToActivate}TAP: Create a {tokenToCreate} token.");
                                     break;
+                                case ActivatedAbility.PayToGainAbility:
+                                    lines.Add($"{creature.manaToPayToActivate}: Gains {creature.abilityToGain} until end of turn.");
+                                    break;
                             }
                         }
                     }

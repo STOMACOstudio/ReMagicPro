@@ -19,6 +19,8 @@ public class CardData
     public bool isToken = false;
     public string tokenToCreate;
 
+    public KeywordAbility abilityToGain = KeywordAbility.None;
+
     //noncreature artifacts
     public enum ArtifactEffect
         {
