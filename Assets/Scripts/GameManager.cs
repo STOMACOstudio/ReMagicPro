@@ -83,7 +83,22 @@ public class GameManager : MonoBehaviour
 
     void BuildStartingDeck(Player player)
         {
-            //test deck
+            if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
+            {
+                foreach (var data in DeckHolder.SelectedDeck)
+                {
+                    player.Deck.Add(CardFactory.Create(data.cardName));
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
+                // fallback to your hardcoded test deck if needed
+                player.Deck.Add(CardFactory.Create("Plains"));
+                player.Deck.Add(CardFactory.Create("Angry Farmer"));
+                // etc.
+            }
+            /*test deck
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
                 humanPlayer.Deck.Add(CardFactory.Create("Forest"));
@@ -97,63 +112,7 @@ public class GameManager : MonoBehaviour
                 humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
                 humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));
                 humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));    
-                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));         
-
-            /*//test white deck
-                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-                humanPlayer.Deck.Add(CardFactory.Create("Plains"));
-                humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
-                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-                humanPlayer.Deck.Add(CardFactory.Create("Virgins Procession"));
-                humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
-                humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
-                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-                humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
-                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
-            
-            /*//test blue deck
-                humanPlayer.Deck.Add(CardFactory.Create("Island"));
-                humanPlayer.Deck.Add(CardFactory.Create("Island"));
-                humanPlayer.Deck.Add(CardFactory.Create("Island"));
-                humanPlayer.Deck.Add(CardFactory.Create("Island"));
-                humanPlayer.Deck.Add(CardFactory.Create("Island"));
-                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-                /*humanPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
-                humanPlayer.Deck.Add(CardFactory.Create("Gallant Lord"));
-                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-                humanPlayer.Deck.Add(CardFactory.Create("Realm Protector"));
-                humanPlayer.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));*/
-
-            /*//test black deck
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Famished Crow"));
-                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));*/
-
-            /*///test green deck
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Domestic Cat"));
-                humanPlayer.Deck.Add(CardFactory.Create("Possessed Innocent"));
-                humanPlayer.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-                humanPlayer.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-                humanPlayer.Deck.Add(CardFactory.Create("Waterbearer"));*/
+                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));*/
         }
 
     void ShuffleDeck(Player player)

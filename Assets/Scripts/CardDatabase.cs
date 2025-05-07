@@ -1450,4 +1450,9 @@ public static class CardDatabase
         Debug.LogError("Card not found in database: " + name);
         return null;
     }
+
+    public static IEnumerable<CardData> GetAllCards()
+    {
+        return cardsByName.Values;
+    }
 }

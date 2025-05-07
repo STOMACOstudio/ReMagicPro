@@ -9,7 +9,7 @@ public class StartJourney : MonoBehaviour
         string chosenColor = PlayerPrefs.GetString("PlayerColor", "");
         if (!string.IsNullOrEmpty(chosenColor))
         {
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("DeckBuilderScene");
         }
         else
         {
