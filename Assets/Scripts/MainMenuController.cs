@@ -7,7 +7,7 @@ public class MainMenuController : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("GameScene"); // Use your actual scene name here
+        SceneManager.LoadScene("ColorSelectScene"); // Use your actual scene name here
     }
 
     public void OpenOptions()
