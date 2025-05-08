@@ -4,8 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.EventSystems;
 
-public class CardVisual : MonoBehaviour
+public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Card linkedCard; // which card it represents
     public GameManager gameManager; // which manager it talks to
@@ -592,5 +593,18 @@ public class CardVisual : MonoBehaviour
                             return true;
                     }
                     return false;
+            }
+
+        public void OnPointerEnter(PointerEventData eventData)
+            {
+                if (linkedCard != null && linkedCard.artwork != null)
+                {
+                    CardHoverPreview.Instance.ShowCard(linkedCard);
+                }
+            }
+
+            public void OnPointerExit(PointerEventData eventData)
+            {
+                CardHoverPreview.Instance.HidePreview();
             } 
 }

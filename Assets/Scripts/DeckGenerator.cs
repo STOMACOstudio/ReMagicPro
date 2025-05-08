@@ -8,11 +8,15 @@ public class DeckGenerator : MonoBehaviour
 {
     public List<CardData> GeneratedDeck { get; private set; } = new List<CardData>();
 
+    [SerializeField] private Transform cardContainer;
+    [SerializeField] private GameObject cardVisualPrefab;
+
     void Start()
     {
         Generate();
         DeckHolder.SelectedDeck = GeneratedDeck;
-        SceneManager.LoadScene("GameScene");
+        ShowCardsInDeckBuilder();
+        //SceneManager.LoadScene("GameScene");
         // Uncomment this if you've added the UI later:
         // DisplayDeck();
     }
@@ -80,4 +84,24 @@ public class DeckGenerator : MonoBehaviour
             _ => "Plains"
         };
     }
+
+    public void ShowCardsInDeckBuilder()
+    {
+        foreach (Transform child in cardContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (var cardData in GeneratedDeck)
+        {
+            Card card = CardFactory.Create(cardData.cardName);
+            GameObject go = Instantiate(cardVisualPrefab, cardContainer);
+
+            go.transform.localScale = Vector3.one * 1.5f;
+
+            CardVisual visual = go.GetComponent<CardVisual>();
+            visual.Setup(card, null); // No GameManager needed here
+        }
+    }
+
 }
