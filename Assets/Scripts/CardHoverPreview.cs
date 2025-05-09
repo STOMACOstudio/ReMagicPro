@@ -31,7 +31,8 @@ public class CardHoverPreview : MonoBehaviour
         }
 
         var visual = currentPreview.GetComponent<CardVisual>();
-        visual.Setup(card, null);
+        CardData cardData = CardDatabase.GetCardData(card.cardName);
+        visual.Setup(card, null, cardData);
     }
 
     public void HidePreview()

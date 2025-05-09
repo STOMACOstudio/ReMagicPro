@@ -355,8 +355,9 @@ public class TurnSystem : MonoBehaviour
                                 {
                                     GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
                                     CardVisual visual = obj.GetComponent<CardVisual>();
-                                    visual.Setup(sorcery, GameManager.Instance);
-                                    GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                    CardData data = CardDatabase.GetCardData(sorcery.cardName);
+                                    visual.Setup(sorcery, GameManager.Instance, data);
 
                                     GameManager.Instance.PlayCard(ai, visual);
                                     Debug.Log($"AI cast sorcery: {sorcery.cardName}");

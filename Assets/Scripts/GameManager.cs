@@ -56,20 +56,46 @@ public class GameManager : MonoBehaviour
             BuildStartingDeck(humanPlayer);
 
             //BuildStartingDeck(aiPlayer);
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                aiPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Plains"));
+                aiPlayer.Deck.Add(CardFactory.Create("Obstacle"));
+                aiPlayer.Deck.Add(CardFactory.Create("Obstacle"));
+                aiPlayer.Deck.Add(CardFactory.Create("Obstacle"));
+                aiPlayer.Deck.Add(CardFactory.Create("Obstacle"));
+                aiPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Angry Farmer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Waterbearer"));
+                aiPlayer.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+                aiPlayer.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+                aiPlayer.Deck.Add(CardFactory.Create("Origin Golem"));
+                aiPlayer.Deck.Add(CardFactory.Create("Origin Golem"));
+                aiPlayer.Deck.Add(CardFactory.Create("Candlelight"));
+                aiPlayer.Deck.Add(CardFactory.Create("Candlelight"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+                aiPlayer.Deck.Add(CardFactory.Create("Mana Rock"));
+                aiPlayer.Deck.Add(CardFactory.Create("Mana Rock"));                
 
             ShuffleDeck(humanPlayer);
             ShuffleDeck(aiPlayer);
@@ -136,7 +162,10 @@ public class GameManager : MonoBehaviour
             {
                 GameObject obj = Instantiate(cardPrefab, playerHandArea);
                 CardVisual visual = obj.GetComponent<CardVisual>();
-                visual.Setup(card, this);
+
+                CardData sourceData = CardDatabase.GetCardData(card.cardName);
+                visual.Setup(card, this, sourceData);
+
                 activeCardVisuals.Add(visual);
             }
         }
@@ -275,28 +304,39 @@ public class GameManager : MonoBehaviour
 
             owner.Battlefield.Remove(card);
             Debug.Log($"{card.cardName} is being sent to the graveyard.");
-            card.isTapped = false;
 
             if (diedFromBattlefield)
-                {
-                    card.OnLeavePlay(owner);
-                }
-            
-            CardVisual visual = FindCardVisual(card);
+            {
+                card.OnLeavePlay(owner);
+            }
 
+            card.isTapped = false;
+            CardVisual visual = FindCardVisual(card);
+            
+            //Reset summoning sickness and toughness
+            if (card is CreatureCard deadCreature)
+            {
+                deadCreature.hasSummoningSickness = false;
+                deadCreature.toughness = deadCreature.baseToughness;
+
+                if (visual != null)
+                {
+                    visual.sicknessText.text = "";
+                }
+            }
+            
+            // Handle token destruction
             if (card is CreatureCard creature && card.isToken)
             {
-                // Remove from game completely
-                //var visual = FindCardVisual(card);
                 if (visual != null)
                 {
                     activeCardVisuals.Remove(visual);
                     Destroy(visual.gameObject);
                 }
-
                 return;
             }
 
+            // Visual fallback
             if (visual == null)
             {
                 GameObject visualGO = Instantiate(cardPrefab,
@@ -306,6 +346,7 @@ public class GameManager : MonoBehaviour
                 visual.isInBattlefield = false;
                 activeCardVisuals.Add(visual);
             }
+
             owner.Graveyard.Add(card);
 
             var graveyardVisual = FindCardVisual(card);

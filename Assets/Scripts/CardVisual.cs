@@ -14,6 +14,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public CreatureCard blockedByThisBlocker; // If attacker, who blocks me
     public LineRenderer lineRenderer;
     public Image artImage;
+    public Image backgroundImage;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -29,89 +30,128 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
 
     public void UpdateVisual()
+{
+    // Apply background color (if not already done in Setup)
+    if (backgroundImage != null)
+    {
+        CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+        if (data != null)
         {
-            if (linkedCard.isTapped)
+            string color = data.color;
+            Color bgColor = Color.white;
+
+            switch (color)
             {
-                transform.rotation = Quaternion.Euler(0, 0, -90);
-            }
-            else
-            {
-                transform.rotation = Quaternion.identity;
-            }
-
-            if (!isInBattlefield)
-            {
-                lineRenderer.enabled = false;
-                return; // don't do line logic at all if dead
-            }
-
-            if (linkedCard is CreatureCard creature)
-            {
-                // Show summoning sickness if creature is on the battlefield
-                if (isInBattlefield && creature.hasSummoningSickness)
-                {
-                    sicknessText.text = "(@)";
-                }
-                else
-                {
-                    sicknessText.text = "";
-                }
-
-                statsText.text = $"{creature.power}/{creature.toughness}";
-
-                List<string> keywords = new List<string>();
-
-                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                    keywords.Add("Haste");
-                if (creature.keywordAbilities.Contains(KeywordAbility.Defender))
-                    keywords.Add("Defender");
-                if (creature.keywordAbilities.Contains(KeywordAbility.CantBlock))
-                    keywords.Add("This creature can't block.");
-                if (creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                    keywords.Add("Vigilance.");
-                if (creature.keywordAbilities.Contains(KeywordAbility.Flying))
-                    keywords.Add("Flying.");
-                if (creature.entersTapped)
-                    keywords.Add("This creature enters the battlefield tapped.");
-
-                // Show keyword + triggered ability text together
-                keywordText.text = linkedCard.GetCardText();
-            }
-            else
-            {
-                sicknessText.text = "";
-                statsText.text = "";
-                keywordText.text = linkedCard.GetCardText();
+                case "White": bgColor = HexToColor("F8F6D8"); break;
+                case "Blue":  bgColor = HexToColor("C1D7E9"); break;
+                case "Black": bgColor = HexToColor("BAB1AB"); break;
+                case "Red":   bgColor = HexToColor("E49977"); break;
+                case "Green": bgColor = HexToColor("A3C095"); break;
+                case "Artifact": bgColor = HexToColor("4B413F"); break;
+                case "None":
+                    if (data.cardType == CardType.Artifact)
+                        bgColor = HexToColor("4B413F");
+                    break;
             }
 
-            if (linkedCard is CreatureCard c && isInBattlefield)
+            if (data.cardType == CardType.Land)
             {
-                if (c.blockingThisAttacker != null)
-                {
-                    lineRenderer.enabled = true;
-                    lineRenderer.SetPosition(0, transform.position);
-                    var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
-                    if (attackerVisual != null)
-                        lineRenderer.SetPosition(1, attackerVisual.transform.position);
-                }
-                else
-                {
-                    lineRenderer.enabled = false;
-                }
+                string name = data.cardName.ToLower();
+                if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
+                if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
+                if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
+                if (name.Contains("mountain")) bgColor = HexToColor("E49977");
+                if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
             }
-            else
-            {
-                lineRenderer.enabled = false;
-            }
+
+            backgroundImage.color = bgColor;
         }
+    }
 
-    public void Setup(Card card, GameManager manager)
+    // Tapped rotation
+    transform.rotation = linkedCard.isTapped
+        ? Quaternion.Euler(0, 0, -90)
+        : Quaternion.identity;
+
+    // Disable line if not in battlefield
+    if (!isInBattlefield)
+    {
+        lineRenderer.enabled = false;
+        return;
+    }
+
+    if (linkedCard is CreatureCard creature)
+    {
+        sicknessText.text = (isInBattlefield && creature.hasSummoningSickness) ? "(@)" : "";
+        statsText.text = $"{creature.power}/{creature.toughness}";
+        keywordText.text = linkedCard.GetCardText();
+    }
+    else
+    {
+        sicknessText.text = "";
+        statsText.text = "";
+        keywordText.text = linkedCard.GetCardText();
+    }
+
+    if (linkedCard is CreatureCard c && isInBattlefield)
+    {
+        if (c.blockingThisAttacker != null)
+        {
+            lineRenderer.enabled = true;
+            lineRenderer.SetPosition(0, transform.position);
+            var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
+            if (attackerVisual != null)
+                lineRenderer.SetPosition(1, attackerVisual.transform.position);
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+        }
+    }
+    else
+    {
+        lineRenderer.enabled = false;
+    }
+}
+
+    public void Setup(Card card, GameManager manager, CardData sourceData = null)
         {
             linkedCard = card;
             gameManager = manager;
             titleText.text = card.cardName;
             lineRenderer = GetComponent<LineRenderer>();
             artImage.sprite = linkedCard.artwork;
+
+            Color bgColor = Color.black;
+            string color = sourceData != null ? sourceData.color : card.color;
+
+            switch (color)
+            {
+                case "White": bgColor = HexToColor("F8F6D8"); break;
+                case "Blue":  bgColor = HexToColor("C1D7E9"); break;
+                case "Black": bgColor = HexToColor("BAB1AB"); break;
+                case "Red":   bgColor = HexToColor("E49977"); break;
+                case "Green": bgColor = HexToColor("A3C095"); break;
+                case "Artifact": bgColor = HexToColor("4B413F"); break;
+                case "None":
+                    if (sourceData != null && sourceData.cardType == CardType.Artifact)
+                        bgColor = HexToColor("4B413F");
+                    break;
+            }
+            if (sourceData != null && sourceData.cardType == CardType.Land)
+            {
+                string name = sourceData.cardName.ToLower();
+                if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
+                if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
+                if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
+                if (name.Contains("mountain")) bgColor = HexToColor("E49977");
+                if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
+            }
+
+            if (backgroundImage != null)
+            {
+                backgroundImage.color = bgColor;
+            }
 
             sicknessText.text = ""; // Clear at start
 
@@ -178,6 +218,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsText.text = "";
                 keywordText.text = "";
             }
+        }
+
+    private Color HexToColor(string hex)
+        {
+            Color color;
+            ColorUtility.TryParseHtmlString("#" + hex, out color);
+            return color;
         }
 
     public void OnClick()

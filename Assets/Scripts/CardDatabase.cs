@@ -953,7 +953,7 @@ public static class CardDatabase
                     power = 7,
                     toughness = 7,
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/realm_crasher")
+                    artwork = Resources.Load<Sprite>("Art/realms_crasher")
                     });
                 Add(new CardData //Drumming elf
                     {
@@ -1120,7 +1120,7 @@ public static class CardDatabase
                     cardName = "Sphynx Lynx",
                     rarity = "Common",
                     manaCost = 6,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -1137,7 +1137,7 @@ public static class CardDatabase
                     cardName = "Origin Golem",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -1150,7 +1150,7 @@ public static class CardDatabase
                     cardName = "Omega Golemoid",
                     rarity = "Uncommon",
                     manaCost = 7,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 5,
@@ -1163,7 +1163,7 @@ public static class CardDatabase
                     cardName = "Glassmole",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
@@ -1176,7 +1176,7 @@ public static class CardDatabase
                     cardName = "Obstacle",
                     rarity = "Common",
                     manaCost = 0,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 1,
@@ -1191,7 +1191,7 @@ public static class CardDatabase
                     cardName = "Autonomous Miner",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "None",
+                    color = "Artifact",
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -1207,7 +1207,7 @@ public static class CardDatabase
                     cardName = "Miner",
                     rarity = "Token",
                     manaCost = 0,
-                    color = "None",
+                    color = "Artifact",
                     isToken = true,
                     entersTapped = true,
                     cardType = CardType.Creature,
@@ -1411,16 +1411,19 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/mana_rock")
                     });
 
-                Add(new CardData
+                Add(new CardData //Crystallium
                     {
                         cardName = "Crystallium",
+                        rarity = "Common",
                         manaCost = 1,
+                        color = "None",
                         cardType = CardType.Artifact,
                         activatedAbilities = new List<ActivatedAbility> {
                             ActivatedAbility.TapAndSacrificeForMana
                         },
                         artwork = Resources.Load<Sprite>("Art/crystallium")
                     });
+                    
                 Add(new CardData //Bonfire
                     {
                         cardName = "Bonfire",

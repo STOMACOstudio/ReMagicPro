@@ -13,9 +13,12 @@ public class DeckGenerator : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("START DeckGenerator");
         Generate();
+        Debug.Log("DECK GENERATED");
         DeckHolder.SelectedDeck = GeneratedDeck;
         ShowCardsInDeckBuilder();
+        Debug.Log("CARDS SHOWN");
         //SceneManager.LoadScene("GameScene");
         // Uncomment this if you've added the UI later:
         // DisplayDeck();
@@ -56,19 +59,42 @@ public class DeckGenerator : MonoBehaviour
 
         System.Random rng = new System.Random();
 
-        while (count > 0 && pool.Count > 0)
+        int attempts = 0;
+        int maxAttempts = 500;
+
+        while (count > 0 && attempts < maxAttempts)
         {
+            if (pool.Count == 0) break;
+
             CardData candidate = pool[rng.Next(pool.Count)];
 
             // Slightly reduce artifact chance
-            if (candidate.color == "None" && rng.NextDouble() < 0.4) continue;
+            if (candidate.color == "None" && rng.NextDouble() < 0.4)
+            {
+                attempts++;
+                continue;
+            }
 
             if (!copies.ContainsKey(candidate.cardName)) copies[candidate.cardName] = 0;
-            if (copies[candidate.cardName] >= 4) continue;
+            if (copies[candidate.cardName] >= 4)
+            {
+                pool.Remove(candidate); // avoid retrying same maxed-out card
+                attempts++;
+                continue;
+            }
 
             GeneratedDeck.Add(candidate);
             copies[candidate.cardName]++;
             count--;
+            attempts++;
+        }
+
+        // If not enough cards were added, fill with Island
+        if (count > 0)
+        {
+            Debug.LogWarning($"[DeckGenerator] Not enough cards of {rarity} for {color}, adding {count} Islands instead.");
+            var island = CardDatabase.GetCardData("Island");
+            for (int i = 0; i < count; i++) GeneratedDeck.Add(island);
         }
     }
 
@@ -100,7 +126,8 @@ public class DeckGenerator : MonoBehaviour
             go.transform.localScale = Vector3.one * 1.5f;
 
             CardVisual visual = go.GetComponent<CardVisual>();
-            visual.Setup(card, null); // No GameManager needed here
+            CardData sourceData = CardDatabase.GetCardData(card.cardName); // ✅ renamed here
+            visual.Setup(card, null, sourceData);
         }
     }
 
