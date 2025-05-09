@@ -26,5 +26,7 @@ public class MapZoneManager : MonoBehaviour
         {
             zone.AssignSprite();
         }
+
+        mapZones[0].TryUnlock(); // Start with Shack unlocked
     }
 }
