@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DeckBuilderScene.unity
     guid: 0a73760516481f54180740cdfcc82326
+  - enabled: 1
+    path: Assets/Scenes/MapScene.unity
+    guid: 661981b295acc14408f895ba2e8e4249
   m_configObjects: {}
