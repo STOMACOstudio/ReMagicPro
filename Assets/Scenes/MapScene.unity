@@ -971,7 +971,6 @@ MonoBehaviour:
   - {fileID: 1785773218}
   - {fileID: 1588966646}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &851738649
@@ -1127,7 +1126,6 @@ MonoBehaviour:
   - {fileID: 1822522853}
   nextZones: []
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &887651986
@@ -1534,7 +1532,6 @@ MonoBehaviour:
   nextZones:
   - {fileID: 1822522853}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1068445899
@@ -2253,7 +2250,6 @@ MonoBehaviour:
   - {fileID: 1888837760}
   - {fileID: 1785773218}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1438480582
@@ -2550,7 +2546,6 @@ MonoBehaviour:
   nextZones:
   - {fileID: 1822522853}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1565006314
@@ -2847,7 +2842,6 @@ MonoBehaviour:
   nextZones:
   - {fileID: 957123369}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1628860130
@@ -3355,7 +3349,6 @@ MonoBehaviour:
   - {fileID: 1546152437}
   - {fileID: 957123369}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1822522848
@@ -3518,7 +3511,6 @@ MonoBehaviour:
   nextZones:
   - {fileID: 851738654}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1831833883
@@ -3756,7 +3748,6 @@ MonoBehaviour:
   nextZones:
   - {fileID: 1546152437}
   isUnlocked: 0
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &1965419740
@@ -4057,7 +4048,6 @@ MonoBehaviour:
   - {fileID: 1262006612}
   - {fileID: 827128025}
   isUnlocked: 1
-  battleSceneName: GameScene
   linePrefab: {fileID: 7022542794840478277, guid: c4b1ca7be14dd574796b20f0e26b997a, type: 3}
   lineContainer: {fileID: 930648227}
 --- !u!1 &2044902165

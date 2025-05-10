@@ -7,6 +7,6 @@ public class StartGameButton : MonoBehaviour
 {
     public void GoToGameScene()
     {
-        SceneManager.LoadScene("MapScene"); // Replace with your actual scene name
+        SceneManager.LoadScene("GameScene"); // Replace with your actual scene name
     }
 }

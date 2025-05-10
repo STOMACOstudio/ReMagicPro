@@ -34,10 +34,6 @@ public class MapZone : MonoBehaviour
     public List<MapZone> nextZones;
     public bool isUnlocked = false;
 
-    [Header("Battle")]
-    //public string aiDeckName;
-    public string battleSceneName = "GameScene"; // default scene name
-
     private bool isCompleted = false;
     private Button button;
     private Sprite assignedSprite = null;
@@ -128,16 +124,6 @@ public class MapZone : MonoBehaviour
     {
         if (!isUnlocked || isCompleted) return;
 
-        // Set static reference so GameManager can know what deck to use
-        BattleData.SelectedMapZone = this;
-
-        UnityEngine.SceneManagement.SceneManager.LoadScene(battleSceneName);
-    }
-
-    /*public void OnClick()
-    {
-        if (!isUnlocked || isCompleted) return;
-
         Debug.Log($"{gameObject.name} clicked → marked as completed");
         isCompleted = true;
 
@@ -184,7 +170,7 @@ public class MapZone : MonoBehaviour
                 zone.AssignSprite(); // refresh visuals to re-gray it out
             }
         }
-    }*/
+    }
 
     public void TryUnlock()
     {
