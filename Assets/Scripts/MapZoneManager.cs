@@ -1,7 +1,7 @@
 using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class MapZoneManager : MonoBehaviour
 {
@@ -21,12 +21,18 @@ public class MapZoneManager : MonoBehaviour
         for (int i = 6; i <= 8; i++) mapZones[i].zoneType = MapZone.ZoneType.Advanced;
         mapZones[9].zoneType = MapZone.ZoneType.Boss;
 
-        // Let each MapZone assign its sprite now
+        // Assign sprites and button logic
         foreach (var zone in mapZones)
         {
             zone.AssignSprite();
         }
 
         mapZones[0].TryUnlock(); // Start with Shack unlocked
+
+        if (BattleData.ZoneJustCompleted && BattleData.CurrentZone != null)
+        {
+            BattleData.CurrentZone.CompleteZone();
+            BattleData.ZoneJustCompleted = false;
+        }
     }
 }

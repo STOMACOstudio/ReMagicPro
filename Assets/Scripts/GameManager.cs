@@ -506,10 +506,18 @@ public class GameManager : MonoBehaviour
 
             sorcery.ResolveEffect(caster);
             SendToGraveyard(sorcery, caster);
-            UpdateUI();
 
+            // Remove old stack visual if it wasn't reused
+            if (caster == aiPlayer && visual != null)
+            {
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+            }
+
+            UpdateUI();
             isStackBusy = false; // UNBLOCK ON RESOLVE
         }
+
     public void SummonToken(Card tokenCard, Player owner)
         {
             if (tokenCard == null)

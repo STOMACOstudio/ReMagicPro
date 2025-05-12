@@ -21,6 +21,9 @@ public class MapZone : MonoBehaviour
     public Sprite[] beginnerSprites;
     public Sprite[] advancedSprites;
 
+    [Header("Enemy Settings")]
+    public Sprite enemyPortrait;
+
     [Header("Color Icons")]
     public Sprite redIcon;
     public Sprite blueIcon;
@@ -34,95 +37,107 @@ public class MapZone : MonoBehaviour
     public List<MapZone> nextZones;
     public bool isUnlocked = false;
 
-    private bool isCompleted = false;
+    [TextArea(2, 3)]
+    public string enemyDescription;
+
+    public bool isCompleted = false;
     private Button button;
     private Sprite assignedSprite = null;
 
     public GameObject linePrefab;      // Drag the line prefab here
     public Transform lineContainer;    // Drag an empty "Lines" object here for organization
 
+    private string baseSpriteNameForPortrait = "";
+
     private static List<MapZone> allZones = new List<MapZone>();
 
     public void AssignSprite()
-    {
-        if (!allZones.Contains(this))
-        allZones.Add(this);
-
-        if (image == null) return;
-
-        // Get button component once
-        if (button == null)
-            button = GetComponent<Button>();
-
-        // Hook up click only once
-        if (button != null && button.onClick.GetPersistentEventCount() == 0)
-            button.onClick.AddListener(OnClick);
-
-        // Pick the sprite only once
-        if (assignedSprite == null)
         {
-            switch (zoneType)
+            if (!allZones.Contains(this))
+                allZones.Add(this);
+
+            if (image == null) return;
+
+            if (button == null)
+                button = GetComponent<Button>();
+
+            if (button != null && button.onClick.GetPersistentEventCount() == 0)
+                button.onClick.AddListener(OnClick);
+
+            // Pick the sprite only once
+            if (assignedSprite == null)
             {
-                case ZoneType.Shack:
-                    assignedSprite = shackSprite;
-                    break;
-                case ZoneType.Boss:
-                    assignedSprite = bossSprite;
-                    break;
-                case ZoneType.Beginner:
-                    if (beginnerSprites.Length > 0)
-                        assignedSprite = beginnerSprites[Random.Range(0, beginnerSprites.Length)];
-                    break;
-                case ZoneType.Advanced:
-                    if (advancedSprites.Length > 0)
-                        assignedSprite = advancedSprites[Random.Range(0, advancedSprites.Length)];
-                    break;
-            }
-        }
+                Sprite chosen = null;
 
-        if (assignedSprite != null)
-        {
-            image.sprite = assignedSprite;
-
-            if (areaLabel != null)
-            {
-                string[] parts = assignedSprite.name.Split('_');
-                areaLabel.text = parts[0].Replace("_", " ");
-            }
-
-            if (colorIcon != null)
-            {
-                // Show icon only if zone is unlocked
-                colorIcon.gameObject.SetActive(isUnlocked);
-
-                if (isUnlocked)
+                switch (zoneType)
                 {
-                    string lowerName = assignedSprite.name.ToLower();
+                    case ZoneType.Shack:
+                        chosen = shackSprite;
+                        break;
+                    case ZoneType.Boss:
+                        chosen = bossSprite;
+                        break;
+                    case ZoneType.Beginner:
+                        if (beginnerSprites.Length > 0)
+                            chosen = beginnerSprites[Random.Range(0, beginnerSprites.Length)];
+                        break;
+                    case ZoneType.Advanced:
+                        if (advancedSprites.Length > 0)
+                            chosen = advancedSprites[Random.Range(0, advancedSprites.Length)];
+                        break;
+                }
 
-                    if (lowerName.Contains("red")) colorIcon.sprite = redIcon;
-                    else if (lowerName.Contains("blue")) colorIcon.sprite = blueIcon;
-                    else if (lowerName.Contains("black")) colorIcon.sprite = blackIcon;
-                    else if (lowerName.Contains("green")) colorIcon.sprite = greenIcon;
-                    else if (lowerName.Contains("white")) colorIcon.sprite = whiteIcon;
-                    else if (lowerName.Contains("artifact")) colorIcon.sprite = artifactIcon;
+                if (chosen != null)
+                {
+                    assignedSprite = chosen;
+                    baseSpriteNameForPortrait = chosen.name;
+
+                    enemyPortrait = GetPortraitForFoe(baseSpriteNameForPortrait);
+                    enemyDescription = GetDescriptionForFoe(baseSpriteNameForPortrait);
                 }
             }
 
+            if (assignedSprite != null)
+            {
+                image.sprite = assignedSprite;
+
+                if (areaLabel != null)
+                {
+                    string[] parts = assignedSprite.name.Split('_');
+                    areaLabel.text = parts[0].Replace("_", " ");
+                }
+
+                if (colorIcon != null)
+                {
+                    colorIcon.gameObject.SetActive(isUnlocked);
+
+                    if (isUnlocked)
+                    {
+                        string lowerName = assignedSprite.name.ToLower();
+
+                        if (lowerName.Contains("red")) colorIcon.sprite = redIcon;
+                        else if (lowerName.Contains("blue")) colorIcon.sprite = blueIcon;
+                        else if (lowerName.Contains("black")) colorIcon.sprite = blackIcon;
+                        else if (lowerName.Contains("green")) colorIcon.sprite = greenIcon;
+                        else if (lowerName.Contains("white")) colorIcon.sprite = whiteIcon;
+                        else if (lowerName.Contains("artifact")) colorIcon.sprite = artifactIcon;
+                    }
+                }
+            }
+
+            if (button != null)
+            {
+                button.interactable = isUnlocked;
+                Color visual = isUnlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
+                image.color = visual;
+                if (colorIcon != null) colorIcon.color = visual;
+            }
         }
 
-        // Visuals: locked or unlocked
-        if (button != null)
-        {
-            button.interactable = isUnlocked;
-            Color visual = isUnlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
-            image.color = visual;
-            if (colorIcon != null) colorIcon.color = visual;
-        }
-    }
-
-    public void OnClick()
+    /*public void OnClick()
     {
         if (!isUnlocked || isCompleted) return;
+        MapZoneUIManager.Instance.ShowZoneDetails(this);
 
         Debug.Log($"{gameObject.name} clicked → marked as completed");
         isCompleted = true;
@@ -170,26 +185,136 @@ public class MapZone : MonoBehaviour
                 zone.AssignSprite(); // refresh visuals to re-gray it out
             }
         }
-    }
+    }*/
 
-    public void TryUnlock()
-    {
-        if (isUnlocked) return;
-
-        // Check if ANY prerequisite is completed
-        bool anyComplete = false;
-        foreach (var prereq in prerequisites)
+    public void OnClick()
         {
-            if (prereq.isCompleted)
+            if (!isUnlocked || isCompleted) return;
+
+            // JUST show UI now
+            MapZoneUIManager.Instance.ShowZoneDetails(this);
+        }
+    
+    public void CompleteZone()
+        {
+            if (isCompleted) return;
+
+            Debug.Log($"{gameObject.name} completed");
+            isCompleted = true;
+
+            if (button != null)
+                button.interactable = false;
+
+            foreach (var zone in nextZones)
             {
-                anyComplete = true;
-                break;
+                zone.TryUnlock();
+
+                // UI Line: draw from this to next
+                if (linePrefab != null && lineContainer != null)
+                {
+                    GameObject lineObj = Instantiate(linePrefab, lineContainer);
+                    RectTransform line = lineObj.GetComponent<RectTransform>();
+
+                    Vector3 startWorld = transform.position;
+                    Vector3 endWorld = zone.transform.position;
+
+                    Vector2 start = lineContainer.InverseTransformPoint(startWorld);
+                    Vector2 end = lineContainer.InverseTransformPoint(endWorld);
+
+                    Vector2 direction = end - start;
+                    float distance = direction.magnitude;
+
+                    line.anchoredPosition = start;
+                    line.sizeDelta = new Vector2(distance, line.sizeDelta.y);
+                    line.pivot = new Vector2(0, 0.5f);
+                    line.rotation = Quaternion.FromToRotation(Vector3.right, direction);
+                }
+            }
+
+            // Disable all other unlocked-but-uncompleted zones not in nextZones
+            foreach (var zone in allZones)
+            {
+                if (zone != this && !zone.isCompleted && zone.isUnlocked && !nextZones.Contains(zone))
+                {
+                    zone.isUnlocked = false;
+                    if (zone.button != null)
+                        zone.button.interactable = false;
+                    zone.AssignSprite();
+                }
             }
         }
 
-        if (!anyComplete) return; // none completed → stay locked
+    public void TryUnlock()
+        {
+            if (isUnlocked) return;
 
-        isUnlocked = true;
-        AssignSprite();
-    }
+            // Check if ANY prerequisite is completed
+            bool anyComplete = false;
+            foreach (var prereq in prerequisites)
+            {
+                if (prereq.isCompleted)
+                {
+                    anyComplete = true;
+                    break;
+                }
+            }
+
+            if (!anyComplete) return; // none completed → stay locked
+
+            isUnlocked = true;
+            AssignSprite();
+        }
+
+        private Sprite GetPortraitForFoe(string spriteName)
+            {
+                spriteName = spriteName.ToLower();
+
+                string[] parts = spriteName.Split('_');
+                if (parts.Length < 1)
+                    return null;
+
+                string location = parts[0]; // e.g., "shack", "village", "nest", etc.
+
+                // Load portrait based only on location name
+                return Resources.Load<Sprite>($"Portraits/{location}_Portrait");
+            }
+
+        private string GetDescriptionForFoe(string spriteName)
+        {
+            spriteName = spriteName.ToLower();
+
+            if (spriteName == "shack")
+                return "Your mother awaits... with judgment.";
+
+            string[] parts = spriteName.Split('_');
+            if (parts.Length < 1) return "Something strange is here.";
+
+            string location = parts[0];
+
+            return location switch
+            {
+                // starting location
+                "shack" => "All young wizards must leave home to prove their valor. Before departing on your pilgrimage, your mother wants to test your strength.",
+
+                // beginner
+                "village" => "You approach a small village. Unfortunately, intruders like you aren't welcome here—they seem afraid of you.",
+                "shore" => "You find a secret shore. It seems calm, and you take a nap. When you wake up, the sea creatures have risen... drawn by something they recognize.",
+                "graveyard" => "The calm of the graveyard seems like a good path to take, but slowly the dead rise from their tombs and encircle you, stirred by a presence they somehow know.",
+                "camp" => "The remains of a campfire: someone left not long ago. The goblins are just around the corner, and their beasts seem uneasy, as if reacting to something...",
+                "thicket" => "Intrigued by the woods, you step inside a thicket. Some curious monkeys approach you, sniff you—and suddenly become violent!",
+                "ruins" => "Silent ruins that seem very old. The ancient machines are rusty and stiff, but as you pass by, they slowly reboot.",
+
+                // advanced
+                "church" => "A solitary church in the middle of a field. As you approach, the protectors leap without warning—no words, only fear and anger in their eyes.",
+                "tower" => "A fellow wizard invites you into his tower for tea... but grows pale as you draw near. Then he attacks, as though compelled to strike first.",
+                "hut" => "Unfortunately, you stumble into the hideout of some hideous witches, starving for raw human flesh.",
+                "nest" => "You spot a huge egg. Starving, you hope to cook it—but the mother is coming, and you're now on the menu.",
+                "woods" => "You wander the forest for hours before finding a clearing, made by wild beasts fighting. The scent you carry seems to disturb the natural order.",
+
+                // boss
+                "castle" => "Your beloved mother reveals herself to be a Lich Queen. She devours her children—if they survive the pilgrimage—to renew her powers.",
+
+                _ => "An unknown threat lies ahead."
+            };
+        }
 }
