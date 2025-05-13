@@ -5,7 +5,14 @@ using UnityEngine;
 
 public class MapZoneManager : MonoBehaviour
 {
+    public static MapZoneManager Instance;
     public List<MapZone> mapZones;
+    public List<int> spriteIndices = new List<int>();
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -15,24 +22,89 @@ public class MapZoneManager : MonoBehaviour
             return;
         }
 
-        // Assign types based on fixed layout
+        // STEP 1: Set zone types (important before AssignSprite)
         mapZones[0].zoneType = MapZone.ZoneType.Shack;
         for (int i = 1; i <= 5; i++) mapZones[i].zoneType = MapZone.ZoneType.Beginner;
         for (int i = 6; i <= 8; i++) mapZones[i].zoneType = MapZone.ZoneType.Advanced;
         mapZones[9].zoneType = MapZone.ZoneType.Boss;
 
-        // Assign sprites and button logic
+        // STEP 2: Generate or load sprite layout
+        string spriteIndexCSV = PlayerPrefs.GetString("MapSpriteIndices", null);
+        if (string.IsNullOrEmpty(spriteIndexCSV))
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (var zone in mapZones)
+            {
+                int index = 0;
+                if (zone.zoneType == MapZone.ZoneType.Beginner && zone.beginnerSprites.Length > 0)
+                    index = Random.Range(0, zone.beginnerSprites.Length);
+                else if (zone.zoneType == MapZone.ZoneType.Advanced && zone.advancedSprites.Length > 0)
+                    index = Random.Range(0, zone.advancedSprites.Length);
+
+                spriteIndices.Add(index);
+                sb.Append(index).Append(",");
+            }
+            PlayerPrefs.SetString("MapSpriteIndices", sb.ToString().TrimEnd(','));
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            string[] tokens = spriteIndexCSV.Split(',');
+            foreach (string token in tokens)
+            {
+                if (int.TryParse(token, out int idx))
+                    spriteIndices.Add(idx);
+                else
+                    spriteIndices.Add(0);
+            }
+        }
+
+        // STEP 3: Assign sprites based on saved layout
         foreach (var zone in mapZones)
         {
             zone.AssignSprite();
         }
 
-        mapZones[0].TryUnlock(); // Start with Shack unlocked
+        // STEP 4: Load saved completed zones
+        string completedZonesCSV = PlayerPrefs.GetString("CompletedZones", "");
+        HashSet<string> completedZoneIds = new HashSet<string>(completedZonesCSV.Split(','));
 
-        if (BattleData.ZoneJustCompleted && BattleData.CurrentZone != null)
+        string lastZoneName = PlayerPrefs.GetString("LastCompletedZone", null);
+
+        // Complete previously completed zones, excluding the one just completed now
+        foreach (var zone in mapZones)
         {
-            BattleData.CurrentZone.CompleteZone();
-            BattleData.ZoneJustCompleted = false;
+            if (completedZoneIds.Contains(zone.zoneId) && zone.zoneId != lastZoneName)
+            {
+                zone.CompleteZone();
+            }
         }
+
+        // Complete the most recent zone
+        if (!string.IsNullOrEmpty(lastZoneName))
+        {
+            MapZone completedZone = mapZones.Find(z => z.zoneId == lastZoneName);
+            if (completedZone != null)
+            {
+                completedZone.CompleteZone();
+
+                completedZoneIds.Add(lastZoneName);
+                string newCSV = string.Join(",", completedZoneIds);
+                PlayerPrefs.SetString("CompletedZones", newCSV);
+                PlayerPrefs.DeleteKey("LastCompletedZone");
+                PlayerPrefs.Save();
+            }
+        }
+
+        // STEP 5: Ensure Shack is always unlocked
+        mapZones[0].TryUnlock();
+    }
+
+    public int GetSpriteIndexForZone(MapZone zone)
+    {
+        int index = mapZones.IndexOf(zone);
+        if (index >= 0 && index < spriteIndices.Count)
+            return spriteIndices[index];
+        return 0;
     }
 }

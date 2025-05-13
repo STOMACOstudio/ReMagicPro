@@ -14,8 +14,8 @@ public enum KeywordAbility
     Islandwalk,
     Swampwalk,
     Mountainwalk,
-    Forestwalk
-    // Add more like Flying, FirstStrike later
+    Forestwalk,
+    Trample,
 }
 
 public enum ActivatedAbility
@@ -30,5 +30,4 @@ public enum ActivatedAbility
     SacrificeToDrawCards,
     TapToCreateToken,
     PayToGainAbility,
-    // etc.
 }

@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+    void Start()
+    {
+        ClearAllSaves();
+    }
+
     public void PlayGame()
     {
         SceneManager.LoadScene("ColorSelectScene"); // Use your actual scene name here
@@ -18,5 +23,12 @@ public class MainMenuController : MonoBehaviour
     public void OpenCredits()
     {
         Debug.Log("Credits clicked");
+    }
+
+    void ClearAllSaves()
+    {
+        Debug.LogWarning("[DEV] Clearing all PlayerPrefs!");
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
     }
 }

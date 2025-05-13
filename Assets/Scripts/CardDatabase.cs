@@ -931,7 +931,7 @@ public static class CardDatabase
                         ActivatedAbility.TapForMana
                     }
                     });
-                Add(new CardData //Cactusaurus TO DO TRAMPLE
+                Add(new CardData //Cactusaurus
                     {
                     cardName = "Cactusaurus",
                     rarity = "Common",
@@ -940,10 +940,12 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
-                    keywordAbilities = new List<KeywordAbility> { },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Trample
+                    },
                     artwork = Resources.Load<Sprite>("Art/cactusaurus")
                     });
-                Add(new CardData //Realms crasher TO DO TRAMPLE
+                Add(new CardData //Realms crasher
                     {
                     cardName = "Realms Crasher",
                     rarity = "Uncommon",
@@ -952,7 +954,9 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 7,
-                    keywordAbilities = new List<KeywordAbility> { },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Trample
+                    },
                     artwork = Resources.Load<Sprite>("Art/realms_crasher")
                     });
                 Add(new CardData //Drumming elf

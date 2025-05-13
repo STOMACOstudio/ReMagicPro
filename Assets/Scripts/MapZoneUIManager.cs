@@ -38,7 +38,7 @@ public class MapZoneUIManager : MonoBehaviour
             engageButton.interactable = zone.isUnlocked && !zone.isCompleted;
         }
 
-    public void OnEngageClicked()
+    /*public void OnEngageClicked()
         {
             if (selectedZone == null || !selectedZone.isUnlocked) return;
 
@@ -47,13 +47,17 @@ public class MapZoneUIManager : MonoBehaviour
             panel.SetActive(false);
 
             Debug.Log($"[TEST] Simulated win for zone: {selectedZone.name}");
-        }
+        }*/
 
-    /*public void OnEngageClicked()
+    public void OnEngageClicked()
         {
             if (selectedZone == null || !selectedZone.isUnlocked) return;
 
-            BattleData.CurrentZone = selectedZone;
-            SceneManager.LoadScene("GameScene"); // Replace with your actual game scene
-        }*/
+            Debug.Log("Engaging zone: " + selectedZone.zoneId);
+            //BattleData.CurrentZone = selectedZone;
+            BattleData.CurrentZoneId = selectedZone.zoneId;
+            BattleData.CurrentDeckKey = selectedZone.deckKey;
+
+            SceneManager.LoadScene("GameScene");
+        }
 }
