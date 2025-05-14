@@ -17,6 +17,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Image artImage;
     public Image backgroundImage;
     
+    public GameObject costBackground;
+    public GameObject statsBackground;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -32,31 +34,31 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             GetComponent<Button>().onClick.AddListener(OnClick);
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
-            {
-                if (isInGraveyard || linkedCard == null || linkedCard.artwork == null)
-                    return;
+    public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (isInGraveyard || linkedCard == null || linkedCard.artwork == null)
+                return;
 
-                CardHoverPreview.Instance.ShowCard(linkedCard);
+            CardHoverPreview.Instance.ShowCard(linkedCard);
 
-                if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
-                    return;
+            if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+                return;
 
-                transform.localScale = Vector3.one * 1.1f;
-            }
+            transform.localScale = Vector3.one * 1.1f;
+        }
 
-        public void OnPointerExit(PointerEventData eventData)
-            {
-                if (isInGraveyard)
-                    return;
+    public void OnPointerExit(PointerEventData eventData)
+        {
+            if (isInGraveyard)
+                return;
 
-                CardHoverPreview.Instance.HidePreview();
+            CardHoverPreview.Instance.HidePreview();
 
-                if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
-                    return;
+            if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+                return;
 
-                transform.localScale = Vector3.one;
-            }
+            transform.localScale = Vector3.one;
+        }
 
     public void UpdateVisual()
         {
@@ -109,19 +111,84 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            // Reset default display
+            costText.text = "";
+            statsText.text = "";
+            keywordText.text = "";
+            sicknessText.text = "";
+
             if (linkedCard is CreatureCard creature)
             {
-                sicknessText.text = (isInBattlefield && creature.hasSummoningSickness) ? "(@)" : "";
+                costText.text = creature.manaCost.ToString();
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
+                sicknessText.text = creature.hasSummoningSickness ? "(@)" : "";
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(true);
+            }
+            else if (linkedCard is SorceryCard sorcery)
+            {
+                costText.text = sorcery.manaCost.ToString();
+
+                string rules = "";
+                if (sorcery.lifeToGain > 0)
+                    rules += $"Gain {sorcery.lifeToGain} life.\n";
+                if (sorcery.lifeToLoseForOpponent > 0)
+                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
+                if (sorcery.lifeLossForBothPlayers > 0)
+                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
+                if (sorcery.cardsToDraw > 0)
+                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
+                if (sorcery.cardsToDiscardorDraw > 0)
+                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
+                if (sorcery.eachPlayerGainLifeEqualToLands)
+                    rules += $"Each player gains life equal to the number of lands they control.\n";
+                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
+                {
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
+                        ? "lands" : "creatures";
+                    rules += $"Destroy all {typeStr}.\n";
+                }
+                if (sorcery.exileAllCreaturesFromGraveyards)
+                    rules += "Exile all creature cards from all graveyards.\n";
+                if (sorcery.damageToEachCreatureAndPlayer > 0)
+                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
+
+                keywordText.text = rules.Trim();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is ArtifactCard artifact)
+            {
+                costText.text = artifact.manaCost.ToString();
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is LandCard)
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
             }
             else
             {
-                sicknessText.text = "";
+                // Fallback
+                costText.text = "";
                 statsText.text = "";
-                keywordText.text = linkedCard.GetCardText();
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
             }
 
+            // Line renderer for blocking
             if (linkedCard is CreatureCard c && isInBattlefield)
             {
                 if (c.blockingThisAttacker != null)
@@ -190,10 +257,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (linkedCard is CreatureCard creature)
             {
                 costText.text = creature.manaCost.ToString();
-                int displayPower = creature.power;
-                int displayToughness = creature.toughness;
-                statsText.text = $"{displayPower}/{displayToughness}";
+                statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(true);
             }
             else if (linkedCard is SorceryCard sorcery)
             {
@@ -216,39 +284,47 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (sorcery.eachPlayerGainLifeEqualToLands)
                     rules += $"Each player gains life equal to the number of lands they control.\n";
                 if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
-                    {
-                        string typeStr = "permanents";
-                        switch (sorcery.typeOfPermanentToDestroyAll)
-                        {
-                            case SorceryCard.PermanentTypeToDestroy.Land:
-                                typeStr = "lands";
-                                break;
-                            case SorceryCard.PermanentTypeToDestroy.Creature:
-                                typeStr = "creatures";
-                                break;
-                            // Add more types if needed
-                        }
-                        rules += $"Destroy all {typeStr}.\n";
-                    }
+                {
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
+                        ? "lands" : "creatures";
+                    rules += $"Destroy all {typeStr}.\n";
+                }
                 if (sorcery.exileAllCreaturesFromGraveyards)
                     rules += "Exile all creature cards from all graveyards.\n";
                 if (sorcery.damageToEachCreatureAndPlayer > 0)
                     rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
 
                 keywordText.text = rules.Trim();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
             }
             else if (linkedCard is ArtifactCard artifact)
             {
                 costText.text = artifact.manaCost.ToString();
                 statsText.text = "";
                 keywordText.text = artifact.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
             }
-            else
+            else if (linkedCard is LandCard)
             {
-                // Default fallback for other card types
                 costText.text = "";
                 statsText.text = "";
                 keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
+            else
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
             }
         }
 

@@ -700,12 +700,15 @@ MonoBehaviour:
   lineRenderer: {fileID: 0}
   artImage: {fileID: 1285546587198178736}
   backgroundImage: {fileID: 6256048876094482093}
+  costBackground: {fileID: 2774696835951908918}
+  statsBackground: {fileID: 1837107983694268112}
   titleText: {fileID: 6256048875999013832}
   sicknessText: {fileID: 5745591189577221338}
   costText: {fileID: 7155773281145799774}
   statsText: {fileID: 6757367444350756674}
   keywordText: {fileID: 1868721622052657023}
   isInBattlefield: 0
+  isInGraveyard: 0
 --- !u!120 &3408271308123586847
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -845,6 +848,7 @@ GameObject:
   - component: {fileID: 9099077646466911624}
   - component: {fileID: 4871611857268053381}
   - component: {fileID: 1285546587198178736}
+  - component: {fileID: 4848872783306058538}
   m_Layer: 5
   m_Name: artImage
   m_TagString: Untagged
@@ -909,6 +913,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4848872783306058538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6382111837765385129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6941505244558915760
 GameObject:
   m_ObjectHideFlags: 0
