@@ -332,6 +332,10 @@ public class GameManager : MonoBehaviour
                 visual = visualGO.GetComponent<CardVisual>();
                 visual.Setup(card, this);
                 visual.isInBattlefield = false;
+                visual.isInGraveyard = true;
+
+                visual.transform.localScale = Vector3.one * 0.5f;
+
                 activeCardVisuals.Add(visual);
             }
 
@@ -341,8 +345,12 @@ public class GameManager : MonoBehaviour
             if (graveyardVisual != null)
             {
                 graveyardVisual.isInBattlefield = false;
+                graveyardVisual.isInGraveyard = true;
                 graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
                 graveyardVisual.transform.localPosition = Vector3.zero;
+
+                graveyardVisual.transform.localScale = Vector3.one * 0.5f;
+
                 graveyardVisual.UpdateVisual();
             }
         }

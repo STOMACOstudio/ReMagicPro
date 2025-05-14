@@ -32,6 +32,11 @@ public class CardHoverPreview : MonoBehaviour
 
         var visual = currentPreview.GetComponent<CardVisual>();
         CardData cardData = CardDatabase.GetCardData(card.cardName);
+
+        // Ensure it's NOT treated like a graveyard card
+        visual.isInGraveyard = false;
+        visual.transform.localScale = Vector3.one * 3f; // scale AFTER flag is cleared
+
         visual.Setup(card, null, cardData);
     }
 

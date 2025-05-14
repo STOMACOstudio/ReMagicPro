@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -15,6 +16,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public LineRenderer lineRenderer;
     public Image artImage;
     public Image backgroundImage;
+    
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -23,96 +25,123 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text keywordText;
 
     public bool isInBattlefield = false;
+    public bool isInGraveyard = false;
 
     void Start()
         {
             GetComponent<Button>().onClick.AddListener(OnClick);
         }
 
+        public void OnPointerEnter(PointerEventData eventData)
+            {
+                if (isInGraveyard || linkedCard == null || linkedCard.artwork == null)
+                    return;
+
+                CardHoverPreview.Instance.ShowCard(linkedCard);
+
+                if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+                    return;
+
+                transform.localScale = Vector3.one * 1.1f;
+            }
+
+        public void OnPointerExit(PointerEventData eventData)
+            {
+                if (isInGraveyard)
+                    return;
+
+                CardHoverPreview.Instance.HidePreview();
+
+                if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+                    return;
+
+                transform.localScale = Vector3.one;
+            }
+
     public void UpdateVisual()
-{
-    // Apply background color (if not already done in Setup)
-    if (backgroundImage != null)
-    {
-        CardData data = CardDatabase.GetCardData(linkedCard.cardName);
-        if (data != null)
         {
-            string color = data.color;
-            Color bgColor = Color.white;
-
-            switch (color)
+            // Apply background color (if not already done in Setup)
+            if (backgroundImage != null)
             {
-                case "White": bgColor = HexToColor("F8F6D8"); break;
-                case "Blue":  bgColor = HexToColor("C1D7E9"); break;
-                case "Black": bgColor = HexToColor("BAB1AB"); break;
-                case "Red":   bgColor = HexToColor("E49977"); break;
-                case "Green": bgColor = HexToColor("A3C095"); break;
-                case "Artifact": bgColor = HexToColor("4B413F"); break;
-                case "None":
-                    if (data.cardType == CardType.Artifact)
-                        bgColor = HexToColor("4B413F");
-                    break;
+                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                if (data != null)
+                {
+                    string color = data.color;
+                    Color bgColor = Color.white;
+
+                    switch (color)
+                    {
+                        case "White": bgColor = HexToColor("F8F6D8"); break;
+                        case "Blue":  bgColor = HexToColor("C1D7E9"); break;
+                        case "Black": bgColor = HexToColor("BAB1AB"); break;
+                        case "Red":   bgColor = HexToColor("E49977"); break;
+                        case "Green": bgColor = HexToColor("A3C095"); break;
+                        case "Artifact": bgColor = HexToColor("4B413F"); break;
+                        case "None":
+                            if (data.cardType == CardType.Artifact)
+                                bgColor = HexToColor("4B413F");
+                            break;
+                    }
+
+                    if (data.cardType == CardType.Land)
+                    {
+                        string name = data.cardName.ToLower();
+                        if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
+                        if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
+                        if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
+                        if (name.Contains("mountain")) bgColor = HexToColor("E49977");
+                        if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
+                    }
+
+                    backgroundImage.color = bgColor;
+                }
             }
 
-            if (data.cardType == CardType.Land)
+            // Tapped rotation
+            transform.rotation = linkedCard.isTapped
+                ? Quaternion.Euler(0, 0, -90)
+                : Quaternion.identity;
+
+            // Disable line if not in battlefield
+            if (!isInBattlefield)
             {
-                string name = data.cardName.ToLower();
-                if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
-                if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
-                if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
-                if (name.Contains("mountain")) bgColor = HexToColor("E49977");
-                if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
+                lineRenderer.enabled = false;
+                return;
             }
 
-            backgroundImage.color = bgColor;
+            if (linkedCard is CreatureCard creature)
+            {
+                sicknessText.text = (isInBattlefield && creature.hasSummoningSickness) ? "(@)" : "";
+                statsText.text = $"{creature.power}/{creature.toughness}";
+                keywordText.text = linkedCard.GetCardText();
+            }
+            else
+            {
+                sicknessText.text = "";
+                statsText.text = "";
+                keywordText.text = linkedCard.GetCardText();
+            }
+
+            if (linkedCard is CreatureCard c && isInBattlefield)
+            {
+                if (c.blockingThisAttacker != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, transform.position);
+                    var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
+                    if (attackerVisual != null)
+                        lineRenderer.SetPosition(1, attackerVisual.transform.position);
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+            }
+            else
+            {
+                lineRenderer.enabled = false;
+            }
         }
-    }
-
-    // Tapped rotation
-    transform.rotation = linkedCard.isTapped
-        ? Quaternion.Euler(0, 0, -90)
-        : Quaternion.identity;
-
-    // Disable line if not in battlefield
-    if (!isInBattlefield)
-    {
-        lineRenderer.enabled = false;
-        return;
-    }
-
-    if (linkedCard is CreatureCard creature)
-    {
-        sicknessText.text = (isInBattlefield && creature.hasSummoningSickness) ? "(@)" : "";
-        statsText.text = $"{creature.power}/{creature.toughness}";
-        keywordText.text = linkedCard.GetCardText();
-    }
-    else
-    {
-        sicknessText.text = "";
-        statsText.text = "";
-        keywordText.text = linkedCard.GetCardText();
-    }
-
-    if (linkedCard is CreatureCard c && isInBattlefield)
-    {
-        if (c.blockingThisAttacker != null)
-        {
-            lineRenderer.enabled = true;
-            lineRenderer.SetPosition(0, transform.position);
-            var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
-            if (attackerVisual != null)
-                lineRenderer.SetPosition(1, attackerVisual.transform.position);
-        }
-        else
-        {
-            lineRenderer.enabled = false;
-        }
-    }
-    else
-    {
-        lineRenderer.enabled = false;
-    }
-}
 
     public void Setup(Card card, GameManager manager, CardData sourceData = null)
         {
@@ -121,6 +150,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             titleText.text = card.cardName;
             lineRenderer = GetComponent<LineRenderer>();
             artImage.sprite = linkedCard.artwork;
+
+            float scale = isInGraveyard ? 0.5f : 1f;
+            //transform.localScale = Vector3.one * scale;
 
             Color bgColor = Color.black;
             string color = sourceData != null ? sourceData.color : card.color;
@@ -236,33 +268,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
-            // TAP-FOR-MANA ability during Main Phase
-                /*if (linkedCard is CreatureCard creatureForTap &&
-                    GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForTap) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
-                    creatureForTap.activatedAbilities != null &&
-                    creatureForTap.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
-                    !creatureForTap.isTapped &&
-                    (!creatureForTap.hasSummoningSickness || creatureForTap.keywordAbilities.Contains(KeywordAbility.Haste)))
-                {
-                    GameManager.Instance.TapCardForMana(creatureForTap);
-                    UpdateVisual();
-                    return;
-                }*/
-                if (linkedCard.activatedAbilities != null &&
-                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
-                    !linkedCard.isTapped &&
-                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
-                {
-                    linkedCard.isTapped = true;
-                    GameManager.Instance.humanPlayer.ManaPool++;
-                    GameManager.Instance.UpdateUI();
-                    UpdateVisual();
-                    return;
-                }
+            if (linkedCard.activatedAbilities != null &&
+                linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
+                !linkedCard.isTapped &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+            {
+                linkedCard.isTapped = true;
+                GameManager.Instance.humanPlayer.ManaPool++;
+                GameManager.Instance.UpdateUI();
+                UpdateVisual();
+                return;
+            }
 
             // PAY-TO-GAIN-ABILITY during Main Phase
                 if (linkedCard is CreatureCard abilityCreature &&
@@ -619,39 +637,26 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
         }
 
-        private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
-            {
-                    foreach (var ability in attacker.keywordAbilities)
-                    {
-                        if (ability == KeywordAbility.Plainswalk &&
-                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("plains")))
-                            return true;
-                        if (ability == KeywordAbility.Islandwalk &&
-                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("island")))
-                            return true;
-                        if (ability == KeywordAbility.Swampwalk &&
-                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("swamp")))
-                            return true;
-                        if (ability == KeywordAbility.Mountainwalk &&
-                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("mountain")))
-                            return true;
-                        if (ability == KeywordAbility.Forestwalk &&
-                            defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("forest")))
-                            return true;
-                    }
-                    return false;
-            }
-
-        public void OnPointerEnter(PointerEventData eventData)
-            {
-                if (linkedCard != null && linkedCard.artwork != null)
+    private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
+        {
+                foreach (var ability in attacker.keywordAbilities)
                 {
-                    CardHoverPreview.Instance.ShowCard(linkedCard);
+                    if (ability == KeywordAbility.Plainswalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("plains")))
+                        return true;
+                    if (ability == KeywordAbility.Islandwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("island")))
+                        return true;
+                    if (ability == KeywordAbility.Swampwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("swamp")))
+                        return true;
+                    if (ability == KeywordAbility.Mountainwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("mountain")))
+                        return true;
+                    if (ability == KeywordAbility.Forestwalk &&
+                        defender.Battlefield.Any(card => card is LandCard land && land.cardName.ToLower().Contains("forest")))
+                        return true;
                 }
-            }
-
-            public void OnPointerExit(PointerEventData eventData)
-            {
-                CardHoverPreview.Instance.HidePreview();
-            } 
+                return false;
+        }
 }
