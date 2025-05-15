@@ -101,9 +101,9 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                     Debug.Log($"Each player gains life equal to their own lands. Human: +{humanLands}, AI: +{aiLands}");
                     didSomething = true;
                 }
-            if (typeOfPermanentToDestroyAll != PermanentTypeToDestroy.None)
+                if (typeOfPermanentToDestroyAll != PermanentTypeToDestroy.None)
                 {
-                    List<Card> destroyedCards = new List<Card>();
+                    List<(Card card, Player owner)> destroyedCards = new List<(Card, Player)>();
 
                     foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
                     {
@@ -111,16 +111,21 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                             .Where(card =>
                                 (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Land && card is LandCard) ||
                                 (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Creature && card is CreatureCard))
-                            .ToList();
+                            .ToList(); // Copy to avoid modifying during iteration
 
                         foreach (var card in targets)
                         {
-                            GameManager.Instance.SendToGraveyard(card, player);
-                            destroyedCards.Add(card);
+                            destroyedCards.Add((card, player));
                         }
                     }
 
-                    Debug.Log($"Destroyed all {typeOfPermanentToDestroyAll}s: {string.Join(", ", destroyedCards.Select(c => c.cardName))}");
+                    // Now safely destroy them all
+                    foreach (var (card, owner) in destroyedCards)
+                    {
+                        GameManager.Instance.SendToGraveyard(card, owner);
+                    }
+
+                    Debug.Log($"Destroyed all {typeOfPermanentToDestroyAll}s: {string.Join(", ", destroyedCards.Select(c => c.card.cardName))}");
                     didSomething = true;
                 }
             if (exileAllCreaturesFromGraveyards)

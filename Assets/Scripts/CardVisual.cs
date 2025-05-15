@@ -345,18 +345,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
 
             if (linkedCard.activatedAbilities != null &&
-                linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
-                !linkedCard.isTapped &&
-                GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
-            {
-                linkedCard.isTapped = true;
-                GameManager.Instance.humanPlayer.ManaPool++;
-                GameManager.Instance.UpdateUI();
-                UpdateVisual();
-                return;
-            }
+            linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
+            !linkedCard.isTapped &&
+            GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+            TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+            (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+            (!(linkedCard is CreatureCard cc) || !cc.hasSummoningSickness || cc.keywordAbilities.Contains(KeywordAbility.Haste)))
+        {
+            linkedCard.isTapped = true;
+            GameManager.Instance.humanPlayer.ManaPool++;
+            GameManager.Instance.UpdateUI();
+            UpdateVisual();
+            return;
+        }
 
             // PAY-TO-GAIN-ABILITY during Main Phase
                 if (linkedCard is CreatureCard abilityCreature &&

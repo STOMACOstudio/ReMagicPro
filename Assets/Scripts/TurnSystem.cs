@@ -127,6 +127,7 @@ public class TurnSystem : MonoBehaviour
                 waitingForPlayerInput = false;
                 confirmBlockersButton.gameObject.SetActive(false);
                 AdvancePhase();
+                GameManager.Instance.UpdateUI();
             }
         }
 
@@ -146,6 +147,7 @@ public class TurnSystem : MonoBehaviour
 
     void AdvancePhase()
         {
+            GameManager.Instance.UpdateUI();
             // Empty mana at the end of each phase
             var player = currentPlayer == PlayerType.Human
                 ? GameManager.Instance.humanPlayer
