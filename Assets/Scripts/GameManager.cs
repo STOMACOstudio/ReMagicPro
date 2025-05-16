@@ -185,6 +185,9 @@ public class GameManager : MonoBehaviour
                 visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
+                visual.UpdateVisual();
+                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay); // <- add this
+
             }
 
             else if (card is CreatureCard creature)
@@ -213,6 +216,7 @@ public class GameManager : MonoBehaviour
                     visual.transform.SetParent(playerBattlefieldArea, false);
                     visual.isInBattlefield = true;
                     visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
                 }
             }
 
@@ -229,7 +233,7 @@ public class GameManager : MonoBehaviour
                     // Move visual to the stack zone
                     visual.transform.SetParent(stackZone, false);
                     visual.transform.localPosition = Vector3.zero;
-
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
                     StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
                 }
                 else
@@ -264,6 +268,7 @@ public class GameManager : MonoBehaviour
 
                     visual.isInBattlefield = true;
                     visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
                 }
                 else
                 {

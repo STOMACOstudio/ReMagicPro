@@ -90,7 +90,7 @@ public class TurnSystem : MonoBehaviour
         {
             if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
             {
-                Debug.Log($"[UI] Player clicked Next Phase");
+                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
                 HideAllConfirmButtons();
                 AdvancePhase();
@@ -101,7 +101,7 @@ public class TurnSystem : MonoBehaviour
         {
             if (waitingForPlayerInput)
             {
-                Debug.Log("[UI] Player confirmed attackers");
+                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
                 confirmAttackersButton.gameObject.SetActive(false);
 
@@ -123,7 +123,7 @@ public class TurnSystem : MonoBehaviour
         {
             if (waitingForPlayerInput)
             {
-                Debug.Log("[UI] Player confirmed blockers");
+                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
                 confirmBlockersButton.gameObject.SetActive(false);
                 AdvancePhase();

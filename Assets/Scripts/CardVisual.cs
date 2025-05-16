@@ -695,6 +695,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         GameManager.Instance.selectedAttackerForBlocking = null;
 
                         Debug.Log($"{clickedCreature.cardName} is blocking {attacker.cardName}");
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.declareBlock);
                         GameManager.Instance.UpdateUI();
                         return;
                     }
@@ -719,6 +720,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         {
                             // Adding to combat
                             GameManager.Instance.selectedAttackers.Add(creature);
+                            SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack);
                             if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
                                 creature.isTapped = true;
 
