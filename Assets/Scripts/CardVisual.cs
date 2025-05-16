@@ -125,6 +125,25 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
                     if (statsRect != null)
                         statsRect.anchoredPosition = battlefieldStatsPosition;
+
+                    // Only check and draw line if it's a creature
+                    if (battlefieldCreature.blockingThisAttacker != null)
+                    {
+                        lineRenderer.enabled = true;
+                        lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                        
+                        var attackerVisual = GameManager.Instance.FindCardVisual(battlefieldCreature.blockingThisAttacker);
+                        if (attackerVisual != null)
+                            lineRenderer.SetPosition(1, new Vector3(attackerVisual.transform.position.x, attackerVisual.transform.position.y, 0));
+                    }
+                    else
+                    {
+                        lineRenderer.enabled = false;
+                    }
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
                 }
 
                 return;
@@ -212,27 +231,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
-            }
-
-            // Line renderer for blocking
-            if (linkedCard is CreatureCard c && isInBattlefield)
-            {
-                if (c.blockingThisAttacker != null)
-                {
-                    lineRenderer.enabled = true;
-                    lineRenderer.SetPosition(0, transform.position);
-                    var attackerVisual = GameManager.Instance.FindCardVisual(c.blockingThisAttacker);
-                    if (attackerVisual != null)
-                        lineRenderer.SetPosition(1, attackerVisual.transform.position);
-                }
-                else
-                {
-                    lineRenderer.enabled = false;
-                }
-            }
-            else
-            {
-                lineRenderer.enabled = false;
             }
         }
 
