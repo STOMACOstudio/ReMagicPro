@@ -299,9 +299,10 @@ public class GameManager : MonoBehaviour
             }
 
             card.isTapped = false;
+
             CardVisual visual = FindCardVisual(card);
 
-            //Reset summoning sickness and toughness
+            // Reset summoning sickness and toughness
             if (card is CreatureCard deadCreature)
             {
                 deadCreature.hasSummoningSickness = false;
@@ -312,7 +313,7 @@ public class GameManager : MonoBehaviour
                     visual.sicknessText.text = "";
                 }
             }
-            
+
             // Handle token destruction
             if (card is CreatureCard creature && card.isToken)
             {
@@ -324,35 +325,23 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            // Visual fallback
-            if (visual == null)
+            // Find or create visual for graveyard
+            CardVisual graveyardVisual = FindCardVisual(card);
+            if (graveyardVisual == null)
             {
                 GameObject visualGO = Instantiate(cardPrefab,
                     owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                visual = visualGO.GetComponent<CardVisual>();
-                visual.Setup(card, this);
-                visual.isInBattlefield = false;
-                visual.isInGraveyard = true;
-
-                visual.transform.localScale = Vector3.one * 0.5f;
-
-                activeCardVisuals.Add(visual);
+                graveyardVisual = visualGO.GetComponent<CardVisual>();
+                graveyardVisual.Setup(card, this);
+                activeCardVisuals.Add(graveyardVisual);
             }
+
+            // Move and update
+            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            graveyardVisual.transform.localPosition = Vector3.zero;
+            graveyardVisual.UpdateGraveyardVisual(); // dedicated method that sets up the correct display
 
             owner.Graveyard.Add(card);
-
-            var graveyardVisual = FindCardVisual(card);
-            if (graveyardVisual != null)
-            {
-                graveyardVisual.isInBattlefield = false;
-                graveyardVisual.isInGraveyard = true;
-                graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                graveyardVisual.transform.localPosition = Vector3.zero;
-
-                graveyardVisual.transform.localScale = Vector3.one * 0.5f;
-
-                graveyardVisual.UpdateVisual();
-            }
         }
 
     public void ResolveCombat()

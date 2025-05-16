@@ -818,6 +818,7 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Haste,
+                        KeywordAbility.Trample,
                     },
                     artwork = Resources.Load<Sprite>("Art/thundermare")
                     });

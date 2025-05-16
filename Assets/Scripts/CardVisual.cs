@@ -26,6 +26,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text statsText;
     public TMP_Text keywordText;
 
+    private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -18); // Adjust as needed
+    private readonly Vector2 defaultStatsPosition = new Vector2(32, -56); // whatever your default was
+
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
 
@@ -66,6 +69,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (backgroundImage != null)
             {
                 CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+
                 if (data != null)
                 {
                     string color = data.color;
@@ -103,6 +107,28 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             transform.rotation = linkedCard.isTapped
                 ? Quaternion.Euler(0, 0, -90)
                 : Quaternion.identity;
+
+            // Hide all UI except artwork (and stats if it's a creature) on battlefield
+            if (isInBattlefield)
+            {
+                if (backgroundImage != null) backgroundImage.enabled = false;
+                costBackground.SetActive(false);
+                titleText.text = "";
+                costText.text = "";
+                sicknessText.text = "";
+                keywordText.text = "";
+
+                if (linkedCard is CreatureCard battlefieldCreature)
+                {
+                    statsText.text = $"{battlefieldCreature.power}/{battlefieldCreature.toughness}";
+                    statsBackground.SetActive(true);
+                    RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
+                    if (statsRect != null)
+                        statsRect.anchoredPosition = battlefieldStatsPosition;
+                }
+
+                return;
+            }
 
             // Disable line if not in battlefield
             if (!isInBattlefield)
@@ -212,6 +238,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void Setup(Card card, GameManager manager, CardData sourceData = null)
         {
+            // Re-enable everything when card is set up (e.g., for hand, stack, etc.)
+            if (backgroundImage != null) backgroundImage.enabled = true;
+            if (titleText != null) titleText.enabled = true;
+            if (sicknessText != null) sicknessText.enabled = true;
+            if (costText != null) costText.enabled = true;
+            if (statsText != null) statsText.enabled = true;
+            if (keywordText != null) keywordText.enabled = true;
+
             linkedCard = card;
             gameManager = manager;
             titleText.text = card.cardName;
@@ -735,5 +769,177 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         return true;
                 }
                 return false;
+        }
+
+    public void ResetVisualForGraveyard()
+        {
+            isInBattlefield = false;
+            isInGraveyard = true;
+
+            if (lineRenderer != null)
+                lineRenderer.enabled = false;
+
+            transform.localScale = Vector3.one * 0.5f;
+            transform.rotation = Quaternion.identity;
+
+            costBackground.SetActive(false);
+            statsBackground.SetActive(false);
+
+            sicknessText.text = "";
+            keywordText.text = "";
+            statsText.text = "";
+        }
+
+    public void PrepareForGraveyard()
+        {
+            isInBattlefield = false;
+            isInGraveyard = true;
+
+            // Re-enable UI components in case they were disabled on battlefield
+            if (backgroundImage != null) backgroundImage.enabled = true;
+            if (titleText != null) titleText.enabled = true;
+            if (sicknessText != null) sicknessText.enabled = true;
+            if (costText != null) costText.enabled = true;
+            if (statsText != null) statsText.enabled = true;
+            if (keywordText != null) keywordText.enabled = true;
+
+            costBackground.SetActive(true);
+            statsBackground.SetActive(true);
+
+            if (lineRenderer != null) lineRenderer.enabled = false;
+
+            // Reset rotation & scale
+            transform.rotation = Quaternion.identity;
+            transform.localScale = Vector3.one * 0.5f;
+        }
+
+    public void UpdateGraveyardVisual()
+        {
+            // General setup
+            isInBattlefield = false;
+            isInGraveyard = true;
+
+            transform.localScale = Vector3.one * 0.5f;
+            transform.rotation = Quaternion.identity;
+
+            // Reset stats position (in case it was moved on battlefield)
+            if (statsBackground != null)
+            {
+                RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
+                if (statsRect != null)
+                    statsRect.anchoredPosition = defaultStatsPosition;
+            }
+
+            if (lineRenderer != null)
+                lineRenderer.enabled = false;
+
+            // Enable all UI elements
+            if (backgroundImage != null) backgroundImage.enabled = true;
+            if (titleText != null) titleText.enabled = true;
+            if (sicknessText != null) sicknessText.enabled = true;
+            if (costText != null) costText.enabled = true;
+            if (statsText != null) statsText.enabled = true;
+            if (keywordText != null) keywordText.enabled = true;
+
+            titleText.text = linkedCard.cardName;
+            sicknessText.text = "";
+            lineRenderer.enabled = false;
+
+            // Load card data
+            CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
+
+            if (sourceData != null && backgroundImage != null)
+            {
+                string color = sourceData.color;
+                Color bgColor = Color.white;
+
+                switch (color)
+                {
+                    case "White": bgColor = HexToColor("F8F6D8"); break;
+                    case "Blue":  bgColor = HexToColor("C1D7E9"); break;
+                    case "Black": bgColor = HexToColor("BAB1AB"); break;
+                    case "Red":   bgColor = HexToColor("E49977"); break;
+                    case "Green": bgColor = HexToColor("A3C095"); break;
+                    case "Artifact": bgColor = HexToColor("4B413F"); break;
+                }
+
+                backgroundImage.color = bgColor;
+            }
+
+            if (artImage != null && linkedCard.artwork != null)
+                artImage.sprite = linkedCard.artwork;
+
+            // Show correct info by card type
+            if (linkedCard is CreatureCard creature)
+            {
+                costText.text = creature.manaCost.ToString();
+                statsText.text = $"{creature.power}/{creature.toughness}";
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(true);
+            }
+            else if (linkedCard is ArtifactCard artifact)
+            {
+                costText.text = artifact.manaCost.ToString();
+                statsText.text = "";
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is SorceryCard sorcery)
+            {
+                costText.text = sorcery.manaCost.ToString();
+                statsText.text = "";
+
+                string rules = "";
+                if (sorcery.lifeToGain > 0)
+                    rules += $"Gain {sorcery.lifeToGain} life.\n";
+                if (sorcery.lifeToLoseForOpponent > 0)
+                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
+                if (sorcery.lifeLossForBothPlayers > 0)
+                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
+                if (sorcery.cardsToDraw > 0)
+                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
+                if (sorcery.cardsToDiscardorDraw > 0)
+                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
+                if (sorcery.eachPlayerGainLifeEqualToLands)
+                    rules += $"Each player gains life equal to the number of lands they control.\n";
+                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
+                {
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
+                        ? "lands" : "creatures";
+                    rules += $"Destroy all {typeStr}.\n";
+                }
+                if (sorcery.exileAllCreaturesFromGraveyards)
+                    rules += "Exile all creature cards from all graveyards.\n";
+                if (sorcery.damageToEachCreatureAndPlayer > 0)
+                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
+
+                keywordText.text = rules.Trim();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is LandCard)
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
+            else
+            {
+                // Unknown type — hide everything
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
         }
 }
