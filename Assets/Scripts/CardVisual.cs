@@ -19,6 +19,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     
     public GameObject costBackground;
     public GameObject statsBackground;
+    public GameObject swordIcon;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -107,6 +108,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             transform.rotation = linkedCard.isTapped
                 ? Quaternion.Euler(0, 0, -90)
                 : Quaternion.identity;
+
+            if (swordIcon != null && linkedCard is CreatureCard)
+                {
+                    bool showSword =
+                        GameManager.Instance.currentAttackers.Contains(linkedCard) ||
+                        GameManager.Instance.selectedAttackers.Contains(linkedCard);
+                    swordIcon.SetActive(showSword);
+                }
 
             // Hide all UI except artwork (and stats if it's a creature) on battlefield
             if (isInBattlefield)

@@ -534,6 +534,7 @@ public class TurnSystem : MonoBehaviour
                                 }
 
                                 GameManager.Instance.currentAttackers.Add(creature);
+                                GameManager.Instance.FindCardVisual(creature)?.swordIcon?.SetActive(true);
                                 Debug.Log($"AI declares attacker: {creature.cardName}");
 
                                 GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
@@ -649,6 +650,13 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.Damage:
                     Debug.Log("→ Resolving combat damage.");
                     GameManager.Instance.ResolveCombat();
+                    foreach (var visual in GameManager.Instance.activeCardVisuals)
+                    {
+                        if (visual.swordIcon != null)
+                            visual.swordIcon.SetActive(false);
+                        
+                        visual.UpdateVisual();
+                    }
                     AdvancePhase();
                     break;
 
