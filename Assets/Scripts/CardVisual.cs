@@ -20,6 +20,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject costBackground;
     public GameObject statsBackground;
     public GameObject swordIcon;
+    public GameObject shieldIcon;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -116,6 +117,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         GameManager.Instance.selectedAttackers.Contains(linkedCard);
                     swordIcon.SetActive(showSword);
                 }
+            
+            if (shieldIcon != null && linkedCard is CreatureCard)
+            {
+                CreatureCard cc = (CreatureCard)linkedCard;
+
+                bool showShield =
+                    cc.blockingThisAttacker != null &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
+
+                shieldIcon.SetActive(showShield);
+            }
 
             // Hide all UI except artwork (and stats if it's a creature) on battlefield
             if (isInBattlefield)
@@ -397,6 +409,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             linkedCard.isTapped = true;
             GameManager.Instance.humanPlayer.ManaPool++;
             GameManager.Instance.UpdateUI();
+            SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
             UpdateVisual();
             return;
         }
@@ -470,6 +483,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
                     GameManager.Instance.TapToLoseLife(creatureForDrain);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
                     UpdateVisual();
                     return;
                 }
@@ -485,6 +499,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
                     GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
                     GameManager.Instance.UpdateUI();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
                     UpdateVisual();
                     Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
                     return;
@@ -511,6 +526,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             linkedCard.isTapped = true;
                             GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
                             GameManager.Instance.UpdateUI();
+                            SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                             UpdateVisual();
                             Debug.Log($"{linkedCard.cardName} activated: +{artifact.manaToGain} mana.");
                         }
@@ -525,6 +541,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         GameManager.Instance.humanPlayer.ManaPool++;
                         GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
                         GameManager.Instance.UpdateUI();
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                         UpdateVisual();
                         Debug.Log($"{linkedCard.cardName} sacrificed: +1 mana.");
                     }
@@ -737,6 +754,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (isInBattlefield && linkedCard is LandCard land)
                 {
                     GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                     UpdateVisual();
                     return;
                 }

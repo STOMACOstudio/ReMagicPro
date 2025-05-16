@@ -932,8 +932,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonClick: {fileID: 8300000, guid: cd3d8b6806110c14f91c7e56e0f3e2f0, type: 3}
   cardPlay: {fileID: 8300000, guid: ae22c23889c17a24f8b71b82233145c2, type: 3}
+  playCreature: {fileID: 8300000, guid: 83cba65ae1cc2bc4da23e6e6e30c93b6, type: 3}
+  playArtifact: {fileID: 8300000, guid: bb63186a3fc81a44b8289c1b3d511690, type: 3}
   declareAttack: {fileID: 8300000, guid: 3cfd159dd7c4a0243aaa7ea928448deb, type: 3}
-  declareBlock: {fileID: 8300000, guid: bb63186a3fc81a44b8289c1b3d511690, type: 3}
+  declareBlock: {fileID: 8300000, guid: ef8bc75062dc38c41b9870a19b494ade, type: 3}
+  break_artifact: {fileID: 8300000, guid: 7081f21eb2a561c4294de26ae02bce26, type: 3}
+  tap_for_mana: {fileID: 8300000, guid: c9da6342cc306234b9bbf9bc3880a308, type: 3}
+  plague: {fileID: 8300000, guid: 127b099b8ecb97840ba02e66449d7e1d, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0

@@ -216,7 +216,7 @@ public class GameManager : MonoBehaviour
                     visual.transform.SetParent(playerBattlefieldArea, false);
                     visual.isInBattlefield = true;
                     visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
                 }
             }
 
@@ -268,7 +268,7 @@ public class GameManager : MonoBehaviour
 
                     visual.isInBattlefield = true;
                     visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
                 }
                 else
                 {
@@ -599,6 +599,7 @@ public class GameManager : MonoBehaviour
             opponent.Life -= creature.tapLifeLossAmount;
 
             Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
+            SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
             UpdateUI();
 
             if (aiPlayer.Life <= 0)

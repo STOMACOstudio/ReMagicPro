@@ -8,8 +8,13 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip buttonClick;
     public AudioClip cardPlay;
+    public AudioClip playCreature;
+    public AudioClip playArtifact;
     public AudioClip declareAttack;
     public AudioClip declareBlock;
+    public AudioClip break_artifact;
+    public AudioClip tap_for_mana;
+    public AudioClip plague;
 
     private AudioSource audioSource;
 
