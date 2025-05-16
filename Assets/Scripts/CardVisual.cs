@@ -130,6 +130,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (linkedCard is CreatureCard battlefieldCreature)
                 {
                     statsText.text = $"{battlefieldCreature.power}/{battlefieldCreature.toughness}";
+                    sicknessText.text = battlefieldCreature.hasSummoningSickness ? "(@)" : "";
                     statsBackground.SetActive(true);
                     RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
                     if (statsRect != null)
