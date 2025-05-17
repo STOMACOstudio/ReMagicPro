@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject cardPrefab;
     public GameObject manaVFXPrefab;
+    public GameObject bloodSplatPrefab;
 
     public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
 
@@ -648,6 +649,9 @@ public class GameManager : MonoBehaviour
 
             Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
             SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+
+            ShowBloodSplatVFX(creature);
+
             UpdateUI();
 
             if (aiPlayer.Life <= 0)
@@ -656,6 +660,27 @@ public class GameManager : MonoBehaviour
                 WinBattle();
             }
         }
+
+    public void ShowBloodSplatVFX(Card card)
+        {
+            Debug.Log("ShowBloodSplatVFX triggered on: " + card.cardName);
+
+            CardVisual visual = FindCardVisual(card);
+            if (visual == null)
+            {
+                Debug.LogWarning("No visual found for card " + card.cardName);
+                return;
+            }
+
+            Vector3 spawnPos = visual.transform.position;
+            spawnPos.z = 0f;
+            spawnPos += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), 0);
+
+            GameObject vfx = Instantiate(bloodSplatPrefab, spawnPos, Quaternion.identity);
+            Destroy(vfx, 1.5f);
+            Debug.Log("Spawned blood VFX at " + spawnPos);
+        }
+
     public void PayToGainAbility(CreatureCard creature)
         {
             if (creature.isTapped) return;

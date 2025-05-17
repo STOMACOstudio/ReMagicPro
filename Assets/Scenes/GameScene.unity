@@ -2025,6 +2025,7 @@ MonoBehaviour:
   aiArtifactArea: {fileID: 486761870}
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
   manaVFXPrefab: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+  bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
   blueIcon: {fileID: 21300000, guid: cf5da0752d7da9f4db791fed64ba1347, type: 3}
   whiteIcon: {fileID: 21300000, guid: e51d0f0e20f24834f893872fd6719259, type: 3}
   blackIcon: {fileID: 21300000, guid: 45c943c1120a5e74dbfdc1bf4d6a0e44, type: 3}

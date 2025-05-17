@@ -485,7 +485,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
                     GameManager.Instance.TapToLoseLife(creatureForDrain);
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                    //SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                    //GameManager.Instance.ShowBloodSplatVFX(creatureForDrain);
                     UpdateVisual();
                     return;
                 }
@@ -502,6 +503,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
                     GameManager.Instance.UpdateUI();
                     SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                    GameManager.Instance.ShowBloodSplatVFX(linkedCard);
                     UpdateVisual();
                     Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
                     return;
