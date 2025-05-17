@@ -116,6 +116,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         GameManager.Instance.currentAttackers.Contains(linkedCard) ||
                         GameManager.Instance.selectedAttackers.Contains(linkedCard);
                     swordIcon.SetActive(showSword);
+                    swordIcon.transform.rotation = Quaternion.identity;
                 }
             
             if (shieldIcon != null && linkedCard is CreatureCard)
@@ -127,6 +128,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
 
                 shieldIcon.SetActive(showShield);
+                shieldIcon.transform.rotation = Quaternion.identity;
             }
 
             // Hide all UI except artwork (and stats if it's a creature) on battlefield
