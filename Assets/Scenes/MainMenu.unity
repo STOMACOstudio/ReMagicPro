@@ -2163,3 +2163,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f200063edf5441443a84152e3d5ff7b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &2646644528912415735
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.6981308
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.83381927
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 61.742176
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4251529688336460641, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
+      propertyPath: m_Name
+      value: ManaVFX
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dfeb56768dfde6e4981e84763526127c, type: 3}

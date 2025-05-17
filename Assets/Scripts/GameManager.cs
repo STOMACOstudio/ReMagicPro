@@ -30,8 +30,10 @@ public class GameManager : MonoBehaviour
     public Transform aiLandArea;
     public Transform aiArtifactArea;
 
-
     public GameObject cardPrefab;
+    public GameObject manaVFXPrefab;
+
+    public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
 
     public List<CardVisual> activeCardVisuals = new List<CardVisual>();
     public List<CreatureCard> selectedAttackers = new List<CreatureCard>();
@@ -287,7 +289,53 @@ public class GameManager : MonoBehaviour
             {
                 land.isTapped = true;
                 player.ManaPool++;
+
+                // Create VFX
+                ShowManaVFX(land);
+
                 if (player == humanPlayer) UpdateUI();
+            }
+        }
+
+    private void ShowManaVFX(LandCard land)
+        {
+            CardVisual visual = FindCardVisual(land);
+            if (visual == null)
+            {
+                Debug.LogWarning("No visual found for land card " + land.cardName);
+                return;
+            }
+
+            Vector3 spawnPos = visual.transform.position;
+            spawnPos.z = 0f;
+
+            Sprite iconSprite = GetManaIconForCardName(land.cardName);
+
+            GameObject vfx = Instantiate(manaVFXPrefab, spawnPos, Quaternion.identity);
+            vfx.GetComponentInChildren<SpriteRenderer>().sprite = iconSprite;
+
+            Debug.Log("Spawning mana VFX at: " + spawnPos);
+        }
+
+    private Sprite GetManaIconForCardName(string cardName)
+        {
+            CardData data = CardDatabase.GetCardData(cardName);
+            if (data == null)
+            {
+                Debug.LogWarning("No card data found for: " + cardName);
+                return null;
+            }
+
+            switch (data.color)
+            {
+                case "Blue": return blueIcon;
+                case "White": return whiteIcon;
+                case "Black": return blackIcon;
+                case "Red": return redIcon;
+                case "Green": return greenIcon;
+                default:
+                    Debug.LogWarning("Unknown color: " + data.color);
+                    return null;
             }
         }
 
