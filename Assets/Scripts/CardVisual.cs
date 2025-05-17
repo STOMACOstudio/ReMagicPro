@@ -16,6 +16,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public LineRenderer lineRenderer;
     public Image artImage;
     public Image backgroundImage;
+
+    public Sprite landBorder;
+    public Sprite whiteBorder;
+    public Sprite blueBorder;
+    public Sprite blackBorder;
+    public Sprite redBorder;
+    public Sprite greenBorder;
+    public Sprite artifactBorder;
+    public Sprite defaultBorder;
     
     public GameObject costBackground;
     public GameObject statsBackground;
@@ -28,8 +37,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text statsText;
     public TMP_Text keywordText;
 
-    private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -18); // Adjust as needed
-    private readonly Vector2 defaultStatsPosition = new Vector2(32, -56); // whatever your default was
+    private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -5); // Adjust as needed
+    private readonly Vector2 defaultStatsPosition = new Vector2(28, -53); // whatever your default was
 
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
@@ -68,7 +77,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void UpdateVisual()
         {
             // Apply background color (if not already done in Setup)
-            if (backgroundImage != null)
+            /*if (backgroundImage != null)
             {
                 CardData data = CardDatabase.GetCardData(linkedCard.cardName);
 
@@ -101,9 +110,32 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
                     }
 
-                    backgroundImage.color = bgColor;
+                    if (backgroundImage != null)
+                    {
+                        if (data.cardType == CardType.Land)
+                        {
+                            backgroundImage.sprite = landBorder;
+                        }
+                        else
+                        {
+                            switch (color)
+                            {
+                                case "White": backgroundImage.sprite = whiteBorder; break;
+                                case "Blue":  backgroundImage.sprite = blueBorder; break;
+                                case "Black": backgroundImage.sprite = blackBorder; break;
+                                case "Red":   backgroundImage.sprite = redBorder; break;
+                                case "Green": backgroundImage.sprite = greenBorder; break;
+                                case "Artifact": backgroundImage.sprite = artifactBorder; break;
+                                default: backgroundImage.sprite = defaultBorder; break;
+                            }
+                        }
+
+                        backgroundImage.color = Color.white; // Reset tint
+                    }
                 }
-            }
+            }*/
+            
+            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
 
             // Tapped rotation
             transform.rotation = linkedCard.isTapped
@@ -274,10 +306,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             lineRenderer = GetComponent<LineRenderer>();
             artImage.sprite = linkedCard.artwork;
 
+            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
+
             float scale = isInGraveyard ? 0.5f : 1f;
             //transform.localScale = Vector3.one * scale;
 
-            Color bgColor = Color.black;
+            /*Color bgColor = Color.black;
             string color = sourceData != null ? sourceData.color : card.color;
 
             switch (color)
@@ -306,7 +340,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (backgroundImage != null)
             {
                 backgroundImage.color = bgColor;
-            }
+            }*/
 
             sicknessText.text = ""; // Clear at start
 
@@ -384,12 +418,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
         }
 
-    private Color HexToColor(string hex)
+    /*private Color HexToColor(string hex)
         {
             Color color;
             ColorUtility.TryParseHtmlString("#" + hex, out color);
             return color;
-        }
+        }*/
 
     public void OnClick()
         {
@@ -879,8 +913,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             // Load card data
             CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
+            SetCardBorder(sourceData);
 
-            if (sourceData != null && backgroundImage != null)
+            /*if (sourceData != null && backgroundImage != null)
             {
                 string color = sourceData.color;
                 Color bgColor = Color.white;
@@ -896,7 +931,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
                 backgroundImage.color = bgColor;
-            }
+            }*/
 
             if (artImage != null && linkedCard.artwork != null)
                 artImage.sprite = linkedCard.artwork;
@@ -974,4 +1009,31 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsBackground.SetActive(false);
             }
         }
+
+        private void SetCardBorder(CardData data)
+            {
+                if (backgroundImage == null || data == null) return;
+
+                if (data.cardType == CardType.Land)
+                {
+                    backgroundImage.sprite = landBorder;
+                }
+                else if (data.cardType == CardType.Artifact || data.color == "Artifact" || data.color == "None")
+                {
+                    backgroundImage.sprite = artifactBorder;
+                }
+                else
+                {
+                    switch (data.color)
+                    {
+                        case "White": backgroundImage.sprite = whiteBorder; break;
+                        case "Blue":  backgroundImage.sprite = blueBorder; break;
+                        case "Black": backgroundImage.sprite = blackBorder; break;
+                        case "Red":   backgroundImage.sprite = redBorder; break;
+                        case "Green": backgroundImage.sprite = greenBorder; break;
+                        default: backgroundImage.sprite = defaultBorder; break;
+                    }
+                }
+                backgroundImage.color = Color.white; // Prevent leftover tint
+            }
 }
