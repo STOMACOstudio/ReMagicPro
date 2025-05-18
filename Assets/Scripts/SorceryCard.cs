@@ -19,6 +19,7 @@ public class SorceryCard : Card
             None,
             Land,
             Creature,
+            Artifact,
             // Add more as needed later (Artifacts, Enchantments, etc.)
         }
 
@@ -109,9 +110,29 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                     {
                         var targets = player.Battlefield
                             .Where(card =>
-                                (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Land && card is LandCard) ||
-                                (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Creature && card is CreatureCard))
-                            .ToList(); // Copy to avoid modifying during iteration
+                            {
+                                if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Land && card is LandCard)
+                                    return true;
+
+                                if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Creature && card is CreatureCard)
+                                    return true;
+
+                                if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Artifact)
+                                {
+                                    if (card is ArtifactCard)
+                                        return true;
+
+                                    if (card is CreatureCard)
+                                    {
+                                        var data = CardDatabase.GetCardData(card.cardName);
+                                        if (data != null && data.color == "Artifact")
+                                            return true;
+                                    }
+                                }
+
+                                return false;
+                            })
+                            .ToList();
 
                         foreach (var card in targets)
                         {
@@ -119,7 +140,6 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                         }
                     }
 
-                    // Now safely destroy them all
                     foreach (var (card, owner) in destroyedCards)
                     {
                         GameManager.Instance.SendToGraveyard(card, owner);

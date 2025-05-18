@@ -409,6 +409,27 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
+                Add(new CardData //Giant Bat
+                        {
+                        cardName = "Giant Bat",
+                        rarity = "Common",
+                        manaCost = 4,
+                        color = "Black",
+                        cardType = CardType.Creature,
+                        power = 3,
+                        toughness = 2,
+                        manaToPayToActivate = 1,
+                        abilityToGain = KeywordAbility.Flying,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Lifelink,
+                        },
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.PayToGainAbility
+                        },
+                        artwork = Resources.Load<Sprite>("Art/giant_bat")
+                        });
                 Add(new CardData //Bog crocodile
                         {
                         cardName = "Bog Crocodile",
@@ -1321,6 +1342,7 @@ public static class CardDatabase
                 Add(new CardData
                     {
                         cardName = "Fire Spirals",
+                        rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 3,
                         color = "Red",
@@ -1328,6 +1350,16 @@ public static class CardDatabase
                         damageToEachCreatureAndPlayer = 2
                     });
             // GREEN
+        Add(new CardData //Natures Rebuke
+                    {
+                        cardName = "Natures Rebuke",
+                        rarity = "Rare",
+                        cardType = CardType.Sorcery,
+                        manaCost = 4,
+                        color = "Green",
+                        artwork = Resources.Load<Sprite>("Art/natures_rebuke"),
+                        typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Artifact
+                    });
                 Add(new CardData { //Feast
                     cardName = "Feast",
                     rarity = "Common",

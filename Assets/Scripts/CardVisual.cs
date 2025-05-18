@@ -247,8 +247,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     rules += $"Each player gains life equal to the number of lands they control.\n";
                 if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
                 {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
-                        ? "lands" : "creatures";
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
+                    {
+                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
+                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
+                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
+                        _ => "permanents"
+                    };
                     rules += $"Destroy all {typeStr}.\n";
                 }
                 if (sorcery.exileAllCreaturesFromGraveyards)
@@ -375,8 +380,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     rules += $"Each player gains life equal to the number of lands they control.\n";
                 if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
                 {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
-                        ? "lands" : "creatures";
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
+                    {
+                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
+                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
+                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
+                        _ => "permanents"
+                    };
                     rules += $"Destroy all {typeStr}.\n";
                 }
                 if (sorcery.exileAllCreaturesFromGraveyards)
@@ -975,8 +985,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     rules += $"Each player gains life equal to the number of lands they control.\n";
                 if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
                 {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll == SorceryCard.PermanentTypeToDestroy.Land
-                        ? "lands" : "creatures";
+                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
+                    {
+                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
+                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
+                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
+                        _ => "permanents"
+                    };
                     rules += $"Destroy all {typeStr}.\n";
                 }
                 if (sorcery.exileAllCreaturesFromGraveyards)
