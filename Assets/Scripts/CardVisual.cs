@@ -16,6 +16,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public LineRenderer lineRenderer;
     public Image artImage;
     public Image backgroundImage;
+    public Image cardRarity;
 
     public Sprite landBorder;
     public Sprite whiteBorder;
@@ -25,6 +26,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Sprite greenBorder;
     public Sprite artifactBorder;
     public Sprite defaultBorder;
+    
     
     public GameObject costBackground;
     public GameObject statsBackground;
@@ -76,66 +78,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void UpdateVisual()
         {
-            // Apply background color (if not already done in Setup)
-            /*if (backgroundImage != null)
-            {
-                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
-
-                if (data != null)
-                {
-                    string color = data.color;
-                    Color bgColor = Color.white;
-
-                    switch (color)
-                    {
-                        case "White": bgColor = HexToColor("F8F6D8"); break;
-                        case "Blue":  bgColor = HexToColor("C1D7E9"); break;
-                        case "Black": bgColor = HexToColor("BAB1AB"); break;
-                        case "Red":   bgColor = HexToColor("E49977"); break;
-                        case "Green": bgColor = HexToColor("A3C095"); break;
-                        case "Artifact": bgColor = HexToColor("4B413F"); break;
-                        case "None":
-                            if (data.cardType == CardType.Artifact)
-                                bgColor = HexToColor("4B413F");
-                            break;
-                    }
-
-                    if (data.cardType == CardType.Land)
-                    {
-                        string name = data.cardName.ToLower();
-                        if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
-                        if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
-                        if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
-                        if (name.Contains("mountain")) bgColor = HexToColor("E49977");
-                        if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
-                    }
-
-                    if (backgroundImage != null)
-                    {
-                        if (data.cardType == CardType.Land)
-                        {
-                            backgroundImage.sprite = landBorder;
-                        }
-                        else
-                        {
-                            switch (color)
-                            {
-                                case "White": backgroundImage.sprite = whiteBorder; break;
-                                case "Blue":  backgroundImage.sprite = blueBorder; break;
-                                case "Black": backgroundImage.sprite = blackBorder; break;
-                                case "Red":   backgroundImage.sprite = redBorder; break;
-                                case "Green": backgroundImage.sprite = greenBorder; break;
-                                case "Artifact": backgroundImage.sprite = artifactBorder; break;
-                                default: backgroundImage.sprite = defaultBorder; break;
-                            }
-                        }
-
-                        backgroundImage.color = Color.white; // Reset tint
-                    }
-                }
-            }*/
             
             SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
+
+            if (cardRarity != null)
+            {
+                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                if (data != null && data.rarity != "Token") // Don't show for tokens
+                {
+                    cardRarity.color = GetRarityColor(data.rarity);
+                    cardRarity.enabled = true;
+                }
+                else
+                {
+                    cardRarity.enabled = false;
+                }
+            }
 
             // Tapped rotation
             transform.rotation = linkedCard.isTapped
@@ -168,6 +126,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 if (backgroundImage != null) backgroundImage.enabled = false;
                 costBackground.SetActive(false);
+                if (cardRarity != null) cardRarity.enabled = false;
                 titleText.text = "";
                 costText.text = "";
                 sicknessText.text = "";
@@ -311,41 +270,23 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             lineRenderer = GetComponent<LineRenderer>();
             artImage.sprite = linkedCard.artwork;
 
+            if (cardRarity != null)
+            {
+                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                if (data != null && data.rarity != "Token") // Don't show for tokens
+                {
+                    cardRarity.color = GetRarityColor(data.rarity);
+                    cardRarity.enabled = true;
+                }
+                else
+                {
+                    cardRarity.enabled = false;
+                }
+            }
+
             SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
 
             float scale = isInGraveyard ? 0.5f : 1f;
-            //transform.localScale = Vector3.one * scale;
-
-            /*Color bgColor = Color.black;
-            string color = sourceData != null ? sourceData.color : card.color;
-
-            switch (color)
-            {
-                case "White": bgColor = HexToColor("F8F6D8"); break;
-                case "Blue":  bgColor = HexToColor("C1D7E9"); break;
-                case "Black": bgColor = HexToColor("BAB1AB"); break;
-                case "Red":   bgColor = HexToColor("E49977"); break;
-                case "Green": bgColor = HexToColor("A3C095"); break;
-                case "Artifact": bgColor = HexToColor("4B413F"); break;
-                case "None":
-                    if (sourceData != null && sourceData.cardType == CardType.Artifact)
-                        bgColor = HexToColor("4B413F");
-                    break;
-            }
-            if (sourceData != null && sourceData.cardType == CardType.Land)
-            {
-                string name = sourceData.cardName.ToLower();
-                if (name.Contains("plains"))   bgColor = HexToColor("F8F6D8");
-                if (name.Contains("island"))   bgColor = HexToColor("C1D7E9");
-                if (name.Contains("swamp"))    bgColor = HexToColor("BAB1AB");
-                if (name.Contains("mountain")) bgColor = HexToColor("E49977");
-                if (name.Contains("forest"))   bgColor = HexToColor("A3C095");
-            }
-
-            if (backgroundImage != null)
-            {
-                backgroundImage.color = bgColor;
-            }*/
 
             sicknessText.text = ""; // Clear at start
 
@@ -427,13 +368,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsBackground.SetActive(false);
             }
         }
-
-    /*private Color HexToColor(string hex)
-        {
-            Color color;
-            ColorUtility.TryParseHtmlString("#" + hex, out color);
-            return color;
-        }*/
 
     public void OnClick()
         {
@@ -529,8 +463,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
                     GameManager.Instance.TapToLoseLife(creatureForDrain);
-                    //SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-                    //GameManager.Instance.ShowBloodSplatVFX(creatureForDrain);
                     UpdateVisual();
                     return;
                 }
@@ -916,6 +848,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (costText != null) costText.enabled = true;
             if (statsText != null) statsText.enabled = true;
             if (keywordText != null) keywordText.enabled = true;
+            if (cardRarity != null) cardRarity.enabled = true;
 
             titleText.text = linkedCard.cardName;
             sicknessText.text = "";
@@ -924,24 +857,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Load card data
             CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
             SetCardBorder(sourceData);
-
-            /*if (sourceData != null && backgroundImage != null)
-            {
-                string color = sourceData.color;
-                Color bgColor = Color.white;
-
-                switch (color)
-                {
-                    case "White": bgColor = HexToColor("F8F6D8"); break;
-                    case "Blue":  bgColor = HexToColor("C1D7E9"); break;
-                    case "Black": bgColor = HexToColor("BAB1AB"); break;
-                    case "Red":   bgColor = HexToColor("E49977"); break;
-                    case "Green": bgColor = HexToColor("A3C095"); break;
-                    case "Artifact": bgColor = HexToColor("4B413F"); break;
-                }
-
-                backgroundImage.color = bgColor;
-            }*/
 
             if (artImage != null && linkedCard.artwork != null)
                 artImage.sprite = linkedCard.artwork;
@@ -1050,5 +965,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                 }
                 backgroundImage.color = Color.white; // Prevent leftover tint
+            }
+
+        private Color GetRarityColor(string rarity)
+            {
+                switch (rarity.ToLower())
+                {
+                    case "common": return Color.black;
+                    case "uncommon": return Color.gray;
+                    case "rare": return new Color(1f, 0.84f, 0f); // gold
+                    default: return Color.clear;
+                }
             }
 }
