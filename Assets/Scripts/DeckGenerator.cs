@@ -68,13 +68,6 @@ public class DeckGenerator : MonoBehaviour
 
             CardData candidate = pool[rng.Next(pool.Count)];
 
-            // Slightly reduce artifact chance
-            if (candidate.color == "None" && rng.NextDouble() < 0.4)
-            {
-                attempts++;
-                continue;
-            }
-
             if (!copies.ContainsKey(candidate.cardName)) copies[candidate.cardName] = 0;
             if (copies[candidate.cardName] >= 4)
             {
@@ -90,12 +83,12 @@ public class DeckGenerator : MonoBehaviour
         }
 
         // If not enough cards were added, fill with Island
-        if (count > 0)
+        /*if (count > 0)
         {
             Debug.LogWarning($"[DeckGenerator] Not enough cards of {rarity} for {color}, adding {count} Islands instead.");
             var island = CardDatabase.GetCardData("Island");
             for (int i = 0; i < count; i++) GeneratedDeck.Add(island);
-        }
+        }*/
     }
 
     private string BasicLandNameForColor(string color)

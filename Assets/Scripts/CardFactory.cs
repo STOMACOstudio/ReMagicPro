@@ -51,6 +51,9 @@ public static class CardFactory
                 sorcery.typeOfPermanentToDestroyAll = data.typeOfPermanentToDestroyAll;
                 sorcery.exileAllCreaturesFromGraveyards = data.exileAllCreaturesFromGraveyards;
                 sorcery.damageToEachCreatureAndPlayer = data.damageToEachCreatureAndPlayer;
+                sorcery.tokenToCreate = data.tokenToCreate;
+                sorcery.numberOfTokensMin = data.numberOfTokensMin;
+                sorcery.numberOfTokensMax = data.numberOfTokensMax;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
@@ -60,6 +63,7 @@ public static class CardFactory
                 artifact.manaToGain = data.manaToGain;
                 artifact.lifeToGain = data.lifeToGain;
                 artifact.cardsToDraw = data.cardsToDraw;
+                artifact.tokenToCreate = data.tokenToCreate;
                 artifact.manaToPayToActivate = data.manaToPayToActivate;
                 artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
                 artifact.keywordAbilities = data.keywordAbilities != null

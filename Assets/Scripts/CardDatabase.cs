@@ -1249,6 +1249,20 @@ public static class CardDatabase
 
         // Sorceries
             //WHITE
+            Add(new CardData { //rolling army
+                    cardName = "Rolling Army",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 4,
+                    color = "White",
+                    artwork = Resources.Load<Sprite>("Art/rolling_army"),
+                    abilities = new List<CardAbility>(),
+
+                    // Custom token-summon logic
+                    tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
+                    numberOfTokensMin = 1,
+                    numberOfTokensMax = 6,
+                });
                 Add(new CardData { //Candlelight
                     cardName = "Candlelight",
                     rarity = "Common",

@@ -18,6 +18,8 @@ public class CardData
     public bool entersTapped = false;
     public bool isToken = false;
     public string tokenToCreate;
+    public int numberOfTokensMin = 0;
+    public int numberOfTokensMax = 0;   
 
     public KeywordAbility abilityToGain = KeywordAbility.None;
 

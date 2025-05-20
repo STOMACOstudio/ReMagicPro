@@ -191,36 +191,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = sorcery.manaCost.ToString();
 
-                string rules = "";
-                if (sorcery.lifeToGain > 0)
-                    rules += $"Gain {sorcery.lifeToGain} life.\n";
-                if (sorcery.lifeToLoseForOpponent > 0)
-                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
-                if (sorcery.lifeLossForBothPlayers > 0)
-                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
-                if (sorcery.cardsToDraw > 0)
-                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
-                if (sorcery.cardsToDiscardorDraw > 0)
-                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
-                if (sorcery.eachPlayerGainLifeEqualToLands)
-                    rules += $"Each player gains life equal to the number of lands they control.\n";
-                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
-                {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
-                    {
-                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
-                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
-                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
-                        _ => "permanents"
-                    };
-                    rules += $"Destroy all {typeStr}.\n";
-                }
-                if (sorcery.exileAllCreaturesFromGraveyards)
-                    rules += "Exile all creature cards from all graveyards.\n";
-                if (sorcery.damageToEachCreatureAndPlayer > 0)
-                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
-
-                keywordText.text = rules.Trim();
+                sorceryEffect(sorcery);
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -305,37 +276,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsText.text = "";
                 sicknessText.text = "";
 
-                string rules = "";
-
-                if (sorcery.lifeToGain > 0)
-                    rules += $"Gain {sorcery.lifeToGain} life.\n";
-                if (sorcery.lifeToLoseForOpponent > 0)
-                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
-                if (sorcery.lifeLossForBothPlayers > 0)
-                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
-                if (sorcery.cardsToDraw > 0)
-                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
-                if (sorcery.cardsToDiscardorDraw > 0)
-                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
-                if (sorcery.eachPlayerGainLifeEqualToLands)
-                    rules += $"Each player gains life equal to the number of lands they control.\n";
-                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
-                {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
-                    {
-                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
-                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
-                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
-                        _ => "permanents"
-                    };
-                    rules += $"Destroy all {typeStr}.\n";
-                }
-                if (sorcery.exileAllCreaturesFromGraveyards)
-                    rules += "Exile all creature cards from all graveyards.\n";
-                if (sorcery.damageToEachCreatureAndPlayer > 0)
-                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
-
-                keywordText.text = rules.Trim();
+                sorceryEffect(sorcery);
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -885,36 +826,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costText.text = sorcery.manaCost.ToString();
                 statsText.text = "";
 
-                string rules = "";
-                if (sorcery.lifeToGain > 0)
-                    rules += $"Gain {sorcery.lifeToGain} life.\n";
-                if (sorcery.lifeToLoseForOpponent > 0)
-                    rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
-                if (sorcery.lifeLossForBothPlayers > 0)
-                    rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
-                if (sorcery.cardsToDraw > 0)
-                    rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
-                if (sorcery.cardsToDiscardorDraw > 0)
-                    rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
-                if (sorcery.eachPlayerGainLifeEqualToLands)
-                    rules += $"Each player gains life equal to the number of lands they control.\n";
-                if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
-                {
-                    string typeStr = sorcery.typeOfPermanentToDestroyAll switch
-                    {
-                        SorceryCard.PermanentTypeToDestroy.Land => "lands",
-                        SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
-                        SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
-                        _ => "permanents"
-                    };
-                    rules += $"Destroy all {typeStr}.\n";
-                }
-                if (sorcery.exileAllCreaturesFromGraveyards)
-                    rules += "Exile all creature cards from all graveyards.\n";
-                if (sorcery.damageToEachCreatureAndPlayer > 0)
-                    rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
-
-                keywordText.text = rules.Trim();
+                sorceryEffect(sorcery);
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -976,5 +888,43 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     case "rare": return new Color(1f, 0.84f, 0f); // gold
                     default: return Color.clear;
                 }
+            }
+        void sorceryEffect(SorceryCard sorcery)
+            {
+                string rules = "";
+
+            if (sorcery.lifeToGain > 0)
+                rules += $"Gain {sorcery.lifeToGain} life.\n";
+            if (sorcery.lifeToLoseForOpponent > 0)
+                rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
+            if (sorcery.lifeLossForBothPlayers > 0)
+                rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
+            if (sorcery.cardsToDraw > 0)
+                rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
+            if (sorcery.numberOfTokensMax > 0)
+            {
+                rules += $"Create {sorcery.numberOfTokensMin}–{sorcery.numberOfTokensMax} {sorcery.tokenToCreate} token(s).\n";
+            }
+            if (sorcery.cardsToDiscardorDraw > 0)
+                rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
+            if (sorcery.eachPlayerGainLifeEqualToLands)
+                rules += $"Each player gains life equal to the number of lands they control.\n";
+            if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
+            {
+                string typeStr = sorcery.typeOfPermanentToDestroyAll switch
+                {
+                    SorceryCard.PermanentTypeToDestroy.Land => "lands",
+                    SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
+                    SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
+                    _ => "permanents"
+                };
+                rules += $"Destroy all {typeStr}.\n";
+            }
+            if (sorcery.exileAllCreaturesFromGraveyards)
+                rules += "Exile all creature cards from all graveyards.\n";
+            if (sorcery.damageToEachCreatureAndPlayer > 0)
+                rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
+
+            keywordText.text = rules.Trim();
             }
 }

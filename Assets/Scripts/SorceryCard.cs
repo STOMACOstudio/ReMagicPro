@@ -13,6 +13,8 @@ public class SorceryCard : Card
     public int damageToEachCreatureAndPlayer = 0;
     public bool eachPlayerGainLifeEqualToLands = false;
     public bool exileAllCreaturesFromGraveyards = false;
+    public int numberOfTokensMin = 0;
+    public int numberOfTokensMax = 0;
 
     public enum PermanentTypeToDestroy
         {
@@ -28,6 +30,21 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
     public virtual void ResolveEffect(Player caster)
         {
             bool didSomething = false;
+
+            if (!string.IsNullOrEmpty(tokenToCreate) && numberOfTokensMax > 0)
+            {
+                int amount = Random.Range(numberOfTokensMin, numberOfTokensMax + 1);
+                for (int i = 0; i < amount; i++)
+                {
+                    Card token = CardFactory.Create(tokenToCreate);
+                    if (token != null)
+                    {
+                        GameManager.Instance.SummonToken(token, caster);
+                    }
+                }
+
+                Debug.Log($"Spawned {amount} {tokenToCreate} tokens.");
+            }
 
             if (lifeToGain > 0)
                 {
