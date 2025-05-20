@@ -32,6 +32,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject statsBackground;
     public GameObject swordIcon;
     public GameObject shieldIcon;
+    public GameObject tapIcon;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -97,8 +98,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             // Tapped rotation
             transform.rotation = linkedCard.isTapped
-                ? Quaternion.Euler(0, 0, -90)
+                ? Quaternion.Euler(0, 0, -30)
                 : Quaternion.identity;
+
+            if (tapIcon != null)
+                tapIcon.SetActive(linkedCard.isTapped);
 
             if (swordIcon != null && linkedCard is CreatureCard)
                 {
@@ -423,6 +427,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.ShowBloodSplatVFX(linkedCard);
                     UpdateVisual();
                     Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
+
+                    if (GameManager.Instance.aiPlayer.Life <= 0)
+                    {
+                        Debug.Log("AI defeated — player wins!");
+                        GameManager.Instance.WinBattle();  // <-- Call here
+                    }
+
                     return;
                 }
             
