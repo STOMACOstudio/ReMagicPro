@@ -62,6 +62,9 @@ public static class CardFactory
                 artifact.cardsToDraw = data.cardsToDraw;
                 artifact.manaToPayToActivate = data.manaToPayToActivate;
                 artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
+                artifact.keywordAbilities = data.keywordAbilities != null
+                    ? new List<KeywordAbility>(data.keywordAbilities)
+                    : new List<KeywordAbility>();
                 newCard = artifact;
                 break;
 

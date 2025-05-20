@@ -16,6 +16,7 @@ public enum KeywordAbility
     Mountainwalk,
     Forestwalk,
     Trample,
+    AllPermanentsEnterTapped,
 }
 
 public enum ActivatedAbility

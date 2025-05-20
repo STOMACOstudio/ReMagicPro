@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -115,21 +116,6 @@ public class GameManager : MonoBehaviour
                 player.Deck.Add(CardFactory.Create("Angry Farmer"));
                 // etc.
             }
-            /*test deck
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Forest"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Swamp"));
-                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                humanPlayer.Deck.Add(CardFactory.Create("Bog Crocodile"));
-                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));
-                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));    
-                humanPlayer.Deck.Add(CardFactory.Create("River Crocodile"));*/
         }
 
     void ShuffleDeck(Player player)
@@ -183,6 +169,12 @@ public class GameManager : MonoBehaviour
                 player.Hand.Remove(card);
                 player.hasPlayedLandThisTurn = true;
 
+                if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                {
+                    card.isTapped = true;
+                    Debug.Log($"{card.cardName} enters tapped (static effect or base).");
+                }
+
                 card.OnEnterPlay(player);
 
                 visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
@@ -210,10 +202,10 @@ public class GameManager : MonoBehaviour
                     else
                         creature.hasSummoningSickness = true;
 
-                    if (card.entersTapped)
+                    if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                     {
                         card.isTapped = true;
-                        Debug.Log($"{card.cardName} enters tapped.");
+                        Debug.Log($"{card.cardName} enters tapped (due to static effect).");
                     }
 
                     visual.transform.SetParent(playerBattlefieldArea, false);
@@ -256,10 +248,10 @@ public class GameManager : MonoBehaviour
                     player.Battlefield.Add(card);
                     card.OnEnterPlay(player);
 
-                    if (artifact.entersTapped)
+                    if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                     {
                         artifact.isTapped = true;
-                        Debug.Log($"{artifact.cardName} enters tapped.");
+                        Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
                     }
 
                     // Move to battlefield area visually
@@ -606,7 +598,12 @@ public class GameManager : MonoBehaviour
             if (tokenCard is CreatureCard creature)
             {
                 creature.hasSummoningSickness = true;
-                creature.isTapped = creature.entersTapped;
+
+                if (creature.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                {
+                    creature.isTapped = true;
+                    Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                }
             }
 
             owner.Battlefield.Add(tokenCard);
@@ -1137,19 +1134,19 @@ public class GameManager : MonoBehaviour
             ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
             ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
             ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
             ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
             ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
             ai.Deck.Add(CardFactory.Create("Thundermare"));
             ai.Deck.Add(CardFactory.Create("Thundermare"));
             ai.Deck.Add(CardFactory.Create("Thundermare"));
-            ai.Deck.Add(CardFactory.Create("Thundermare"));
+            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
             ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
             ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
             ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
             ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
             ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
             }
 
         public void BuildGreenBeginnerDeck(Player ai)
@@ -1327,7 +1324,7 @@ public class GameManager : MonoBehaviour
             ai.Deck.Add(CardFactory.Create("Mana Rock"));
             ai.Deck.Add(CardFactory.Create("Potion of Mana"));
             ai.Deck.Add(CardFactory.Create("Potion of Mana"));
-            ai.Deck.Add(CardFactory.Create("Potion of Mana"));
+            ai.Deck.Add(CardFactory.Create("Pressure Sphere"));
             ai.Deck.Add(CardFactory.Create("Stone of Plague"));
             ai.Deck.Add(CardFactory.Create("Stone of Plague"));
             }
@@ -1415,5 +1412,12 @@ public class GameManager : MonoBehaviour
                         BuildStarterDeck(ai);
                         break;
                 }
+            }
+
+        public bool IsAllPermanentsEnterTappedActive()
+            {
+                return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
+                    .Any(card => card.keywordAbilities != null &&
+                                card.keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped));
             }
 }

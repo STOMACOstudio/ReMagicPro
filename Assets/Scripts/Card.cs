@@ -26,6 +26,7 @@ public class Card
 
     public List<CardAbility> abilities = new List<CardAbility>();
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
+    public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();
 
     public virtual void Play(Player player)
         {
@@ -155,6 +156,12 @@ public class Card
                     lines.Add("When this creature dies, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnUpkeep)
                     lines.Add("At the beginning of your upkeep, " + ability.description);
+            }
+
+            if (keywordAbilities != null)
+            {
+                if (keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped))
+                    lines.Add("All permanents enter the battlefield tapped.");
             }
 
             return string.Join("\n", lines);

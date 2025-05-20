@@ -1350,7 +1350,7 @@ public static class CardDatabase
                         damageToEachCreatureAndPlayer = 2
                     });
             // GREEN
-        Add(new CardData //Natures Rebuke
+            Add(new CardData //Natures Rebuke
                     {
                         cardName = "Natures Rebuke",
                         rarity = "Rare",
@@ -1371,6 +1371,19 @@ public static class CardDatabase
                     });
 
         // Artifacts
+            Add(new CardData // Pressure Sphere
+                {
+                    cardName = "Pressure Sphere",
+                    rarity = "Rare",
+                    manaCost = 2,
+                    color = "None",
+                    cardType = CardType.Artifact,
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.AllPermanentsEnterTapped
+                    },
+                    artwork = Resources.Load<Sprite>("Art/pressure_sphere")
+                });
             Add(new CardData // Potion of knowledge
                 {
                     cardName = "Potion of Knowledge",

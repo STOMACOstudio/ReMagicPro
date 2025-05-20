@@ -14,8 +14,6 @@ public class CreatureCard : Card
     public CreatureCard blockingThisAttacker;  // If this is a blocker
     public CreatureCard blockedByThisBlocker;  // If this is an attacker
 
-    public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();
-
     public override void Play(Player player)
     {
         if (player.ManaPool >= manaCost)
