@@ -611,6 +611,13 @@ public class TurnSystem : MonoBehaviour
                                     continue;
                                 }
 
+                                // PROTECTION: attacker cannot be blocked by this blocker if it has protection from blocker's color
+                                if (attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color)))
+                                {
+                                    Debug.Log($"{attacker.cardName} has protection from {blocker.color}, so AI cannot assign {blocker.cardName} to block it.");
+                                    continue;
+                                }
+
                                 GameManager.Instance.blockingAssignments[attacker] = blocker;
                                 blocker.blockingThisAttacker = attacker;
                                 attacker.blockedByThisBlocker = blocker;
@@ -729,5 +736,17 @@ public class TurnSystem : MonoBehaviour
                 }
                 return false;
             }
-
+        
+        private KeywordAbility GetProtectionKeyword(string color)
+            {
+                return color switch
+                {
+                    "White" => KeywordAbility.ProtectionFromWhite,
+                    "Blue" => KeywordAbility.ProtectionFromBlue,
+                    "Black" => KeywordAbility.ProtectionFromBlack,
+                    "Red" => KeywordAbility.ProtectionFromRed,
+                    "Green" => KeywordAbility.ProtectionFromGreen,
+                    _ => KeywordAbility.None
+                };
+            }
 }

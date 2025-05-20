@@ -627,6 +627,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} due to landwalk.");
                             return;
                         }
+                        // Prevent blocking if attacker has protection from blocker's color
+                        if (attacker.keywordAbilities.Contains(GetProtectionKeyword(clickedCreature.color)))
+                        {
+                            Debug.Log($"{attacker.cardName} has protection from {clickedCreature.color}, so it can't be blocked by {clickedCreature.cardName}.");
+                            return;
+                        }
                         
                         // Assign the block
                         clickedCreature.blockingThisAttacker = attacker;
@@ -926,5 +932,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
 
             keywordText.text = rules.Trim();
+            }
+
+        private KeywordAbility GetProtectionKeyword(string color)
+            {
+                return color switch
+                {
+                    "White" => KeywordAbility.ProtectionFromWhite,
+                    "Blue" => KeywordAbility.ProtectionFromBlue,
+                    "Black" => KeywordAbility.ProtectionFromBlack,
+                    "Red" => KeywordAbility.ProtectionFromRed,
+                    "Green" => KeywordAbility.ProtectionFromGreen,
+                    _ => KeywordAbility.None
+                };
             }
 }

@@ -425,8 +425,19 @@ public class GameManager : MonoBehaviour
                     }
 
                     // Blocker and attacker deal damage to each other
-                    blocker.toughness -= attacker.power;
-                    attacker.toughness -= blocker.power;
+                    // Apply protection checks before assigning damage
+                    bool attackerProtected = attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color));
+                    bool blockerProtected = blocker.keywordAbilities.Contains(GetProtectionKeyword(attacker.color));
+
+                    if (!blockerProtected)
+                        blocker.toughness -= attacker.power;
+                    else
+                        Debug.Log($"{blocker.cardName} has protection from {attacker.color} and takes no damage.");
+
+                    if (!attackerProtected)
+                        attacker.toughness -= blocker.power;
+                    else
+                        Debug.Log($"{attacker.cardName} has protection from {blocker.color} and takes no damage.");
 
                     Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
 
@@ -1419,5 +1430,18 @@ public class GameManager : MonoBehaviour
                 return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
                     .Any(card => card.keywordAbilities != null &&
                                 card.keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped));
+            }
+        
+        private KeywordAbility GetProtectionKeyword(string color)
+            {
+                return color switch
+                {
+                    "White" => KeywordAbility.ProtectionFromWhite,
+                    "Blue" => KeywordAbility.ProtectionFromBlue,
+                    "Black" => KeywordAbility.ProtectionFromBlack,
+                    "Red" => KeywordAbility.ProtectionFromRed,
+                    "Green" => KeywordAbility.ProtectionFromGreen,
+                    _ => KeywordAbility.None
+                };
             }
 }

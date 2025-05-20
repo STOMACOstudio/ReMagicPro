@@ -203,6 +203,14 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                         // Damage to each creature
                         foreach (var creature in player.Battlefield.OfType<CreatureCard>())
                         {
+                            KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
+
+                            if (creature.keywordAbilities.Contains(protectionKeyword))
+                            {
+                                Debug.Log($"{creature.cardName} has protection from {this.color} and takes no damage.");
+                                continue;
+                            }
+
                             creature.toughness -= damageToEachCreatureAndPlayer;
                             Debug.Log($"{creature.cardName} takes {damageToEachCreatureAndPlayer} damage.");
                         }
@@ -222,4 +230,17 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
 
             GameManager.Instance.UpdateUI();
         }
+
+        private KeywordAbility GetProtectionKeyword(string color)
+            {
+                return color switch
+                {
+                    "White" => KeywordAbility.ProtectionFromWhite,
+                    "Blue" => KeywordAbility.ProtectionFromBlue,
+                    "Black" => KeywordAbility.ProtectionFromBlack,
+                    "Red" => KeywordAbility.ProtectionFromRed,
+                    "Green" => KeywordAbility.ProtectionFromGreen,
+                    _ => KeywordAbility.None
+                };
+            }
 }

@@ -57,7 +57,22 @@ public static class CardDatabase
 
         // Creatures
             //WHITE
-                Add(new CardData //Angry farmer
+                Add (new CardData { // Beasthunter
+                    cardName = "Beasthunter",
+                    rarity = "Uncommon",
+                    manaCost = 2,
+                    color = "White",
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.ProtectionFromRed,
+                        KeywordAbility.ProtectionFromGreen,
+                    },
+                    artwork = Resources.Load<Sprite>("Art/beasthunter")
+                    });
+                Add(new CardData // Angry farmer
                     {
                     cardName = "Angry Farmer",
                     rarity = "Common",
@@ -409,6 +424,20 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
+            Add (new CardData { //Flayed Deer
+                    cardName = "Flayed Deer",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = "Black",
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.ProtectionFromGreen
+                    },
+                    artwork = Resources.Load<Sprite>("Art/flayed_deer")
+                    });
                 Add(new CardData //Giant Bat
                         {
                         cardName = "Giant Bat",
@@ -718,6 +747,20 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/demon_token")
                     });
             //RED
+                Add (new CardData { //Firedancer
+                    cardName = "Firedancer",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = "Red",
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.ProtectionFromRed
+                    },
+                    artwork = Resources.Load<Sprite>("Art/firedancer")
+                    });
                 Add(new CardData //Rabid dog
                     {
                     cardName = "Rabid Dog",
@@ -1503,23 +1546,23 @@ public static class CardDatabase
     }
 
     private static void Add(CardData data)
-    {
-        cardsByName[data.cardName] = data;
-    }
-
-    public static CardData GetCardData(string name)
-    {
-        if (cardsByName.TryGetValue(name, out var data))
         {
-            return data;
+            cardsByName[data.cardName] = data;
         }
 
-        Debug.LogError("Card not found in database: " + name);
-        return null;
-    }
+    public static CardData GetCardData(string name)
+        {
+            if (cardsByName.TryGetValue(name, out var data))
+            {
+                return data;
+            }
+
+            Debug.LogError("Card not found in database: " + name);
+            return null;
+        }
 
     public static IEnumerable<CardData> GetAllCards()
-    {
-        return cardsByName.Values;
-    }
+        {
+            return cardsByName.Values;
+        }
 }

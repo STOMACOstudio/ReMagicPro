@@ -81,6 +81,7 @@ public static class CardFactory
         // Shared assignment
         newCard.cardName = data.cardName;
         newCard.manaCost = data.manaCost;
+        newCard.color = data.color;
         newCard.artwork = data.artwork;
         newCard.entersTapped = data.entersTapped;
         newCard.abilities = new List<CardAbility>(data.abilities);

@@ -66,8 +66,10 @@ public class Card
                 {
                 foreach (var keyword in creature.keywordAbilities)
                 {
-                    // Skip verbose keywords — we’ll handle them separately
-                    if (keyword == KeywordAbility.CantBlock || keyword == KeywordAbility.CanOnlyBlockFlying || keyword == KeywordAbility.CantBlockWithoutForest)
+                    if (keyword == KeywordAbility.CantBlock ||
+                        keyword == KeywordAbility.CanOnlyBlockFlying ||
+                        keyword == KeywordAbility.CantBlockWithoutForest ||
+                        keyword.ToString().StartsWith("ProtectionFrom")) //
                         continue;
 
                     lines.Add(keyword.ToString());
@@ -81,6 +83,16 @@ public class Card
                     lines.Add("This creature can't block if you don't control a forest.");
                 if (entersTapped)
                     lines.Add("This creature enters the battlefield tapped.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromWhite))
+                    lines.Add("Protection from White");
+                if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlue))
+                    lines.Add("Protection from Blue");
+                if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlack))
+                    lines.Add("Protection from Black");
+                if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromRed))
+                    lines.Add("Protection from Red");
+                if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromGreen))
+                    lines.Add("Protection from Green");
 
                 // Activated abilities
                 if (creature.activatedAbilities != null)

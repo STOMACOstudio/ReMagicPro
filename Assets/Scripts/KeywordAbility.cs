@@ -17,6 +17,11 @@ public enum KeywordAbility
     Forestwalk,
     Trample,
     AllPermanentsEnterTapped,
+    ProtectionFromWhite,
+    ProtectionFromBlue,
+    ProtectionFromBlack,
+    ProtectionFromRed,
+    ProtectionFromGreen,
 }
 
 public enum ActivatedAbility
