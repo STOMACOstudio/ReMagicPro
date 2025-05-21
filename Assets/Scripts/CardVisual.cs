@@ -25,8 +25,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Sprite redBorder;
     public Sprite greenBorder;
     public Sprite artifactBorder;
-    public Sprite defaultBorder;
-    
+    public Sprite defaultBorder;    
     
     public GameObject costBackground;
     public GameObject statsBackground;
@@ -39,6 +38,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text costText;
     public TMP_Text statsText;
     public TMP_Text keywordText;
+    public TMP_Text cardTypeText;
 
     private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -5); // Adjust as needed
     private readonly Vector2 defaultStatsPosition = new Vector2(28, -53); // whatever your default was
@@ -94,6 +94,28 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     cardRarity.enabled = false;
                 }
+            }
+
+            // Show type line based on card
+            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+            if (cardData != null && cardTypeText != null)
+            {
+                string typeLine;
+
+                if (cardData.cardType == CardType.Creature)
+                {
+                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
+                    else
+                        typeLine = "Creature";
+                }
+                else
+                {
+                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
+                }
+
+                cardTypeText.text = typeLine;
+                cardTypeText.enabled = !isInBattlefield;
             }
 
             // Tapped rotation
@@ -241,6 +263,29 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             linkedCard = card;
             gameManager = manager;
+            
+            // Show type line based on card
+            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+            if (cardData != null && cardTypeText != null)
+            {
+                string typeLine;
+
+                if (cardData.cardType == CardType.Creature)
+                {
+                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
+                    else
+                        typeLine = "Creature";
+                }
+                else
+                {
+                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
+                }
+
+                cardTypeText.text = typeLine;
+                cardTypeText.enabled = !isInBattlefield;
+            }
+
             titleText.text = card.cardName;
             lineRenderer = GetComponent<LineRenderer>();
             artImage.sprite = linkedCard.artwork;
@@ -784,6 +829,27 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // General setup
             isInBattlefield = false;
             isInGraveyard = true;
+
+            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+            if (cardData != null && cardTypeText != null)
+            {
+                string typeLine;
+
+                if (cardData.cardType == CardType.Creature)
+                {
+                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
+                    else
+                        typeLine = "Creature";
+                }
+                else
+                {
+                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
+                }
+
+                cardTypeText.text = typeLine;
+                cardTypeText.enabled = !isInBattlefield;
+            }
 
             transform.localScale = Vector3.one * 0.5f;
             transform.rotation = Quaternion.identity;

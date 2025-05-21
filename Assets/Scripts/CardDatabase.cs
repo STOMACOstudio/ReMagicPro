@@ -65,6 +65,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Human", "Warrior" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.ProtectionFromRed,
@@ -81,6 +82,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/angry_farmer")
                     });
@@ -93,6 +95,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 3,
+                    subtypes = new List<string> { "Human", "Knight" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance
@@ -108,6 +111,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
+                    subtypes = new List<string> { "Giant" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Defender
@@ -123,6 +127,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 3,
+                    subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> {},
                     artwork = Resources.Load<Sprite>("Art/waterbearer"),
                     abilities = new List<CardAbility>
@@ -160,6 +165,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 4,
+                    subtypes = new List<string> { "Human", "Cleric" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance
@@ -188,6 +194,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 7,
+                    subtypes = new List<string> { "Human", "Soldier" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance
@@ -203,6 +210,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human", "Soldier" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/hamlet_recruiter"),
                     abilities = new List<CardAbility>
@@ -235,6 +243,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
+                    subtypes = new List<string> { "Unicorn" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -250,6 +259,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
+                    subtypes = new List<string> { "Angel" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -280,6 +290,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
+                        subtypes = new List<string> { "Human", "Soldier" },
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/human_soldier_token")
                     });
@@ -294,6 +305,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
+                    subtypes = new List<string> { "Leviathan" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -309,6 +321,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 6,
+                    subtypes = new List<string> { "Cephalopod" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/wandering_squid")
                     });
@@ -321,6 +334,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 4,
+                    subtypes = new List<string> { "Crab" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/giant_crab")
                     });
@@ -333,6 +347,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
+                    subtypes = new List<string> { "Elemental" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying,
@@ -349,6 +364,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
+                        subtypes = new List<string> { "Human" },
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/lucky_fisherman"),
                         abilities = new List<CardAbility>
@@ -374,6 +390,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 8,
                     toughness = 8,
+                    subtypes = new List<string> { "Cephalopod" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/colossal_octopus")
                     });
@@ -386,6 +403,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Wizard" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/replicator"),
                     abilities = new List<CardAbility>
@@ -420,6 +438,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 3,
+                    subtypes = new List<string> { "Merfolk", "Warrior" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
@@ -432,6 +451,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Zombie", "Beast" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.ProtectionFromGreen
@@ -448,6 +468,7 @@ public static class CardDatabase
                         power = 3,
                         toughness = 2,
                         manaToPayToActivate = 1,
+                        subtypes = new List<string> { "Bat" },
                         abilityToGain = KeywordAbility.Flying,
                         keywordAbilities = new List<KeywordAbility>
                         {
@@ -468,6 +489,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 3,
+                        subtypes = new List<string> { "Reptile" },
                         keywordAbilities = new List<KeywordAbility>
                         {
                             KeywordAbility.Swampwalk,
@@ -484,6 +506,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
+                    subtypes = new List<string> { "Monkey", "Zombie" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlockWithoutForest,
@@ -499,6 +522,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 6,
                     toughness = 1,
+                    subtypes = new List<string> { "Zombie", "Leviathan" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/rotting_whale")
                     });
@@ -512,6 +536,7 @@ public static class CardDatabase
                     power = 2,
                     toughness = 2,
                     entersTapped = true,
+                    subtypes = new List<string> { "Zombie" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/limping_corpse")
                     });
@@ -524,6 +549,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Zombie", "Bird" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
@@ -540,6 +566,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Bird" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
@@ -569,6 +596,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/possessed_innocent"),
                     abilities = new List<CardAbility>
@@ -601,6 +629,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human", "Wizard" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/lunatic_necromancer"),
                     abilities = new List<CardAbility>
@@ -633,6 +662,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Spirit" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/sad_clown"),
                     abilities = new List<CardAbility>
@@ -668,6 +698,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Rat", "Bat" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
@@ -685,6 +716,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 1,
+                    subtypes = new List<string> { "Rat" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/giant_rat")
                     });
@@ -697,6 +729,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Insect" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock,
@@ -714,6 +747,7 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     tapLifeLossAmount = 1,
+                    subtypes = new List<string> { "Human", "Wizard" },
                     activatedAbilities = new List<ActivatedAbility> {
                         ActivatedAbility.TapToLoseLife
                     },
@@ -730,6 +764,7 @@ public static class CardDatabase
                         power = 2,
                         toughness = 2,
                         entersTapped = true,
+                        subtypes = new List<string> { "Zombie" },
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/zombie_token")
                     });
@@ -743,6 +778,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 5,
                         toughness = 5,
+                        subtypes = new List<string> { "Demon" },
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
                         artwork = Resources.Load<Sprite>("Art/demon_token")
                     });
@@ -755,6 +791,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human", "Shaman" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.ProtectionFromRed
@@ -770,6 +807,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Dog" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Haste,
@@ -786,6 +824,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
+                    subtypes = new List<string> { "Dragon" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Haste,
@@ -802,6 +841,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human", "Shaman" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/dragon_summoner"),
                     abilities = new List<CardAbility>
@@ -834,6 +874,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 4,
+                    subtypes = new List<string> { "Elemental" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Defender,
@@ -849,6 +890,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Beast" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -864,6 +906,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
+                    subtypes = new List<string> { "Goblin", "Warrior" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.CantBlock
@@ -879,6 +922,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 3,
+                    subtypes = new List<string> { "Elemental" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Haste,
@@ -895,6 +939,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/village_idiot"),
                     abilities = new List<CardAbility>
@@ -921,6 +966,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 1,
+                    subtypes = new List<string> { "Bird", "Beast" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Haste,
@@ -938,6 +984,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 5,
                         toughness = 5,
+                        subtypes = new List<string> { "Dragon" },
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
                         artwork = Resources.Load<Sprite>("Art/dragon_token")
                     });
@@ -951,6 +998,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 3,
+                        subtypes = new List<string> { "Reptile" },
                         keywordAbilities = new List<KeywordAbility>
                         {
                             KeywordAbility.Islandwalk,
@@ -967,6 +1015,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 5,
+                    subtypes = new List<string> { "Treefolk", "Druid" },
                     artwork = Resources.Load<Sprite>("Art/living_tree"),
                     keywordAbilities = new List<KeywordAbility>
                     {
@@ -986,6 +1035,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 2,
+                    subtypes = new List<string> { "Plant" },
                     artwork = Resources.Load<Sprite>("Art/wall_of_roots"),
                     keywordAbilities = new List<KeywordAbility>
                     {
@@ -1005,6 +1055,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
+                    subtypes = new List<string> { "Plant", "Reptile" },
                     keywordAbilities = new List<KeywordAbility> {
                         KeywordAbility.Trample
                     },
@@ -1019,6 +1070,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 7,
+                    subtypes = new List<string> { "Beast" },
                     keywordAbilities = new List<KeywordAbility> {
                         KeywordAbility.Trample
                     },
@@ -1033,6 +1085,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Elf" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/drumming_elf"),
                     abilities = new List<CardAbility>
@@ -1065,6 +1118,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/crazy_cat_lady"),
                     abilities = new List<CardAbility>
@@ -1100,6 +1154,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Cat" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Reach
@@ -1115,10 +1170,11 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/deep_forest_monkeys")
                     });
-                Add(new CardData //Violent ape
+                Add(new CardData //Violent Monkey
                     {
                     cardName = "Violent Ape",
                     rarity = "Common",
@@ -1127,6 +1183,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
+                    subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
@@ -1139,6 +1196,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    subtypes = new List<string> { "Beast" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -1154,6 +1212,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 8,
                     toughness = 8,
+                    subtypes = new List<string> { "Beast" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/slack_tungo")
                     });
@@ -1167,6 +1226,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
+                        subtypes = new List<string> { "Cat" },
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Reach },
                         artwork = Resources.Load<Sprite>("Art/cat_token")
                     });
@@ -1180,6 +1240,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
+                        subtypes = new List<string> { "Monkey" },
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/monkey_token")
                     });
@@ -1193,6 +1254,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
+                    subtypes = new List<string> { "Cat", "Sphynx" },
                     manaToPayToActivate = 4,
                     abilityToGain = KeywordAbility.Flying,
                     activatedAbilities = new List<ActivatedAbility>
@@ -1210,6 +1272,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
+                    subtypes = new List<string> { "Golem" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/origin_golem")
@@ -1223,6 +1286,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 5,
+                    subtypes = new List<string> { "Golem" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/omega_golemoid")
@@ -1236,6 +1300,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
+                    subtypes = new List<string> { "Beast" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/glassmole")
@@ -1249,6 +1314,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 1,
+                    subtypes = new List<string> { "Wall" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Defender,
@@ -1265,6 +1331,7 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     manaToPayToActivate = 3,
+                    subtypes = new List<string> { "Golem" },
                     tokenToCreate = "Miner",
                     activatedAbilities = new List<ActivatedAbility> {
                         ActivatedAbility.TapToCreateToken
@@ -1282,6 +1349,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    subtypes = new List<string> { "Golem" },
                     manaToPayToActivate = 3,
                     tokenToCreate = "Miner",
                     activatedAbilities = new List<ActivatedAbility> {

@@ -22,6 +22,7 @@ public class CardData
     public int numberOfTokensMax = 0;   
 
     public KeywordAbility abilityToGain = KeywordAbility.None;
+    public List<string> subtypes = new List<string>(); // e.g., "Human", "Warrior"
 
     //noncreature artifacts
     public enum ArtifactEffect
