@@ -740,10 +740,10 @@ public class GameManager : MonoBehaviour
                 enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
 
             if (playerLifeText != null)
-                playerLifeText.text = "Life: " + humanPlayer.Life;
+                playerLifeText.text = "" + humanPlayer.Life;
 
             if (enemyLifeText != null)
-                enemyLifeText.text = "Enemy Life: " + aiPlayer.Life;
+                enemyLifeText.text = "" + aiPlayer.Life;
 
             if (manaPoolText != null)
             {
