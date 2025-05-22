@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject manaVFXPrefab;
     public GameObject bloodSplatPrefab;
+    public GameObject playerLifeContainer;
+    public GameObject enemyLifeContainer;
 
     public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
 
@@ -44,6 +46,11 @@ public class GameManager : MonoBehaviour
     public Dictionary<CreatureCard, CreatureCard> blockingAssignments = new Dictionary<CreatureCard, CreatureCard>();
 
     public bool isStackBusy = false;
+
+    public SorceryCard targetingSorcery;
+    public Player targetingPlayer;
+    public CardVisual targetingVisual;
+    public bool isTargetingMode = false;
 
     void Awake()
         {
@@ -217,6 +224,13 @@ public class GameManager : MonoBehaviour
 
             else if (card is SorceryCard sorcery)
             {
+                if (sorcery.requiresTarget)
+                {
+                    Debug.Log("This sorcery requires a target — entering targeting mode.");
+                    BeginTargetSelection(sorcery, player, visual);
+                    return;
+                }
+
                 if (player.ManaPool >= sorcery.manaCost)
                 {
                     isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
@@ -1465,5 +1479,150 @@ public class GameManager : MonoBehaviour
                     "Green" => KeywordAbility.ProtectionFromGreen,
                     _ => KeywordAbility.None
                 };
+            }
+            
+        public void BeginTargetSelection(SorceryCard sorcery, Player caster, CardVisual visual)
+            {
+                targetingSorcery = sorcery;
+                targetingPlayer = caster;
+                targetingVisual = visual;
+                isTargetingMode = true;
+
+                if (!sorcery.requiresTarget)
+                {
+                    Debug.LogWarning("BeginTargetSelection called for non-targeting sorcery.");
+                    return;
+                }
+
+                // Check if any valid targets exist (but do not highlight anything)
+                foreach (var cv in activeCardVisuals)
+                {
+                    if (cv == null || cv.linkedCard == null)
+                        continue;
+
+                    Card target = cv.linkedCard;
+
+                    bool correctType =
+                        (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                        (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
+                        (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                        (sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && target is CreatureCard);
+
+                    bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
+
+                    if (correctType && isOnBattlefield && !IsProtectedFromSpell(target))
+                    {
+                        // Valid target exists, but no visual feedback is shown
+                    }
+                }
+
+                // You may still want to show/hide player target visuals separately if needed
+            }
+        
+        private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
+            {
+                yield return new WaitForSeconds(2f);
+
+                sorcery.ResolveEffect(caster, target);
+                SendToGraveyard(sorcery, caster);
+
+                if (caster == aiPlayer && visual != null)
+                {
+                    activeCardVisuals.Remove(visual);
+                    Destroy(visual.gameObject);
+                }
+
+                UpdateUI();
+                isStackBusy = false;
+            }
+
+        public void CompleteTargetSelection(CardVisual targetVisual)
+            {
+                Card chosen = targetVisual.linkedCard;
+                targetingSorcery.chosenTarget = chosen;
+
+                // Remove highlight from all cards
+                foreach (var cv in activeCardVisuals)
+                    cv.EnableTargetingHighlight(false);
+
+                Debug.Log($"Target selected: {chosen.cardName}");
+
+                // Move sorcery visual to stack before resolving
+                targetingVisual.transform.SetParent(stackZone, false);
+                targetingVisual.transform.localPosition = Vector3.zero;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+                StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual));
+
+                isTargetingMode = false;
+                targetingSorcery = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+            }
+        
+        public void CancelTargeting()
+            {
+                foreach (var cv in activeCardVisuals)
+                    cv.EnableTargetingHighlight(false);
+
+                targetingSorcery = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                isStackBusy = false;
+
+                UpdateUI();
+            }
+        
+        public void CompletePlayerTargetSelection(Player targetPlayer)
+            {
+                // Move visual to stack
+                targetingVisual.transform.SetParent(stackZone, false);
+                targetingVisual.transform.localPosition = Vector3.zero;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+                StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual));
+
+                if (targetingPlayer == aiPlayer && targetingVisual != null)
+                {
+                    activeCardVisuals.Remove(targetingVisual);
+                    Destroy(targetingVisual.gameObject);
+                }
+
+                isTargetingMode = false;
+                targetingSorcery = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+
+                UpdateUI();
+                isStackBusy = false;
+            }
+        
+        private bool IsProtectedFromSpell(Card card)
+            {
+                if (card is CreatureCard creature && targetingSorcery != null)
+                {
+                    KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.color);
+                    return creature.keywordAbilities.Contains(protection);
+                }
+
+                return false;
+            }
+        
+        private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual)
+            {
+                yield return new WaitForSeconds(2f);
+
+                sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
+                SendToGraveyard(sorcery, caster);
+
+                if (caster == aiPlayer && visual != null)
+                {
+                    activeCardVisuals.Remove(visual);
+                    Destroy(visual.gameObject);
+                }
+
+                UpdateUI();
+                isStackBusy = false;
             }
 }

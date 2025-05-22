@@ -92,6 +92,13 @@ public class TurnSystem : MonoBehaviour
             if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
+
+                if (GameManager.Instance.isTargetingMode)
+                {
+                    Debug.Log("Canceled targeting because player pressed Next Phase.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
                 waitingForPlayerInput = false;
                 HideAllConfirmButtons();
                 AdvancePhase();

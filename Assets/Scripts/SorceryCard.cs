@@ -6,7 +6,7 @@ using System.Linq;
 
 public class SorceryCard : Card
 {
-    //public int lifeToGain = 0;
+    public bool requiresTarget = false;
     public int lifeToLoseForOpponent = 0;
     public int lifeLossForBothPlayers = 0;
     public int cardsToDiscardorDraw = 0;
@@ -15,6 +15,21 @@ public class SorceryCard : Card
     public bool exileAllCreaturesFromGraveyards = false;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
+    public Card chosenTarget = null;
+    public int damageToTarget = 0;
+
+    public TargetType requiredTargetType = TargetType.None;
+    public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
+    
+    public enum TargetType
+    {
+        None,
+        Creature,
+        Land,
+        Artifact,
+        Player,
+        CreatureOrPlayer
+    }
 
     public enum PermanentTypeToDestroy
         {
@@ -24,8 +39,6 @@ public class SorceryCard : Card
             Artifact,
             // Add more as needed later (Artifacts, Enchantments, etc.)
         }
-
-public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
 
     public virtual void ResolveEffect(Player caster)
         {
@@ -231,7 +244,43 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
             GameManager.Instance.UpdateUI();
         }
 
-        private KeywordAbility GetProtectionKeyword(string color)
+        public virtual void ResolveEffect(Player caster, Card target)
+            {
+                if (target != null)
+                {
+                    Debug.Log($"{cardName} is resolving on target {target.cardName}.");
+
+                    if (damageToTarget > 0 && target is CreatureCard creature)
+                    {
+                        KeywordAbility protection = GetProtectionKeyword(color);
+                        if (creature.keywordAbilities.Contains(protection))
+                        {
+                            Debug.Log($"{creature.cardName} is protected from {color}, takes no damage.");
+                        }
+                        else
+                        {
+                            creature.toughness -= damageToTarget;
+                            Debug.Log($"{creature.cardName} takes {damageToTarget} damage from {cardName}.");
+                            GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                            GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                        }
+
+                        GameManager.Instance.UpdateUI();
+                        return;
+                    }
+
+                    // fallback: destroy if no damage is defined but it's the correct target type
+                    if (requiredTargetType == TargetType.Creature && target is CreatureCard defaultKill)
+                    {
+                        GameManager.Instance.SendToGraveyard(defaultKill, GameManager.Instance.GetOwnerOfCard(defaultKill));
+                        Debug.Log($"{cardName} destroyed {defaultKill.cardName}.");
+                    }
+                }
+
+                GameManager.Instance.UpdateUI();
+            }
+
+        public KeywordAbility GetProtectionKeyword(string color)
             {
                 return color switch
                 {
@@ -242,5 +291,19 @@ public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestr
                     "Green" => KeywordAbility.ProtectionFromGreen,
                     _ => KeywordAbility.None
                 };
+            }
+        
+        public virtual void ResolveEffectOnPlayer(Player caster, Player targetPlayer)
+            {
+                if (requiredTargetType == TargetType.Player || requiredTargetType == TargetType.CreatureOrPlayer)
+                {
+                    if (damageToTarget > 0)
+                    {
+                        targetPlayer.Life -= damageToTarget;
+                        Debug.Log($"{cardName} deals {damageToTarget} damage to {targetPlayer}.");
+                    }
+                }
+
+                GameManager.Instance.UpdateUI();
             }
 }

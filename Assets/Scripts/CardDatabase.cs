@@ -1360,7 +1360,7 @@ public static class CardDatabase
 
         // Sorceries
             //WHITE
-            Add(new CardData { //rolling army
+                Add(new CardData { //rolling army
                     cardName = "Rolling Army",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
@@ -1373,7 +1373,7 @@ public static class CardDatabase
                     tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
                     numberOfTokensMin = 1,
                     numberOfTokensMax = 6,
-                });
+                    });
                 Add(new CardData { //Candlelight
                     cardName = "Candlelight",
                     rarity = "Common",
@@ -1454,6 +1454,19 @@ public static class CardDatabase
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
             // RED
+                Add(new CardData
+                    {
+                        cardName = "Explosion",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = "Red",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                        damageToTarget = 3,
+                        artwork = Resources.Load<Sprite>("Art/explosion"),
+                    });
+
                 Add(new CardData //Moonfall
                     {
                         cardName = "Moonfall",

@@ -361,6 +361,59 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            if (GameManager.Instance.targetingSorcery != null)
+            {
+                if (GameManager.Instance.targetingVisual == this)
+                {
+                    GameManager.Instance.CancelTargeting();
+                    return;
+                }
+
+                var spell = GameManager.Instance.targetingSorcery;
+                var caster = GameManager.Instance.targetingPlayer;
+                var card = linkedCard;
+
+                bool valid = false;
+
+                // Creature target
+                if ((spell.requiredTargetType == SorceryCard.TargetType.Creature ||
+                    spell.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer) &&
+                    card is CreatureCard targetCreature)
+                {
+                    // Is on battlefield and not protected
+                    if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
+                    {
+                        var protection = spell.GetProtectionKeyword(spell.color);
+                        if (!targetCreature.keywordAbilities.Contains(protection))
+                            valid = true;
+                    }
+                }
+
+                // Land / Artifact: not allowed unless explicitly targeted
+                if (spell.requiredTargetType == SorceryCard.TargetType.Land && card is LandCard)
+                {
+                    if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
+                        valid = true;
+                }
+
+                if (spell.requiredTargetType == SorceryCard.TargetType.Artifact && card is ArtifactCard)
+                {
+                    if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
+                        valid = true;
+                }
+
+                if (valid)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Invalid target — canceling.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
 
             if (!isInBattlefield && GameManager.Instance.humanPlayer.Hand.Contains(linkedCard) == false)
             {
@@ -972,6 +1025,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     default: return Color.clear;
                 }
             }
+
         void sorceryEffect(SorceryCard sorcery)
             {
                 string rules = "";
@@ -992,6 +1046,21 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
             if (sorcery.eachPlayerGainLifeEqualToLands)
                 rules += $"Each player gains life equal to the number of lands they control.\n";
+            if (sorcery.damageToTarget > 0 &&
+                (sorcery.requiredTargetType == SorceryCard.TargetType.Creature ||
+                sorcery.requiredTargetType == SorceryCard.TargetType.Player ||
+                sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer))
+            {
+                string targetTypeStr = sorcery.requiredTargetType switch
+                {
+                    SorceryCard.TargetType.Creature => "target creature",
+                    SorceryCard.TargetType.Player => "target player",
+                    SorceryCard.TargetType.CreatureOrPlayer => "any target",
+                    _ => "target"
+                };
+
+                rules += $"Deal {sorcery.damageToTarget} damage to {targetTypeStr}.\n";
+            }
             if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
             {
                 string typeStr = sorcery.typeOfPermanentToDestroyAll switch
@@ -1022,5 +1091,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     "Green" => KeywordAbility.ProtectionFromGreen,
                     _ => KeywordAbility.None
                 };
+            }
+
+        public void EnableTargetingHighlight(bool enable)
+            {
+                // Simplest version: tint the card green
+                if (backgroundImage != null)
+                {
+                    backgroundImage.color = enable ? Color.green : Color.white;
+                }
             }
 }

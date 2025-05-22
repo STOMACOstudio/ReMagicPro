@@ -345,7 +345,8 @@ GameObject:
   - component: {fileID: 219930520}
   - component: {fileID: 219930522}
   - component: {fileID: 219930521}
-  m_Layer: 0
+  - component: {fileID: 219930523}
+  m_Layer: 5
   m_Name: EnemyLifeContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -410,6 +411,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 219930519}
   m_CullTransparentMesh: 1
+--- !u!114 &219930523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219930519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7501bd8a749cba4cb5f085ce861b094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHuman: 0
 --- !u!1 &335802182
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,7 +435,8 @@ GameObject:
   - component: {fileID: 335802183}
   - component: {fileID: 335802185}
   - component: {fileID: 335802184}
-  m_Layer: 0
+  - component: {fileID: 335802186}
+  m_Layer: 5
   m_Name: PlayerLifeContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,6 +501,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 335802182}
   m_CullTransparentMesh: 1
+--- !u!114 &335802186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335802182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7501bd8a749cba4cb5f085ce861b094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHuman: 1
 --- !u!1 &342265606
 GameObject:
   m_ObjectHideFlags: 0
@@ -2269,6 +2297,8 @@ MonoBehaviour:
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
   manaVFXPrefab: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
   bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
+  playerLifeContainer: {fileID: 335802182}
+  enemyLifeContainer: {fileID: 219930519}
   blueIcon: {fileID: 21300000, guid: cf5da0752d7da9f4db791fed64ba1347, type: 3}
   whiteIcon: {fileID: 21300000, guid: e51d0f0e20f24834f893872fd6719259, type: 3}
   blackIcon: {fileID: 21300000, guid: 45c943c1120a5e74dbfdc1bf4d6a0e44, type: 3}
@@ -2276,6 +2306,8 @@ MonoBehaviour:
   greenIcon: {fileID: 21300000, guid: ee21b80a1bc7cb14daa78ade36c0bce9, type: 3}
   activeCardVisuals: []
   isStackBusy: 0
+  targetingVisual: {fileID: 0}
+  isTargetingMode: 0
 --- !u!4 &1539663350
 Transform:
   m_ObjectHideFlags: 0
