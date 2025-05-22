@@ -425,28 +425,38 @@ public class GameManager : MonoBehaviour
                     }
 
                     // Blocker and attacker deal damage to each other
-                    // Apply protection checks before assigning damage
                     bool attackerProtected = attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color));
                     bool blockerProtected = blocker.keywordAbilities.Contains(GetProtectionKeyword(attacker.color));
 
+                    int damageFromAttacker = attacker.power;
+                    int damageFromBlocker = blocker.power;
+
                     if (!blockerProtected)
-                        blocker.toughness -= attacker.power;
+                        blocker.toughness -= damageFromAttacker;
                     else
-                        Debug.Log($"{blocker.cardName} has protection from {attacker.color} and takes no damage.");
+                        damageFromAttacker = 0;
 
                     if (!attackerProtected)
-                        attacker.toughness -= blocker.power;
+                        attacker.toughness -= damageFromBlocker;
                     else
-                        Debug.Log($"{attacker.cardName} has protection from {blocker.color} and takes no damage.");
+                        damageFromBlocker = 0;
 
                     Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
 
-                    // Lifelink: gain life equal to damage dealt to blocker
-                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                    // Lifelink: gain life equal to damage dealt by attacker
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromAttacker > 0)
                     {
                         Player owner = GetOwnerOfCard(attacker);
-                        owner.Life += attacker.power;
-                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to {owner}.");
+                        owner.Life += damageFromAttacker;
+                        Debug.Log($"{attacker.cardName} lifelinks {damageFromAttacker} life to {owner}.");
+                    }
+
+                    // Lifelink: gain life equal to damage dealt by blocker
+                    if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
+                    {
+                        Player blockerOwner = GetOwnerOfCard(blocker);
+                        blockerOwner.Life += damageFromBlocker;
+                        Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
                     }
                 }
                 else
