@@ -43,6 +43,9 @@ public class TurnSystem : MonoBehaviour
     public Button confirmAttackersButton;
     public Button confirmBlockersButton;
 
+    public TurnPhase lastPhaseBeforeStack;
+    public bool waitingToResumeAI = false;
+
     void Start()
         {
             Instance = this;
@@ -58,33 +61,31 @@ public class TurnSystem : MonoBehaviour
         }
 
     void Update()
-        {
-            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
             {
-                RunCurrentPhase();
-            }
-
-            // Update next phase button dynamically
-            if (nextPhaseButton != null)
-            {
-                bool allowNext = currentPlayer == PlayerType.Human &&
-                                waitingForPlayerInput &&
-                                !GameManager.Instance.isStackBusy &&
-                                currentPhase != TurnPhase.ConfirmAttackers &&
-                                currentPhase != TurnPhase.ConfirmBlockers &&
-                                currentPhase != TurnPhase.ChooseAttackers;
-
-                nextPhaseButton.interactable = allowNext;
-
-
-
-                TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
-                if (label != null)
+                if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
                 {
-                    label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
+                    RunCurrentPhase(); // this alone is enough
+                }
+
+                // Update next phase button dynamically
+                if (nextPhaseButton != null)
+                {
+                    bool allowNext = currentPlayer == PlayerType.Human &&
+                                    waitingForPlayerInput &&
+                                    !GameManager.Instance.isStackBusy &&
+                                    currentPhase != TurnPhase.ConfirmAttackers &&
+                                    currentPhase != TurnPhase.ConfirmBlockers &&
+                                    currentPhase != TurnPhase.ChooseAttackers;
+
+                    nextPhaseButton.interactable = allowNext;
+
+                    TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
+                    if (label != null)
+                    {
+                        label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
+                    }
                 }
             }
-        }
 
     public void NextPhaseButton()
         {
@@ -167,7 +168,9 @@ public class TurnSystem : MonoBehaviour
 
             if (GameManager.Instance.isStackBusy)
             {
-                Debug.Log("Stack is busy — AI is waiting.");
+                Debug.Log("AI cast a sorcery — stack is busy. Will resume after.");
+                lastPhaseBeforeStack = currentPhase;
+                waitingToResumeAI = true;
                 return;
             }
 
@@ -499,13 +502,11 @@ public class TurnSystem : MonoBehaviour
                         GameManager.Instance.UpdateUI(); // update UI after all actions
                         if (GameManager.Instance.isStackBusy)
                         {
-                            Debug.Log("AI cast a sorcery — waiting for resolution before advancing phase.");
-                            StartCoroutine(WaitAndAdvancePhase());
+                            Debug.Log("AI cast a sorcery — waiting... will not advance phase until resolved.");
+                            return; // just wait
                         }
-                        else
-                        {
-                            AdvancePhase();
-                        }
+
+                        AdvancePhase();
                         break;
                     }
                     break;
@@ -711,7 +712,11 @@ public class TurnSystem : MonoBehaviour
         private IEnumerator WaitAndAdvancePhase()
             {
                 yield return new WaitUntil(() => !GameManager.Instance.isStackBusy);
-                AdvancePhase();
+                
+                // Wait a frame to ensure any triggered UI changes or effects have finished
+                yield return null;
+
+                AdvancePhase(); // <-- This must always be called
             }
         
         private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
@@ -748,5 +753,20 @@ public class TurnSystem : MonoBehaviour
                     "Green" => KeywordAbility.ProtectionFromGreen,
                     _ => KeywordAbility.None
                 };
+            }
+        
+        public void ContinueAIAfterStack()
+            {
+                if (currentPlayer == PlayerType.AI)
+                {
+                    Debug.Log("AI stack resolved — resuming AI turn.");
+                    RunCurrentPhase();
+                }
+            }
+
+        public void RunSpecificPhase(TurnPhase phase)
+            {
+                currentPhase = phase;
+                RunCurrentPhase();
             }
 }

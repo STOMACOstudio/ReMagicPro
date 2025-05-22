@@ -443,7 +443,7 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
-            Add (new CardData { //Flayed Deer
+                Add (new CardData { //Flayed Deer
                     cardName = "Flayed Deer",
                     rarity = "Common",
                     manaCost = 4,

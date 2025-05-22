@@ -591,10 +591,22 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             isStackBusy = false; // UNBLOCK ON RESOLVE
 
+            isStackBusy = false;
+
             if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
                 WinBattle();
+            }
+
+            if (caster == aiPlayer)
+            {
+                if (TurnSystem.Instance.waitingToResumeAI)
+                {
+                    Debug.Log("Resuming AI phase after stack.");
+                    TurnSystem.Instance.waitingToResumeAI = false;
+                    TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+                }
             }
         }
 
