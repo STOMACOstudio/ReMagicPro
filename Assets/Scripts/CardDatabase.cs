@@ -1360,6 +1360,18 @@ public static class CardDatabase
 
         // Sorceries
             //WHITE
+                Add(new CardData { //for glory
+                    cardName = "For Glory",
+                    rarity = "Uncommon",
+                    cardType = CardType.Sorcery,
+                    manaCost = 5,
+                    color = "White",
+                    artwork = Resources.Load<Sprite>("Art/for_glory"),
+                    abilities = new List<CardAbility>(),
+                    tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
+                    numberOfTokensMin = 4,
+                    numberOfTokensMax = 4,
+                    });
                 Add(new CardData { //rolling army
                     cardName = "Rolling Army",
                     rarity = "Common",
@@ -1368,8 +1380,6 @@ public static class CardDatabase
                     color = "White",
                     artwork = Resources.Load<Sprite>("Art/rolling_army"),
                     abilities = new List<CardAbility>(),
-
-                    // Custom token-summon logic
                     tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
                     numberOfTokensMin = 1,
                     numberOfTokensMax = 6,
@@ -1454,6 +1464,30 @@ public static class CardDatabase
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
             // RED
+                Add(new CardData //thunderstrike
+                    {
+                        cardName = "Thunderstrike",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 6,
+                        color = "Red",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        damageToTarget = 6,
+                        artwork = Resources.Load<Sprite>("Art/thunderstrike"),
+                    });
+                Add(new CardData //fire hatchet
+                    {
+                        cardName = "Fire Hatchet",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 4,
+                        color = "Red",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                        damageToTarget = 4,
+                        artwork = Resources.Load<Sprite>("Art/fire_hatchet"),
+                    });
                 Add(new CardData
                     {
                         cardName = "Explosion",
@@ -1466,7 +1500,6 @@ public static class CardDatabase
                         damageToTarget = 3,
                         artwork = Resources.Load<Sprite>("Art/explosion"),
                     });
-
                 Add(new CardData //Moonfall
                     {
                         cardName = "Moonfall",
@@ -1488,6 +1521,18 @@ public static class CardDatabase
                         damageToEachCreatureAndPlayer = 2
                     });
             // GREEN
+            Add(new CardData //whip of thorns
+                    {
+                        cardName = "Whip of Thorns",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = "Green",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        damageToTarget = 2,
+                        artwork = Resources.Load<Sprite>("Art/whip_of_thorns"),
+                    });
             Add(new CardData //Natures Rebuke
                     {
                         cardName = "Natures Rebuke",
