@@ -1038,9 +1038,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
             if (sorcery.cardsToDraw > 0)
                 rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
-            if (sorcery.numberOfTokensMax > 0)
+            if (!string.IsNullOrEmpty(sorcery.tokenToCreate) && sorcery.numberOfTokensMax > 0)
             {
-                rules += $"Create {sorcery.numberOfTokensMin}–{sorcery.numberOfTokensMax} {sorcery.tokenToCreate} token(s).\n";
+                int min = sorcery.numberOfTokensMin;
+                int max = sorcery.numberOfTokensMax;
+
+                if (min == max)
+                {
+                    string plural = (min == 1) ? "" : "s";
+                    rules += $"Create {min} {sorcery.tokenToCreate} token{plural}.\n";
+                }
+                else
+                {
+                    rules += $"Create {min}–{max} {sorcery.tokenToCreate} tokens.\n";
+                }
             }
             if (sorcery.cardsToDiscardorDraw > 0)
                 rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
@@ -1076,7 +1087,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += "Exile all creature cards from all graveyards.\n";
             if (sorcery.damageToEachCreatureAndPlayer > 0)
                 rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
+            if (sorcery.destroyTargetIfTypeMatches)
+            {
+                string destroyType = sorcery.requiredTargetType switch
+                {
+                    SorceryCard.TargetType.Creature => "creature",
+                    SorceryCard.TargetType.Land => "land",
+                    SorceryCard.TargetType.Artifact => "artifact",
+                    _ => "permanent"
+                };
 
+                rules += $"Destroy target {destroyType}.\n";
+            }
             keywordText.text = rules.Trim();
             }
 

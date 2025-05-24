@@ -361,6 +361,8 @@ public class GameManager : MonoBehaviour
             card.isTapped = false;
 
             CardVisual visual = FindCardVisual(card);
+            if (visual != null && visual.tapIcon != null)
+                visual.tapIcon.SetActive(false);
 
             // Reset summoning sickness and toughness
             if (card is CreatureCard deadCreature)
@@ -1523,7 +1525,8 @@ public class GameManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(2f);
 
-                sorcery.ResolveEffect(caster, target);
+                sorcery.ResolveEffect(caster, target);   // run effect on the target
+                sorcery.ResolveEffect(caster);          // ALSO run general effect (life loss, tokens, etc.)
                 SendToGraveyard(sorcery, caster);
 
                 if (caster == aiPlayer && visual != null)

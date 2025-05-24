@@ -57,6 +57,7 @@ public static class CardFactory
                 sorcery.requiresTarget = data.requiresTarget;
                 sorcery.requiredTargetType = data.requiredTargetType;
                 sorcery.damageToTarget = data.damageToTarget;
+                sorcery.destroyTargetIfTypeMatches = data.destroyTargetIfTypeMatches;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:

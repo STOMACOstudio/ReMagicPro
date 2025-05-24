@@ -20,6 +20,7 @@ public class CardData
     public string tokenToCreate;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;   
+    public bool destroyTargetIfTypeMatches = false;
 
     public KeywordAbility abilityToGain = KeywordAbility.None;
     public List<string> subtypes = new List<string>(); // e.g., "Human", "Warrior"

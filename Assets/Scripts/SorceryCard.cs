@@ -17,6 +17,7 @@ public class SorceryCard : Card
     public int numberOfTokensMax = 0;
     public Card chosenTarget = null;
     public int damageToTarget = 0;
+    public bool destroyTargetIfTypeMatches = false;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -46,7 +47,9 @@ public class SorceryCard : Card
 
             if (!string.IsNullOrEmpty(tokenToCreate) && numberOfTokensMax > 0)
             {
-                int amount = Random.Range(numberOfTokensMin, numberOfTokensMax + 1);
+                int amount = (numberOfTokensMin == numberOfTokensMax)
+                    ? numberOfTokensMin
+                    : Random.Range(numberOfTokensMin, numberOfTokensMax + 1);
                 for (int i = 0; i < amount; i++)
                 {
                     Card token = CardFactory.Create(tokenToCreate);
@@ -269,11 +272,19 @@ public class SorceryCard : Card
                         return;
                     }
 
-                    // fallback: destroy if no damage is defined but it's the correct target type
-                    if (requiredTargetType == TargetType.Creature && target is CreatureCard defaultKill)
+                    if (destroyTargetIfTypeMatches)
                     {
-                        GameManager.Instance.SendToGraveyard(defaultKill, GameManager.Instance.GetOwnerOfCard(defaultKill));
-                        Debug.Log($"{cardName} destroyed {defaultKill.cardName}.");
+                        bool typeMatches =
+                            (requiredTargetType == TargetType.Creature && target is CreatureCard) ||
+                            (requiredTargetType == TargetType.Land && target is LandCard) ||
+                            (requiredTargetType == TargetType.Artifact && target is ArtifactCard);
+
+                        if (typeMatches)
+                        {
+                            GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
+                            Debug.Log($"{cardName} destroyed {target.cardName}.");
+                            return;
+                        }
                     }
                 }
 

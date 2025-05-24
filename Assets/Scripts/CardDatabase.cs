@@ -1425,6 +1425,46 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
                     });
             //BLACK
+                Add(new CardData //stain of rot
+                    {
+                        cardName = "Stain of Rot",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        color = "Black",
+                        manaCost = 4,
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Land,
+                        destroyTargetIfTypeMatches = true,
+                        lifeToLoseForOpponent = 2,
+                        artwork = Resources.Load<Sprite>("Art/stain_of_rot")
+                    });
+                Add(new CardData //Forced mummification
+                    {
+                        cardName = "Forced Mummification",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        color = "Black",
+                        manaCost = 6,
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        destroyTargetIfTypeMatches = true,
+                        tokenToCreate = "Zombie",
+                        numberOfTokensMin = 1,
+                        numberOfTokensMax = 1,
+                        artwork = Resources.Load<Sprite>("Art/forced_mummification")
+                    });
+                Add(new CardData //Lights out
+                    {
+                        cardName = "Lights Out",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 4,
+                        color = "Black",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        destroyTargetIfTypeMatches = true,
+                        artwork = Resources.Load<Sprite>("Art/lights_out"),
+                    });
                 Add(new CardData { //Witches rite
                     cardName = "Witches Rite",
                     rarity = "Common",
@@ -1464,6 +1504,30 @@ public static class CardDatabase
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
             // RED
+                Add(new CardData //To dig a hole
+                        {
+                            cardName = "To Dig a Hole",
+                            rarity = "Common",
+                            cardType = CardType.Sorcery,
+                            manaCost = 3,
+                            color = "Red",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Land,
+                            destroyTargetIfTypeMatches = true,
+                            artwork = Resources.Load<Sprite>("Art/to_dig_a_hole"),
+                        });
+                Add(new CardData //Melt
+                        {
+                            cardName = "Melt",
+                            rarity = "Common",
+                            cardType = CardType.Sorcery,
+                            manaCost = 1,
+                            color = "Red",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Artifact,
+                            destroyTargetIfTypeMatches = true,
+                            artwork = Resources.Load<Sprite>("Art/melt"),
+                        });
                 Add(new CardData //thunderstrike
                     {
                         cardName = "Thunderstrike",
@@ -1521,28 +1585,28 @@ public static class CardDatabase
                         damageToEachCreatureAndPlayer = 2
                     });
             // GREEN
-            Add(new CardData //whip of thorns
-                    {
-                        cardName = "Whip of Thorns",
-                        rarity = "Common",
-                        cardType = CardType.Sorcery,
-                        manaCost = 1,
-                        color = "Green",
-                        requiresTarget = true,
-                        requiredTargetType = SorceryCard.TargetType.Creature,
-                        damageToTarget = 2,
-                        artwork = Resources.Load<Sprite>("Art/whip_of_thorns"),
-                    });
-            Add(new CardData //Natures Rebuke
-                    {
-                        cardName = "Natures Rebuke",
-                        rarity = "Rare",
-                        cardType = CardType.Sorcery,
-                        manaCost = 4,
-                        color = "Green",
-                        artwork = Resources.Load<Sprite>("Art/natures_rebuke"),
-                        typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Artifact
-                    });
+                Add(new CardData //whip of thorns
+                        {
+                            cardName = "Whip of Thorns",
+                            rarity = "Common",
+                            cardType = CardType.Sorcery,
+                            manaCost = 1,
+                            color = "Green",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Creature,
+                            damageToTarget = 2,
+                            artwork = Resources.Load<Sprite>("Art/whip_of_thorns"),
+                        });
+                Add(new CardData //Natures Rebuke
+                        {
+                            cardName = "Natures Rebuke",
+                            rarity = "Rare",
+                            cardType = CardType.Sorcery,
+                            manaCost = 4,
+                            color = "Green",
+                            artwork = Resources.Load<Sprite>("Art/natures_rebuke"),
+                            typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Artifact
+                        });
                 Add(new CardData { //Feast
                     cardName = "Feast",
                     rarity = "Common",
