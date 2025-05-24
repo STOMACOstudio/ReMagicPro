@@ -50,14 +50,14 @@ public class DeckGenerator : MonoBehaviour
     private void AddCardsByRarity(string color, string rarity, int count)
         {
             var pool = CardDatabase.GetAllCards()
-                .Where(card =>
-                    card.rarity == rarity &&
-                    (
-                        card.color == color || 
-                        (card.color == "Artifact" && card.cardType == CardType.Creature)
-                    )
+            .Where(card =>
+                card.rarity == rarity &&
+                (
+                    card.color == color ||
+                    card.cardType == CardType.Artifact
                 )
-                .ToList();
+            )
+            .ToList();
 
             Dictionary<string, int> copies = GeneratedDeck
                 .GroupBy(c => c.cardName)
@@ -116,7 +116,7 @@ public class DeckGenerator : MonoBehaviour
                 go.transform.localScale = Vector3.one * 1.5f;
 
                 CardVisual visual = go.GetComponent<CardVisual>();
-                CardData sourceData = CardDatabase.GetCardData(card.cardName); // ✅ renamed here
+                CardData sourceData = CardDatabase.GetCardData(card.cardName);
                 visual.Setup(card, null, sourceData);
             }
         }
