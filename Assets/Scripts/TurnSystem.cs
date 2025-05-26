@@ -156,12 +156,14 @@ public class TurnSystem : MonoBehaviour
     void AdvancePhase()
         {
             GameManager.Instance.UpdateUI();
+
             // Empty mana at the end of each phase
             var player = currentPlayer == PlayerType.Human
                 ? GameManager.Instance.humanPlayer
                 : GameManager.Instance.aiPlayer;
 
-            player.ManaPool = 0;
+            player.ColoredMana.Clear(); // ✅ correctly clears all colors
+
             if (currentPlayer == PlayerType.Human)
                 GameManager.Instance.UpdateUI();
 
@@ -284,8 +286,6 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
-                        Debug.Log($"AI mana pool: {ai.ManaPool}");
-
                         // Handle all artifact abilities that produce mana
                         foreach (var card in ai.Battlefield.ToList())
                         {
@@ -295,8 +295,8 @@ public class TurnSystem : MonoBehaviour
                                 if (artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana))
                                 {
                                     artifact.isTapped = true;
-                                    ai.ManaPool++;
-                                    Debug.Log($"AI taps {artifact.cardName} for 1 mana.");
+                                    ai.ColoredMana.Colorless += 1;
+                                    Debug.Log($"AI taps {artifact.cardName} for 1 colorless mana.");
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                 }
 
@@ -304,33 +304,50 @@ public class TurnSystem : MonoBehaviour
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana))
                                 {
                                     artifact.isTapped = true;
-                                    ai.ManaPool++;
+                                    ai.ColoredMana.Colorless += 1;
                                     GameManager.Instance.SendToGraveyard(artifact, ai);
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                    Debug.Log($"AI taps and sacrifices {artifact.cardName} for 1 mana.");
+                                    Debug.Log($"AI taps and sacrifices {artifact.cardName} for 1 colorless mana.");
                                 }
 
                                 // Pay mana, Tap and Sacrifice: Add N mana
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana))
                                 {
-                                    if (ai.ManaPool >= artifact.manaToPayToActivate)
+                                    int cost = artifact.manaToPayToActivate;
+
+                                    if (ai.ColoredMana.Total() >= cost)
                                     {
-                                        ai.ManaPool -= artifact.manaToPayToActivate;
+                                        int remaining = cost;
+
+                                        // Spend colorless first
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Colorless, remaining);
+
+                                        // Then WUBRG
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.White, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Blue, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Black, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Red, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Green, remaining);
+
+                                        if (remaining > 0)
+                                        {
+                                            Debug.Log($"AI can't activate {artifact.cardName}: not enough mana to pay {cost}.");
+                                            return;
+                                        }
+
                                         artifact.isTapped = true;
-                                        ai.ManaPool += artifact.manaToGain;
+                                        ai.ColoredMana.Colorless += artifact.manaToGain;
                                         GameManager.Instance.SendToGraveyard(artifact, ai);
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                        Debug.Log($"AI pays {artifact.manaToPayToActivate}, taps and sacrifices {artifact.cardName} to gain {artifact.manaToGain} mana.");
+                                        Debug.Log($"AI pays {cost}, taps and sacrifices {artifact.cardName} to gain {artifact.manaToGain} colorless mana.");
                                     }
                                     else
                                     {
-                                        Debug.Log($"AI can't activate {artifact.cardName}: not enough mana ({ai.ManaPool}/{artifact.manaToPayToActivate}).");
+                                        Debug.Log($"AI can't activate {artifact.cardName}: not enough total mana.");
                                     }
                                 }
                             }
                         }
-
-                        Debug.Log($"AI mana pool: {ai.ManaPool}");
 
                         // Play as many cards as AI can afford
                         bool playedCard = true;
@@ -343,67 +360,95 @@ public class TurnSystem : MonoBehaviour
                             {
                                 Card card = ai.Hand[i];
                                 
-                                if (card is CreatureCard creature && ai.ManaPool >= creature.manaCost)
+                                if (card is CreatureCard creature)
                                 {
-                                    ai.ManaPool -= creature.manaCost;
-                                    ai.Hand.Remove(card);
-                                    ai.Battlefield.Add(card);
-                                    card.OnEnterPlay(ai);
-
-                                    if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                    var cost = GameManager.Instance.GetManaCostBreakdown(creature.manaCost, creature.color);
+                                    if (ai.ColoredMana.CanPay(cost))
                                     {
-                                        card.isTapped = true;
-                                        Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                        ai.ColoredMana.Pay(cost);
+                                        ai.Hand.Remove(card);
+                                        ai.Battlefield.Add(card);
+                                        card.OnEnterPlay(ai);
+
+                                        if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        {
+                                            card.isTapped = true;
+                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                        }
+
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        visual.Setup(card, GameManager.Instance);
+                                        visual.isInBattlefield = true;
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                        creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
+
+                                        Debug.Log($"AI played creature: {card.cardName}");
+                                        playedCard = true;
+                                        break;
                                     }
-
-                                    GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
-                                    CardVisual visual = obj.GetComponent<CardVisual>();
-                                    visual.Setup(card, GameManager.Instance);
-                                    visual.isInBattlefield = true;
-                                    GameManager.Instance.activeCardVisuals.Add(visual);
-
-                                    creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
-
-                                    Debug.Log($"AI played creature: {card.cardName}");
-                                    playedCard = true;
-                                    break;
                                 }
-                                else if (card is SorceryCard sorcery && ai.ManaPool >= sorcery.manaCost)
+                                else if (card is SorceryCard sorcery)
                                 {
-                                    GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
-                                    CardVisual visual = obj.GetComponent<CardVisual>();
-
-                                    CardData data = CardDatabase.GetCardData(sorcery.cardName);
-                                    visual.Setup(sorcery, GameManager.Instance, data);
-
-                                    GameManager.Instance.PlayCard(ai, visual);
-                                    Debug.Log($"AI cast sorcery: {sorcery.cardName}");
-
-                                    playedCard = true;
-                                    break;
-                                }
-                                else if (card is ArtifactCard artifact && ai.ManaPool >= artifact.manaCost)
-                                {
-                                    ai.ManaPool -= artifact.manaCost;
-                                    ai.Hand.Remove(card);
-                                    ai.Battlefield.Add(card);
-                                    card.OnEnterPlay(ai);
-
-                                    if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                    var cost = GameManager.Instance.GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
+                                    if (ai.ColoredMana.CanPay(cost))
                                     {
-                                        card.isTapped = true;
-                                        Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                        ai.ColoredMana.Pay(cost);
+
+                                        ai.Hand.Remove(sorcery);
+                                        sorcery.owner = ai;
+
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+
+                                        CardData data = CardDatabase.GetCardData(sorcery.cardName);
+                                        visual.Setup(sorcery, GameManager.Instance, data);
+
+                                        visual.transform.localPosition = Vector3.zero;
+                                        visual.transform.SetParent(GameManager.Instance.stackZone, false);
+
+                                        GameManager.Instance.UpdateUI();
+                                        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+                                        GameManager.Instance.isStackBusy = true;
+                                        TurnSystem.Instance.waitingToResumeAI = true;
+                                        TurnSystem.Instance.lastPhaseBeforeStack = currentPhase;
+
+                                        GameManager.Instance.StartCoroutine(GameManager.Instance.ResolveSorceryAfterDelay(sorcery, visual, ai));
+
+                                        Debug.Log($"AI cast sorcery: {sorcery.cardName}");
+
+                                        playedCard = true;
+                                        break;
                                     }
+                                }
+                                else if (card is ArtifactCard artifact)
+                                {
+                                    var cost = GameManager.Instance.GetManaCostBreakdown(artifact.manaCost, artifact.color);
+                                    if (ai.ColoredMana.CanPay(cost))
+                                    {
+                                        ai.ColoredMana.Pay(cost);
+                                        ai.Hand.Remove(card);
+                                        ai.Battlefield.Add(card);
+                                        card.OnEnterPlay(ai);
 
-                                    GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiArtifactArea);
-                                    CardVisual visual = obj.GetComponent<CardVisual>();
-                                    visual.Setup(card, GameManager.Instance);
-                                    visual.isInBattlefield = true;
-                                    GameManager.Instance.activeCardVisuals.Add(visual);
+                                        if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        {
+                                            card.isTapped = true;
+                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                        }
 
-                                    Debug.Log($"AI played artifact: {card.cardName}");
-                                    playedCard = true;
-                                    break;
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiArtifactArea);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        visual.Setup(card, GameManager.Instance);
+                                        visual.isInBattlefield = true;
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                        Debug.Log($"AI played artifact: {card.cardName}");
+                                        playedCard = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -422,12 +467,30 @@ public class TurnSystem : MonoBehaviour
                                 }
 
                                 // TAP TO CREATE MINER
-                                else if (creature.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken))
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken))
                                 {
                                     int cost = creature.manaToPayToActivate;
-                                    if (ai.ManaPool >= cost)
+
+                                    if (ai.ColoredMana.Total() >= cost)
                                     {
-                                        ai.ManaPool -= cost;
+                                        int remaining = cost;
+
+                                        // Spend colorless first
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Colorless, remaining);
+
+                                        // Spend from WUBRG
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.White, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Blue, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Black, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Red, remaining);
+                                        remaining -= SpendFromPool(ref ai.ColoredMana.Green, remaining);
+
+                                        if (remaining > 0)
+                                        {
+                                            Debug.Log($"AI can't create token — not enough mana to pay {cost}.");
+                                            continue;
+                                        }
+
                                         creature.isTapped = true;
 
                                         string tokenName = creature.tokenToCreate;
@@ -444,16 +507,48 @@ public class TurnSystem : MonoBehaviour
 
                                         GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                     }
+                                    else
+                                    {
+                                        Debug.Log($"AI can't create token — not enough total mana ({ai.ColoredMana.Total()}/{cost}).");
+                                    }
                                 }
 
-                                //GAIN ABILITY
-                                if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
-                                    !creature.keywordAbilities.Contains(creature.abilityToGain) &&
-                                    ai.ManaPool >= creature.manaToPayToActivate)
+                            if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
+                                !creature.keywordAbilities.Contains(creature.abilityToGain))
+                            {
+                                int cost = creature.manaToPayToActivate;
+                                string color = creature.color;
+
+                                bool canActivate = false;
+
+                                if (!string.IsNullOrEmpty(color) && color != "Artifact")
+                                {
+                                    int colorAvailable = color switch
+                                    {
+                                        "White" => ai.ColoredMana.White,
+                                        "Blue" => ai.ColoredMana.Blue,
+                                        "Black" => ai.ColoredMana.Black,
+                                        "Red" => ai.ColoredMana.Red,
+                                        "Green" => ai.ColoredMana.Green,
+                                        _ => 0
+                                    };
+
+                                    int genericNeeded = cost - 1;
+                                    int totalGeneric = ai.ColoredMana.Total() - colorAvailable;
+
+                                    canActivate = (colorAvailable >= 1) && (totalGeneric >= genericNeeded);
+                                }
+                                else // Colorless/generic ability
+                                {
+                                    canActivate = ai.ColoredMana.Total() >= cost;
+                                }
+
+                                if (canActivate)
                                 {
                                     GameManager.Instance.PayToGainAbility(creature);
                                     GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                 }
+                            }
                             }
                         }
 
@@ -479,9 +574,23 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.UpdateUI();
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeForLife) &&
-                                        ai.ManaPool >= artifact.manaToPayToActivate)
+                                        ai.ColoredMana.Total() >= artifact.manaToPayToActivate)
                                 {
-                                    ai.ManaPool -= artifact.manaToPayToActivate;
+                                    int remaining = artifact.manaToPayToActivate;
+
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Colorless, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.White, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Blue, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Black, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Red, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Green, remaining);
+
+                                    if (remaining > 0)
+                                    {
+                                        Debug.Log($"AI can't activate {artifact.cardName} — not enough mana.");
+                                        return;
+                                    }
+
                                     ai.Life += artifact.lifeToGain;
                                     artifact.isTapped = true;
                                     GameManager.Instance.SendToGraveyard(artifact, ai);
@@ -490,14 +599,30 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.UpdateUI();
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards) &&
-                                        ai.ManaPool >= artifact.manaToPayToActivate)
+                                        ai.ColoredMana.Total() >= artifact.manaToPayToActivate)
                                 {
-                                    ai.ManaPool -= artifact.manaToPayToActivate;
+                                    int remaining = artifact.manaToPayToActivate;
+
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Colorless, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.White, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Blue, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Black, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Red, remaining);
+                                    remaining -= SpendFromPool(ref ai.ColoredMana.Green, remaining);
+
+                                    if (remaining > 0)
+                                    {
+                                        Debug.Log($"AI can't activate {artifact.cardName} — not enough mana.");
+                                        return;
+                                    }
+
                                     artifact.isTapped = true;
+
                                     for (int i = 0; i < artifact.cardsToDraw; i++)
                                     {
                                         GameManager.Instance.DrawCard(ai);
                                     }
+
                                     GameManager.Instance.SendToGraveyard(artifact, ai);
                                     Debug.Log($"AI sacrifices {artifact.cardName} to draw {artifact.cardsToDraw} card(s).");
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
@@ -775,5 +900,12 @@ public class TurnSystem : MonoBehaviour
             {
                 currentPhase = phase;
                 RunCurrentPhase();
+            }
+        
+        private int SpendFromPool(ref int pool, int needed)
+            {
+                int spent = Mathf.Min(pool, needed);
+                pool -= spent;
+                return spent;
             }
 }

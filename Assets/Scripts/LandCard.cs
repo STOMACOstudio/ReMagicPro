@@ -16,9 +16,7 @@ public class LandCard : Card
     {
         if (!isTapped)
         {
-            isTapped = true;
-            player.ManaPool += 1;
-            Debug.Log(cardName + " tapped for 1 mana.");
+            GameManager.Instance.TapLandForMana(this, player);
         }
     }
 }

@@ -430,7 +430,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             (!(linkedCard is CreatureCard cc) || !cc.hasSummoningSickness || cc.keywordAbilities.Contains(KeywordAbility.Haste)))
         {
             linkedCard.isTapped = true;
-            GameManager.Instance.humanPlayer.ManaPool++;
+
+            string color = linkedCard.color;
+
+            switch (color)
+            {
+                case "White": GameManager.Instance.humanPlayer.ColoredMana.White++; break;
+                case "Blue": GameManager.Instance.humanPlayer.ColoredMana.Blue++; break;
+                case "Black": GameManager.Instance.humanPlayer.ColoredMana.Black++; break;
+                case "Red": GameManager.Instance.humanPlayer.ColoredMana.Red++; break;
+                case "Green": GameManager.Instance.humanPlayer.ColoredMana.Green++; break;
+                default:
+                    GameManager.Instance.humanPlayer.ColoredMana.Colorless++;
+                    Debug.LogWarning($"{linkedCard.cardName} has no valid color for mana — added colorless instead.");
+                    break;
+            }
+
             GameManager.Instance.UpdateUI();
             SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
             UpdateVisual();
@@ -445,14 +460,45 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 abilityCreature.activatedAbilities != null &&
                 abilityCreature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
             {
-                if (GameManager.Instance.humanPlayer.ManaPool >= abilityCreature.manaToPayToActivate)
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = abilityCreature.manaToPayToActivate;
+                string cardColor = abilityCreature.color;
+
+                // Colored ability: must pay using that color (plus generic if cost > 1)
+                if (!string.IsNullOrEmpty(cardColor) && cardColor != "Artifact")
                 {
-                    GameManager.Instance.PayToGainAbility(abilityCreature);
-                    UpdateVisual();
+                    int available = cardColor switch
+                    {
+                        "White" => player.ColoredMana.White,
+                        "Blue" => player.ColoredMana.Blue,
+                        "Black" => player.ColoredMana.Black,
+                        "Red" => player.ColoredMana.Red,
+                        "Green" => player.ColoredMana.Green,
+                        _ => 0
+                    };
+
+                    int remaining = cost - 1;
+                    if (available >= 1 && player.ColoredMana.Total() - available >= remaining)
+                    {
+                        GameManager.Instance.PayToGainAbility(abilityCreature);
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log($"Not enough {cardColor} + generic mana to activate {abilityCreature.cardName}'s ability.");
+                    }
                 }
-                else
+                else // Colorless/generic activation
                 {
-                    Debug.Log($"Not enough mana to activate {abilityCreature.cardName}'s ability.");
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        GameManager.Instance.PayToGainAbility(abilityCreature);
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log($"Not enough generic mana to activate {abilityCreature.cardName}'s ability.");
+                    }
                 }
                 return;
             }
@@ -467,17 +513,38 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
                     (!tokenSpawner.hasSummoningSickness || tokenSpawner.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
+                    Player player = GameManager.Instance.humanPlayer;
                     int cost = linkedCard.manaToPayToActivate;
-                    if (GameManager.Instance.humanPlayer.ManaPool >= cost)
+
+                    if (player.ColoredMana.Total() >= cost)
                     {
-                        GameManager.Instance.humanPlayer.ManaPool -= cost;
+                        int remaining = cost;
+
+                        // Spend colorless first
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        // Spend from WUBRG
+                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.Log("Not enough mana to activate token creation.");
+                            return;
+                        }
+
                         linkedCard.isTapped = true;
 
                         string tokenName = linkedCard.tokenToCreate;
                         Card token = CardFactory.Create(tokenName);
                         if (token != null)
                         {
-                            GameManager.Instance.SummonToken(token, GameManager.Instance.humanPlayer);
+                            GameManager.Instance.SummonToken(token, player);
                             Debug.Log($"{linkedCard.cardName} created a {tokenName} token.");
                         }
                         else
@@ -546,34 +613,47 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
 
-                    // Check for SacrificeForMana with cost
-                    if (linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana))
+                    Player player = GameManager.Instance.humanPlayer;
+                    int cost = artifact.manaToPayToActivate;
+
+                    if (player.ColoredMana.Total() >= cost)
                     {
-                        if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
-                        {
-                            GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
-                            GameManager.Instance.humanPlayer.ManaPool += artifact.manaToGain;
-                            linkedCard.isTapped = true;
-                            GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
-                            GameManager.Instance.UpdateUI();
-                            SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
-                            UpdateVisual();
-                            Debug.Log($"{linkedCard.cardName} activated: +{artifact.manaToGain} mana.");
-                        }
-                        else
+                        int remaining = cost;
+
+                        // Spend colorless first
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        // Spend from WUBRG
+                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
                         {
                             Debug.Log("Not enough mana for ability.");
+                            return;
                         }
+
+                        player.ColoredMana.Colorless += artifact.manaToGain;
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.SendToGraveyard(linkedCard, player);
+                        GameManager.Instance.UpdateUI();
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
+                        UpdateVisual();
+                        Debug.Log($"{linkedCard.cardName} activated: +{artifact.manaToGain} mana.");
                     }
                     else // TapAndSacrificeForMana (no cost, gain 1 mana)
                     {
                         linkedCard.isTapped = true;
-                        GameManager.Instance.humanPlayer.ManaPool++;
-                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        player.ColoredMana.Colorless += 1;
+                        GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();
                         SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                         UpdateVisual();
-                        Debug.Log($"{linkedCard.cardName} sacrificed: +1 mana.");
                     }
 
                     return;
@@ -605,12 +685,32 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
 
-                    if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
+                    Player player = GameManager.Instance.humanPlayer;
+                    int remaining = artifact.manaToPayToActivate;
+
+                    if (player.ColoredMana.Total() >= remaining)
                     {
-                        GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
-                        GameManager.Instance.humanPlayer.Life += artifact.lifeToGain;
+                        // Spend colorless first
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        // Spend from WUBRG
+                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.LogWarning($"{linkedCard.cardName} activation failed: not enough mana.");
+                            return;
+                        }
+
+                        player.Life += artifact.lifeToGain;
                         linkedCard.isTapped = true;
-                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
                         Debug.Log($"{linkedCard.cardName} activated: Gain {artifact.lifeToGain} life.");
@@ -633,24 +733,46 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
 
-                    if (GameManager.Instance.humanPlayer.ManaPool >= artifact.manaToPayToActivate)
+                    Player player = GameManager.Instance.humanPlayer;
+                    int totalAvailable = player.ColoredMana.Total();
+                    int cost = artifact.manaToPayToActivate;
+
+                    if (totalAvailable >= cost)
                     {
-                        GameManager.Instance.humanPlayer.ManaPool -= artifact.manaToPayToActivate;
+                        int remaining = cost;
+
+                        // 1. Spend colorless first
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        // 2. Spend from WUBRG
+                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.LogWarning("Draw ability: Not enough mana even though initial check passed.");
+                            return;
+                        }
 
                         for (int i = 0; i < artifact.cardsToDraw; i++)
                         {
-                            GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
+                            GameManager.Instance.DrawCard(player);
                         }
-                        
+
                         linkedCard.isTapped = true;
-                        GameManager.Instance.SendToGraveyard(linkedCard, GameManager.Instance.humanPlayer);
+                        GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
                         Debug.Log($"{linkedCard.cardName} activated: Draw {artifact.cardsToDraw} cards.");
                     }
                     else
                     {
-                        Debug.Log("Not enough mana for ability.");
+                        Debug.Log("Not enough mana to activate draw ability.");
                     }
 
                     return;
@@ -1122,5 +1244,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     backgroundImage.color = enable ? Color.green : Color.white;
                 }
+            }
+
+        private int SpendFromPool(ref int pool, int needed)
+            {
+                int spent = Mathf.Min(pool, needed);
+                pool -= spent;
+                return spent;
             }
 }

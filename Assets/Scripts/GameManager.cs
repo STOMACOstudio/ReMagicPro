@@ -37,7 +37,21 @@ public class GameManager : MonoBehaviour
     public GameObject playerLifeContainer;
     public GameObject enemyLifeContainer;
 
+
     public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
+
+    public Image whiteManaIcon;
+    public TMP_Text whiteManaText;
+    public Image blueManaIcon;
+    public TMP_Text blueManaText;
+    public Image blackManaIcon;
+    public TMP_Text blackManaText;
+    public Image redManaIcon;
+    public TMP_Text redManaText;
+    public Image greenManaIcon;
+    public TMP_Text greenManaText;
+    public Image colorlessManaIcon;
+    public TMP_Text colorlessManaText;
 
     public List<CardVisual> activeCardVisuals = new List<CardVisual>();
     public List<CreatureCard> selectedAttackers = new List<CreatureCard>();
@@ -53,255 +67,275 @@ public class GameManager : MonoBehaviour
     public bool isTargetingMode = false;
 
     void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            else
-                Destroy(gameObject);
-        }
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     void Start()
+    {
+        humanPlayer = new Player();
+        aiPlayer = new Player();
+
+        Debug.Log("Loading deck for zone ID: " + BattleData.CurrentZoneId);
+
+        BuildStartingDeck(humanPlayer);
+
+        if (!string.IsNullOrEmpty(BattleData.CurrentDeckKey))
         {
-            humanPlayer = new Player();
-            aiPlayer = new Player();
+            Debug.Log("Loading deck by key: " + BattleData.CurrentDeckKey);
+            LoadDeckByKey(aiPlayer, BattleData.CurrentDeckKey);
+        }
+        else
+        {
+            Debug.LogWarning("No deckKey set — using fallback starter deck.");
+            BuildStarterDeck(aiPlayer);
+        }
 
-            Debug.Log("Loading deck for zone ID: " + BattleData.CurrentZoneId);
+        ShuffleDeck(humanPlayer);
+        ShuffleDeck(aiPlayer);
 
-            BuildStartingDeck(humanPlayer);
+        for (int i = 0; i < 7; i++)
+        {
+            DrawCard(humanPlayer);
+            DrawCard(aiPlayer);
+        }
+    }
 
-            if (!string.IsNullOrEmpty(BattleData.CurrentDeckKey))
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
             {
-                Debug.Log("Loading deck by key: " + BattleData.CurrentDeckKey);
-                LoadDeckByKey(aiPlayer, BattleData.CurrentDeckKey);
+                Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
+                WinBattle();
             }
             else
             {
-                Debug.LogWarning("No deckKey set — using fallback starter deck.");
-                BuildStarterDeck(aiPlayer);
-            }      
-
-            ShuffleDeck(humanPlayer);
-            ShuffleDeck(aiPlayer);
-
-            for (int i = 0; i < 7; i++)
-            {
-                DrawCard(humanPlayer);
-                DrawCard(aiPlayer);
+                Debug.LogWarning("[DEV] No zone ID found — can't win");
             }
         }
-    
-    void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
-                {
-                    Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
-                    WinBattle();
-                }
-                else
-                {
-                    Debug.LogWarning("[DEV] No zone ID found — can't win");
-                }
-            }
-        }
+    }
 
     void BuildStartingDeck(Player player)
+    {
+        if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
         {
-            if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
+            foreach (var data in DeckHolder.SelectedDeck)
             {
-                foreach (var data in DeckHolder.SelectedDeck)
-                {
-                    player.Deck.Add(CardFactory.Create(data.cardName));
-                }
-            }
-            else
-            {
-                Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
-                // fallback to your hardcoded test deck if needed
-                player.Deck.Add(CardFactory.Create("Plains"));
-                player.Deck.Add(CardFactory.Create("Angry Farmer"));
-                // etc.
+                player.Deck.Add(CardFactory.Create(data.cardName));
             }
         }
+        else
+        {
+            Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
+            // fallback to your hardcoded test deck if needed
+            player.Deck.Add(CardFactory.Create("Plains"));
+            player.Deck.Add(CardFactory.Create("Angry Farmer"));
+            // etc.
+        }
+    }
 
     void ShuffleDeck(Player player)
+    {
+        for (int i = 0; i < player.Deck.Count; i++)
         {
-            for (int i = 0; i < player.Deck.Count; i++)
-            {
-                Card temp = player.Deck[i];
-                int randomIndex = Random.Range(i, player.Deck.Count);
-                player.Deck[i] = player.Deck[randomIndex];
-                player.Deck[randomIndex] = temp;
-            }
+            Card temp = player.Deck[i];
+            int randomIndex = Random.Range(i, player.Deck.Count);
+            player.Deck[i] = player.Deck[randomIndex];
+            player.Deck[randomIndex] = temp;
         }
+    }
     public void DrawCard(Player player)
+    {
+        if (player.Deck.Count == 0) return;
+        Card card = player.Deck[0];
+        player.Deck.RemoveAt(0);
+        player.Hand.Add(card);
+
+        if (player == humanPlayer)
         {
-            if (player.Deck.Count == 0) return;
-            Card card = player.Deck[0];
-            player.Deck.RemoveAt(0);
-            player.Hand.Add(card);
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
 
-            if (player == humanPlayer)
-            {
-                GameObject obj = Instantiate(cardPrefab, playerHandArea);
-                CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData sourceData = CardDatabase.GetCardData(card.cardName);
+            visual.Setup(card, this, sourceData);
 
-                CardData sourceData = CardDatabase.GetCardData(card.cardName);
-                visual.Setup(card, this, sourceData);
-
-                activeCardVisuals.Add(visual);
-            }
+            activeCardVisuals.Add(visual);
         }
+    }
 
     public void PlayCard(Player player, CardVisual visual)
+    {
+        if (isStackBusy)
         {
-            if (isStackBusy)
+            Debug.Log("A spell is already on the stack. Please wait.");
+            return;
+        }
+
+        Card card = visual.linkedCard;
+
+        if (card is LandCard)
+        {
+            if (player.hasPlayedLandThisTurn)
             {
-                Debug.Log("A spell is already on the stack. Please wait.");
+                Debug.Log("You already played a land this turn!");
                 return;
             }
 
-            Card card = visual.linkedCard;
+            player.Battlefield.Add(card);
+            player.Hand.Remove(card);
+            player.hasPlayedLandThisTurn = true;
 
-            if (card is LandCard)
+            if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
             {
-                if (player.hasPlayedLandThisTurn)
-                {
-                    Debug.Log("You already played a land this turn!");
-                    return;
-                }
+                card.isTapped = true;
+                Debug.Log($"{card.cardName} enters tapped (static effect or base).");
+            }
 
-                player.Battlefield.Add(card);
+            card.OnEnterPlay(player);
+
+            visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
+            visual.isInBattlefield = true;
+            visual.UpdateVisual();
+            visual.UpdateVisual();
+            SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay); // <- add this
+
+        }
+
+        else if (card is CreatureCard creature)
+        {
+            var cost = GetManaCostBreakdown(creature.manaCost, creature.color);
+            if (player.ColoredMana.CanPay(cost))
+            {
+                player.ColoredMana.Pay(cost);
+                card.owner = player;
+                if (player == humanPlayer) UpdateUI();
                 player.Hand.Remove(card);
-                player.hasPlayedLandThisTurn = true;
-
-                if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                {
-                    card.isTapped = true;
-                    Debug.Log($"{card.cardName} enters tapped (static effect or base).");
-                }
+                player.Battlefield.Add(card);
 
                 card.OnEnterPlay(player);
 
-                visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
+                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                    creature.hasSummoningSickness = false;
+                else
+                    creature.hasSummoningSickness = true;
+
+                if (card.entersTapped || IsAllPermanentsEnterTappedActive())
+                {
+                    card.isTapped = true;
+                    Debug.Log($"{card.cardName} enters tapped (due to static effect).");
+                }
+
+                visual.transform.SetParent(player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea, false);
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
-                visual.UpdateVisual();
-                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay); // <- add this
-
-            }
-
-            else if (card is CreatureCard creature)
-            {
-                if (player.ManaPool >= creature.manaCost)
-                {
-                    player.ManaPool -= creature.manaCost;
-                    card.owner = player;
-                    if (player == humanPlayer) UpdateUI();
-                    player.Hand.Remove(card);
-                    player.Battlefield.Add(card);
-
-                    card.OnEnterPlay(player);
-
-                    if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                        creature.hasSummoningSickness = false;
-                    else
-                        creature.hasSummoningSickness = true;
-
-                    if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                    {
-                        card.isTapped = true;
-                        Debug.Log($"{card.cardName} enters tapped (due to static effect).");
-                    }
-
-                    visual.transform.SetParent(playerBattlefieldArea, false);
-                    visual.isInBattlefield = true;
-                    visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
-                }
-            }
-
-            else if (card is SorceryCard sorcery)
-            {
-                if (sorcery.requiresTarget)
-                {
-                    Debug.Log("This sorcery requires a target — entering targeting mode.");
-                    BeginTargetSelection(sorcery, player, visual);
-                    return;
-                }
-
-                if (player.ManaPool >= sorcery.manaCost)
-                {
-                    isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
-                    player.ManaPool -= sorcery.manaCost;
-                    card.owner = player;
-                    player.Hand.Remove(card);
-                    UpdateUI();
-
-                    // Move visual to the stack zone
-                    visual.transform.SetParent(stackZone, false);
-                    visual.transform.localPosition = Vector3.zero;
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-                    StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
-                }
-                else
-                {
-                    Debug.Log("Not enough mana to cast this sorcery.");
-                }
-            }
-            else if (card is ArtifactCard artifact)
-            {
-                if (player.ManaPool >= artifact.manaCost)
-                {
-                    player.ManaPool -= artifact.manaCost;
-                    card.owner = player;
-                    if (player == humanPlayer) UpdateUI();
-
-                    player.Hand.Remove(card);
-                    player.Battlefield.Add(card);
-                    card.OnEnterPlay(player);
-
-                    if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                    {
-                        artifact.isTapped = true;
-                        Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
-                    }
-
-                    // Move to battlefield area visually
-                    Transform visualParent = player == humanPlayer
-                        ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
-                        : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
-
-                    visual.transform.SetParent(visualParent, false);
-
-                    visual.isInBattlefield = true;
-                    visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
-                }
-                else
-                {
-                    Debug.Log("Not enough mana to play this artifact.");
-                }
+                SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
             }
             else
             {
-                Debug.LogWarning("Unhandled card type played: " + card.cardName);
+                Debug.Log("Not enough colored mana to cast this creature.");
             }
         }
 
+        else if (card is SorceryCard sorcery)
+        {
+            if (sorcery.requiresTarget)
+            {
+                Debug.Log("This sorcery requires a target — entering targeting mode.");
+                BeginTargetSelection(sorcery, player, visual);
+                return;
+            }
+
+            var cost = GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
+            if (player.ColoredMana.CanPay(cost))
+            {
+                isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
+                player.ColoredMana.Pay(cost);
+                card.owner = player;
+                player.Hand.Remove(card);
+                UpdateUI();
+
+                // Move visual to the stack zone
+                visual.transform.SetParent(stackZone, false);
+                visual.transform.localPosition = Vector3.zero;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+                StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
+            }
+            else
+            {
+                Debug.Log("Not enough colored mana to cast this sorcery.");
+            }
+        }
+        else if (card is ArtifactCard artifact)
+        {
+            var cost = GetManaCostBreakdown(artifact.manaCost, artifact.color);
+            if (player.ColoredMana.CanPay(cost))
+            {
+                player.ColoredMana.Pay(cost);
+                card.owner = player;
+                if (player == humanPlayer) UpdateUI();
+
+                player.Hand.Remove(card);
+                player.Battlefield.Add(card);
+                card.OnEnterPlay(player);
+
+                if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                {
+                    artifact.isTapped = true;
+                    Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+                }
+
+                // Move to battlefield area visually
+                Transform visualParent = player == humanPlayer
+                    ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
+                    : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
+
+                visual.transform.SetParent(visualParent, false);
+
+                visual.isInBattlefield = true;
+                visual.UpdateVisual();
+                SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+            }
+            else
+            {
+                Debug.Log("Not enough colored mana to play this artifact.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Unhandled card type played: " + card.cardName);
+        }
+    }
+
     public void TapLandForMana(LandCard land, Player player)
         {
-            if (!land.isTapped)
+            if (land.isTapped)
+                return;
+
+            land.isTapped = true;
+
+            string color = CardDatabase.GetCardData(land.cardName).color;
+
+            switch (color)
             {
-                land.isTapped = true;
-                player.ManaPool++;
-
-                // Create VFX
-                ShowManaVFX(land);
-
-                if (player == humanPlayer) UpdateUI();
+                case "White": player.ColoredMana.White++; break;
+                case "Blue": player.ColoredMana.Blue++; break;
+                case "Black": player.ColoredMana.Black++; break;
+                case "Red": player.ColoredMana.Red++; break;
+                case "Green": player.ColoredMana.Green++; break;
+                default:
+                    Debug.LogWarning($"Unknown land color for mana: {color}");
+                    break;
             }
+
+            Debug.Log($"Tapped {land.cardName}, added 1 {color} mana.");
+            if (player == humanPlayer)
+                ShowManaVFX(land);
+                UpdateUI();
         }
 
     private void ShowManaVFX(LandCard land)
@@ -347,267 +381,1316 @@ public class GameManager : MonoBehaviour
         }
 
     public void SendToGraveyard(Card card, Player owner)
+    {
+        bool diedFromBattlefield = owner.Battlefield.Contains(card);
+
+        owner.Battlefield.Remove(card);
+        Debug.Log($"{card.cardName} is being sent to the graveyard.");
+
+        if (diedFromBattlefield)
         {
-            bool diedFromBattlefield = owner.Battlefield.Contains(card);
-
-            owner.Battlefield.Remove(card);
-            Debug.Log($"{card.cardName} is being sent to the graveyard.");
-
-            if (diedFromBattlefield)
-            {
-                card.OnLeavePlay(owner);
-            }
-
-            card.isTapped = false;
-
-            CardVisual visual = FindCardVisual(card);
-            if (visual != null && visual.tapIcon != null)
-                visual.tapIcon.SetActive(false);
-
-            // Reset summoning sickness and toughness
-            if (card is CreatureCard deadCreature)
-            {
-                deadCreature.hasSummoningSickness = false;
-                deadCreature.toughness = deadCreature.baseToughness;
-
-                if (visual != null)
-                {
-                    visual.sicknessText.text = "";
-                }
-            }
-
-            // Handle token destruction
-            if (card is CreatureCard creature && card.isToken)
-            {
-                if (visual != null)
-                {
-                    activeCardVisuals.Remove(visual);
-                    Destroy(visual.gameObject);
-                }
-                return;
-            }
-
-            // Find or create visual for graveyard
-            CardVisual graveyardVisual = FindCardVisual(card);
-            if (graveyardVisual == null)
-            {
-                GameObject visualGO = Instantiate(cardPrefab,
-                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                graveyardVisual = visualGO.GetComponent<CardVisual>();
-                graveyardVisual.Setup(card, this);
-                activeCardVisuals.Add(graveyardVisual);
-            }
-
-            // Move and update
-            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-            graveyardVisual.transform.localPosition = Vector3.zero;
-            graveyardVisual.UpdateGraveyardVisual(); // dedicated method that sets up the correct display
-
-            owner.Graveyard.Add(card);
+            card.OnLeavePlay(owner);
         }
 
-    public void ResolveCombat()
+        card.isTapped = false;
+
+        CardVisual visual = FindCardVisual(card);
+        if (visual != null && visual.tapIcon != null)
+            visual.tapIcon.SetActive(false);
+
+        // Reset summoning sickness and toughness
+        if (card is CreatureCard deadCreature)
         {
-            foreach (var attacker in currentAttackers)
+            deadCreature.hasSummoningSickness = false;
+            deadCreature.toughness = deadCreature.baseToughness;
+
+            if (visual != null)
             {
-                CreatureCard blocker = attacker.blockedByThisBlocker;
+                visual.sicknessText.text = "";
+            }
+        }
 
-                if (blocker != null)
+        // Handle token destruction
+        if (card is CreatureCard creature && card.isToken)
+        {
+            if (visual != null)
+            {
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+            }
+            return;
+        }
+
+        // Find or create visual for graveyard
+        CardVisual graveyardVisual = FindCardVisual(card);
+        if (graveyardVisual == null)
+        {
+            GameObject visualGO = Instantiate(cardPrefab,
+                owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            graveyardVisual = visualGO.GetComponent<CardVisual>();
+            graveyardVisual.Setup(card, this);
+            activeCardVisuals.Add(graveyardVisual);
+        }
+
+        // Move and update
+        graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+        graveyardVisual.transform.localPosition = Vector3.zero;
+        graveyardVisual.UpdateGraveyardVisual(); // dedicated method that sets up the correct display
+
+        owner.Graveyard.Add(card);
+    }
+
+    public void ResolveCombat()
+    {
+        foreach (var attacker in currentAttackers)
+        {
+            CreatureCard blocker = attacker.blockedByThisBlocker;
+
+            if (blocker != null)
+            {
+                int blockerToughnessBefore = blocker.toughness;
+
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
                 {
-                    int blockerToughnessBefore = blocker.toughness;
-
-                    if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
+                    int excessDamage = attacker.power - blockerToughnessBefore;
+                    if (excessDamage > 0)
                     {
-                        int excessDamage = attacker.power - blockerToughnessBefore;
-                        if (excessDamage > 0)
+                        if (humanPlayer.Battlefield.Contains(attacker))
                         {
-                            if (humanPlayer.Battlefield.Contains(attacker))
-                            {
-                                aiPlayer.Life -= excessDamage;
-                                Debug.Log($"{attacker.cardName} tramples over for {excessDamage} damage!");
-                            }
-                            else
-                            {
-                                humanPlayer.Life -= excessDamage;
-                                Debug.Log($"{attacker.cardName} tramples YOU for {excessDamage} damage!");
-                            }
+                            aiPlayer.Life -= excessDamage;
+                            Debug.Log($"{attacker.cardName} tramples over for {excessDamage} damage!");
+                        }
+                        else
+                        {
+                            humanPlayer.Life -= excessDamage;
+                            Debug.Log($"{attacker.cardName} tramples YOU for {excessDamage} damage!");
+                        }
 
-                            if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
-                            {
-                                GetOwnerOfCard(attacker).Life += excessDamage;
-                                Debug.Log($"{attacker.cardName} lifelinks {excessDamage} trample damage.");
-                            }
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            GetOwnerOfCard(attacker).Life += excessDamage;
+                            Debug.Log($"{attacker.cardName} lifelinks {excessDamage} trample damage.");
                         }
                     }
+                }
 
-                    // Blocker and attacker deal damage to each other
-                    bool attackerProtected = attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color));
-                    bool blockerProtected = blocker.keywordAbilities.Contains(GetProtectionKeyword(attacker.color));
+                // Blocker and attacker deal damage to each other
+                bool attackerProtected = attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color));
+                bool blockerProtected = blocker.keywordAbilities.Contains(GetProtectionKeyword(attacker.color));
 
-                    int damageFromAttacker = attacker.power;
-                    int damageFromBlocker = blocker.power;
+                int damageFromAttacker = attacker.power;
+                int damageFromBlocker = blocker.power;
 
-                    if (!blockerProtected)
-                        blocker.toughness -= damageFromAttacker;
-                    else
-                        damageFromAttacker = 0;
+                if (!blockerProtected)
+                    blocker.toughness -= damageFromAttacker;
+                else
+                    damageFromAttacker = 0;
 
-                    if (!attackerProtected)
-                        attacker.toughness -= damageFromBlocker;
-                    else
-                        damageFromBlocker = 0;
+                if (!attackerProtected)
+                    attacker.toughness -= damageFromBlocker;
+                else
+                    damageFromBlocker = 0;
 
-                    Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
+                Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
 
-                    // Lifelink: gain life equal to damage dealt by attacker
-                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromAttacker > 0)
+                // Lifelink: gain life equal to damage dealt by attacker
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromAttacker > 0)
+                {
+                    Player owner = GetOwnerOfCard(attacker);
+                    owner.Life += damageFromAttacker;
+                    Debug.Log($"{attacker.cardName} lifelinks {damageFromAttacker} life to {owner}.");
+                }
+
+                // Lifelink: gain life equal to damage dealt by blocker
+                if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
+                {
+                    Player blockerOwner = GetOwnerOfCard(blocker);
+                    blockerOwner.Life += damageFromBlocker;
+                    Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
+                }
+            }
+            else
+            {
+                // Attacker goes unblocked
+                if (humanPlayer.Battlefield.Contains(attacker))
+                {
+                    aiPlayer.Life -= attacker.power;
+                    Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+
+                    // Lifelink: gain life equal to damage dealt to AI
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        Player owner = GetOwnerOfCard(attacker);
-                        owner.Life += damageFromAttacker;
-                        Debug.Log($"{attacker.cardName} lifelinks {damageFromAttacker} life to {owner}.");
-                    }
-
-                    // Lifelink: gain life equal to damage dealt by blocker
-                    if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
-                    {
-                        Player blockerOwner = GetOwnerOfCard(blocker);
-                        blockerOwner.Life += damageFromBlocker;
-                        Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
+                        humanPlayer.Life += attacker.power;
+                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to Human.");
                     }
                 }
                 else
                 {
-                    // Attacker goes unblocked
-                    if (humanPlayer.Battlefield.Contains(attacker))
-                    {
-                        aiPlayer.Life -= attacker.power;
-                        Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+                    humanPlayer.Life -= attacker.power;
+                    Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
 
-                        // Lifelink: gain life equal to damage dealt to AI
-                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
-                        {
-                            humanPlayer.Life += attacker.power;
-                            Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to Human.");
-                        }
-                    }
-                    else
+                    // Lifelink: gain life equal to damage dealt to Human
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        humanPlayer.Life -= attacker.power;
-                        Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
-
-                        // Lifelink: gain life equal to damage dealt to Human
-                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
-                        {
-                            aiPlayer.Life += attacker.power;
-                            Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
-                        }
+                        aiPlayer.Life += attacker.power;
+                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
                     }
                 }
-            }
-
-            CheckDeaths(humanPlayer);
-            CheckDeaths(aiPlayer);
-
-            // Cleanup combat assignments
-            foreach (var card in humanPlayer.Battlefield)
-            {
-                if (card is CreatureCard c)
-                {
-                    c.blockingThisAttacker = null;
-                    c.blockedByThisBlocker = null;
-                }
-            }
-            foreach (var card in aiPlayer.Battlefield)
-            {
-                if (card is CreatureCard c)
-                {
-                    c.blockingThisAttacker = null;
-                    c.blockedByThisBlocker = null;
-                }
-            }
-
-            currentAttackers.Clear();
-            selectedAttackerForBlocking = null;
-
-            UpdateUI();
-
-            if (aiPlayer.Life <= 0)
-            {
-                Debug.Log("AI defeated — player wins!");
-                WinBattle();
             }
         }
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+
+        // Cleanup combat assignments
+        foreach (var card in humanPlayer.Battlefield)
+        {
+            if (card is CreatureCard c)
+            {
+                c.blockingThisAttacker = null;
+                c.blockedByThisBlocker = null;
+            }
+        }
+        foreach (var card in aiPlayer.Battlefield)
+        {
+            if (card is CreatureCard c)
+            {
+                c.blockingThisAttacker = null;
+                c.blockedByThisBlocker = null;
+            }
+        }
+
+        currentAttackers.Clear();
+        selectedAttackerForBlocking = null;
+
+        UpdateUI();
+
+        if (aiPlayer.Life <= 0)
+        {
+            Debug.Log("AI defeated — player wins!");
+            WinBattle();
+        }
+    }
 
     public void CheckDeaths(Player player)
+    {
+        List<Card> toGrave = new List<Card>();
+        foreach (var card in player.Battlefield)
         {
-            List<Card> toGrave = new List<Card>();
-            foreach (var card in player.Battlefield)
+            if (card is CreatureCard c && c.toughness <= 0)
             {
-                if (card is CreatureCard c && c.toughness <= 0)
-                {
-                    toGrave.Add(c);
-                }
-            }
-
-            foreach (var card in toGrave)
-            {
-                SendToGraveyard(card, player);
+                toGrave.Add(c);
             }
         }
+
+        foreach (var card in toGrave)
+        {
+            SendToGraveyard(card, player);
+        }
+    }
 
     public void ResetPermanents(Player player)
+    {
+        foreach (var card in player.Battlefield)
         {
-            foreach (var card in player.Battlefield)
+            card.isTapped = false;
+
+            if (card is CreatureCard creature)
             {
-                card.isTapped = false;
-
-                if (card is CreatureCard creature)
-                {
-                    creature.hasSummoningSickness = false;
-                    creature.toughness = creature.baseToughness;
-                    creature.blockingThisAttacker = null;
-                    creature.blockedByThisBlocker = null;
-                }
-
-                var visual = FindCardVisual(card);
-                if (visual != null)
-                {
-                    visual.UpdateVisual(); // Just call once, it's enough
-                }
+                creature.hasSummoningSickness = false;
+                creature.toughness = creature.baseToughness;
+                creature.blockingThisAttacker = null;
+                creature.blockedByThisBlocker = null;
             }
 
-            player.hasPlayedLandThisTurn = false; // Also reset land play
-            
-            foreach (var visual in activeCardVisuals)
+            var visual = FindCardVisual(card);
+            if (visual != null)
             {
-                visual.UpdateVisual();
+                visual.UpdateVisual(); // Just call once, it's enough
             }
-
         }
-    
+
+        player.hasPlayedLandThisTurn = false; // Also reset land play
+
+        foreach (var visual in activeCardVisuals)
+        {
+            visual.UpdateVisual();
+        }
+
+    }
+
     public void ResetDamage(Player player)
+    {
+        foreach (var card in player.Battlefield)
         {
-            foreach (var card in player.Battlefield)
+            if (card is CreatureCard creature)
             {
-                if (card is CreatureCard creature)
-                {
-                    creature.toughness = creature.baseToughness;
-                }
+                creature.toughness = creature.baseToughness;
             }
         }
+    }
 
     public CardVisual FindCardVisual(Card card)
+    {
+        return activeCardVisuals.Find(cv => cv.linkedCard == card);
+    }
+    public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
+    {
+        yield return new WaitForSeconds(2f);
+
+        sorcery.ResolveEffect(caster);
+        SendToGraveyard(sorcery, caster);
+
+        // Remove old stack visual if it wasn't reused
+        if (caster == aiPlayer && visual != null)
         {
-            return activeCardVisuals.Find(cv => cv.linkedCard == card);
+            activeCardVisuals.Remove(visual);
+            Destroy(visual.gameObject);
         }
-    private IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
+
+        UpdateUI();
+        isStackBusy = false; // UNBLOCK ON RESOLVE
+
+        isStackBusy = false;
+
+        if (aiPlayer.Life <= 0)
+        {
+            Debug.Log("AI defeated — player wins!");
+            WinBattle();
+        }
+
+        if (caster == aiPlayer)
+        {
+            if (TurnSystem.Instance.waitingToResumeAI)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+    }
+
+    public void SummonToken(Card tokenCard, Player owner)
+    {
+        if (tokenCard == null)
+        {
+            Debug.LogError("Tried to summon a null token.");
+            return;
+        }
+
+        if (tokenCard is CreatureCard creature)
+        {
+            creature.hasSummoningSickness = true;
+
+            if (creature.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+            {
+                creature.isTapped = true;
+                Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+            }
+        }
+
+        owner.Battlefield.Add(tokenCard);
+
+        // Create visual and link it
+        GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+        CardVisual visual = visualGO.GetComponent<CardVisual>();
+
+        visual.Setup(tokenCard, this);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
+    }
+    public Player GetOpponentOf(Player player)
+    {
+        return player == humanPlayer ? aiPlayer : humanPlayer;
+    }
+
+    public void TapCardForMana(CreatureCard creature)
+    {
+        if (!creature.isTapped)
+        {
+            creature.isTapped = true;
+            humanPlayer.ColoredMana.Colorless++;
+            UpdateUI();
+        }
+    }
+
+    public void TapToLoseLife(CreatureCard creature)
+    {
+        if (creature.isTapped || creature.hasSummoningSickness)
+            return;
+
+        creature.isTapped = true;
+
+        Player opponent = GetOpponentOf(GetOwnerOfCard(creature));
+        opponent.Life -= creature.tapLifeLossAmount;
+
+        Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
+        SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+
+        ShowBloodSplatVFX(creature);
+
+        UpdateUI();
+
+        if (aiPlayer.Life <= 0)
+        {
+            Debug.Log("AI defeated — player wins!");
+            WinBattle();
+        }
+    }
+
+    public void ShowBloodSplatVFX(Card card)
+    {
+        Debug.Log("ShowBloodSplatVFX triggered on: " + card.cardName);
+
+        CardVisual visual = FindCardVisual(card);
+        if (visual == null)
+        {
+            Debug.LogWarning("No visual found for card " + card.cardName);
+            return;
+        }
+
+        Vector3 spawnPos = visual.transform.position;
+        spawnPos.z = 0f;
+        spawnPos += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), 0);
+
+        GameObject vfx = Instantiate(bloodSplatPrefab, spawnPos, Quaternion.identity);
+        Destroy(vfx, 1.5f);
+        Debug.Log("Spawned blood VFX at " + spawnPos);
+    }
+
+    public void PayToGainAbility(CreatureCard creature)
+    {
+        if (creature.isTapped) return;
+
+        Player owner = GetOwnerOfCard(creature);
+        int remaining = creature.manaToPayToActivate;
+
+        if (owner.ColoredMana.Total() >= remaining)
+        {
+            // Spend colorless first
+            int useColorless = Mathf.Min(owner.ColoredMana.Colorless, remaining);
+            owner.ColoredMana.Colorless -= useColorless;
+            remaining -= useColorless;
+
+            // Spend from WUBRG
+            remaining -= SpendFromPool(ref owner.ColoredMana.White, remaining);
+            remaining -= SpendFromPool(ref owner.ColoredMana.Blue, remaining);
+            remaining -= SpendFromPool(ref owner.ColoredMana.Black, remaining);
+            remaining -= SpendFromPool(ref owner.ColoredMana.Red, remaining);
+            remaining -= SpendFromPool(ref owner.ColoredMana.Green, remaining);
+
+            if (remaining > 0)
+            {
+                Debug.LogWarning("PayToGainAbility: Not enough mana despite Total() check.");
+                return;
+            }
+
+            creature.keywordAbilities.Add(creature.abilityToGain);
+            Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
+            UpdateUI();
+        }
+        else
+        {
+            Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
+        }
+        creature.keywordAbilities.Add(creature.abilityToGain); // TEMP grant
+        Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
+
+        UpdateUI();
+    }
+
+    public Player GetOwnerOfCard(Card card)
+    {
+        if (humanPlayer.Battlefield.Contains(card)) return humanPlayer;
+        if (aiPlayer.Battlefield.Contains(card)) return aiPlayer;
+
+        Debug.LogWarning($"[GetOwnerOfCard] Couldn't find owner of {card.cardName}");
+        return null;
+    }
+
+    public void UpdateUI()
+    {
+        foreach (var visual in activeCardVisuals)
+        {
+            if (visual.isInBattlefield)
+                visual.UpdateVisual();
+        }
+
+        if (enemyHandText != null)
+            enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
+
+        if (playerLifeText != null)
+            playerLifeText.text = "" + humanPlayer.Life;
+
+        if (enemyLifeText != null)
+            enemyLifeText.text = "" + aiPlayer.Life;
+
+        if (manaPoolText != null)
+        {
+            // Replace mana text with icon updates
+            UpdateManaIcon(whiteManaIcon, whiteManaText, humanPlayer.ColoredMana.White);
+            UpdateManaIcon(blueManaIcon, blueManaText, humanPlayer.ColoredMana.Blue);
+            UpdateManaIcon(blackManaIcon, blackManaText, humanPlayer.ColoredMana.Black);
+            UpdateManaIcon(redManaIcon, redManaText, humanPlayer.ColoredMana.Red);
+            UpdateManaIcon(greenManaIcon, greenManaText, humanPlayer.ColoredMana.Green);
+            UpdateManaIcon(colorlessManaIcon, colorlessManaText, humanPlayer.ColoredMana.Colorless);
+        }
+    }
+
+    private void UpdateManaIcon(Image icon, TMP_Text label, int amount)
+        {
+            if (icon != null)
+                icon.color = (amount > 0) ? Color.white : Color.black;
+
+            if (label != null)
+                label.text = amount.ToString();
+        }
+
+    public void WinBattle()
+    {
+        if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
+        {
+            Debug.Log("Player won battle at zone ID: " + BattleData.CurrentZoneId);
+            PlayerPrefs.SetString("LastCompletedZone", BattleData.CurrentZoneId);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            Debug.LogWarning("No zone ID found when trying to WinBattle.");
+        }
+
+        SceneManager.LoadScene("MapScene");
+    }
+
+    public void BuildStarterDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+        ai.Deck.Add(CardFactory.Create("Origin Golem"));
+        ai.Deck.Add(CardFactory.Create("Origin Golem"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+    }
+
+    public void BuildWhiteBeginnerDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
+        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
+        ai.Deck.Add(CardFactory.Create("Gentle Giant"));
+        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
+        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
+        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
+        ai.Deck.Add(CardFactory.Create("Bonfire"));
+        ai.Deck.Add(CardFactory.Create("Bonfire"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Crystallium"));
+    }
+
+    public void BuildWhiteAdvancedDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Plains"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Waterbearer"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
+        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
+        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
+        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
+        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
+        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
+        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
+        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
+        ai.Deck.Add(CardFactory.Create("Pure Angel"));
+        ai.Deck.Add(CardFactory.Create("Pure Angel"));
+        ai.Deck.Add(CardFactory.Create("Bonfire"));
+        ai.Deck.Add(CardFactory.Create("Bonfire"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+    }
+
+    public void BuildBlueBeginnerDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
+        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
+        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Crystallium"));
+        ai.Deck.Add(CardFactory.Create("Crystallium"));
+        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+    }
+
+    public void BuildBlueAdvancedDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Giant Crab"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
+        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
+        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
+        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
+        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Crystallium"));
+        ai.Deck.Add(CardFactory.Create("Crystallium"));
+        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
+    }
+
+    public void BuildBlackBeginnerDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
+        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
+        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
+        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+        ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Giant Rat"));
+        ai.Deck.Add(CardFactory.Create("Giant Rat"));
+        ai.Deck.Add(CardFactory.Create("Giant Rat"));
+        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+    }
+
+    public void BuildBlackAdvancedDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
+        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
+        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
+        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Communed Rot"));
+        ai.Deck.Add(CardFactory.Create("Communed Rot"));
+        ai.Deck.Add(CardFactory.Create("Communed Rot"));
+        ai.Deck.Add(CardFactory.Create("Communed Rot"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+    }
+
+    public void BuildRedBeginnerDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Village Idiot"));
+        ai.Deck.Add(CardFactory.Create("Village Idiot"));
+        ai.Deck.Add(CardFactory.Create("Village Idiot"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Flying Pig"));
+        ai.Deck.Add(CardFactory.Create("Flying Pig"));
+        ai.Deck.Add(CardFactory.Create("Flying Pig"));
+        ai.Deck.Add(CardFactory.Create("Flying Pig"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+    }
+
+    public void BuildRedAdvancedDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Mountain"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
+        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Thundermare"));
+        ai.Deck.Add(CardFactory.Create("Thundermare"));
+        ai.Deck.Add(CardFactory.Create("Thundermare"));
+        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
+        ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
+        ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
+        ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
+        ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
+    }
+
+    public void BuildGreenBeginnerDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
+        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
+        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Living Tree"));
+        ai.Deck.Add(CardFactory.Create("Living Tree"));
+        ai.Deck.Add(CardFactory.Create("Living Tree"));
+        ai.Deck.Add(CardFactory.Create("Flying Donkey"));
+        ai.Deck.Add(CardFactory.Create("Flying Donkey"));
+        ai.Deck.Add(CardFactory.Create("Feast"));
+        ai.Deck.Add(CardFactory.Create("Feast"));
+        ai.Deck.Add(CardFactory.Create("Feast"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+    }
+
+    public void BuildGreenAdvancedDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Forest"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Violent Ape"));
+        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
+        ai.Deck.Add(CardFactory.Create("Living Tree"));
+        ai.Deck.Add(CardFactory.Create("Living Tree"));
+        ai.Deck.Add(CardFactory.Create("Drumming Elf"));
+        ai.Deck.Add(CardFactory.Create("Drumming Elf"));
+        ai.Deck.Add(CardFactory.Create("Cactusaurus"));
+        ai.Deck.Add(CardFactory.Create("Cactusaurus"));
+        ai.Deck.Add(CardFactory.Create("Realms Crasher"));
+        ai.Deck.Add(CardFactory.Create("Realms Crasher"));
+        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
+        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
+        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
+    }
+
+    public void BuildBossDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Swamp"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Forget"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Famished Crow"));
+        ai.Deck.Add(CardFactory.Create("Sad Clown"));
+        ai.Deck.Add(CardFactory.Create("Sad Clown"));
+        ai.Deck.Add(CardFactory.Create("Sad Clown"));
+        ai.Deck.Add(CardFactory.Create("Sad Clown"));
+        ai.Deck.Add(CardFactory.Create("Giant Crow"));
+        ai.Deck.Add(CardFactory.Create("Giant Crow"));
+        ai.Deck.Add(CardFactory.Create("Giant Crow"));
+        ai.Deck.Add(CardFactory.Create("Giant Crow"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Witches Rite"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
+        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
+    }
+
+    public void BuildRuinsDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Island"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Obstacle"));
+        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
+        ai.Deck.Add(CardFactory.Create("Glassmole"));
+        ai.Deck.Add(CardFactory.Create("Glassmole"));
+        ai.Deck.Add(CardFactory.Create("Glassmole"));
+        ai.Deck.Add(CardFactory.Create("Origin Golem"));
+        ai.Deck.Add(CardFactory.Create("Origin Golem"));
+        ai.Deck.Add(CardFactory.Create("Origin Golem"));
+        ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
+        ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Potion of Mana"));
+        ai.Deck.Add(CardFactory.Create("Potion of Mana"));
+        ai.Deck.Add(CardFactory.Create("Pressure Sphere"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
+    }
+
+    void PickRandomBeginnerDeck(Player ai)
+    {
+        var decks = new System.Action<Player>[]
+        {
+                    BuildWhiteBeginnerDeck,
+                    BuildBlueBeginnerDeck,
+                    BuildBlackBeginnerDeck,
+                    BuildRedBeginnerDeck,
+                    BuildGreenBeginnerDeck,
+                    BuildRuinsDeck
+        };
+
+        decks[Random.Range(0, decks.Length)](ai);
+    }
+
+    void PickRandomAdvancedDeck(Player ai)
+    {
+        var decks = new System.Action<Player>[]
+        {
+                    BuildWhiteAdvancedDeck,
+                    BuildBlueAdvancedDeck,
+                    BuildBlackAdvancedDeck,
+                    BuildRedAdvancedDeck,
+                    BuildGreenAdvancedDeck
+        };
+
+        decks[Random.Range(0, decks.Length)](ai);
+    }
+
+    void LoadDeckByKey(Player ai, string key)
+    {
+        switch (key)
+        {
+            // STARTER + BOSS
+            case "Deck_Starter":
+                BuildStarterDeck(ai);
+                break;
+            case "Deck_Boss":
+                BuildBossDeck(ai);
+                break;
+
+            // BEGINNER (6)
+            case "Deck_Shore":
+                BuildBlueBeginnerDeck(ai);
+                break;
+            case "Deck_Camp":
+                BuildRedBeginnerDeck(ai);
+                break;
+            case "Deck_Graveyard":
+                BuildBlackBeginnerDeck(ai);
+                break;
+            case "Deck_Thicket":
+                BuildGreenBeginnerDeck(ai);
+                break;
+            case "Deck_Village":
+                BuildWhiteBeginnerDeck(ai);
+                break;
+            case "Deck_Ruins":
+                BuildRuinsDeck(ai);
+                break;
+
+            // ADVANCED (5)
+            case "Deck_Church":
+                BuildWhiteAdvancedDeck(ai);
+                break;
+            case "Deck_Tower":
+                BuildBlueAdvancedDeck(ai);
+                break;
+            case "Deck_Hut":
+                BuildBlackAdvancedDeck(ai);
+                break;
+            case "Deck_Nest":
+                BuildRedAdvancedDeck(ai);
+                break;
+            case "Deck_Woods":
+                BuildGreenAdvancedDeck(ai);
+                break;
+
+            default:
+                Debug.LogWarning("Unknown deck key: " + key + " — using fallback.");
+                BuildStarterDeck(ai);
+                break;
+        }
+    }
+
+    public bool IsAllPermanentsEnterTappedActive()
+    {
+        return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
+            .Any(card => card.keywordAbilities != null &&
+                        card.keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped));
+    }
+
+    private KeywordAbility GetProtectionKeyword(string color)
+    {
+        return color switch
+        {
+            "White" => KeywordAbility.ProtectionFromWhite,
+            "Blue" => KeywordAbility.ProtectionFromBlue,
+            "Black" => KeywordAbility.ProtectionFromBlack,
+            "Red" => KeywordAbility.ProtectionFromRed,
+            "Green" => KeywordAbility.ProtectionFromGreen,
+            _ => KeywordAbility.None
+        };
+    }
+
+    public void BeginTargetSelection(SorceryCard sorcery, Player caster, CardVisual visual)
+    {
+        targetingSorcery = sorcery;
+        targetingPlayer = caster;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        if (!sorcery.requiresTarget)
+        {
+            Debug.LogWarning("BeginTargetSelection called for non-targeting sorcery.");
+            return;
+        }
+
+        // Check if any valid targets exist (but do not highlight anything)
+        foreach (var cv in activeCardVisuals)
+        {
+            if (cv == null || cv.linkedCard == null)
+                continue;
+
+            Card target = cv.linkedCard;
+
+            bool correctType =
+                (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
+                (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                (sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && target is CreatureCard);
+
+            bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
+
+            if (correctType && isOnBattlefield && !IsProtectedFromSpell(target))
+            {
+                // Valid target exists, but no visual feedback is shown
+            }
+        }
+
+        // You may still want to show/hide player target visuals separately if needed
+    }
+
+    private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
+    {
+        yield return new WaitForSeconds(2f);
+
+        sorcery.ResolveEffect(caster, target);   // run effect on the target
+        sorcery.ResolveEffect(caster);          // ALSO run general effect (life loss, tokens, etc.)
+        SendToGraveyard(sorcery, caster);
+
+        if (caster == aiPlayer && visual != null)
+        {
+            activeCardVisuals.Remove(visual);
+            Destroy(visual.gameObject);
+        }
+
+        UpdateUI();
+        isStackBusy = false;
+    }
+
+    public void CompleteTargetSelection(CardVisual targetVisual)
+    {
+        Card chosen = targetVisual.linkedCard;
+        targetingSorcery.chosenTarget = chosen;
+
+        // Remove highlight from all cards
+        foreach (var cv in activeCardVisuals)
+            cv.EnableTargetingHighlight(false);
+
+        Debug.Log($"Target selected: {chosen.cardName}");
+
+        // Move sorcery visual to stack before resolving
+        targetingVisual.transform.SetParent(stackZone, false);
+        targetingVisual.transform.localPosition = Vector3.zero;
+        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+        StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual));
+
+        isTargetingMode = false;
+        targetingSorcery = null;
+        targetingPlayer = null;
+        targetingVisual = null;
+    }
+
+    public void CancelTargeting()
+    {
+        foreach (var cv in activeCardVisuals)
+            cv.EnableTargetingHighlight(false);
+
+        targetingSorcery = null;
+        targetingPlayer = null;
+        targetingVisual = null;
+        isTargetingMode = false;
+        isStackBusy = false;
+
+        UpdateUI();
+    }
+
+    public void CompletePlayerTargetSelection(Player targetPlayer)
+    {
+        // Move visual to stack
+        targetingVisual.transform.SetParent(stackZone, false);
+        targetingVisual.transform.localPosition = Vector3.zero;
+        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+        StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual));
+
+        if (targetingPlayer == aiPlayer && targetingVisual != null)
+        {
+            activeCardVisuals.Remove(targetingVisual);
+            Destroy(targetingVisual.gameObject);
+        }
+
+        isTargetingMode = false;
+        targetingSorcery = null;
+        targetingPlayer = null;
+        targetingVisual = null;
+
+        UpdateUI();
+        isStackBusy = false;
+    }
+
+    private bool IsProtectedFromSpell(Card card)
+        {
+            if (card is CreatureCard creature && targetingSorcery != null)
+            {
+                KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.color);
+                return creature.keywordAbilities.Contains(protection);
+            }
+
+            return false;
+        }
+
+    private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual)
         {
             yield return new WaitForSeconds(2f);
 
-            sorcery.ResolveEffect(caster);
+            sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
             SendToGraveyard(sorcery, caster);
 
-            // Remove old stack visual if it wasn't reused
             if (caster == aiPlayer && visual != null)
             {
                 activeCardVisuals.Remove(visual);
@@ -615,1017 +1698,31 @@ public class GameManager : MonoBehaviour
             }
 
             UpdateUI();
-            isStackBusy = false; // UNBLOCK ON RESOLVE
-
             isStackBusy = false;
-
-            if (aiPlayer.Life <= 0)
-            {
-                Debug.Log("AI defeated — player wins!");
-                WinBattle();
-            }
-
-            if (caster == aiPlayer)
-            {
-                if (TurnSystem.Instance.waitingToResumeAI)
-                {
-                    Debug.Log("Resuming AI phase after stack.");
-                    TurnSystem.Instance.waitingToResumeAI = false;
-                    TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-                }
-            }
-        }
-
-    public void SummonToken(Card tokenCard, Player owner)
-        {
-            if (tokenCard == null)
-            {
-                Debug.LogError("Tried to summon a null token.");
-                return;
-            }
-
-            if (tokenCard is CreatureCard creature)
-            {
-                creature.hasSummoningSickness = true;
-
-                if (creature.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                {
-                    creature.isTapped = true;
-                    Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
-                }
-            }
-
-            owner.Battlefield.Add(tokenCard);
-
-            // Create visual and link it
-            GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
-            CardVisual visual = visualGO.GetComponent<CardVisual>();
-
-            visual.Setup(tokenCard, this);
-            visual.isInBattlefield = true;
-            activeCardVisuals.Add(visual);
-            visual.UpdateVisual();
-
-            tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
-        }
-    public Player GetOpponentOf(Player player)
-            {
-                return player == humanPlayer ? aiPlayer : humanPlayer;
-            }
-
-    public void TapCardForMana(CreatureCard creature)
-        {
-            if (!creature.isTapped)
-            {
-                creature.isTapped = true;
-                humanPlayer.ManaPool++;
-                UpdateUI();
-            }
-        }
-
-    public void TapToLoseLife(CreatureCard creature)
-        {
-            if (creature.isTapped || creature.hasSummoningSickness)
-                return;
-
-            creature.isTapped = true;
-
-            Player opponent = GetOpponentOf(GetOwnerOfCard(creature));
-            opponent.Life -= creature.tapLifeLossAmount;
-
-            Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
-            SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-
-            ShowBloodSplatVFX(creature);
-
-            UpdateUI();
-
-            if (aiPlayer.Life <= 0)
-            {
-                Debug.Log("AI defeated — player wins!");
-                WinBattle();
-            }
-        }
-
-    public void ShowBloodSplatVFX(Card card)
-        {
-            Debug.Log("ShowBloodSplatVFX triggered on: " + card.cardName);
-
-            CardVisual visual = FindCardVisual(card);
-            if (visual == null)
-            {
-                Debug.LogWarning("No visual found for card " + card.cardName);
-                return;
-            }
-
-            Vector3 spawnPos = visual.transform.position;
-            spawnPos.z = 0f;
-            spawnPos += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), 0);
-
-            GameObject vfx = Instantiate(bloodSplatPrefab, spawnPos, Quaternion.identity);
-            Destroy(vfx, 1.5f);
-            Debug.Log("Spawned blood VFX at " + spawnPos);
-        }
-
-    public void PayToGainAbility(CreatureCard creature)
-        {
-            if (creature.isTapped) return;
-
-            Player owner = GetOwnerOfCard(creature);
-            if (owner.ManaPool < creature.manaToPayToActivate)
-            {
-                Debug.Log($"{creature.cardName} can't activate: not enough mana.");
-                return;
-            }
-
-            owner.ManaPool -= creature.manaToPayToActivate;
-            creature.keywordAbilities.Add(creature.abilityToGain); // TEMP grant
-            Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
-
-            UpdateUI();
         }
     
-    public Player GetOwnerOfCard(Card card)
+    public Dictionary<string, int> GetManaCostBreakdown(int totalCost, string color)
         {
-            if (humanPlayer.Battlefield.Contains(card)) return humanPlayer;
-            if (aiPlayer.Battlefield.Contains(card)) return aiPlayer;
+            var cost = new Dictionary<string, int>();
 
-            Debug.LogWarning($"[GetOwnerOfCard] Couldn't find owner of {card.cardName}");
-            return null;
-        }   
-
-    public void UpdateUI()
-        {
-            foreach (var visual in activeCardVisuals)
+            // Artifacts or colorless cards require only generic mana
+            if (string.IsNullOrEmpty(color) || color == "Artifact" || color == "None")
             {
-                if (visual.isInBattlefield)
-                    visual.UpdateVisual();
+                cost["Generic"] = totalCost;
+            }
+            else
+            {
+                cost[color] = 1;
+                cost["Generic"] = totalCost - 1;
             }
 
-            if (enemyHandText != null)
-                enemyHandText.text = "Hand: " + aiPlayer.Hand.Count;
-
-            if (playerLifeText != null)
-                playerLifeText.text = "" + humanPlayer.Life;
-
-            if (enemyLifeText != null)
-                enemyLifeText.text = "" + aiPlayer.Life;
-
-            if (manaPoolText != null)
-            {
-                manaPoolText.text = "Mana: " + humanPlayer.ManaPool;
-            }
+            return cost;
         }
 
-        public void WinBattle()
-            {
-                if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
-                {
-                    Debug.Log("Player won battle at zone ID: " + BattleData.CurrentZoneId);
-                    PlayerPrefs.SetString("LastCompletedZone", BattleData.CurrentZoneId);
-                    PlayerPrefs.Save();
-                }
-                else
-                {
-                    Debug.LogWarning("No zone ID found when trying to WinBattle.");
-                }
-
-                SceneManager.LoadScene("MapScene");
-            }
-
-        public void BuildStarterDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-            ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-            ai.Deck.Add(CardFactory.Create("Origin Golem"));
-            ai.Deck.Add(CardFactory.Create("Origin Golem"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            }
-
-        public void BuildWhiteBeginnerDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-            ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-            ai.Deck.Add(CardFactory.Create("Gentle Giant"));
-            ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-            ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-            ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-            ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-            ai.Deck.Add(CardFactory.Create("Bonfire"));
-            ai.Deck.Add(CardFactory.Create("Bonfire"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Crystallium"));
-            }
-
-        public void BuildWhiteAdvancedDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Plains"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-            ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-            ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-            ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-            ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-            ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-            ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-            ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-            ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-            ai.Deck.Add(CardFactory.Create("Pure Angel"));
-            ai.Deck.Add(CardFactory.Create("Pure Angel"));
-            ai.Deck.Add(CardFactory.Create("Bonfire"));
-            ai.Deck.Add(CardFactory.Create("Bonfire"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            }
-
-        public void BuildBlueBeginnerDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-            ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-            ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Crystallium"));
-            ai.Deck.Add(CardFactory.Create("Crystallium"));
-            ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-            }
-
-        public void BuildBlueAdvancedDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Giant Crab"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-            ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-            ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-            ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-            ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Crystallium"));
-            ai.Deck.Add(CardFactory.Create("Crystallium"));
-            ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-            }
-
-        public void BuildBlackBeginnerDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-            ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-            ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-            ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-            ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Giant Rat"));
-            ai.Deck.Add(CardFactory.Create("Giant Rat"));
-            ai.Deck.Add(CardFactory.Create("Giant Rat"));
-            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            }
-
-        public void BuildBlackAdvancedDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Ratbat"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Potion of Health"));
-            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-            ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-            ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-            ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-            ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Communed Rot"));
-            ai.Deck.Add(CardFactory.Create("Communed Rot"));
-            ai.Deck.Add(CardFactory.Create("Communed Rot"));
-            ai.Deck.Add(CardFactory.Create("Communed Rot"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            }
-
-        public void BuildRedBeginnerDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Village Idiot"));
-            ai.Deck.Add(CardFactory.Create("Village Idiot"));
-            ai.Deck.Add(CardFactory.Create("Village Idiot"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Great Boulder"));
-            ai.Deck.Add(CardFactory.Create("Great Boulder"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-            ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-            ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-            ai.Deck.Add(CardFactory.Create("Flying Pig"));
-            ai.Deck.Add(CardFactory.Create("Flying Pig"));
-            ai.Deck.Add(CardFactory.Create("Flying Pig"));
-            ai.Deck.Add(CardFactory.Create("Flying Pig"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            }
-
-        public void BuildRedAdvancedDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Mountain"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-            ai.Deck.Add(CardFactory.Create("Great Boulder"));
-            ai.Deck.Add(CardFactory.Create("Great Boulder"));
-            ai.Deck.Add(CardFactory.Create("Great Boulder"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-            ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-            ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-            ai.Deck.Add(CardFactory.Create("Thundermare"));
-            ai.Deck.Add(CardFactory.Create("Thundermare"));
-            ai.Deck.Add(CardFactory.Create("Thundermare"));
-            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-            ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
-            ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
-            ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
-            ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-            }
-
-        public void BuildGreenBeginnerDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-            ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-            ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Living Tree"));
-            ai.Deck.Add(CardFactory.Create("Living Tree"));
-            ai.Deck.Add(CardFactory.Create("Living Tree"));
-            ai.Deck.Add(CardFactory.Create("Flying Donkey"));
-            ai.Deck.Add(CardFactory.Create("Flying Donkey"));
-            ai.Deck.Add(CardFactory.Create("Feast"));
-            ai.Deck.Add(CardFactory.Create("Feast"));
-            ai.Deck.Add(CardFactory.Create("Feast"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            }
-
-        public void BuildGreenAdvancedDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Forest"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Violent Ape"));
-            ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-            ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-            ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-            ai.Deck.Add(CardFactory.Create("Living Tree"));
-            ai.Deck.Add(CardFactory.Create("Living Tree"));
-            ai.Deck.Add(CardFactory.Create("Drumming Elf"));
-            ai.Deck.Add(CardFactory.Create("Drumming Elf"));
-            ai.Deck.Add(CardFactory.Create("Cactusaurus"));
-            ai.Deck.Add(CardFactory.Create("Cactusaurus"));
-            ai.Deck.Add(CardFactory.Create("Realms Crasher"));
-            ai.Deck.Add(CardFactory.Create("Realms Crasher"));
-            ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-            ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-            ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-            }
-
-        public void BuildBossDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Famished Crow"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-            ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-            ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-            }
-
-        public void BuildRuinsDeck(Player ai)
-            {
-            ai.Deck.Clear();
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Island"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Obstacle"));
-            ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-            ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-            ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-            ai.Deck.Add(CardFactory.Create("Glassmole"));
-            ai.Deck.Add(CardFactory.Create("Glassmole"));
-            ai.Deck.Add(CardFactory.Create("Glassmole"));
-            ai.Deck.Add(CardFactory.Create("Origin Golem"));
-            ai.Deck.Add(CardFactory.Create("Origin Golem"));
-            ai.Deck.Add(CardFactory.Create("Origin Golem"));
-            ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
-            ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Mana Rock"));
-            ai.Deck.Add(CardFactory.Create("Potion of Mana"));
-            ai.Deck.Add(CardFactory.Create("Potion of Mana"));
-            ai.Deck.Add(CardFactory.Create("Pressure Sphere"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-            }
-
-        void PickRandomBeginnerDeck(Player ai)
-            {
-                var decks = new System.Action<Player>[]
-                {
-                    BuildWhiteBeginnerDeck,
-                    BuildBlueBeginnerDeck,
-                    BuildBlackBeginnerDeck,
-                    BuildRedBeginnerDeck,
-                    BuildGreenBeginnerDeck,
-                    BuildRuinsDeck
-                };
-
-                decks[Random.Range(0, decks.Length)](ai);
-            }
-
-        void PickRandomAdvancedDeck(Player ai)
-            {
-                var decks = new System.Action<Player>[]
-                {
-                    BuildWhiteAdvancedDeck,
-                    BuildBlueAdvancedDeck,
-                    BuildBlackAdvancedDeck,
-                    BuildRedAdvancedDeck,
-                    BuildGreenAdvancedDeck
-                };
-
-                decks[Random.Range(0, decks.Length)](ai);
-            }
-
-        void LoadDeckByKey(Player ai, string key)
-            {
-            switch (key)
-                {
-                    // STARTER + BOSS
-                    case "Deck_Starter":
-                        BuildStarterDeck(ai);
-                        break;
-                    case "Deck_Boss":
-                        BuildBossDeck(ai);
-                        break;
-
-                    // BEGINNER (6)
-                    case "Deck_Shore":
-                        BuildBlueBeginnerDeck(ai);
-                        break;
-                    case "Deck_Camp":
-                        BuildRedBeginnerDeck(ai);
-                        break;
-                    case "Deck_Graveyard":
-                        BuildBlackBeginnerDeck(ai);
-                        break;
-                    case "Deck_Thicket":
-                        BuildGreenBeginnerDeck(ai);
-                        break;
-                    case "Deck_Village":
-                        BuildWhiteBeginnerDeck(ai);
-                        break;
-                    case "Deck_Ruins":
-                        BuildRuinsDeck(ai);
-                        break;
-
-                    // ADVANCED (5)
-                    case "Deck_Church":
-                        BuildWhiteAdvancedDeck(ai);
-                        break;
-                    case "Deck_Tower":
-                        BuildBlueAdvancedDeck(ai);
-                        break;
-                    case "Deck_Hut":
-                        BuildBlackAdvancedDeck(ai);
-                        break;
-                    case "Deck_Nest":
-                        BuildRedAdvancedDeck(ai);
-                        break;
-                    case "Deck_Woods":
-                        BuildGreenAdvancedDeck(ai);
-                        break;
-
-                    default:
-                        Debug.LogWarning("Unknown deck key: " + key + " — using fallback.");
-                        BuildStarterDeck(ai);
-                        break;
-                }
-            }
-
-        public bool IsAllPermanentsEnterTappedActive()
-            {
-                return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
-                    .Any(card => card.keywordAbilities != null &&
-                                card.keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped));
-            }
-        
-        private KeywordAbility GetProtectionKeyword(string color)
-            {
-                return color switch
-                {
-                    "White" => KeywordAbility.ProtectionFromWhite,
-                    "Blue" => KeywordAbility.ProtectionFromBlue,
-                    "Black" => KeywordAbility.ProtectionFromBlack,
-                    "Red" => KeywordAbility.ProtectionFromRed,
-                    "Green" => KeywordAbility.ProtectionFromGreen,
-                    _ => KeywordAbility.None
-                };
-            }
-            
-        public void BeginTargetSelection(SorceryCard sorcery, Player caster, CardVisual visual)
-            {
-                targetingSorcery = sorcery;
-                targetingPlayer = caster;
-                targetingVisual = visual;
-                isTargetingMode = true;
-
-                if (!sorcery.requiresTarget)
-                {
-                    Debug.LogWarning("BeginTargetSelection called for non-targeting sorcery.");
-                    return;
-                }
-
-                // Check if any valid targets exist (but do not highlight anything)
-                foreach (var cv in activeCardVisuals)
-                {
-                    if (cv == null || cv.linkedCard == null)
-                        continue;
-
-                    Card target = cv.linkedCard;
-
-                    bool correctType =
-                        (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
-                        (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
-                        (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
-                        (sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && target is CreatureCard);
-
-                    bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
-
-                    if (correctType && isOnBattlefield && !IsProtectedFromSpell(target))
-                    {
-                        // Valid target exists, but no visual feedback is shown
-                    }
-                }
-
-                // You may still want to show/hide player target visuals separately if needed
-            }
-        
-        private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
-            {
-                yield return new WaitForSeconds(2f);
-
-                sorcery.ResolveEffect(caster, target);   // run effect on the target
-                sorcery.ResolveEffect(caster);          // ALSO run general effect (life loss, tokens, etc.)
-                SendToGraveyard(sorcery, caster);
-
-                if (caster == aiPlayer && visual != null)
-                {
-                    activeCardVisuals.Remove(visual);
-                    Destroy(visual.gameObject);
-                }
-
-                UpdateUI();
-                isStackBusy = false;
-            }
-
-        public void CompleteTargetSelection(CardVisual targetVisual)
-            {
-                Card chosen = targetVisual.linkedCard;
-                targetingSorcery.chosenTarget = chosen;
-
-                // Remove highlight from all cards
-                foreach (var cv in activeCardVisuals)
-                    cv.EnableTargetingHighlight(false);
-
-                Debug.Log($"Target selected: {chosen.cardName}");
-
-                // Move sorcery visual to stack before resolving
-                targetingVisual.transform.SetParent(stackZone, false);
-                targetingVisual.transform.localPosition = Vector3.zero;
-                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual));
-
-                isTargetingMode = false;
-                targetingSorcery = null;
-                targetingPlayer = null;
-                targetingVisual = null;
-            }
-        
-        public void CancelTargeting()
-            {
-                foreach (var cv in activeCardVisuals)
-                    cv.EnableTargetingHighlight(false);
-
-                targetingSorcery = null;
-                targetingPlayer = null;
-                targetingVisual = null;
-                isTargetingMode = false;
-                isStackBusy = false;
-
-                UpdateUI();
-            }
-        
-        public void CompletePlayerTargetSelection(Player targetPlayer)
-            {
-                // Move visual to stack
-                targetingVisual.transform.SetParent(stackZone, false);
-                targetingVisual.transform.localPosition = Vector3.zero;
-                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual));
-
-                if (targetingPlayer == aiPlayer && targetingVisual != null)
-                {
-                    activeCardVisuals.Remove(targetingVisual);
-                    Destroy(targetingVisual.gameObject);
-                }
-
-                isTargetingMode = false;
-                targetingSorcery = null;
-                targetingPlayer = null;
-                targetingVisual = null;
-
-                UpdateUI();
-                isStackBusy = false;
-            }
-        
-        private bool IsProtectedFromSpell(Card card)
-            {
-                if (card is CreatureCard creature && targetingSorcery != null)
-                {
-                    KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.color);
-                    return creature.keywordAbilities.Contains(protection);
-                }
-
-                return false;
-            }
-        
-        private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual)
-            {
-                yield return new WaitForSeconds(2f);
-
-                sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
-                SendToGraveyard(sorcery, caster);
-
-                if (caster == aiPlayer && visual != null)
-                {
-                    activeCardVisuals.Remove(visual);
-                    Destroy(visual.gameObject);
-                }
-
-                UpdateUI();
-                isStackBusy = false;
-            }
+    private int SpendFromPool(ref int pool, int needed)
+        {
+            int spent = Mathf.Min(pool, needed);
+            pool -= spent;
+            return spent;
+        }
 }

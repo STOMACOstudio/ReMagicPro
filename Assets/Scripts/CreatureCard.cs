@@ -16,15 +16,16 @@ public class CreatureCard : Card
 
     public override void Play(Player player)
     {
-        if (player.ManaPool >= manaCost)
+        var cost = GameManager.Instance.GetManaCostBreakdown(manaCost, color);
+        if (player.ColoredMana.CanPay(cost))
         {
-            player.ManaPool -= manaCost;
+            player.ColoredMana.Pay(cost);
             base.Play(player);
             Debug.Log(cardName + " summoned to battlefield.");
         }
         else
         {
-            Debug.Log("Not enough mana to summon " + cardName);
+            Debug.Log("Not enough colored mana to summon " + cardName);
         }
     }
 }
