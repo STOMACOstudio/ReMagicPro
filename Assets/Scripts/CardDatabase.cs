@@ -1715,6 +1715,7 @@ public static class CardDatabase
                         manaCost = 1,
                         color = "None",
                         cardType = CardType.Artifact,
+                        manaToGain = 1,
                         activatedAbilities = new List<ActivatedAbility> {
                             ActivatedAbility.TapAndSacrificeForMana
                         },

@@ -17,6 +17,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Image artImage;
     public Image backgroundImage;
     public Image cardRarity;
+    public Image coloredManaIcon;
 
     public Sprite landBorder;
     public Sprite whiteBorder;
@@ -25,13 +26,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Sprite redBorder;
     public Sprite greenBorder;
     public Sprite artifactBorder;
-    public Sprite defaultBorder;    
+    public Sprite defaultBorder;  
+    public Sprite whiteManaSymbol;
+    public Sprite blueManaSymbol;
+    public Sprite blackManaSymbol;
+    public Sprite redManaSymbol;
+    public Sprite greenManaSymbol;  
     
     public GameObject costBackground;
     public GameObject statsBackground;
     public GameObject swordIcon;
     public GameObject shieldIcon;
     public GameObject tapIcon;
+    public GameObject genericCostBG;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -203,9 +210,28 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             keywordText.text = "";
             sicknessText.text = "";
 
+            // Show mana cost and icon
+            int genericCost = 0;
+
+            bool isOneColoredMana = (linkedCard.manaCost == 1) &&
+                        linkedCard.color != "Artifact" &&
+                        linkedCard.color != "None";
+
+            if (isOneColoredMana)
+            {
+                costText.text = "";
+                if (genericCostBG != null) genericCostBG.SetActive(false);
+            }
+            else
+            {
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
+            }
+
             if (linkedCard is CreatureCard creature)
             {
-                costText.text = creature.manaCost.ToString();
+                genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
                 sicknessText.text = creature.hasSummoningSickness ? "(@)" : "";
@@ -215,7 +241,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                costText.text = sorcery.manaCost.ToString();
+                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
 
                 sorceryEffect(sorcery);
 
@@ -224,7 +251,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                costText.text = artifact.manaCost.ToString();
+                genericCost = artifact.manaCost;
+                costText.text = genericCost.ToString();
                 keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
@@ -241,13 +269,36 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else
             {
-                // Fallback
                 costText.text = "";
                 statsText.text = "";
                 keywordText.text = "";
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
+            }
+
+            // Update colored icon
+            if (coloredManaIcon != null)
+            {
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    coloredManaIcon.gameObject.SetActive(false); // <-- FULL DEACTIVATION
+                }
+                else
+                {
+                    Sprite icon = null;
+                    switch (linkedCard.color)
+                    {
+                        case "White": icon = whiteManaSymbol; break;
+                        case "Blue":  icon = blueManaSymbol; break;
+                        case "Black": icon = blackManaSymbol; break;
+                        case "Red":   icon = redManaSymbol; break;
+                        case "Green": icon = greenManaSymbol; break;
+                    }
+
+                    coloredManaIcon.sprite = icon;
+                    coloredManaIcon.gameObject.SetActive(icon != null); // <-- Re-activate only if there's an icon
+                }
             }
         }
 
@@ -310,9 +361,27 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             sicknessText.text = ""; // Clear at start
 
+            int genericCost = 0;
+
+            bool isOneColoredMana = (linkedCard.manaCost == 1) &&
+                        linkedCard.color != "Artifact" &&
+                        linkedCard.color != "None";
+
+            if (isOneColoredMana)
+            {
+                costText.text = "";
+                if (genericCostBG != null) genericCostBG.SetActive(false);
+            }
+            else
+            {
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
+            }
+
             if (linkedCard is CreatureCard creature)
             {
-                costText.text = creature.manaCost.ToString();
+                genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -321,7 +390,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                costText.text = sorcery.manaCost.ToString();
+                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
                 statsText.text = "";
                 sicknessText.text = "";
 
@@ -332,7 +402,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                costText.text = artifact.manaCost.ToString();
+                genericCost = artifact.manaCost;
+                costText.text = genericCost.ToString();
                 statsText.text = "";
                 keywordText.text = artifact.GetCardText();
 
@@ -356,6 +427,30 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
+            }
+
+            // Set colored mana icon
+            if (coloredManaIcon != null)
+            {
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    coloredManaIcon.gameObject.SetActive(false); // <-- FULL DEACTIVATION
+                }
+                else
+                {
+                    Sprite icon = null;
+                    switch (linkedCard.color)
+                    {
+                        case "White": icon = whiteManaSymbol; break;
+                        case "Blue":  icon = blueManaSymbol; break;
+                        case "Black": icon = blackManaSymbol; break;
+                        case "Red":   icon = redManaSymbol; break;
+                        case "Green": icon = greenManaSymbol; break;
+                    }
+
+                    coloredManaIcon.sprite = icon;
+                    coloredManaIcon.gameObject.SetActive(icon != null); // <-- Re-activate only if there's an icon
+                }
             }
         }
 
@@ -612,50 +707,57 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
-
                     Player player = GameManager.Instance.humanPlayer;
+
                     int cost = artifact.manaToPayToActivate;
+                    int gain = artifact.manaToGain;
 
-                    if (player.ColoredMana.Total() >= cost)
+                    if (cost > 0)
                     {
-                        int remaining = cost;
-
-                        // Spend colorless first
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        // Spend from WUBRG
-                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
+                        if (player.ColoredMana.Total() >= cost)
                         {
-                            Debug.Log("Not enough mana for ability.");
+                            int remaining = cost;
+
+                            // Spend colorless first
+                            int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                            player.ColoredMana.Colorless -= useColorless;
+                            remaining -= useColorless;
+
+                            // Spend from WUBRG
+                            remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
+                            remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                            remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
+                            remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
+                            remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                            if (remaining > 0)
+                            {
+                                Debug.Log("Not enough mana for ability.");
+                                return;
+                            }
+
+                            player.ColoredMana.Colorless += gain;
+                            Debug.Log($"{linkedCard.cardName} activated: +{gain} mana (paid {cost}).");
+                        }
+                        else
+                        {
+                            Debug.Log("Not enough mana for paid activation.");
                             return;
                         }
-
-                        player.ColoredMana.Colorless += artifact.manaToGain;
-                        linkedCard.isTapped = true;
-                        GameManager.Instance.SendToGraveyard(linkedCard, player);
-                        GameManager.Instance.UpdateUI();
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
-                        UpdateVisual();
-                        Debug.Log($"{linkedCard.cardName} activated: +{artifact.manaToGain} mana.");
                     }
-                    else // TapAndSacrificeForMana (no cost, gain 1 mana)
+                    else
                     {
-                        linkedCard.isTapped = true;
-                        player.ColoredMana.Colorless += 1;
-                        GameManager.Instance.SendToGraveyard(linkedCard, player);
-                        GameManager.Instance.UpdateUI();
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
-                        UpdateVisual();
+                        // Free ability
+                        player.ColoredMana.Colorless += gain;
+                        Debug.Log($"{linkedCard.cardName} activated: +{gain} mana (free).");
                     }
 
+                    // Shared execution
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.SendToGraveyard(linkedCard, player);
+                    GameManager.Instance.UpdateUI();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
+                    UpdateVisual();
                     return;
                 }
 
@@ -1063,7 +1165,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Show correct info by card type
             if (linkedCard is CreatureCard creature)
             {
-                costText.text = creature.manaCost.ToString();
+                costText.text = Mathf.Max(creature.manaCost - 1, 0).ToString();
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -1081,7 +1183,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                costText.text = sorcery.manaCost.ToString();
+                costText.text = Mathf.Max(sorcery.manaCost - 1, 0).ToString();
                 statsText.text = "";
 
                 sorceryEffect(sorcery);
