@@ -17,6 +17,7 @@ public class Card
     public int lifeToGain;
     public int manaToPayToActivate;
     public int cardsToDraw;
+    public int damageToCreature;
 
     public string tokenToCreate;
 
@@ -155,6 +156,9 @@ public class Card
                             case ActivatedAbility.SacrificeToDrawCards:
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Draw {cardsToDraw} card(s).");
                                 break;
+                            case ActivatedAbility.DealDamageToCreature:
+                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Deal {damageToCreature} damage to target creature.");
+                                    break;
                         }
                     }
                 }

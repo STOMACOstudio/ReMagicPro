@@ -12,15 +12,19 @@ public class CardData
     public Sprite artwork;
 
     // Only used for creatures
+    public string tokenToCreate;
+    public string requiredTargetColor = null;
+
+    public bool entersTapped = false;
+    public bool isToken = false;
+    public bool destroyTargetIfTypeMatches = false;
+    
+    public int numberOfTokensMin = 0;
+    public int numberOfTokensMax = 0;   
     public int power;
     public int toughness;
     public int tapLifeLossAmount;
-    public bool entersTapped = false;
-    public bool isToken = false;
-    public string tokenToCreate;
-    public int numberOfTokensMin = 0;
-    public int numberOfTokensMax = 0;   
-    public bool destroyTargetIfTypeMatches = false;
+    public int damageToCreature = 0;
 
     public KeywordAbility abilityToGain = KeywordAbility.None;
     public List<string> subtypes = new List<string>(); // e.g., "Human", "Warrior"

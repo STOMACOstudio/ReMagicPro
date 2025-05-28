@@ -18,6 +18,7 @@ public class SorceryCard : Card
     public Card chosenTarget = null;
     public int damageToTarget = 0;
     public bool destroyTargetIfTypeMatches = false;
+    public string requiredTargetColor = null;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -279,7 +280,15 @@ public class SorceryCard : Card
                             (requiredTargetType == TargetType.Land && target is LandCard) ||
                             (requiredTargetType == TargetType.Artifact && target is ArtifactCard);
 
-                        if (typeMatches)
+                        bool colorMatches = true;
+
+                        if (!string.IsNullOrEmpty(requiredTargetColor))
+                        {
+                            CardData data = CardDatabase.GetCardData(target.cardName);
+                            colorMatches = data != null && data.color == requiredTargetColor;
+                        }
+
+                        if (typeMatches && colorMatches)
                         {
                             GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
                             Debug.Log($"{cardName} destroyed {target.cardName}.");

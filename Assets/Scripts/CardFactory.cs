@@ -58,6 +58,7 @@ public static class CardFactory
                 sorcery.requiredTargetType = data.requiredTargetType;
                 sorcery.damageToTarget = data.damageToTarget;
                 sorcery.destroyTargetIfTypeMatches = data.destroyTargetIfTypeMatches;
+                sorcery.requiredTargetColor = data.requiredTargetColor;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
@@ -73,6 +74,7 @@ public static class CardFactory
                 artifact.keywordAbilities = data.keywordAbilities != null
                     ? new List<KeywordAbility>(data.keywordAbilities)
                     : new List<KeywordAbility>();
+                artifact.damageToCreature = data.damageToCreature;
                 newCard = artifact;
                 break;
 

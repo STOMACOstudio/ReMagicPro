@@ -456,6 +456,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            if (GameManager.Instance.targetingArtifact != null)
+            {
+                Card clicked = linkedCard;
+
+                if (clicked is CreatureCard)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Clicked non-creature during artifact targeting — cancelling.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
             if (GameManager.Instance.targetingSorcery != null)
             {
                 if (GameManager.Instance.targetingVisual == this)
@@ -824,7 +840,33 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     return;
                 }
-            
+
+                //SACRIFICE TO DEAL DAMAGE
+                    if (linkedCard.activatedAbilities != null &&
+                        linkedCard.activatedAbilities.Contains(ActivatedAbility.DealDamageToCreature) &&
+                        !linkedCard.isTapped &&
+                        GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                        (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    {
+                        // Check for mana
+                        ArtifactCard artifact = linkedCard as ArtifactCard;
+                        Player player = GameManager.Instance.humanPlayer;
+                        int totalAvailable = player.ColoredMana.Total();
+                        int cost = artifact.manaToPayToActivate;
+
+                        if (totalAvailable >= cost)
+                        {
+                            GameManager.Instance.BeginTargetingWithArtifactDamage(artifact, player, this);
+                        }
+                        else
+                        {
+                            Debug.Log("Not enough mana to activate damage artifact.");
+                        }
+
+                        return;
+                    }
+
             // SACRIFICE-TO-DRAW-CARDS during Main Phase
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards) &&
@@ -1320,6 +1362,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SorceryCard.TargetType.Artifact => "artifact",
                     _ => "permanent"
                 };
+
+                if (!string.IsNullOrEmpty(sorcery.requiredTargetColor))
+                    destroyType = $"{sorcery.requiredTargetColor} {destroyType}";
 
                 rules += $"Destroy target {destroyType}.\n";
             }

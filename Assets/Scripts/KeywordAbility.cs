@@ -36,4 +36,5 @@ public enum ActivatedAbility
     SacrificeToDrawCards,
     TapToCreateToken,
     PayToGainAbility,
+    DealDamageToCreature,
 }

@@ -1360,6 +1360,18 @@ public static class CardDatabase
 
         // Sorceries
             //WHITE
+                Add(new CardData { //Shattering light
+                    cardName = "Shattering Light",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = "White",
+                    requiresTarget = true,
+                    destroyTargetIfTypeMatches = true,
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    requiredTargetColor = "Black",
+                    artwork = Resources.Load<Sprite>("Art/shattering_light")
+                    });
                 Add(new CardData { //for glory
                     cardName = "For Glory",
                     rarity = "Uncommon",
@@ -1425,6 +1437,18 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
                     });
             //BLACK
+                Add(new CardData { //Devouring shadows
+                    cardName = "Devouring Shadow",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = "Black",
+                    requiresTarget = true,
+                    destroyTargetIfTypeMatches = true,
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    requiredTargetColor = "White",
+                    artwork = Resources.Load<Sprite>("Art/devouring_shadows")
+                    });
                 Add(new CardData //stain of rot
                     {
                         cardName = "Stain of Rot",
@@ -1630,6 +1654,22 @@ public static class CardDatabase
                         KeywordAbility.AllPermanentsEnterTapped
                     },
                     artwork = Resources.Load<Sprite>("Art/pressure_sphere")
+                });
+            Add(new CardData //Potion of lava
+                {
+                    cardName = "Potion of Lava",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = "None",
+                    cardType = CardType.Artifact,
+                    entersTapped = true,
+                    manaToPayToActivate = 2,
+                    damageToCreature = 2,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.DealDamageToCreature
+                    },
+                    artwork = Resources.Load<Sprite>("Art/potion_of_lava")
                 });
             Add(new CardData // Potion of knowledge
                 {
