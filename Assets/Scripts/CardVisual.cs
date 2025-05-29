@@ -456,6 +456,36 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            // Optional ETB targeting (e.g. Monk: "You may destroy target artifact")
+            if (GameManager.Instance.targetingCreatureOptional != null)
+            {
+                Card clicked = linkedCard;
+                var ability = GameManager.Instance.optionalAbility;
+                bool isValid = false;
+
+                if (ability.requiredTargetType == SorceryCard.TargetType.Creature && clicked is CreatureCard)
+                    isValid = true;
+
+                if (ability.requiredTargetType == SorceryCard.TargetType.Artifact && clicked is ArtifactCard)
+                    isValid = true;
+
+                if (ability.requiredTargetType == SorceryCard.TargetType.Land && clicked is LandCard)
+                    isValid = true;
+
+                if (isValid && GameManager.Instance.GetOwnerOfCard(clicked)?.Battlefield.Contains(clicked) == true)
+                {
+                    ability.effect?.Invoke(GameManager.Instance.humanPlayer, clicked);
+                    Debug.Log($"{clicked.cardName} destroyed by optional ETB.");
+                }
+                else
+                {
+                    Debug.Log("Clicked invalid target — optional ETB does nothing.");
+                }
+
+                GameManager.Instance.CancelOptionalTargeting();
+                return;
+            }
+
             if (GameManager.Instance.targetingArtifact != null)
             {
                 Card clicked = linkedCard;
@@ -707,7 +737,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     if (GameManager.Instance.aiPlayer.Life <= 0)
                     {
                         Debug.Log("AI defeated — player wins!");
-                        GameManager.Instance.WinBattle();  // <-- Call here
+                        GameManager.Instance.WinBattle();
                     }
 
                     return;
@@ -1063,19 +1093,21 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             // Playing card from hand
                 if (!isInBattlefield)
+                {
+                    if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human ||
+                        (TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main1 &&
+                        TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main2))
                     {
-                        if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human ||
-                            (TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main1 &&
-                            TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main2))
-                        {
-                            Debug.Log("You can only play cards during your own Main Phase.");
-                            return;
-                        }
-
-                        GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
-                        UpdateVisual();
+                        Debug.Log("You can only play cards during your own Main Phase.");
                         return;
                     }
+
+                    GameManager.Instance.CancelOptionalTargeting(); // ← cancel any other ETB clicks
+
+                    GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
+                    UpdateVisual();
+                    return;
+                }
         }
 
     private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)

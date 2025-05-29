@@ -67,6 +67,11 @@ public class GameManager : MonoBehaviour
     public CardVisual targetingVisual;
     public bool isTargetingMode = false;
 
+    public Card targetingCreature;
+    public CardAbility targetingAbility;
+    public Card targetingCreatureOptional;
+    public CardAbility optionalAbility;
+
     void Awake()
     {
         if (Instance == null)
@@ -118,6 +123,12 @@ public class GameManager : MonoBehaviour
             {
                 Debug.LogWarning("[DEV] No zone ID found — can't win");
             }
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
+            Debug.Log("D key pressed — drew a card.");
         }
     }
 
@@ -1667,7 +1678,38 @@ public class GameManager : MonoBehaviour
                 isTargetingMode = false;
                 return;
             }
+            // Creature ETB targeting
+            if (targetingCreature != null && targetingAbility != null)
+            {
+                Card target = targetVisual.linkedCard;
 
+                bool correctType =
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard);
+
+                bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
+
+                if (!correctType || !isOnBattlefield)
+                {
+                    Debug.LogWarning($"Invalid target: {target.cardName} does not match ETB type.");
+                    CancelTargeting();
+                    return;
+                }
+
+                Debug.Log($"ETB target selected: {target.cardName}");
+                targetingAbility.effect?.Invoke(GetOwnerOfCard(targetingCreature), target); // You'll update effect type later if needed
+
+                UpdateUI();
+                CheckDeaths(humanPlayer);
+                CheckDeaths(aiPlayer);
+
+                targetingCreature = null;
+                targetingAbility = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                return;
+            }
             // Sorcery fallback
             if (targetingSorcery != null)
             {
@@ -1865,4 +1907,88 @@ public class GameManager : MonoBehaviour
             targetingVisual = null;
             isTargetingMode = false;
         }
+
+    public void BeginTargetSelectionForCreature(Card creature, Player owner, CardAbility ability)
+        {
+            targetingCreature = creature;
+            targetingAbility = ability;
+            isTargetingMode = true;
+
+            bool foundValidTarget = false;
+
+            foreach (var cv in activeCardVisuals)
+            {
+                if (cv == null || cv.linkedCard == null)
+                    continue;
+
+                Card target = cv.linkedCard;
+
+                bool correctType =
+                    (ability.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                    (ability.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                    (ability.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard);
+
+                bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
+
+                if (correctType && isOnBattlefield)
+                {
+                    foundValidTarget = true;
+                    break;
+                }
+            }
+
+            if (!foundValidTarget)
+            {
+                Debug.Log("No valid targets for creature ETB — skipping ability.");
+                targetingCreature = null;
+                targetingAbility = null;
+                isTargetingMode = false;
+            }
+            else
+            {
+                Debug.Log("ETB ability requires target — enter targeting mode.");
+            }
+        }
+
+        public bool HasValidTargetForAbility(CardAbility ability)
+            {
+                List<Card> battlefieldCards = new List<Card>();
+                battlefieldCards.AddRange(humanPlayer.Battlefield);
+                battlefieldCards.AddRange(aiPlayer.Battlefield);
+
+                foreach (Card target in battlefieldCards)
+                {
+                    bool correctType =
+                        (ability.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                        (ability.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                        (ability.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard);
+
+                    if (correctType)
+                        return true;
+                }
+
+                return false;
+            }
+
+        public void BeginOptionalTargetSelectionAfterEntry(Card creature, Player owner, CardAbility ability)
+            {
+                targetingCreatureOptional = creature;
+                optionalAbility = ability;
+                isTargetingMode = true;
+                targetingVisual = FindCardVisual(creature); // Optional, for visual link
+
+                Debug.Log($"Optional ETB targeting started for {creature.cardName}. Click an artifact if you want to destroy it.");
+            }
+
+        public void CancelOptionalTargeting()
+            {
+                if (targetingCreatureOptional != null)
+                {
+                    Debug.Log("Optional targeting cancelled.");
+                    targetingCreatureOptional = null;
+                    optionalAbility = null;
+                    isTargetingMode = false;
+                    targetingVisual = null;
+                }
+            }
 }

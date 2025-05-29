@@ -57,6 +57,33 @@ public static class CardDatabase
 
         // Creatures
             //WHITE
+                Add(new CardData //Iconoclast monk
+                    {
+                        cardName = "Iconoclast Monk",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = "White",
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        subtypes = new List<string> { "Human", "Cleric" },
+                        artwork = Resources.Load<Sprite>("Art/iconoclast_monk"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "you may destroy target artifact.",
+                                requiresTarget = true,
+                                requiredTargetType = SorceryCard.TargetType.Artifact,
+                                effect = (Player owner, Card target) =>
+                                {
+                                    Player controller = GameManager.Instance.GetOwnerOfCard(target);
+                                    GameManager.Instance.SendToGraveyard(target, controller);
+                                }
+                            }
+                        }
+                    });
                 Add (new CardData { // Beasthunter
                     cardName = "Beasthunter",
                     rarity = "Uncommon",
@@ -136,7 +163,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnEnter,
                             description = "gain 1 life.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 owner.Life += 1;
                                 GameManager.Instance.UpdateUI();
@@ -147,7 +174,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnDeath,
                             description = "gain 1 life.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 owner.Life += 1;
                                 GameManager.Instance.UpdateUI();
@@ -177,7 +204,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnEnter,
                             description = "Gain 4 life.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 owner.Life += 4;
                                 GameManager.Instance.UpdateUI();
@@ -219,7 +246,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "create a Human Soldier.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card humanSoldier = CardFactory.Create("Human Soldier");
                                 if (humanSoldier == null)
@@ -271,7 +298,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "gain 5 life.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 owner.Life += 5;
                                 GameManager.Instance.UpdateUI();
@@ -373,7 +400,7 @@ public static class CardDatabase
                             {
                                 timing = TriggerTiming.OnEnter,
                                 description = "draw a card.",
-                                effect = (Player owner) =>
+                                effect = (Player owner, Card unused) =>
                                 {
                                     GameManager.Instance.DrawCard(owner);
                                     Debug.Log("Lucky Fisherman enters: draw a card.");
@@ -412,7 +439,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "create a copy of this creature.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card replicator = CardFactory.Create("Replicator");
                                 if (replicator == null)
@@ -443,6 +470,33 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
+            Add(new CardData //Hired assassin
+                {
+                    cardName = "Hired Assassin",
+                    rarity = "Uncommon",
+                    manaCost = 6,
+                    color = "Black",
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Rogue" },
+                    artwork = Resources.Load<Sprite>("Art/hired_assassin"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "you may destroy target creature.",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Creature,
+                            effect = (Player owner, Card target) =>
+                            {
+                                Player controller = GameManager.Instance.GetOwnerOfCard(target);
+                                GameManager.Instance.SendToGraveyard(target, controller);
+                            }
+                        }
+                    }
+                });
                 Add (new CardData { //Flayed Deer
                     cardName = "Flayed Deer",
                     rarity = "Common",
@@ -579,7 +633,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnEnter,
                             description = "opponent discards a card at random.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Player opponent = GameManager.Instance.GetOpponentOf(owner);
                                 opponent.DiscardRandomCard();
@@ -605,7 +659,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnDeath,
                             description = "create a Demon.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card demon = CardFactory.Create("Demon");
                                 if (demon == null)
@@ -638,7 +692,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "create a tapped Zombie.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card zombie = CardFactory.Create("Zombie");
                                 if (zombie == null)
@@ -671,7 +725,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnEnter,
                             description = "opponent discards a card at random.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Player opponent = GameManager.Instance.GetOpponentOf(owner);
                                 opponent.DiscardRandomCard();
@@ -681,7 +735,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnDeath,
                             description = "opponent discards a card at random.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Player opponent = GameManager.Instance.GetOpponentOf(owner);
                                 opponent.DiscardRandomCard();
@@ -850,7 +904,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "create a Dragon.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card dragon = CardFactory.Create("Dragon");
                                 if (dragon == null)
@@ -939,6 +993,7 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
+                    requiresTarget = false,
                     subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/village_idiot"),
@@ -948,7 +1003,7 @@ public static class CardDatabase
                             {
                                 timing = TriggerTiming.OnEnter,
                                 description = "draw a card, then discard two cards at random.",
-                                effect = (Player owner) =>
+                                effect = (Player owner, Card unused) =>
                                 {
                                     GameManager.Instance.DrawCard(owner);
                                     owner.DiscardRandomCard(2);
@@ -1094,7 +1149,7 @@ public static class CardDatabase
                         {
                             timing = TriggerTiming.OnUpkeep,
                             description = "create a Monkey.",
-                            effect = (Player owner) =>
+                            effect = (Player owner, Card unused) =>
                             {
                                 Card monkey = CardFactory.Create("Monkey");
                                 if (monkey == null)
@@ -1127,7 +1182,7 @@ public static class CardDatabase
                     {
                         timing = TriggerTiming.OnEnter,
                         description = "create two Cats.",
-                        effect = (Player owner) =>
+                        effect = (Player owner, Card unused) =>
                         {
                             for (int i = 0; i < 2; i++)
                             {

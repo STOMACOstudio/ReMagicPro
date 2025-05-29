@@ -44,8 +44,17 @@ public class Card
         {
             foreach (var ability in abilities)
             {
-                if (ability.timing == TriggerTiming.OnEnter)
-                    ability.effect?.Invoke(owner);
+                if (ability.timing != TriggerTiming.OnEnter)
+                    continue;
+
+                if (ability.requiresTarget)
+                {
+                    GameManager.Instance.BeginOptionalTargetSelectionAfterEntry(this, owner, ability);
+                }
+                else
+                {
+                    ability.effect?.Invoke(owner, null);
+                }
             }
         }
 
@@ -54,7 +63,7 @@ public class Card
             foreach (var ability in abilities)
             {
                 if (ability.timing == TriggerTiming.OnDeath)
-                    ability.effect?.Invoke(owner);
+                    ability.effect?.Invoke(owner, null);
             }
         }
 

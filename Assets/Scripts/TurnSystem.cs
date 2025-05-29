@@ -98,6 +98,11 @@ public class TurnSystem : MonoBehaviour
                     Debug.Log("Canceled targeting because player pressed Next Phase.");
                     GameManager.Instance.CancelTargeting();
                 }
+                if (GameManager.Instance.targetingCreatureOptional != null)
+                {
+                    Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
+                    GameManager.Instance.CancelOptionalTargeting();
+                }
 
                 waitingForPlayerInput = false;
                 HideAllConfirmButtons();
@@ -210,7 +215,7 @@ public class TurnSystem : MonoBehaviour
                             if (ability.timing == TriggerTiming.OnUpkeep)
                             {
                                 Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
-                                ability.effect?.Invoke(player);
+                                ability.effect?.Invoke(player, null);
                             }
                         }
                     }
