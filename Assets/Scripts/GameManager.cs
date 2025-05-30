@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
             if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
             {
                 Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
-                WinBattle();
+                FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
             else
             {
@@ -580,7 +580,7 @@ public class GameManager : MonoBehaviour
         if (aiPlayer.Life <= 0)
         {
             Debug.Log("AI defeated — player wins!");
-            WinBattle();
+            FindObjectOfType<WinScreenUI>().ShowWinScreen();
         }
     }
 
@@ -668,7 +668,7 @@ public class GameManager : MonoBehaviour
         if (aiPlayer.Life <= 0)
         {
             Debug.Log("AI defeated — player wins!");
-            WinBattle();
+            FindObjectOfType<WinScreenUI>().ShowWinScreen();
         }
 
         if (caster == aiPlayer)
@@ -749,7 +749,7 @@ public class GameManager : MonoBehaviour
         if (aiPlayer.Life <= 0)
         {
             Debug.Log("AI defeated — player wins!");
-            WinBattle();
+            FindObjectOfType<WinScreenUI>().ShowWinScreen();
         }
     }
 
