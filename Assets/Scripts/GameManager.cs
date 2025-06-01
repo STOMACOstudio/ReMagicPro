@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public GameObject bloodSplatPrefab;
     public GameObject playerLifeContainer;
     public GameObject enemyLifeContainer;
+    public GameObject floatingDamagePrefab;
 
     public ArtifactCard targetingArtifact;
 
@@ -214,7 +215,7 @@ public class GameManager : MonoBehaviour
             visual.isInBattlefield = true;
             visual.UpdateVisual();
             visual.UpdateVisual();
-            SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay); // <- add this
+            SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
         }
 
@@ -452,8 +453,11 @@ public class GameManager : MonoBehaviour
         owner.Graveyard.Add(card);
     }
 
-    public void ResolveCombat()
+    public (int playerDamage, int aiDamage) ResolveCombat()
     {
+        int playerDamage = 0;
+        int aiDamage = 0;
+
         foreach (var attacker in currentAttackers)
         {
             CreatureCard blocker = attacker.blockedByThisBlocker;
@@ -470,11 +474,13 @@ public class GameManager : MonoBehaviour
                         if (humanPlayer.Battlefield.Contains(attacker))
                         {
                             aiPlayer.Life -= excessDamage;
+                            aiDamage += excessDamage;
                             Debug.Log($"{attacker.cardName} tramples over for {excessDamage} damage!");
                         }
                         else
                         {
                             humanPlayer.Life -= excessDamage;
+                            playerDamage += excessDamage;
                             Debug.Log($"{attacker.cardName} tramples YOU for {excessDamage} damage!");
                         }
 
@@ -527,7 +533,7 @@ public class GameManager : MonoBehaviour
                 if (humanPlayer.Battlefield.Contains(attacker))
                 {
                     aiPlayer.Life -= attacker.power;
-                    Debug.Log($"{attacker.cardName} hits AI for {attacker.power} damage!");
+                    aiDamage += attacker.power;
 
                     // Lifelink: gain life equal to damage dealt to AI
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
@@ -539,7 +545,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     humanPlayer.Life -= attacker.power;
-                    Debug.Log($"{attacker.cardName} hits YOU for {attacker.power} damage!");
+                    playerDamage += attacker.power;
 
                     // Lifelink: gain life equal to damage dealt to Human
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
@@ -582,6 +588,9 @@ public class GameManager : MonoBehaviour
             Debug.Log("AI defeated — player wins!");
             FindObjectOfType<WinScreenUI>().ShowWinScreen();
         }
+
+        return (playerDamage, aiDamage);
+
     }
 
     public void CheckDeaths(Player player)
@@ -2013,5 +2022,57 @@ public class GameManager : MonoBehaviour
                     isTargetingMode = false;
                     targetingVisual = null;
                 }
+            }
+        
+        public void ShowFloatingDamage(int amount, GameObject target)
+            {
+                if (floatingDamagePrefab == null)
+                {
+                    Debug.LogError("Missing floatingDamagePrefab!");
+                    return;
+                }
+
+                GameObject obj = Instantiate(floatingDamagePrefab);
+                
+                obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+                RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+                RectTransform targetRect = target.GetComponent<RectTransform>();
+                RectTransform rt = obj.GetComponent<RectTransform>();
+
+                Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
+                rt.anchoredPosition = localPoint;
+
+                rt.localScale = Vector3.one;
+                rt.sizeDelta = new Vector2(100, 40); // set fixed size if needed
+
+                TMP_Text text = obj.GetComponent<TMP_Text>();
+                text.fontSize = 48;
+                text.enableAutoSizing = false;
+                text.text = "-" + amount;
+
+                SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
+
+                StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
+            }
+        
+        private IEnumerator FadeAndFloatText(GameObject obj, bool floatUp)
+            {
+                RectTransform rt = obj.GetComponent<RectTransform>();
+                TMP_Text text = obj.GetComponent<TMP_Text>();
+                Vector3 startPos = rt.localPosition;
+                float t = 0f;
+                float direction = floatUp ? 1f : -1f;
+
+                while (t < 1.25f)
+                {
+                    t += Time.deltaTime;
+                    rt.localPosition = startPos + new Vector3(0, t * 20f * direction, 0);
+                    text.color = new Color(1, 0, 0, 1 - t * 0.8f); // fade out
+                    yield return null;
+                }
+
+                Destroy(obj);
             }
 }

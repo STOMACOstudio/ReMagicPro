@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip break_artifact;
     public AudioClip tap_for_mana;
     public AudioClip plague;
+    public AudioClip dealDamage;
 
     private AudioSource audioSource;
 

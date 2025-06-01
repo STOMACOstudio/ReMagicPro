@@ -1673,6 +1673,7 @@ MonoBehaviour:
   break_artifact: {fileID: 8300000, guid: 7081f21eb2a561c4294de26ae02bce26, type: 3}
   tap_for_mana: {fileID: 8300000, guid: 875212118b46d8f4da07757905e92117, type: 3}
   plague: {fileID: 8300000, guid: 127b099b8ecb97840ba02e66449d7e1d, type: 3}
+  dealDamage: {fileID: 8300000, guid: 754b0d9ce19e6234b9ebda0e4dee60b3, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0
@@ -3307,6 +3308,7 @@ MonoBehaviour:
   bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
   playerLifeContainer: {fileID: 335802182}
   enemyLifeContainer: {fileID: 219930519}
+  floatingDamagePrefab: {fileID: 6263719099324857846, guid: dbcb8822c50f8d6418d4bbed97b45924, type: 3}
   blueIcon: {fileID: 21300000, guid: cf5da0752d7da9f4db791fed64ba1347, type: 3}
   whiteIcon: {fileID: 21300000, guid: e51d0f0e20f24834f893872fd6719259, type: 3}
   blackIcon: {fileID: 21300000, guid: 45c943c1120a5e74dbfdc1bf4d6a0e44, type: 3}

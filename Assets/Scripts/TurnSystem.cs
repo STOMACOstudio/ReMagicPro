@@ -46,6 +46,8 @@ public class TurnSystem : MonoBehaviour
     public TurnPhase lastPhaseBeforeStack;
     public bool waitingToResumeAI = false;
 
+    private Coroutine damageCoroutine;
+
     void Start()
         {
             Instance = this;
@@ -167,7 +169,7 @@ public class TurnSystem : MonoBehaviour
                 ? GameManager.Instance.humanPlayer
                 : GameManager.Instance.aiPlayer;
 
-            player.ColoredMana.Clear(); // ✅ correctly clears all colors
+            player.ColoredMana.Clear();
 
             if (currentPlayer == PlayerType.Human)
                 GameManager.Instance.UpdateUI();
@@ -932,15 +934,10 @@ public class TurnSystem : MonoBehaviour
 
                 case TurnPhase.Damage:
                     Debug.Log("→ Resolving combat damage.");
-                    GameManager.Instance.ResolveCombat();
-                    foreach (var visual in GameManager.Instance.activeCardVisuals)
-                    {
-                        if (visual.swordIcon != null)
-                            visual.swordIcon.SetActive(false);
-                        
-                        visual.UpdateVisual();
-                    }
-                    AdvancePhase();
+                    if (damageCoroutine != null)
+                        StopCoroutine(damageCoroutine);
+
+                    damageCoroutine = StartCoroutine(WaitToShowCombatDamage());
                     break;
 
                 case TurnPhase.EndTurn:
@@ -1045,5 +1042,35 @@ public class TurnSystem : MonoBehaviour
                 int spent = Mathf.Min(pool, needed);
                 pool -= spent;
                 return spent;
+            }
+        
+        private IEnumerator WaitToShowCombatDamage()
+            {
+                var (playerDamage, aiDamage) = GameManager.Instance.ResolveCombat();
+
+                foreach (var visual in GameManager.Instance.activeCardVisuals)
+                {
+                    if (visual.swordIcon != null)
+                        visual.swordIcon.SetActive(false);
+
+                    visual.UpdateVisual();
+                }
+
+                if (playerDamage > 0)
+                {
+                    GameManager.Instance.ShowFloatingDamage(playerDamage, GameManager.Instance.playerLifeContainer);
+                }
+
+                if (aiDamage > 0)
+                {
+                    GameManager.Instance.ShowFloatingDamage(aiDamage, GameManager.Instance.enemyLifeContainer);
+                }
+
+                if (playerDamage > 0 || aiDamage > 0)
+                    yield return new WaitForSeconds(1f);
+
+                AdvancePhase();
+
+                damageCoroutine = null;
             }
 }
