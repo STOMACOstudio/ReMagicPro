@@ -19,6 +19,7 @@ public class SorceryCard : Card
     public int damageToTarget = 0;
     public bool destroyTargetIfTypeMatches = false;
     public string requiredTargetColor = null;
+    public Player chosenPlayerTarget = null;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -240,11 +241,6 @@ public class SorceryCard : Card
                     didSomething = true;
                 }
 
-            if (!didSomething)
-            {
-                Debug.LogWarning("ResolveEffect() called, but no effect was defined.");
-            }
-
             GameManager.Instance.UpdateUI();
         }
 
@@ -294,9 +290,23 @@ public class SorceryCard : Card
                             Debug.Log($"{cardName} destroyed {target.cardName}.");
                             return;
                         }
+                        else
+                        {
+                            Debug.LogWarning($"{cardName} failed to destroy {target.cardName}: type match = {typeMatches}, color match = {colorMatches}");
+                        }
                     }
                 }
 
+                if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
+                {
+                    Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
+                }
+
+                if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
+                {
+                    Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
+                }
+                
                 GameManager.Instance.UpdateUI();
             }
 

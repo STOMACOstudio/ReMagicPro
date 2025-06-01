@@ -399,14 +399,121 @@ public class TurnSystem : MonoBehaviour
                                     var cost = GameManager.Instance.GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
                                     if (ai.ColoredMana.CanPay(cost))
                                     {
-                                        ai.ColoredMana.Pay(cost);
+                                        if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
+                                            sorcery.destroyTargetIfTypeMatches)
+                                        {
+                                            Player opponent = GameManager.Instance.GetOpponentOf(ai);
 
+                                            // Pick enemy creature with the highest mana cost
+                                            var target = opponent.Battlefield
+                                                .OfType<CreatureCard>()
+                                                .OrderByDescending(c =>
+                                                {
+                                                    var data = CardDatabase.GetCardData(c.cardName);
+                                                    return data != null ? data.manaCost : 0;
+                                                })
+                                                .FirstOrDefault();
+
+                                            if (target != null)
+                                            {
+                                                sorcery.chosenTarget = target;
+                                                sorcery.chosenPlayerTarget = null;
+
+                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost creature).");
+                                            }
+                                        }
+                                        else if (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact &&
+                                                sorcery.destroyTargetIfTypeMatches)
+                                        {
+                                            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+
+                                            var target = opponent.Battlefield
+                                                .OfType<ArtifactCard>()
+                                                .OrderByDescending(c =>
+                                                {
+                                                    var data = CardDatabase.GetCardData(c.cardName);
+                                                    return data != null ? data.manaCost : 0;
+                                                })
+                                                .FirstOrDefault();
+
+                                            if (target != null)
+                                            {
+                                                sorcery.chosenTarget = target;
+                                                sorcery.chosenPlayerTarget = null;
+                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost artifact).");
+                                            }
+                                        }
+                                        else if (sorcery.requiredTargetType == SorceryCard.TargetType.Land &&
+                                                sorcery.destroyTargetIfTypeMatches)
+                                        {
+                                            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+
+                                            var target = opponent.Battlefield
+                                                .OfType<LandCard>()
+                                                .OrderByDescending(c =>
+                                                {
+                                                    var data = CardDatabase.GetCardData(c.cardName);
+                                                    return data != null ? data.manaCost : 0;
+                                                })
+                                                .FirstOrDefault();
+
+                                            if (target != null)
+                                            {
+                                                sorcery.chosenTarget = target;
+                                                sorcery.chosenPlayerTarget = null;
+                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost land).");
+                                            }
+                                        }
+
+                                        bool canTarget = sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && sorcery.damageToTarget > 0;
+
+                                        if (canTarget)
+                                        {
+                                            int damage = sorcery.damageToTarget;
+                                            Player opponent = GameManager.Instance.humanPlayer;
+
+                                            // Get enemy creatures
+                                            List<CreatureCard> enemyCreatures = opponent.Battlefield
+                                                .OfType<CreatureCard>()
+                                                .Where(c => c.toughness > 0)
+                                                .ToList();
+
+                                            // 1. Kill opponent
+                                            if (opponent.Life <= damage)
+                                            {
+                                                sorcery.chosenTarget = null;
+                                                sorcery.chosenPlayerTarget = opponent;
+                                            }
+                                            // 2. Killable creature
+                                            else
+                                            {
+                                                var killable = enemyCreatures.FirstOrDefault(c => c.toughness <= damage);
+                                                if (killable != null)
+                                                {
+                                                    sorcery.chosenTarget = killable;
+                                                }
+                                                else
+                                                {
+                                                    // 3. Fallback: damage opponent
+                                                    sorcery.chosenTarget = null;
+                                                    sorcery.chosenPlayerTarget = opponent;
+
+                                                }
+                                            }
+                                        }
+
+                                        if (sorcery.requiresTarget && sorcery.chosenTarget == null && sorcery.chosenPlayerTarget == null)
+                                        {
+                                            Debug.Log($"[AI] Skipping {sorcery.cardName} — no valid target.");
+                                            continue; // Go to next card
+                                        }
+                                        
+                                        ai.ColoredMana.Pay(cost);
                                         ai.Hand.Remove(sorcery);
                                         sorcery.owner = ai;
 
                                         GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
                                         CardVisual visual = obj.GetComponent<CardVisual>();
-
                                         CardData data = CardDatabase.GetCardData(sorcery.cardName);
                                         visual.Setup(sorcery, GameManager.Instance, data);
 
@@ -422,11 +529,9 @@ public class TurnSystem : MonoBehaviour
 
                                         GameManager.Instance.StartCoroutine(GameManager.Instance.ResolveSorceryAfterDelay(sorcery, visual, ai));
 
-                                        Debug.Log($"AI cast sorcery: {sorcery.cardName}");
-
                                         playedCard = true;
                                         break;
-                                    }
+                                    }   
                                 }
                                 else if (card is ArtifactCard artifact)
                                 {

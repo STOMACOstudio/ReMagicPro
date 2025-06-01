@@ -643,44 +643,67 @@ public class GameManager : MonoBehaviour
     }
 
     public CardVisual FindCardVisual(Card card)
-    {
-        return activeCardVisuals.Find(cv => cv.linkedCard == card);
-    }
+        {
+            return activeCardVisuals.Find(cv => cv.linkedCard == card);
+        }
+    
     public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
-    {
-        yield return new WaitForSeconds(2f);
-
-        sorcery.ResolveEffect(caster);
-        SendToGraveyard(sorcery, caster);
-
-        // Remove old stack visual if it wasn't reused
-        if (caster == aiPlayer && visual != null)
         {
-            activeCardVisuals.Remove(visual);
-            Destroy(visual.gameObject);
-        }
+            yield return new WaitForSeconds(2f);
 
-        UpdateUI();
-        isStackBusy = false; // UNBLOCK ON RESOLVE
+            // PREVENT executing if required target is missing
+            if (sorcery.requiresTarget && sorcery.chosenTarget == null && sorcery.chosenPlayerTarget == null)
+            {
+                Debug.LogWarning($"[ResolveSorceryAfterDelay] {sorcery.cardName} requires a target, but none was set. Aborting cast.");
 
-        isStackBusy = false;
+                // Destroy visual
+                if (visual != null)
+                {
+                    GameManager.Instance.activeCardVisuals.Remove(visual);
+                    GameObject.Destroy(visual.gameObject);
+                }
 
-        if (aiPlayer.Life <= 0)
-        {
-            Debug.Log("AI defeated — player wins!");
-            FindObjectOfType<WinScreenUI>().ShowWinScreen();
-        }
+                isStackBusy = false;
+                yield break;
+            }
 
-        if (caster == aiPlayer)
-        {
-            if (TurnSystem.Instance.waitingToResumeAI)
+            if (sorcery.chosenTarget != null)
+            {
+                sorcery.ResolveEffect(caster, sorcery.chosenTarget);
+            }
+            else if (sorcery.chosenPlayerTarget != null)
+            {
+                sorcery.ResolveEffectOnPlayer(caster, sorcery.chosenPlayerTarget);
+            }
+            else
+            {
+                sorcery.ResolveEffect(caster);
+            }
+
+            SendToGraveyard(sorcery, caster);
+
+            if (caster == aiPlayer && visual != null)
+            {
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+            }
+
+            UpdateUI();
+            isStackBusy = false;
+
+            if (aiPlayer.Life <= 0)
+            {
+                Debug.Log("AI defeated — player wins!");
+                FindObjectOfType<WinScreenUI>().ShowWinScreen();
+            }
+
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
                 TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
             }
         }
-    }
 
     public void SummonToken(Card tokenCard, Player owner)
     {
@@ -1134,8 +1157,8 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
         ai.Deck.Add(CardFactory.Create("Ratbat"));
         ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
+        ai.Deck.Add(CardFactory.Create("Forced Mummification"));
+        ai.Deck.Add(CardFactory.Create("Forced Mummification"));
         ai.Deck.Add(CardFactory.Create("Giant Rat"));
         ai.Deck.Add(CardFactory.Create("Giant Rat"));
         ai.Deck.Add(CardFactory.Create("Giant Rat"));
@@ -1221,18 +1244,18 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Fire Hatchet"));
         ai.Deck.Add(CardFactory.Create("Great Boulder"));
         ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+        ai.Deck.Add(CardFactory.Create("Explosion"));
+        ai.Deck.Add(CardFactory.Create("Explosion"));
         ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
         ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Melt"));
         ai.Deck.Add(CardFactory.Create("Flying Pig"));
         ai.Deck.Add(CardFactory.Create("Flying Pig"));
         ai.Deck.Add(CardFactory.Create("Flying Pig"));
-        ai.Deck.Add(CardFactory.Create("Flying Pig"));
+        ai.Deck.Add(CardFactory.Create("To Dig a Hole"));
         ai.Deck.Add(CardFactory.Create("Mana Rock"));
         ai.Deck.Add(CardFactory.Create("Mana Rock"));
     }
@@ -1260,16 +1283,16 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
         ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
+        ai.Deck.Add(CardFactory.Create("Melt"));
         ai.Deck.Add(CardFactory.Create("Great Boulder"));
         ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("Great Boulder"));
+        ai.Deck.Add(CardFactory.Create("To Dig a Hole"));
         ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
         ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
         ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
+        ai.Deck.Add(CardFactory.Create("Fire Hatchet"));
+        ai.Deck.Add(CardFactory.Create("Explosion"));
+        ai.Deck.Add(CardFactory.Create("Explosion"));
         ai.Deck.Add(CardFactory.Create("Thundermare"));
         ai.Deck.Add(CardFactory.Create("Thundermare"));
         ai.Deck.Add(CardFactory.Create("Thundermare"));
@@ -1410,8 +1433,8 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Witches Rite"));
         ai.Deck.Add(CardFactory.Create("Witches Rite"));
         ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
+        ai.Deck.Add(CardFactory.Create("Lights Out"));
+        ai.Deck.Add(CardFactory.Create("Lights Out"));
         ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
         ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
         ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
