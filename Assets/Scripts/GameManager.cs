@@ -344,8 +344,8 @@ public class GameManager : MonoBehaviour
                     break;
             }
 
-            Debug.Log($"Tapped {land.cardName}, added 1 {color} mana.");
             if (player == humanPlayer)
+                SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                 ShowManaVFX(land);
                 UpdateUI();
         }

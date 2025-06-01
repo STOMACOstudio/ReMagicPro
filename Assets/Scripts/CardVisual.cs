@@ -569,29 +569,29 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
             (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
             (!(linkedCard is CreatureCard cc) || !cc.hasSummoningSickness || cc.keywordAbilities.Contains(KeywordAbility.Haste)))
-        {
-            linkedCard.isTapped = true;
-
-            string color = linkedCard.color;
-
-            switch (color)
             {
-                case "White": GameManager.Instance.humanPlayer.ColoredMana.White++; break;
-                case "Blue": GameManager.Instance.humanPlayer.ColoredMana.Blue++; break;
-                case "Black": GameManager.Instance.humanPlayer.ColoredMana.Black++; break;
-                case "Red": GameManager.Instance.humanPlayer.ColoredMana.Red++; break;
-                case "Green": GameManager.Instance.humanPlayer.ColoredMana.Green++; break;
-                default:
-                    GameManager.Instance.humanPlayer.ColoredMana.Colorless++;
-                    Debug.LogWarning($"{linkedCard.cardName} has no valid color for mana — added colorless instead.");
-                    break;
-            }
+                SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
+                linkedCard.isTapped = true;
 
-            GameManager.Instance.UpdateUI();
-            SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
-            UpdateVisual();
-            return;
-        }
+                string color = linkedCard.color;
+
+                switch (color)
+                {
+                    case "White": GameManager.Instance.humanPlayer.ColoredMana.White++; break;
+                    case "Blue": GameManager.Instance.humanPlayer.ColoredMana.Blue++; break;
+                    case "Black": GameManager.Instance.humanPlayer.ColoredMana.Black++; break;
+                    case "Red": GameManager.Instance.humanPlayer.ColoredMana.Red++; break;
+                    case "Green": GameManager.Instance.humanPlayer.ColoredMana.Green++; break;
+                    default:
+                        GameManager.Instance.humanPlayer.ColoredMana.Colorless++;
+                        Debug.LogWarning($"{linkedCard.cardName} has no valid color for mana — added colorless instead.");
+                        break;
+                }
+
+                GameManager.Instance.UpdateUI();
+                UpdateVisual();
+                return;
+            }
 
             // PAY-TO-GAIN-ABILITY during Main Phase
                 if (linkedCard is CreatureCard abilityCreature &&
@@ -1086,7 +1086,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (isInBattlefield && linkedCard is LandCard land)
                 {
                     GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                     UpdateVisual();
                     return;
                 }
