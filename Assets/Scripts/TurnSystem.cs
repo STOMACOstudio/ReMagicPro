@@ -381,6 +381,34 @@ public class TurnSystem : MonoBehaviour
                                             Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
                                         }
 
+                                        if (creature.abilities != null)
+                                        {
+                                            foreach (var ability in creature.abilities)
+                                            {
+                                                if (ability.timing == TriggerTiming.OnEnter && ability.requiresTarget)
+                                                {
+                                                    Player opponent = GameManager.Instance.GetOpponentOf(ai);
+
+                                                    Card target = opponent.Battlefield
+                                                        .Where(c =>
+                                                            (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard) ||
+                                                            (ability.requiredTargetType == SorceryCard.TargetType.Artifact && c is ArtifactCard) ||
+                                                            (ability.requiredTargetType == SorceryCard.TargetType.Land && c is LandCard))
+                                                        .OrderByDescending(c => CardDatabase.GetCardData(c.cardName)?.manaCost ?? 0)
+                                                        .FirstOrDefault();
+
+                                                    if (target != null)
+                                                    {
+                                                        ability.effect?.Invoke(ai, target);
+                                                        Debug.Log($"[AI ETB] {creature.cardName} destroys {target.cardName}");
+                                                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                                                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                                                        GameManager.Instance.UpdateUI();
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                         GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
                                         CardVisual visual = obj.GetComponent<CardVisual>();
                                         visual.Setup(card, GameManager.Instance);

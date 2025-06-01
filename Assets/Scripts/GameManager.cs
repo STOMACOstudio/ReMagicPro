@@ -971,7 +971,7 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Waterbearer"));
         ai.Deck.Add(CardFactory.Create("Waterbearer"));
         ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
+        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
         ai.Deck.Add(CardFactory.Create("Gallant Lord"));
         ai.Deck.Add(CardFactory.Create("Gentle Giant"));
         ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
@@ -985,7 +985,7 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Bonfire"));
         ai.Deck.Add(CardFactory.Create("Potion of Health"));
         ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
+        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
         ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
         ai.Deck.Add(CardFactory.Create("Crystallium"));
     }
@@ -1014,11 +1014,11 @@ public class GameManager : MonoBehaviour
         ai.Deck.Add(CardFactory.Create("Waterbearer"));
         ai.Deck.Add(CardFactory.Create("Waterbearer"));
         ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
+        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
+        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
         ai.Deck.Add(CardFactory.Create("Candlelight"));
         ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
+        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
         ai.Deck.Add(CardFactory.Create("Solid Prayer"));
         ai.Deck.Add(CardFactory.Create("Solid Prayer"));
         ai.Deck.Add(CardFactory.Create("Solid Prayer"));
