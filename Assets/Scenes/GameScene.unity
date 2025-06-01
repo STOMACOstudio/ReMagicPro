@@ -1588,7 +1588,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_Spacing: -50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -1866,7 +1866,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_Spacing: -50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -2436,7 +2436,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_Spacing: -50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -3060,7 +3060,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_Spacing: -50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -3306,6 +3306,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
   manaVFXPrefab: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
   bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
+  deathPlaceholderPrefab: {fileID: 570516853043311398, guid: b5e135cc2aaca5b479fbed6e7ef3ab0d, type: 3}
   playerLifeContainer: {fileID: 335802182}
   enemyLifeContainer: {fileID: 219930519}
   floatingDamagePrefab: {fileID: 6263719099324857846, guid: dbcb8822c50f8d6418d4bbed97b45924, type: 3}

@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject manaVFXPrefab;
     public GameObject bloodSplatPrefab;
+    public GameObject deathPlaceholderPrefab;
     public GameObject playerLifeContainer;
     public GameObject enemyLifeContainer;
     public GameObject floatingDamagePrefab;
@@ -428,10 +429,19 @@ public class GameManager : MonoBehaviour
         {
             if (visual != null)
             {
-                activeCardVisuals.Remove(visual);
-                Destroy(visual.gameObject);
+                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
             }
             return;
+        }
+
+        // If creature, trigger death VFX and delay layout collapse
+        if (card is CreatureCard)
+        {
+            if (visual != null)
+            {
+                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
+                return;
+            }
         }
 
         // Find or create visual for graveyard
@@ -2075,4 +2085,41 @@ public class GameManager : MonoBehaviour
 
                 Destroy(obj);
             }
+
+        private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
+            {
+                // 1. Create a placeholder object in the same layout slot
+                GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
+                placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
+                placeholder.transform.localScale = visual.transform.localScale;
+                placeholder.transform.localPosition = visual.transform.localPosition + placeholder.transform.localPosition;
+
+                // 2. Remove the visual instantly, preserving layout slot
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+
+                // 3. Wait for VFX duration
+                yield return new WaitForSeconds(1.5f); // Match blood splat prefab's lifespan
+
+                // 4. Now destroy the placeholder — this causes the layout to update
+                Destroy(placeholder);
+
+                // 5. Create graveyard visual (if not a token)
+                if (!card.isToken)
+                {
+                    GameObject visualGO = Instantiate(cardPrefab,
+                        owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                    CardVisual graveyardVisual = visualGO.GetComponent<CardVisual>();
+                    graveyardVisual.Setup(card, this);
+                    graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                    graveyardVisual.transform.localPosition = Vector3.zero;
+                    graveyardVisual.UpdateGraveyardVisual();
+
+                    activeCardVisuals.Add(graveyardVisual);
+                }
+
+                // 6. Move to graveyard data list
+                owner.Graveyard.Add(card);
+            }
+
 }
