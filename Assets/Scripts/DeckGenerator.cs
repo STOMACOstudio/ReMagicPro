@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.SceneManagement; // At the top of your script
+using UnityEngine.SceneManagement;
 
 public class DeckGenerator : MonoBehaviour
 {
@@ -27,24 +27,47 @@ public class DeckGenerator : MonoBehaviour
     [ContextMenu("Generate Deck")]
     public void Generate()
         {
-            string chosenColor = PlayerPrefs.GetString("PlayerColor", "Red"); // fallback to Red
+            string colorPref = PlayerPrefs.GetString("PlayerColor", "Red");
+            string[] chosenColors = colorPref.Split(',').Select(c => c.Trim()).ToArray();
+
+            // Fallback to single Red if empty
+            if (chosenColors.Length == 0) chosenColors = new[] { "Red" };
+
             GeneratedDeck = new List<CardData>();
 
-            // 1. Add 16 basic lands
-            var basicLand = CardDatabase.GetCardData(BasicLandNameForColor(chosenColor));
-            for (int i = 0; i < 16; i++) GeneratedDeck.Add(basicLand);
+            // 1. Add cards by rarity for each color
+            foreach (string color in chosenColors)
+            {
+                AddCardsByRarity(color, "Rare", 2 / chosenColors.Length);
+                AddCardsByRarity(color, "Uncommon", 8 / chosenColors.Length);
+                AddCardsByRarity(color, "Common", 14 / chosenColors.Length);
+            }
 
-            // 2. Add cards by rarity
-            AddCardsByRarity(chosenColor, "Rare", 2);
-            AddCardsByRarity(chosenColor, "Uncommon", 8);
-            AddCardsByRarity(chosenColor, "Common", 14);
+            // 2. Count how many cards of each color were actually added (excluding artifacts)
+            Dictionary<string, int> colorCounts = chosenColors.ToDictionary(c => c, c => 0);
+            foreach (var card in GeneratedDeck)
+            {
+                if (colorCounts.ContainsKey(card.color))
+                    colorCounts[card.color]++;
+            }
+
+            // 3. Add 16 lands proportionally
+            int totalColoredCards = colorCounts.Values.Sum();
+            int landsToAdd = 16;
+            foreach (string color in chosenColors)
+            {
+                int count = colorCounts[color];
+                int landsForThisColor = Mathf.RoundToInt((count / (float)totalColoredCards) * landsToAdd);
+
+                var basicLand = CardDatabase.GetCardData(BasicLandNameForColor(color));
+                for (int i = 0; i < landsForThisColor; i++)
+                    GeneratedDeck.Add(basicLand);
+            }
 
             // Print result
             Debug.Log("Generated Deck:");
             foreach (var card in GeneratedDeck)
-            {
                 Debug.Log(card.cardName);
-            }
         }
 
     private void AddCardsByRarity(string color, string rarity, int count)
