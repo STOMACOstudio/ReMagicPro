@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Loading deck for zone ID: " + BattleData.CurrentZoneId);
 
-        BuildStartingDeck(humanPlayer);
+        DeckDatabase.BuildStartingDeck(humanPlayer);
 
         if (!string.IsNullOrEmpty(BattleData.CurrentDeckKey))
         {
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No deckKey set — using fallback starter deck.");
-            BuildStarterDeck(aiPlayer);
+            DeckDatabase.BuildStarterDeck(aiPlayer);
         }
 
         ShuffleDeck(humanPlayer);
@@ -131,25 +131,6 @@ public class GameManager : MonoBehaviour
         {
             GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
             Debug.Log("D key pressed — drew a card.");
-        }
-    }
-
-    void BuildStartingDeck(Player player)
-    {
-        if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
-        {
-            foreach (var data in DeckHolder.SelectedDeck)
-            {
-                player.Deck.Add(CardFactory.Create(data.cardName));
-            }
-        }
-        else
-        {
-            Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
-            // fallback to your hardcoded test deck if needed
-            player.Deck.Add(CardFactory.Create("Plains"));
-            player.Deck.Add(CardFactory.Create("Angry Farmer"));
-            // etc.
         }
     }
 
@@ -919,601 +900,16 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MapScene");
     }
 
-    public void BuildStarterDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-        ai.Deck.Add(CardFactory.Create("Origin Golem"));
-        ai.Deck.Add(CardFactory.Create("Origin Golem"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-    }
-
-    public void BuildWhiteBeginnerDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Angry Farmer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
-        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-        ai.Deck.Add(CardFactory.Create("Gentle Giant"));
-        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-        ai.Deck.Add(CardFactory.Create("Bonfire"));
-        ai.Deck.Add(CardFactory.Create("Bonfire"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Crystallium"));
-    }
-
-    public void BuildWhiteAdvancedDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Plains"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Waterbearer"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
-        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Candlelight"));
-        ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
-        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-        ai.Deck.Add(CardFactory.Create("Solid Prayer"));
-        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-        ai.Deck.Add(CardFactory.Create("Gallant Lord"));
-        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-        ai.Deck.Add(CardFactory.Create("Hamlet Recruiter"));
-        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-        ai.Deck.Add(CardFactory.Create("Pure Angel"));
-        ai.Deck.Add(CardFactory.Create("Pure Angel"));
-        ai.Deck.Add(CardFactory.Create("Bonfire"));
-        ai.Deck.Add(CardFactory.Create("Bonfire"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-    }
-
-    public void BuildBlueBeginnerDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Crystallium"));
-        ai.Deck.Add(CardFactory.Create("Crystallium"));
-        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-    }
-
-    public void BuildBlueAdvancedDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Giant Crab"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Squid"));
-        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-        ai.Deck.Add(CardFactory.Create("Wandering Cloud"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Sharkmen Tribe"));
-        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-        ai.Deck.Add(CardFactory.Create("Colossal Octopus"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Crystallium"));
-        ai.Deck.Add(CardFactory.Create("Crystallium"));
-        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
-    }
-
-    public void BuildBlackBeginnerDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-        ai.Deck.Add(CardFactory.Create("Limping Corpse"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-        ai.Deck.Add(CardFactory.Create("Lunatic Necromancer"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Forced Mummification"));
-        ai.Deck.Add(CardFactory.Create("Forced Mummification"));
-        ai.Deck.Add(CardFactory.Create("Giant Rat"));
-        ai.Deck.Add(CardFactory.Create("Giant Rat"));
-        ai.Deck.Add(CardFactory.Create("Giant Rat"));
-        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-    }
-
-    public void BuildBlackAdvancedDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Ratbat"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Potion of Health"));
-        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-        ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
-        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-        ai.Deck.Add(CardFactory.Create("Wicked Witch"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Communed Rot"));
-        ai.Deck.Add(CardFactory.Create("Communed Rot"));
-        ai.Deck.Add(CardFactory.Create("Communed Rot"));
-        ai.Deck.Add(CardFactory.Create("Communed Rot"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-    }
-
-    public void BuildRedBeginnerDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Village Idiot"));
-        ai.Deck.Add(CardFactory.Create("Village Idiot"));
-        ai.Deck.Add(CardFactory.Create("Village Idiot"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Fire Hatchet"));
-        ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("Explosion"));
-        ai.Deck.Add(CardFactory.Create("Explosion"));
-        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-        ai.Deck.Add(CardFactory.Create("Goblin Puncher"));
-        ai.Deck.Add(CardFactory.Create("Melt"));
-        ai.Deck.Add(CardFactory.Create("Flying Pig"));
-        ai.Deck.Add(CardFactory.Create("Flying Pig"));
-        ai.Deck.Add(CardFactory.Create("Flying Pig"));
-        ai.Deck.Add(CardFactory.Create("To Dig a Hole"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-    }
-
-    public void BuildRedAdvancedDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Mountain"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Rabid Dog"));
-        ai.Deck.Add(CardFactory.Create("Melt"));
-        ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("Great Boulder"));
-        ai.Deck.Add(CardFactory.Create("To Dig a Hole"));
-        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
-        ai.Deck.Add(CardFactory.Create("Fire Hatchet"));
-        ai.Deck.Add(CardFactory.Create("Explosion"));
-        ai.Deck.Add(CardFactory.Create("Explosion"));
-        ai.Deck.Add(CardFactory.Create("Thundermare"));
-        ai.Deck.Add(CardFactory.Create("Thundermare"));
-        ai.Deck.Add(CardFactory.Create("Thundermare"));
-        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-        ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
-        ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
-        ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
-        ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
-    }
-
-    public void BuildGreenBeginnerDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-        ai.Deck.Add(CardFactory.Create("Domestic Cat"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Living Tree"));
-        ai.Deck.Add(CardFactory.Create("Living Tree"));
-        ai.Deck.Add(CardFactory.Create("Living Tree"));
-        ai.Deck.Add(CardFactory.Create("Flying Donkey"));
-        ai.Deck.Add(CardFactory.Create("Flying Donkey"));
-        ai.Deck.Add(CardFactory.Create("Feast"));
-        ai.Deck.Add(CardFactory.Create("Feast"));
-        ai.Deck.Add(CardFactory.Create("Feast"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-    }
-
-    public void BuildGreenAdvancedDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Forest"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Wall of Roots"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Deep Forest Monkeys"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Violent Ape"));
-        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-        ai.Deck.Add(CardFactory.Create("Crazy Cat Lady"));
-        ai.Deck.Add(CardFactory.Create("Living Tree"));
-        ai.Deck.Add(CardFactory.Create("Living Tree"));
-        ai.Deck.Add(CardFactory.Create("Drumming Elf"));
-        ai.Deck.Add(CardFactory.Create("Drumming Elf"));
-        ai.Deck.Add(CardFactory.Create("Cactusaurus"));
-        ai.Deck.Add(CardFactory.Create("Cactusaurus"));
-        ai.Deck.Add(CardFactory.Create("Realms Crasher"));
-        ai.Deck.Add(CardFactory.Create("Realms Crasher"));
-        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-        ai.Deck.Add(CardFactory.Create("Slack Tungo"));
-    }
-
-    public void BuildBossDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Swamp"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Forget"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Famished Crow"));
-        ai.Deck.Add(CardFactory.Create("Sad Clown"));
-        ai.Deck.Add(CardFactory.Create("Sad Clown"));
-        ai.Deck.Add(CardFactory.Create("Sad Clown"));
-        ai.Deck.Add(CardFactory.Create("Sad Clown"));
-        ai.Deck.Add(CardFactory.Create("Giant Crow"));
-        ai.Deck.Add(CardFactory.Create("Giant Crow"));
-        ai.Deck.Add(CardFactory.Create("Giant Crow"));
-        ai.Deck.Add(CardFactory.Create("Giant Crow"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Witches Rite"));
-        ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-        ai.Deck.Add(CardFactory.Create("Lights Out"));
-        ai.Deck.Add(CardFactory.Create("Lights Out"));
-        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-        ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-    }
-
-    public void BuildRuinsDeck(Player ai)
-    {
-        ai.Deck.Clear();
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Island"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Obstacle"));
-        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-        ai.Deck.Add(CardFactory.Create("Sphynx Lynx"));
-        ai.Deck.Add(CardFactory.Create("Glassmole"));
-        ai.Deck.Add(CardFactory.Create("Glassmole"));
-        ai.Deck.Add(CardFactory.Create("Glassmole"));
-        ai.Deck.Add(CardFactory.Create("Origin Golem"));
-        ai.Deck.Add(CardFactory.Create("Origin Golem"));
-        ai.Deck.Add(CardFactory.Create("Origin Golem"));
-        ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
-        ai.Deck.Add(CardFactory.Create("Omega Golemoid"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Mana Rock"));
-        ai.Deck.Add(CardFactory.Create("Potion of Mana"));
-        ai.Deck.Add(CardFactory.Create("Potion of Mana"));
-        ai.Deck.Add(CardFactory.Create("Pressure Sphere"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-        ai.Deck.Add(CardFactory.Create("Stone of Plague"));
-    }
-
     void PickRandomBeginnerDeck(Player ai)
     {
         var decks = new System.Action<Player>[]
         {
-                    BuildWhiteBeginnerDeck,
-                    BuildBlueBeginnerDeck,
-                    BuildBlackBeginnerDeck,
-                    BuildRedBeginnerDeck,
-                    BuildGreenBeginnerDeck,
-                    BuildRuinsDeck
+                    DeckDatabase.BuildWhiteBeginnerDeck,
+                    DeckDatabase.BuildBlueBeginnerDeck,
+                    DeckDatabase.BuildBlackBeginnerDeck,
+                    DeckDatabase.BuildRedBeginnerDeck,
+                    DeckDatabase.BuildGreenBeginnerDeck,
+                    DeckDatabase.BuildRuinsDeck
         };
 
         decks[Random.Range(0, decks.Length)](ai);
@@ -1523,11 +919,11 @@ public class GameManager : MonoBehaviour
     {
         var decks = new System.Action<Player>[]
         {
-                    BuildWhiteAdvancedDeck,
-                    BuildBlueAdvancedDeck,
-                    BuildBlackAdvancedDeck,
-                    BuildRedAdvancedDeck,
-                    BuildGreenAdvancedDeck
+                    DeckDatabase.BuildWhiteAdvancedDeck,
+                    DeckDatabase.BuildBlueAdvancedDeck,
+                    DeckDatabase.BuildBlackAdvancedDeck,
+                    DeckDatabase.BuildRedAdvancedDeck,
+                    DeckDatabase.BuildGreenAdvancedDeck
         };
 
         decks[Random.Range(0, decks.Length)](ai);
@@ -1539,52 +935,52 @@ public class GameManager : MonoBehaviour
         {
             // STARTER + BOSS
             case "Deck_Starter":
-                BuildStarterDeck(ai);
+                DeckDatabase.BuildStarterDeck(ai);
                 break;
             case "Deck_Boss":
-                BuildBossDeck(ai);
+                DeckDatabase.BuildBossDeck(ai);
                 break;
 
             // BEGINNER (6)
             case "Deck_Shore":
-                BuildBlueBeginnerDeck(ai);
+                DeckDatabase.BuildBlueBeginnerDeck(ai);
                 break;
             case "Deck_Camp":
-                BuildRedBeginnerDeck(ai);
+                DeckDatabase.BuildRedBeginnerDeck(ai);
                 break;
             case "Deck_Graveyard":
-                BuildBlackBeginnerDeck(ai);
+                DeckDatabase.BuildBlackBeginnerDeck(ai);
                 break;
             case "Deck_Thicket":
-                BuildGreenBeginnerDeck(ai);
+                DeckDatabase.BuildGreenBeginnerDeck(ai);
                 break;
             case "Deck_Village":
-                BuildWhiteBeginnerDeck(ai);
+                DeckDatabase.BuildWhiteBeginnerDeck(ai);
                 break;
             case "Deck_Ruins":
-                BuildRuinsDeck(ai);
+                DeckDatabase.BuildRuinsDeck(ai);
                 break;
 
             // ADVANCED (5)
             case "Deck_Church":
-                BuildWhiteAdvancedDeck(ai);
+                DeckDatabase.BuildWhiteAdvancedDeck(ai);
                 break;
             case "Deck_Tower":
-                BuildBlueAdvancedDeck(ai);
+                DeckDatabase.BuildBlueAdvancedDeck(ai);
                 break;
             case "Deck_Hut":
-                BuildBlackAdvancedDeck(ai);
+                DeckDatabase.BuildBlackAdvancedDeck(ai);
                 break;
             case "Deck_Nest":
-                BuildRedAdvancedDeck(ai);
+                DeckDatabase.BuildRedAdvancedDeck(ai);
                 break;
             case "Deck_Woods":
-                BuildGreenAdvancedDeck(ai);
+                DeckDatabase.BuildGreenAdvancedDeck(ai);
                 break;
 
             default:
                 Debug.LogWarning("Unknown deck key: " + key + " — using fallback.");
-                BuildStarterDeck(ai);
+                DeckDatabase.BuildStarterDeck(ai);
                 break;
         }
     }
