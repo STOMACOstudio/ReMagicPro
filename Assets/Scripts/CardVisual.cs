@@ -1052,34 +1052,33 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
             // Declare attacker
-                if (linkedCard is CreatureCard creature)
+                if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseAttackers &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    linkedCard is CreatureCard creature &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(creature))
                 {
-                    if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseAttackers &&
-                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human)
+                    if (GameManager.Instance.selectedAttackers.Contains(creature))
                     {
-                        if (GameManager.Instance.selectedAttackers.Contains(creature))
-                        {
-                            // Removing from combat
-                            GameManager.Instance.selectedAttackers.Remove(creature);
-                            if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                                creature.isTapped = false;
+                        // Removing from combat
+                        GameManager.Instance.selectedAttackers.Remove(creature);
+                        if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                            creature.isTapped = false;
 
-                            Debug.Log($"{creature.cardName} removed from attackers.");
-                        }
-                        else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
-                        {
-                            // Adding to combat
-                            GameManager.Instance.selectedAttackers.Add(creature);
-                            SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack);
-                            if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                                creature.isTapped = true;
-
-                            Debug.Log($"{creature.cardName} declared as attacker.");
-                        }
-
-                        UpdateVisual();
-                        return;
+                        Debug.Log($"{creature.cardName} removed from attackers.");
                     }
+                    else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                    {
+                        // Adding to combat
+                        GameManager.Instance.selectedAttackers.Add(creature);
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack);
+                        if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                            creature.isTapped = true;
+
+                        Debug.Log($"{creature.cardName} declared as attacker.");
+                    }
+
+                    UpdateVisual();
+                    return;
                 }
 
             // Land usage
