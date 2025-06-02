@@ -183,65 +183,65 @@ public class SorceryCard : Card
                     Debug.Log($"Destroyed all {typeOfPermanentToDestroyAll}s: {string.Join(", ", destroyedCards.Select(c => c.card.cardName))}");
                     didSomething = true;
                 }
-            if (exileAllCreaturesFromGraveyards)
-                {
-                    List<Card> exiledCards = new List<Card>();
-
-                    foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                if (exileAllCreaturesFromGraveyards)
                     {
-                        var toRemove = player.Graveyard
-                            .Where(c => c is CreatureCard)
-                            .ToList();
+                        List<Card> exiledCards = new List<Card>();
 
-                        foreach (var card in toRemove)
+                        foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
                         {
-                            player.Graveyard.Remove(card);
+                            var toRemove = player.Graveyard
+                                .Where(c => c is CreatureCard)
+                                .ToList();
 
-                            CardVisual visual = GameManager.Instance.FindCardVisual(card);
-                            if (visual != null)
+                            foreach (var card in toRemove)
                             {
-                                GameManager.Instance.activeCardVisuals.Remove(visual);
-                                GameObject.Destroy(visual.gameObject);
-                            }
+                                player.Graveyard.Remove(card);
 
-                            exiledCards.Add(card);
+                                CardVisual visual = GameManager.Instance.FindCardVisual(card);
+                                if (visual != null)
+                                {
+                                    GameManager.Instance.activeCardVisuals.Remove(visual);
+                                    GameObject.Destroy(visual.gameObject);
+                                }
+
+                                exiledCards.Add(card);
+                            }
                         }
+
+                        Debug.Log($"Exiled creatures from graveyards: {string.Join(", ", exiledCards.Select(c => c.cardName))}");
+                        didSomething = true;
+                    }
+                if (damageToEachCreatureAndPlayer > 0)
+                    {
+                        foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                        {
+                            // Damage to player
+                            player.Life -= damageToEachCreatureAndPlayer;
+
+                            // Damage to each creature
+                            foreach (var creature in player.Battlefield.OfType<CreatureCard>())
+                            {
+                                KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
+
+                                if (creature.keywordAbilities.Contains(protectionKeyword))
+                                {
+                                    Debug.Log($"{creature.cardName} has protection from {this.color} and takes no damage.");
+                                    continue;
+                                }
+
+                                creature.toughness -= damageToEachCreatureAndPlayer;
+                                Debug.Log($"{creature.cardName} takes {damageToEachCreatureAndPlayer} damage.");
+                            }
+                        }
+
+                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+
+                        Debug.Log($"Fire Spirals deals {damageToEachCreatureAndPlayer} damage to all creatures and players.");
+                        didSomething = true;
                     }
 
-                    Debug.Log($"Exiled creatures from graveyards: {string.Join(", ", exiledCards.Select(c => c.cardName))}");
-                    didSomething = true;
-                }
-            if (damageToEachCreatureAndPlayer > 0)
-                {
-                    foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
-                    {
-                        // Damage to player
-                        player.Life -= damageToEachCreatureAndPlayer;
-
-                        // Damage to each creature
-                        foreach (var creature in player.Battlefield.OfType<CreatureCard>())
-                        {
-                            KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
-
-                            if (creature.keywordAbilities.Contains(protectionKeyword))
-                            {
-                                Debug.Log($"{creature.cardName} has protection from {this.color} and takes no damage.");
-                                continue;
-                            }
-
-                            creature.toughness -= damageToEachCreatureAndPlayer;
-                            Debug.Log($"{creature.cardName} takes {damageToEachCreatureAndPlayer} damage.");
-                        }
-                    }
-
-                    GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
-                    GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
-
-                    Debug.Log($"Fire Spirals deals {damageToEachCreatureAndPlayer} damage to all creatures and players.");
-                    didSomething = true;
-                }
-
-            GameManager.Instance.UpdateUI();
+                GameManager.Instance.UpdateUI();
         }
 
         public virtual void ResolveEffect(Player caster, Card target)
@@ -266,6 +266,7 @@ public class SorceryCard : Card
                         }
 
                         GameManager.Instance.UpdateUI();
+                        ResolveEffect(caster); // Add this line
                         return;
                     }
 
@@ -288,6 +289,8 @@ public class SorceryCard : Card
                         {
                             GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
                             Debug.Log($"{cardName} destroyed {target.cardName}.");
+
+                            ResolveEffect(caster); // Add this line
                             return;
                         }
                         else
@@ -302,12 +305,8 @@ public class SorceryCard : Card
                     Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
                 }
 
-                if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
-                {
-                    Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
-                }
-                
                 GameManager.Instance.UpdateUI();
+                ResolveEffect(caster); // Add this line to ensure fallback effects run
             }
 
         public KeywordAbility GetProtectionKeyword(string color)
