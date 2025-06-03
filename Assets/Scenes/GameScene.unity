@@ -1673,7 +1673,7 @@ MonoBehaviour:
   break_artifact: {fileID: 8300000, guid: 7081f21eb2a561c4294de26ae02bce26, type: 3}
   tap_for_mana: {fileID: 8300000, guid: 875212118b46d8f4da07757905e92117, type: 3}
   plague: {fileID: 8300000, guid: 127b099b8ecb97840ba02e66449d7e1d, type: 3}
-  dealDamage: {fileID: 8300000, guid: 754b0d9ce19e6234b9ebda0e4dee60b3, type: 3}
+  dealDamage: {fileID: 8300000, guid: 1e5f17914b7c1b6478ff930d88ea2028, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0

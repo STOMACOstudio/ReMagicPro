@@ -19,9 +19,6 @@ public class DeckGenerator : MonoBehaviour
             DeckHolder.SelectedDeck = GeneratedDeck;
             ShowCardsInDeckBuilder();
             Debug.Log("CARDS SHOWN");
-            //SceneManager.LoadScene("GameScene");
-            // Uncomment this if you've added the UI later:
-            // DisplayDeck();
         }
 
     [ContextMenu("Generate Deck")]
@@ -54,14 +51,47 @@ public class DeckGenerator : MonoBehaviour
             // 3. Add 16 lands proportionally
             int totalColoredCards = colorCounts.Values.Sum();
             int landsToAdd = 16;
+            Dictionary<string, int> landsPerColor = new Dictionary<string, int>();
+
+            int totalAdded = 0;
             foreach (string color in chosenColors)
             {
                 int count = colorCounts[color];
-                int landsForThisColor = Mathf.RoundToInt((count / (float)totalColoredCards) * landsToAdd);
+                int share = Mathf.RoundToInt((count / (float)totalColoredCards) * landsToAdd);
+                landsPerColor[color] = share;
+                totalAdded += share;
+            }
 
-                var basicLand = CardDatabase.GetCardData(BasicLandNameForColor(color));
-                for (int i = 0; i < landsForThisColor; i++)
-                    GeneratedDeck.Add(basicLand);
+            // Adjust if over 16 due to rounding
+            while (totalAdded > 16)
+            {
+                foreach (string color in chosenColors)
+                {
+                    if (landsPerColor[color] > 0 && totalAdded > 16)
+                    {
+                        landsPerColor[color]--;
+                        totalAdded--;
+                    }
+                }
+            }
+
+            // Fill up to exactly 16 if needed
+            while (totalAdded < 16)
+            {
+                foreach (string color in chosenColors)
+                {
+                    landsPerColor[color]++;
+                    totalAdded++;
+                    if (totalAdded == 16) break;
+                }
+            }
+
+            // Now add the lands
+            foreach (var kvp in landsPerColor)
+            {
+                var land = CardDatabase.GetCardData(BasicLandNameForColor(kvp.Key));
+                for (int i = 0; i < kvp.Value; i++)
+                    GeneratedDeck.Add(land);
             }
 
             // Print result
@@ -77,8 +107,10 @@ public class DeckGenerator : MonoBehaviour
                 card.rarity == rarity &&
                 (
                     card.color == color ||
+                    card.color == "Artifact" ||
                     card.cardType == CardType.Artifact
-                )
+                ) &&
+                card.cardType != CardType.Land
             )
             .ToList();
 
