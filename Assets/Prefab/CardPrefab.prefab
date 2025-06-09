@@ -959,6 +959,97 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4027206160647432886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6728184244537369134}
+  - component: {fileID: 7843738616904248193}
+  - component: {fileID: 8363323252893594702}
+  - component: {fileID: 8023618817502772632}
+  m_Layer: 5
+  m_Name: landIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6728184244537369134
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027206160647432886}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6256048876094482092}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -29}
+  m_SizeDelta: {x: 26.1164, y: 26.1161}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7843738616904248193
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027206160647432886}
+  m_CullTransparentMesh: 1
+--- !u!114 &8363323252893594702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027206160647432886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 273f916e216da544d85b18ba04cf709c, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8023618817502772632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027206160647432886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 0.5, y: -0.5}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6148380688250433790
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,6 +1319,7 @@ RectTransform:
   - {fileID: 5632188673307894298}
   - {fileID: 4161140015355905617}
   - {fileID: 1460991592838289374}
+  - {fileID: 6728184244537369134}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1349,12 +1441,18 @@ MonoBehaviour:
   blackManaSymbol: {fileID: 21300000, guid: ec0e286e58f081e4eaecc53fd6928b35, type: 3}
   redManaSymbol: {fileID: 21300000, guid: b148ac36b7aa056469d7d357dcdbac44, type: 3}
   greenManaSymbol: {fileID: 21300000, guid: bd11a4ce2d9b0a545ad4537fd02e708a, type: 3}
+  whiteLandIcon: {fileID: 21300000, guid: fc33fdb45a2ad3642957bcb516b75cba, type: 3}
+  blueLandIcon: {fileID: 21300000, guid: 52a2cadacf5d17247a4310fc172345d8, type: 3}
+  blackLandIcon: {fileID: 21300000, guid: 6266023ff63532a4286c40db445d97c5, type: 3}
+  redLandIcon: {fileID: 21300000, guid: 7dd2cb9f0d82ff04790ea2c0f0e43562, type: 3}
+  greenLandIcon: {fileID: 21300000, guid: 97ab0f265a919a848b19d49e30a58a24, type: 3}
   costBackground: {fileID: 2774696835951908918}
   statsBackground: {fileID: 1837107983694268112}
   swordIcon: {fileID: 1508784904614383938}
   shieldIcon: {fileID: 3097404724242342598}
   tapIcon: {fileID: 2285952499510970996}
   genericCostBG: {fileID: 1447999937406918178}
+  landIcon: {fileID: 4027206160647432886}
   titleText: {fileID: 6256048875999013832}
   sicknessText: {fileID: 5745591189577221338}
   costText: {fileID: 7155773281145799774}
