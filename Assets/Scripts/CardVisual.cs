@@ -254,7 +254,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     if (linkedCard is CreatureCard creature)
     {
-        genericCost = Mathf.Max(creature.manaCost - 1, 0);
+        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+        {
+            genericCost = creature.manaCost;
+        }
+        else
+        {
+            genericCost = Mathf.Max(creature.manaCost - 1, 0);
+        }
         costText.text = genericCost.ToString();
         statsText.text = $"{creature.power}/{creature.toughness}";
         keywordText.text = linkedCard.GetCardText();
@@ -436,7 +443,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     if (linkedCard is CreatureCard creature)
     {
-        genericCost = Mathf.Max(creature.manaCost - 1, 0);
+        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+        {
+            genericCost = creature.manaCost;
+        }
+        else
+        {
+            genericCost = Mathf.Max(creature.manaCost - 1, 0);
+        }
         costText.text = genericCost.ToString();
         statsText.text = $"{creature.power}/{creature.toughness}";
         keywordText.text = linkedCard.GetCardText();
