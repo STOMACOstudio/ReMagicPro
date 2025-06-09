@@ -65,11 +65,19 @@ public class SorceryCard : Card
             }
 
             if (lifeToGain > 0)
-                {
-                    caster.Life += lifeToGain;
-                    Debug.Log($"{caster} gains {lifeToGain} life.");
-                    didSomething = true;
-                }
+            {
+                caster.Life += lifeToGain;
+                Debug.Log($"{caster} gains {lifeToGain} life.");
+
+                GameManager.Instance.ShowFloatingHeal(
+                    lifeToGain,
+                    caster == GameManager.Instance.humanPlayer
+                        ? GameManager.Instance.playerLifeContainer
+                        : GameManager.Instance.enemyLifeContainer
+                );
+
+                didSomething = true;
+            }
             if (lifeToLoseForOpponent > 0)
             {
                 Player opponent = GameManager.Instance.GetOpponentOf(caster);
@@ -143,10 +151,13 @@ public class SorceryCard : Card
                     human.Life += humanLands;
                     ai.Life += aiLands;
 
+                    GameManager.Instance.ShowFloatingHeal(humanLands, GameManager.Instance.playerLifeContainer);
+                    GameManager.Instance.ShowFloatingHeal(aiLands, GameManager.Instance.enemyLifeContainer);
+
                     Debug.Log($"Each player gains life equal to their own lands. Human: +{humanLands}, AI: +{aiLands}");
                     didSomething = true;
                 }
-                if (typeOfPermanentToDestroyAll != PermanentTypeToDestroy.None)
+            if (typeOfPermanentToDestroyAll != PermanentTypeToDestroy.None)
                 {
                     List<(Card card, Player owner)> destroyedCards = new List<(Card, Player)>();
 
@@ -192,7 +203,7 @@ public class SorceryCard : Card
                     Debug.Log($"Destroyed all {typeOfPermanentToDestroyAll}s: {string.Join(", ", destroyedCards.Select(c => c.card.cardName))}");
                     didSomething = true;
                 }
-                if (exileAllCreaturesFromGraveyards)
+            if (exileAllCreaturesFromGraveyards)
                     {
                         List<Card> exiledCards = new List<Card>();
 
@@ -220,7 +231,7 @@ public class SorceryCard : Card
                         Debug.Log($"Exiled creatures from graveyards: {string.Join(", ", exiledCards.Select(c => c.cardName))}");
                         didSomething = true;
                     }
-                if (damageToEachCreatureAndPlayer > 0)
+            if (damageToEachCreatureAndPlayer > 0)
                 {
                     foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
                     {

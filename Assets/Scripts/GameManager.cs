@@ -479,6 +479,11 @@ public class GameManager : MonoBehaviour
                         {
                             GetOwnerOfCard(attacker).Life += excessDamage;
                             Debug.Log($"{attacker.cardName} lifelinks {excessDamage} trample damage.");
+
+                            if (attacker.owner == humanPlayer)
+                                ShowFloatingHeal(excessDamage, playerLifeContainer);
+                            else
+                                ShowFloatingHeal(excessDamage, enemyLifeContainer);
                         }
                     }
                 }
@@ -508,6 +513,11 @@ public class GameManager : MonoBehaviour
                     Player owner = GetOwnerOfCard(attacker);
                     owner.Life += damageFromAttacker;
                     Debug.Log($"{attacker.cardName} lifelinks {damageFromAttacker} life to {owner}.");
+
+                    if (owner == humanPlayer)
+                        ShowFloatingHeal(damageFromAttacker, playerLifeContainer);
+                    else
+                        ShowFloatingHeal(damageFromAttacker, enemyLifeContainer);
                 }
 
                 // Lifelink: gain life equal to damage dealt by blocker
@@ -516,6 +526,11 @@ public class GameManager : MonoBehaviour
                     Player blockerOwner = GetOwnerOfCard(blocker);
                     blockerOwner.Life += damageFromBlocker;
                     Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
+
+                    if (blockerOwner == humanPlayer)
+                        ShowFloatingHeal(damageFromBlocker, playerLifeContainer);
+                    else
+                        ShowFloatingHeal(damageFromBlocker, enemyLifeContainer);
                 }
             }
             else
@@ -529,8 +544,14 @@ public class GameManager : MonoBehaviour
                     // Lifelink: gain life equal to damage dealt to AI
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        humanPlayer.Life += attacker.power;
-                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to Human.");
+                        Player owner = humanPlayer.Battlefield.Contains(attacker) ? humanPlayer : aiPlayer;
+                        owner.Life += attacker.power;
+                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to {(owner == humanPlayer ? "Human" : "AI")}.");
+
+                        if (owner == humanPlayer)
+                            ShowFloatingHeal(attacker.power, playerLifeContainer);
+                        else
+                            ShowFloatingHeal(attacker.power, enemyLifeContainer);
                     }
                 }
                 else
@@ -1440,7 +1461,6 @@ public class GameManager : MonoBehaviour
                 }
 
                 GameObject obj = Instantiate(floatingDamagePrefab);
-                
                 obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
 
                 RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
@@ -1452,14 +1472,48 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = localPoint;
 
                 rt.localScale = Vector3.one;
-                rt.sizeDelta = new Vector2(100, 40); // set fixed size if needed
+                rt.sizeDelta = new Vector2(100, 40);
 
                 TMP_Text text = obj.GetComponent<TMP_Text>();
                 text.fontSize = 48;
                 text.enableAutoSizing = false;
                 text.text = "-" + amount;
+                text.color = Color.red;
 
                 SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
+
+                StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
+            }
+        
+        public void ShowFloatingHeal(int amount, GameObject target)
+            {
+                if (floatingDamagePrefab == null)
+                {
+                    Debug.LogError("Missing floatingDamagePrefab!");
+                    return;
+                }
+
+                GameObject obj = Instantiate(floatingDamagePrefab);
+                obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+                RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+                RectTransform targetRect = target.GetComponent<RectTransform>();
+                RectTransform rt = obj.GetComponent<RectTransform>();
+
+                Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
+                rt.anchoredPosition = localPoint;
+
+                rt.localScale = Vector3.one;
+                rt.sizeDelta = new Vector2(100, 40);
+
+                TMP_Text text = obj.GetComponent<TMP_Text>();
+                text.fontSize = 48;
+                text.enableAutoSizing = false;
+                text.text = "+" + amount;
+                text.color = Color.green;
+
+                SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life); // use appropriate sound
 
                 StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
             }
@@ -1472,15 +1526,18 @@ public class GameManager : MonoBehaviour
                 float t = 0f;
                 float direction = floatUp ? 1f : -1f;
 
+                Color baseColor = text.color;
+
                 while (t < 1.25f)
                 {
                     t += Time.deltaTime;
                     rt.localPosition = startPos + new Vector3(0, t * 20f * direction, 0);
-                    text.color = new Color(1, 0, 0, 1 - t * 0.8f); // fade out
+                    text.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1 - t * 0.8f);
                     yield return null;
                 }
 
                 Destroy(obj);
+                yield break;
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
@@ -1519,4 +1576,14 @@ public class GameManager : MonoBehaviour
                 owner.Graveyard.Add(card);
             }
 
+        public void GainLife(Player player, int amount)
+        {
+            player.Life += amount;
+            UpdateUI();
+
+            if (player == humanPlayer)
+                ShowFloatingHeal(amount, playerLifeContainer);
+            else
+                ShowFloatingHeal(amount, enemyLifeContainer);
+        }
 }

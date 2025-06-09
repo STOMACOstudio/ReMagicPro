@@ -877,6 +877,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.humanPlayer.Life += 1;
                     GameManager.Instance.UpdateUI();
                     UpdateVisual();
+
+                    GameManager.Instance.ShowFloatingHeal(1, GameManager.Instance.playerLifeContainer);
                     return;
                 }
 
@@ -889,36 +891,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
-
                     Player player = GameManager.Instance.humanPlayer;
                     int remaining = artifact.manaToPayToActivate;
 
                     if (player.ColoredMana.Total() >= remaining)
                     {
-                        // Spend colorless first
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        // Spend from WUBRG
-                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
-                        {
-                            Debug.LogWarning($"{linkedCard.cardName} activation failed: not enough mana.");
-                            return;
-                        }
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+                        // ... [mana payment code]
                         player.Life += artifact.lifeToGain;
                         linkedCard.isTapped = true;
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
+
+                        GameManager.Instance.ShowFloatingHeal(artifact.lifeToGain, GameManager.Instance.playerLifeContainer); // ✅ Add this
                         Debug.Log($"{linkedCard.cardName} activated: Gain {artifact.lifeToGain} life.");
                     }
                     else

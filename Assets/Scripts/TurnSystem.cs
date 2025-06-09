@@ -214,10 +214,23 @@ public class TurnSystem : MonoBehaviour
                     {
                         foreach (var ability in card.abilities)
                         {
-                            if (ability.timing == TriggerTiming.OnUpkeep)
+                            if (ability.timing == TriggerTiming.OnUpkeep && ability.effect != null)
                             {
                                 Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
-                                ability.effect?.Invoke(player, null);
+
+                                int oldLife = player.Life;
+                                ability.effect.Invoke(player, null);
+                                int gained = player.Life - oldLife;
+
+                                if (gained > 0)
+                                {
+                                    GameManager.Instance.ShowFloatingHeal(
+                                        gained,
+                                        player == GameManager.Instance.humanPlayer
+                                            ? GameManager.Instance.playerLifeContainer
+                                            : GameManager.Instance.enemyLifeContainer
+                                    );
+                                }
                             }
                         }
                     }

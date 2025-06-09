@@ -53,7 +53,20 @@ public class Card
                 }
                 else
                 {
-                    ability.effect?.Invoke(owner, null);
+                    if (ability.effect != null)
+                    {
+                        int oldLife = owner.Life;
+                        ability.effect.Invoke(owner, null);
+                        int gained = owner.Life - oldLife;
+
+                        if (gained > 0)
+                        {
+                            GameManager.Instance.ShowFloatingHeal(gained,
+                                owner == GameManager.Instance.humanPlayer
+                                    ? GameManager.Instance.playerLifeContainer
+                                    : GameManager.Instance.enemyLifeContainer);
+                        }
+                    }
                 }
             }
         }
@@ -62,8 +75,22 @@ public class Card
         {
             foreach (var ability in abilities)
             {
-                if (ability.timing == TriggerTiming.OnDeath)
-                    ability.effect?.Invoke(owner, null);
+                if (ability.timing == TriggerTiming.OnDeath && ability.effect != null)
+                {
+                    int oldLife = owner.Life;
+                    ability.effect.Invoke(owner, null);
+                    int gained = owner.Life - oldLife;
+
+                    if (gained > 0)
+                    {
+                        GameManager.Instance.ShowFloatingHeal(
+                            gained,
+                            owner == GameManager.Instance.humanPlayer
+                                ? GameManager.Instance.playerLifeContainer
+                                : GameManager.Instance.enemyLifeContainer
+                        );
+                    }
+                }
             }
         }
 
