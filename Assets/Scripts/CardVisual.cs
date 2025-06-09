@@ -855,6 +855,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
 
                     // Shared execution
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                     linkedCard.isTapped = true;
                     GameManager.Instance.SendToGraveyard(linkedCard, player);
                     GameManager.Instance.UpdateUI();
@@ -911,7 +912,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.LogWarning($"{linkedCard.cardName} activation failed: not enough mana.");
                             return;
                         }
-
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
                         player.Life += artifact.lifeToGain;
                         linkedCard.isTapped = true;
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
@@ -994,6 +996,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             GameManager.Instance.DrawCard(player);
                         }
 
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
                         linkedCard.isTapped = true;
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();

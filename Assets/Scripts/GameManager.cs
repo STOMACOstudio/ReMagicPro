@@ -1325,6 +1325,7 @@ public class GameManager : MonoBehaviour
                 GetOwnerOfCard(creature)?.Battlefield.Contains(creature) == true &&
                 targetingArtifact != null)
             {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                 creature.toughness -= targetingArtifact.damageToCreature;
                 Debug.Log($"{targetingArtifact.cardName} dealt {targetingArtifact.damageToCreature} damage to {creature.cardName}");
 
