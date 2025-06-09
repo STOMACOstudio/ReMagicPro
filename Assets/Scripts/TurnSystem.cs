@@ -889,6 +889,12 @@ public class TurnSystem : MonoBehaviour
                                 {
                                     continue; // this blocker can't block this attacker
                                 }
+
+                                if (blocker.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
+                                    !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
+                                {
+                                    continue; // this blocker can't block non-flying creatures
+                                }
                                 
                                 // LANDWALK rule: attacker is unblockable if AI controls matching land
                                 if (IsLandwalkPreventingBlock(attacker, ai))
