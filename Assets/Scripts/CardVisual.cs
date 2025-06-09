@@ -855,11 +855,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
 
                     // Shared execution
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                     linkedCard.isTapped = true;
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                     GameManager.Instance.SendToGraveyard(linkedCard, player);
                     GameManager.Instance.UpdateUI();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.break_artifact);
                     UpdateVisual();
                     return;
                 }
@@ -899,11 +898,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         // ... [mana payment code]
                         player.Life += artifact.lifeToGain;
                         linkedCard.isTapped = true;
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
 
-                        GameManager.Instance.ShowFloatingHeal(artifact.lifeToGain, GameManager.Instance.playerLifeContainer); // ✅ Add this
+                        GameManager.Instance.ShowFloatingHeal(artifact.lifeToGain, GameManager.Instance.playerLifeContainer);
                         Debug.Log($"{linkedCard.cardName} activated: Gain {artifact.lifeToGain} life.");
                     }
                     else
