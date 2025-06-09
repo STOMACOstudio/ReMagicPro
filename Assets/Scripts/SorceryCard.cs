@@ -89,7 +89,7 @@ public class SorceryCard : Card
                     : GameManager.Instance.enemyLifeContainer;
 
                 GameManager.Instance.ShowFloatingDamage(lifeToLoseForOpponent, targetUI);
-
+                GameManager.Instance.CheckForGameEnd();
                 didSomething = true;
             }
             if (lifeLossForBothPlayers > 0)
@@ -100,7 +100,7 @@ public class SorceryCard : Card
 
                 GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.playerLifeContainer);
                 GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.enemyLifeContainer);
-
+                GameManager.Instance.CheckForGameEnd();
                 didSomething = true;
             }
             if (cardsToDraw > 0)
@@ -260,6 +260,7 @@ public class SorceryCard : Card
 
                     GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                     GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                    GameManager.Instance.CheckForGameEnd();
                     didSomething = true;
                 }
                 GameManager.Instance.UpdateUI();
@@ -355,6 +356,7 @@ public class SorceryCard : Card
                         ? GameManager.Instance.playerLifeContainer
                         : GameManager.Instance.enemyLifeContainer;
 
+                    GameManager.Instance.CheckForGameEnd();
                     GameManager.Instance.ShowFloatingDamage(damageToTarget, targetUI);
                 }
             }

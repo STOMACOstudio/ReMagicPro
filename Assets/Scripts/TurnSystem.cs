@@ -722,7 +722,7 @@ public class TurnSystem : MonoBehaviour
                                     artifact.isTapped = true;
                                     GameManager.Instance.humanPlayer.Life -= artifact.plagueAmount;
                                     GameManager.Instance.aiPlayer.Life -= artifact.plagueAmount;
-                                    Debug.Log($"AI taps {artifact.cardName}: Both players lose {artifact.plagueAmount} life.");
+                                    GameManager.Instance.CheckForGameEnd();
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                     GameManager.Instance.UpdateUI();
                                 }

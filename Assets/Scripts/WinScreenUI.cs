@@ -1,34 +1,61 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class WinScreenUI : MonoBehaviour
 {
     public GameObject winPanel; // Assign in Inspector
     public Button winImageButton; // Assign in Inspector
-    private CanvasGroup canvasGroup;
+    public Image winIconImage; // Optional: assign to dynamically change sprite
+    public Sprite winSprite;
+    public Sprite loseSprite;
 
+    private CanvasGroup canvasGroup;
     private GameManager gameManager;
+
+    private bool isWin;
 
     void Start()
     {
         winPanel.SetActive(false);
         canvasGroup = winPanel.GetComponent<CanvasGroup>();
-
         gameManager = FindObjectOfType<GameManager>();
 
-        winImageButton.onClick.AddListener(() =>
-        {
-            gameManager.WinBattle();
-        });
+        winImageButton.onClick.AddListener(OnWinLoseClick);
     }
 
     public void ShowWinScreen()
     {
-        StartCoroutine(DissolveIn());
+        isWin = true;
+        if (winIconImage != null && winSprite != null)
+            winIconImage.sprite = winSprite;
+
+        StartCoroutine(FadeIn());
     }
 
-    private IEnumerator DissolveIn()
+    public void ShowLoseScreen()
+    {
+        isWin = false;
+        if (winIconImage != null && loseSprite != null)
+            winIconImage.sprite = loseSprite;
+
+        StartCoroutine(FadeIn());
+    }
+
+    private void OnWinLoseClick()
+    {
+        if (isWin)
+        {
+            gameManager.WinBattle(); // Go to map scene
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu"); // Restart game
+        }
+    }
+
+    private IEnumerator FadeIn()
     {
         winPanel.SetActive(true);
         canvasGroup.alpha = 0f;

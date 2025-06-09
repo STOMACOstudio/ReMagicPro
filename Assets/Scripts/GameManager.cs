@@ -592,17 +592,9 @@ public class GameManager : MonoBehaviour
 
         currentAttackers.Clear();
         selectedAttackerForBlocking = null;
-
         UpdateUI();
-
-        if (aiPlayer.Life <= 0)
-        {
-            Debug.Log("AI defeated — player wins!");
-            FindObjectOfType<WinScreenUI>().ShowWinScreen();
-        }
-
+        CheckForGameEnd();
         return (playerDamage, aiDamage);
-
     }
 
     public void CheckDeaths(Player player)
@@ -711,12 +703,7 @@ public class GameManager : MonoBehaviour
 
             UpdateUI();
             isStackBusy = false;
-
-            if (aiPlayer.Life <= 0)
-            {
-                Debug.Log("AI defeated — player wins!");
-                FindObjectOfType<WinScreenUI>().ShowWinScreen();
-            }
+            CheckForGameEnd();
 
             if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
             {
@@ -779,22 +766,13 @@ public class GameManager : MonoBehaviour
             return;
 
         creature.isTapped = true;
-
         Player opponent = GetOpponentOf(GetOwnerOfCard(creature));
         opponent.Life -= creature.tapLifeLossAmount;
-
         Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
         SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-
         ShowBloodSplatVFX(creature);
-
         UpdateUI();
-
-        if (aiPlayer.Life <= 0)
-        {
-            Debug.Log("AI defeated — player wins!");
-            FindObjectOfType<WinScreenUI>().ShowWinScreen();
-        }
+        CheckForGameEnd();
     }
 
     public void ShowBloodSplatVFX(Card card)
@@ -1583,5 +1561,19 @@ public class GameManager : MonoBehaviour
                 ShowFloatingHeal(amount, playerLifeContainer);
             else
                 ShowFloatingHeal(amount, enemyLifeContainer);
+        }
+
+        public void CheckForGameEnd()
+        {
+            if (aiPlayer.Life <= 0)
+            {
+                Debug.Log("AI defeated — player wins!");
+                FindObjectOfType<WinScreenUI>().ShowWinScreen();
+            }
+            else if (humanPlayer.Life <= 0)
+            {
+                Debug.Log("Human player defeated — game lost.");
+                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+            }
         }
 }

@@ -2383,6 +2383,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   winPanel: {fileID: 1515505899}
   winImageButton: {fileID: 1515505901}
+  winIconImage: {fileID: 541880024}
+  winSprite: {fileID: 21300000, guid: d1ae4116d14b21c49be3c912c20219aa, type: 3}
+  loseSprite: {fileID: 21300000, guid: 6d1a8b253c4b3a345bc2a742c399474d, type: 3}
 --- !u!1 &1177050439
 GameObject:
   m_ObjectHideFlags: 0

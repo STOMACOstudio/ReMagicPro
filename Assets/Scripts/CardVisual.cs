@@ -788,14 +788,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
                     GameManager.Instance.ShowBloodSplatVFX(linkedCard);
                     UpdateVisual();
-                    Debug.Log($"{linkedCard.cardName} tapped: Both players lose {linkedCard.plagueAmount} life.");
-
-                    if (GameManager.Instance.aiPlayer.Life <= 0)
-                    {
-                        Debug.Log("AI defeated — player wins!");
-                        GameManager.Instance.WinBattle();
-                    }
-
+                    GameManager.Instance.CheckForGameEnd();
                     return;
                 }
             
