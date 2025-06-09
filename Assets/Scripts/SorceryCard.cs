@@ -70,22 +70,31 @@ public class SorceryCard : Card
                     Debug.Log($"{caster} gains {lifeToGain} life.");
                     didSomething = true;
                 }
-
             if (lifeToLoseForOpponent > 0)
-                {
-                    Player opponent = GameManager.Instance.GetOpponentOf(caster);
-                    opponent.Life -= lifeToLoseForOpponent;
-                    Debug.Log($"{opponent} loses {lifeToLoseForOpponent} life.");
-                    didSomething = true;
-                }
+            {
+                Player opponent = GameManager.Instance.GetOpponentOf(caster);
+                opponent.Life -= lifeToLoseForOpponent;
+                Debug.Log($"{opponent} loses {lifeToLoseForOpponent} life.");
 
+                GameObject targetUI = (opponent == GameManager.Instance.humanPlayer)
+                    ? GameManager.Instance.playerLifeContainer
+                    : GameManager.Instance.enemyLifeContainer;
+
+                GameManager.Instance.ShowFloatingDamage(lifeToLoseForOpponent, targetUI);
+
+                didSomething = true;
+            }
             if (lifeLossForBothPlayers > 0)
-                {
-                    GameManager.Instance.humanPlayer.Life -= lifeLossForBothPlayers;
-                    GameManager.Instance.aiPlayer.Life -= lifeLossForBothPlayers;
-                    Debug.Log($"Each player loses {lifeLossForBothPlayers} life.");
-                    didSomething = true;
-                }
+            {
+                GameManager.Instance.humanPlayer.Life -= lifeLossForBothPlayers;
+                GameManager.Instance.aiPlayer.Life -= lifeLossForBothPlayers;
+                Debug.Log($"Each player loses {lifeLossForBothPlayers} life.");
+
+                GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.playerLifeContainer);
+                GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.enemyLifeContainer);
+
+                didSomething = true;
+            }
             if (cardsToDraw > 0)
                 {
                     for (int i = 0; i < cardsToDraw; i++)
@@ -212,35 +221,36 @@ public class SorceryCard : Card
                         didSomething = true;
                     }
                 if (damageToEachCreatureAndPlayer > 0)
+                {
+                    foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
                     {
-                        foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                        // Damage to player
+                        player.Life -= damageToEachCreatureAndPlayer;
+
+                        GameObject targetUI = (player == GameManager.Instance.humanPlayer)
+                            ? GameManager.Instance.playerLifeContainer
+                            : GameManager.Instance.enemyLifeContainer;
+
+                        GameManager.Instance.ShowFloatingDamage(damageToEachCreatureAndPlayer, targetUI);
+
+                        // Damage to each creature
+                        foreach (var creature in player.Battlefield.OfType<CreatureCard>())
                         {
-                            // Damage to player
-                            player.Life -= damageToEachCreatureAndPlayer;
+                            KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
 
-                            // Damage to each creature
-                            foreach (var creature in player.Battlefield.OfType<CreatureCard>())
+                            if (creature.keywordAbilities.Contains(protectionKeyword))
                             {
-                                KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
-
-                                if (creature.keywordAbilities.Contains(protectionKeyword))
-                                {
-                                    Debug.Log($"{creature.cardName} has protection from {this.color} and takes no damage.");
-                                    continue;
-                                }
-
-                                creature.toughness -= damageToEachCreatureAndPlayer;
-                                Debug.Log($"{creature.cardName} takes {damageToEachCreatureAndPlayer} damage.");
+                                continue;
                             }
+
+                            creature.toughness -= damageToEachCreatureAndPlayer;
                         }
-
-                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
-                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
-
-                        Debug.Log($"Fire Spirals deals {damageToEachCreatureAndPlayer} damage to all creatures and players.");
-                        didSomething = true;
                     }
 
+                    GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                    GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                    didSomething = true;
+                }
                 GameManager.Instance.UpdateUI();
         }
 
@@ -260,7 +270,6 @@ public class SorceryCard : Card
                         else
                         {
                             creature.toughness -= damageToTarget;
-                            Debug.Log($"{creature.cardName} takes {damageToTarget} damage from {cardName}.");
                             GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                             GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                         }
@@ -306,7 +315,7 @@ public class SorceryCard : Card
                 }
 
                 GameManager.Instance.UpdateUI();
-                ResolveEffect(caster); // Add this line to ensure fallback effects run
+                ResolveEffect(caster);
             }
 
         public KeywordAbility GetProtectionKeyword(string color)
@@ -323,16 +332,22 @@ public class SorceryCard : Card
             }
         
         public virtual void ResolveEffectOnPlayer(Player caster, Player targetPlayer)
+        {
+            if (requiredTargetType == TargetType.Player || requiredTargetType == TargetType.CreatureOrPlayer)
             {
-                if (requiredTargetType == TargetType.Player || requiredTargetType == TargetType.CreatureOrPlayer)
+                if (damageToTarget > 0)
                 {
-                    if (damageToTarget > 0)
-                    {
-                        targetPlayer.Life -= damageToTarget;
-                        Debug.Log($"{cardName} deals {damageToTarget} damage to {targetPlayer}.");
-                    }
-                }
+                    targetPlayer.Life -= damageToTarget;
+                    Debug.Log($"{cardName} deals {damageToTarget} damage to {targetPlayer}.");
 
-                GameManager.Instance.UpdateUI();
+                    GameObject targetUI = (targetPlayer == GameManager.Instance.humanPlayer)
+                        ? GameManager.Instance.playerLifeContainer
+                        : GameManager.Instance.enemyLifeContainer;
+
+                    GameManager.Instance.ShowFloatingDamage(damageToTarget, targetUI);
+                }
             }
+
+            GameManager.Instance.UpdateUI();
+        }
 }
