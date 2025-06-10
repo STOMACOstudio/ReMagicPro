@@ -53,8 +53,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text keywordText;
     public TMP_Text cardTypeText;
 
-    private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -5); // Adjust as needed
-    private readonly Vector2 defaultStatsPosition = new Vector2(28, -53); // whatever your default was
+    private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -5);
+    private readonly Vector2 defaultStatsPosition = new Vector2(28, -53);
+    private Vector3 originalPosition;
 
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
@@ -74,7 +75,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
                 return;
 
-            transform.localScale = Vector3.one * 1.1f;
+            if (!isInBattlefield && !isInGraveyard) // assume this means it's in hand
+            {
+                originalPosition = transform.localPosition;
+                transform.localPosition += Vector3.up * 30f;
+            }
+            else
+            {
+                transform.localScale = Vector3.one * 1.1f;
+            }
         }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -87,442 +96,449 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
                 return;
 
-            transform.localScale = Vector3.one;
+            if (!isInBattlefield && !isInGraveyard) // in hand
+            {
+                transform.localPosition = originalPosition;
+            }
+            else
+            {
+                transform.localScale = Vector3.one;
+            }
         }
 
     public void UpdateVisual()
-{
-    SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
-
-    // Ensure land icon visibility is always updated
-    if (landIcon != null)
-    {
-        if (linkedCard is LandCard && !isInBattlefield)
         {
-            Sprite landSprite = linkedCard.color switch
+            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
+
+            // Ensure land icon visibility is always updated
+            if (landIcon != null)
             {
-                "White" => whiteLandIcon,
-                "Blue" => blueLandIcon,
-                "Black" => blackLandIcon,
-                "Red" => redLandIcon,
-                "Green" => greenLandIcon,
-                _ => null
-            };
+                if (linkedCard is LandCard && !isInBattlefield)
+                {
+                    Sprite landSprite = linkedCard.color switch
+                    {
+                        "White" => whiteLandIcon,
+                        "Blue" => blueLandIcon,
+                        "Black" => blackLandIcon,
+                        "Red" => redLandIcon,
+                        "Green" => greenLandIcon,
+                        _ => null
+                    };
 
-            landIcon.GetComponent<Image>().sprite = landSprite;
-            landIcon.SetActive(landSprite != null);
-        }
-        else
-        {
-            landIcon.SetActive(false);
-        }
-    }
+                    landIcon.GetComponent<Image>().sprite = landSprite;
+                    landIcon.SetActive(landSprite != null);
+                }
+                else
+                {
+                    landIcon.SetActive(false);
+                }
+            }
 
-    if (cardRarity != null)
-    {
-        CardData data = CardDatabase.GetCardData(linkedCard.cardName);
-        if (data != null && data.rarity != "Token")
-        {
-            cardRarity.color = GetRarityColor(data.rarity);
-            cardRarity.enabled = true;
-        }
-        else
-        {
-            cardRarity.enabled = false;
-        }
-    }
+            if (cardRarity != null)
+            {
+                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                if (data != null && data.rarity != "Token")
+                {
+                    cardRarity.color = GetRarityColor(data.rarity);
+                    cardRarity.enabled = true;
+                }
+                else
+                {
+                    cardRarity.enabled = false;
+                }
+            }
 
-    CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
-    if (cardData != null && cardTypeText != null)
-    {
-        string typeLine;
+            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+            if (cardData != null && cardTypeText != null)
+            {
+                string typeLine;
 
-        if (cardData.cardType == CardType.Creature)
-        {
-            if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
-            else
-                typeLine = "Creature";
-        }
-        else
-        {
-            typeLine = cardData.cardType.ToString();
-        }
+                if (cardData.cardType == CardType.Creature)
+                {
+                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
+                    else
+                        typeLine = "Creature";
+                }
+                else
+                {
+                    typeLine = cardData.cardType.ToString();
+                }
 
-        cardTypeText.text = typeLine;
-        cardTypeText.enabled = !isInBattlefield;
-    }
+                cardTypeText.text = typeLine;
+                cardTypeText.enabled = !isInBattlefield;
+            }
 
-    transform.rotation = linkedCard.isTapped
-        ? Quaternion.Euler(0, 0, -30)
-        : Quaternion.identity;
+            transform.rotation = linkedCard.isTapped
+                ? Quaternion.Euler(0, 0, -30)
+                : Quaternion.identity;
 
-    if (tapIcon != null)
-        tapIcon.SetActive(linkedCard.isTapped);
+            if (tapIcon != null)
+                tapIcon.SetActive(linkedCard.isTapped);
 
-    if (swordIcon != null && linkedCard is CreatureCard)
-    {
-        bool showSword =
-            GameManager.Instance.currentAttackers.Contains(linkedCard) ||
-            GameManager.Instance.selectedAttackers.Contains(linkedCard);
-        swordIcon.SetActive(showSword);
-        swordIcon.transform.rotation = Quaternion.identity;
-    }
+            if (swordIcon != null && linkedCard is CreatureCard)
+            {
+                bool showSword =
+                    GameManager.Instance.currentAttackers.Contains(linkedCard) ||
+                    GameManager.Instance.selectedAttackers.Contains(linkedCard);
+                swordIcon.SetActive(showSword);
+                swordIcon.transform.rotation = Quaternion.identity;
+            }
 
-    if (shieldIcon != null && linkedCard is CreatureCard)
-    {
-        CreatureCard cc = (CreatureCard)linkedCard;
-        bool showShield =
-            cc.blockingThisAttacker != null &&
-            GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
+            if (shieldIcon != null && linkedCard is CreatureCard)
+            {
+                CreatureCard cc = (CreatureCard)linkedCard;
+                bool showShield =
+                    cc.blockingThisAttacker != null &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
 
-        shieldIcon.SetActive(showShield);
-        shieldIcon.transform.rotation = Quaternion.identity;
-    }
-
-    if (isInBattlefield)
-    {
-        if (backgroundImage != null) backgroundImage.enabled = false;
-        costBackground.SetActive(false);
-        if (cardRarity != null) cardRarity.enabled = false;
-        titleText.text = "";
-        costText.text = "";
-        sicknessText.text = "";
-        keywordText.text = "";
-
-        if (linkedCard is CreatureCard battlefieldCreature)
-        {
-            statsText.text = $"{battlefieldCreature.power}/{battlefieldCreature.toughness}";
+                shieldIcon.SetActive(showShield);
+                shieldIcon.transform.rotation = Quaternion.identity;
+            }
 
             if (isInBattlefield)
             {
-                sicknessText.text = battlefieldCreature.hasSummoningSickness ? "(@)" : "";
-            }
-            else
-            {
+                if (backgroundImage != null) backgroundImage.enabled = false;
+                costBackground.SetActive(false);
+                if (cardRarity != null) cardRarity.enabled = false;
+                titleText.text = "";
+                costText.text = "";
                 sicknessText.text = "";
+                keywordText.text = "";
+
+                if (linkedCard is CreatureCard battlefieldCreature)
+                {
+                    statsText.text = $"{battlefieldCreature.power}/{battlefieldCreature.toughness}";
+
+                    if (isInBattlefield)
+                    {
+                        sicknessText.text = battlefieldCreature.hasSummoningSickness ? "(@)" : "";
+                    }
+                    else
+                    {
+                        sicknessText.text = "";
+                    }
+
+                    statsBackground.SetActive(true);
+                    RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
+                    if (statsRect != null)
+                        statsRect.anchoredPosition = battlefieldStatsPosition;
+
+                    if (battlefieldCreature.blockingThisAttacker != null)
+                    {
+                        lineRenderer.enabled = true;
+                        lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+
+                        var attackerVisual = GameManager.Instance.FindCardVisual(battlefieldCreature.blockingThisAttacker);
+                        if (attackerVisual != null)
+                            lineRenderer.SetPosition(1, new Vector3(attackerVisual.transform.position.x, attackerVisual.transform.position.y, 0));
+                    }
+                    else
+                    {
+                        lineRenderer.enabled = false;
+                    }
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+
+                return;
             }
 
-            statsBackground.SetActive(true);
-            RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
-            if (statsRect != null)
-                statsRect.anchoredPosition = battlefieldStatsPosition;
+            costText.text = "";
+            statsText.text = "";
+            keywordText.text = "";
+            sicknessText.text = "";
 
-            if (battlefieldCreature.blockingThisAttacker != null)
+            int genericCost = 0;
+
+            bool isOneColoredMana = (linkedCard.manaCost == 1) &&
+                        linkedCard.color != "Artifact" &&
+                        linkedCard.color != "None";
+
+            if (isOneColoredMana)
             {
-                lineRenderer.enabled = true;
-                lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
-
-                var attackerVisual = GameManager.Instance.FindCardVisual(battlefieldCreature.blockingThisAttacker);
-                if (attackerVisual != null)
-                    lineRenderer.SetPosition(1, new Vector3(attackerVisual.transform.position.x, attackerVisual.transform.position.y, 0));
+                costText.text = "";
+                if (genericCostBG != null) genericCostBG.SetActive(false);
             }
             else
             {
-                lineRenderer.enabled = false;
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
             }
-        }
-        else
-        {
-            lineRenderer.enabled = false;
-        }
 
-        return;
-    }
-
-    costText.text = "";
-    statsText.text = "";
-    keywordText.text = "";
-    sicknessText.text = "";
-
-    int genericCost = 0;
-
-    bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                linkedCard.color != "Artifact" &&
-                linkedCard.color != "None";
-
-    if (isOneColoredMana)
-    {
-        costText.text = "";
-        if (genericCostBG != null) genericCostBG.SetActive(false);
-    }
-    else
-    {
-        costText.text = genericCost.ToString();
-        if (genericCostBG != null) genericCostBG.SetActive(true);
-    }
-
-    if (linkedCard is CreatureCard creature)
-    {
-        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-        {
-            genericCost = creature.manaCost;
-        }
-        else
-        {
-            genericCost = Mathf.Max(creature.manaCost - 1, 0);
-        }
-        costText.text = genericCost.ToString();
-        statsText.text = $"{creature.power}/{creature.toughness}";
-        keywordText.text = linkedCard.GetCardText();
-
-        if (isInBattlefield)
-        {
-            sicknessText.text = creature.hasSummoningSickness ? "(@)" : "";
-        }
-        else
-        {
-            sicknessText.text = "";
-        }
-
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(true);
-    }
-    else if (linkedCard is SorceryCard sorcery)
-    {
-        genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
-        costText.text = genericCost.ToString();
-
-        sorceryEffect(sorcery);
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(false);
-    }
-    else if (linkedCard is ArtifactCard artifact)
-    {
-        genericCost = artifact.manaCost;
-        costText.text = genericCost.ToString();
-        keywordText.text = linkedCard.GetCardText();
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(false);
-    }
-    else if (linkedCard is LandCard)
-    {
-        costText.text = "";
-        statsText.text = "";
-        keywordText.text = "";
-
-        costBackground.SetActive(false);
-        statsBackground.SetActive(false);
-    }
-    else
-    {
-        costText.text = "";
-        statsText.text = "";
-        keywordText.text = "";
-
-        costBackground.SetActive(false);
-        statsBackground.SetActive(false);
-    }
-
-    if (coloredManaIcon != null)
-    {
-        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-        {
-            coloredManaIcon.gameObject.SetActive(false);
-        }
-        else
-        {
-            Sprite icon = null;
-            switch (linkedCard.color)
+            if (linkedCard is CreatureCard creature)
             {
-                case "White": icon = whiteManaSymbol; break;
-                case "Blue":  icon = blueManaSymbol; break;
-                case "Black": icon = blackManaSymbol; break;
-                case "Red":   icon = redManaSymbol; break;
-                case "Green": icon = greenManaSymbol; break;
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    genericCost = creature.manaCost;
+                }
+                else
+                {
+                    genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                }
+                costText.text = genericCost.ToString();
+                statsText.text = $"{creature.power}/{creature.toughness}";
+                keywordText.text = linkedCard.GetCardText();
+
+                if (isInBattlefield)
+                {
+                    sicknessText.text = creature.hasSummoningSickness ? "(@)" : "";
+                }
+                else
+                {
+                    sicknessText.text = "";
+                }
+
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(true);
+            }
+            else if (linkedCard is SorceryCard sorcery)
+            {
+                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
+
+                sorceryEffect(sorcery);
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is ArtifactCard artifact)
+            {
+                genericCost = artifact.manaCost;
+                costText.text = genericCost.ToString();
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is LandCard)
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
+            else
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
             }
 
-            coloredManaIcon.sprite = icon;
-            coloredManaIcon.gameObject.SetActive(icon != null);
+            if (coloredManaIcon != null)
+            {
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    coloredManaIcon.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Sprite icon = null;
+                    switch (linkedCard.color)
+                    {
+                        case "White": icon = whiteManaSymbol; break;
+                        case "Blue":  icon = blueManaSymbol; break;
+                        case "Black": icon = blackManaSymbol; break;
+                        case "Red":   icon = redManaSymbol; break;
+                        case "Green": icon = greenManaSymbol; break;
+                    }
+
+                    coloredManaIcon.sprite = icon;
+                    coloredManaIcon.gameObject.SetActive(icon != null);
+                }
+            }
         }
-    }
-}
 
     public void Setup(Card card, GameManager manager, CardData sourceData = null)
-{
-    linkedCard = card;
-    gameManager = manager;
-
-    // Ensure land icon visibility is updated before any return
-    if (landIcon != null)
-    {
-        if (linkedCard is LandCard && !isInBattlefield)
         {
-            Sprite landSprite = linkedCard.color switch
+            linkedCard = card;
+            gameManager = manager;
+
+            // Ensure land icon visibility is updated before any return
+            if (landIcon != null)
             {
-                "White" => whiteLandIcon,
-                "Blue" => blueLandIcon,
-                "Black" => blackLandIcon,
-                "Red" => redLandIcon,
-                "Green" => greenLandIcon,
-                _ => null
-            };
+                if (linkedCard is LandCard && !isInBattlefield)
+                {
+                    Sprite landSprite = linkedCard.color switch
+                    {
+                        "White" => whiteLandIcon,
+                        "Blue" => blueLandIcon,
+                        "Black" => blackLandIcon,
+                        "Red" => redLandIcon,
+                        "Green" => greenLandIcon,
+                        _ => null
+                    };
 
-            landIcon.GetComponent<Image>().sprite = landSprite;
-            landIcon.SetActive(landSprite != null);
-        }
-        else
-        {
-            landIcon.SetActive(false);
-        }
-    }
-
-    // Re-enable everything when card is set up (e.g., for hand, stack, etc.)
-    if (backgroundImage != null) backgroundImage.enabled = true;
-    if (titleText != null) titleText.enabled = true;
-    if (sicknessText != null) sicknessText.enabled = true;
-    if (costText != null) costText.enabled = true;
-    if (statsText != null) statsText.enabled = true;
-    if (keywordText != null) keywordText.enabled = true;
-
-    // Show type line based on card
-    CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
-    if (cardData != null && cardTypeText != null)
-    {
-        string typeLine;
-
-        if (cardData.cardType == CardType.Creature)
-        {
-            if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
-            else
-                typeLine = "Creature";
-        }
-        else
-        {
-            typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
-        }
-
-        cardTypeText.text = typeLine;
-        cardTypeText.enabled = !isInBattlefield;
-    }
-
-    titleText.text = card.cardName;
-    lineRenderer = GetComponent<LineRenderer>();
-    artImage.sprite = linkedCard.artwork;
-
-    if (cardRarity != null)
-    {
-        CardData data = CardDatabase.GetCardData(linkedCard.cardName);
-        if (data != null && data.rarity != "Token") // Don't show for tokens
-        {
-            cardRarity.color = GetRarityColor(data.rarity);
-            cardRarity.enabled = true;
-        }
-        else
-        {
-            cardRarity.enabled = false;
-        }
-    }
-
-    SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
-
-    float scale = isInGraveyard ? 0.5f : 1f;
-
-    sicknessText.text = ""; // Clear at start
-
-    int genericCost = 0;
-
-    bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                linkedCard.color != "Artifact" &&
-                linkedCard.color != "None";
-
-    if (isOneColoredMana)
-    {
-        costText.text = "";
-        if (genericCostBG != null) genericCostBG.SetActive(false);
-    }
-    else
-    {
-        costText.text = genericCost.ToString();
-        if (genericCostBG != null) genericCostBG.SetActive(true);
-    }
-
-    if (linkedCard is CreatureCard creature)
-    {
-        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-        {
-            genericCost = creature.manaCost;
-        }
-        else
-        {
-            genericCost = Mathf.Max(creature.manaCost - 1, 0);
-        }
-        costText.text = genericCost.ToString();
-        statsText.text = $"{creature.power}/{creature.toughness}";
-        keywordText.text = linkedCard.GetCardText();
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(true);
-    }
-    else if (linkedCard is SorceryCard sorcery)
-    {
-        genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
-        costText.text = genericCost.ToString();
-        statsText.text = "";
-        sicknessText.text = "";
-
-        sorceryEffect(sorcery);
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(false);
-    }
-    else if (linkedCard is ArtifactCard artifact)
-    {
-        genericCost = artifact.manaCost;
-        costText.text = genericCost.ToString();
-        statsText.text = "";
-        keywordText.text = artifact.GetCardText();
-
-        costBackground.SetActive(true);
-        statsBackground.SetActive(false);
-    }
-    else if (linkedCard is LandCard)
-    {
-        costText.text = "";
-        statsText.text = "";
-        keywordText.text = "";
-
-        costBackground.SetActive(false);
-        statsBackground.SetActive(false);
-    }
-    else
-    {
-        costText.text = "";
-        statsText.text = "";
-        keywordText.text = "";
-
-        costBackground.SetActive(false);
-        statsBackground.SetActive(false);
-    }
-
-    // Set colored mana icon
-    if (coloredManaIcon != null)
-    {
-        if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-        {
-            coloredManaIcon.gameObject.SetActive(false); // <-- FULL DEACTIVATION
-        }
-        else
-        {
-            Sprite icon = null;
-            switch (linkedCard.color)
-            {
-                case "White": icon = whiteManaSymbol; break;
-                case "Blue":  icon = blueManaSymbol; break;
-                case "Black": icon = blackManaSymbol; break;
-                case "Red":   icon = redManaSymbol; break;
-                case "Green": icon = greenManaSymbol; break;
+                    landIcon.GetComponent<Image>().sprite = landSprite;
+                    landIcon.SetActive(landSprite != null);
+                }
+                else
+                {
+                    landIcon.SetActive(false);
+                }
             }
 
-            coloredManaIcon.sprite = icon;
-            coloredManaIcon.gameObject.SetActive(icon != null); // <-- Re-activate only if there's an icon
+            // Re-enable everything when card is set up (e.g., for hand, stack, etc.)
+            if (backgroundImage != null) backgroundImage.enabled = true;
+            if (titleText != null) titleText.enabled = true;
+            if (sicknessText != null) sicknessText.enabled = true;
+            if (costText != null) costText.enabled = true;
+            if (statsText != null) statsText.enabled = true;
+            if (keywordText != null) keywordText.enabled = true;
+
+            // Show type line based on card
+            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+            if (cardData != null && cardTypeText != null)
+            {
+                string typeLine;
+
+                if (cardData.cardType == CardType.Creature)
+                {
+                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
+                    else
+                        typeLine = "Creature";
+                }
+                else
+                {
+                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
+                }
+
+                cardTypeText.text = typeLine;
+                cardTypeText.enabled = !isInBattlefield;
+            }
+
+            titleText.text = card.cardName;
+            lineRenderer = GetComponent<LineRenderer>();
+            artImage.sprite = linkedCard.artwork;
+
+            if (cardRarity != null)
+            {
+                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                if (data != null && data.rarity != "Token") // Don't show for tokens
+                {
+                    cardRarity.color = GetRarityColor(data.rarity);
+                    cardRarity.enabled = true;
+                }
+                else
+                {
+                    cardRarity.enabled = false;
+                }
+            }
+
+            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
+
+            float scale = isInGraveyard ? 0.5f : 1f;
+
+            sicknessText.text = ""; // Clear at start
+
+            int genericCost = 0;
+
+            bool isOneColoredMana = (linkedCard.manaCost == 1) &&
+                        linkedCard.color != "Artifact" &&
+                        linkedCard.color != "None";
+
+            if (isOneColoredMana)
+            {
+                costText.text = "";
+                if (genericCostBG != null) genericCostBG.SetActive(false);
+            }
+            else
+            {
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
+            }
+
+            if (linkedCard is CreatureCard creature)
+            {
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    genericCost = creature.manaCost;
+                }
+                else
+                {
+                    genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                }
+                costText.text = genericCost.ToString();
+                statsText.text = $"{creature.power}/{creature.toughness}";
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(true);
+            }
+            else if (linkedCard is SorceryCard sorcery)
+            {
+                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
+                costText.text = genericCost.ToString();
+                statsText.text = "";
+                sicknessText.text = "";
+
+                sorceryEffect(sorcery);
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is ArtifactCard artifact)
+            {
+                genericCost = artifact.manaCost;
+                costText.text = genericCost.ToString();
+                statsText.text = "";
+                keywordText.text = artifact.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is LandCard)
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
+            else
+            {
+                costText.text = "";
+                statsText.text = "";
+                keywordText.text = "";
+
+                costBackground.SetActive(false);
+                statsBackground.SetActive(false);
+            }
+
+            // Set colored mana icon
+            if (coloredManaIcon != null)
+            {
+                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                {
+                    coloredManaIcon.gameObject.SetActive(false); // <-- FULL DEACTIVATION
+                }
+                else
+                {
+                    Sprite icon = null;
+                    switch (linkedCard.color)
+                    {
+                        case "White": icon = whiteManaSymbol; break;
+                        case "Blue":  icon = blueManaSymbol; break;
+                        case "Black": icon = blackManaSymbol; break;
+                        case "Red":   icon = redManaSymbol; break;
+                        case "Green": icon = greenManaSymbol; break;
+                    }
+
+                    coloredManaIcon.sprite = icon;
+                    coloredManaIcon.gameObject.SetActive(icon != null); // <-- Re-activate only if there's an icon
+                }
+            }
         }
-    }
-}
 
     public void OnClick()
         {
