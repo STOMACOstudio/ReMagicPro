@@ -43,9 +43,9 @@ MonoBehaviour:
     width: 1920
     height: 997
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Console
   m_RootView: {fileID: 10}
-  m_MinSize: {x: 875, y: 392}
+  m_MinSize: {x: 875, y: 371}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &3
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 121}
   m_MaxSize: {x: 4000, y: 4021}
   vertical: 0
-  controlID: 81
+  controlID: 117
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -172,10 +172,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 898, y: 342}
-  m_MaxSize: {x: 16003, y: 8042}
+  m_MinSize: {x: 898, y: 321}
+  m_MaxSize: {x: 16003, y: 8021}
   vertical: 0
-  controlID: 158
+  controlID: 52
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -329,10 +329,10 @@ MonoBehaviour:
     y: 0
     width: 1187
     height: 947
-  m_MinSize: {x: 422, y: 342}
-  m_MaxSize: {x: 8002, y: 8042}
+  m_MinSize: {x: 422, y: 321}
+  m_MaxSize: {x: 8002, y: 8021}
   vertical: 1
-  controlID: 159
+  controlID: 53
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -684,7 +684,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 5a480000
     m_LastClickedID: 18522
-    m_ExpandedIDs: 000000005a48000000ca9a3b
+    m_ExpandedIDs: 000000005a480000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

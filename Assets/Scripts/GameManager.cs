@@ -565,6 +565,7 @@ public class GameManager : MonoBehaviour
                     {
                         aiPlayer.Life += attacker.power;
                         Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
+                        ShowFloatingHeal(attacker.power, enemyLifeContainer); // ← ADD THIS
                     }
                 }
             }
@@ -1464,6 +1465,8 @@ public class GameManager : MonoBehaviour
         
         public void ShowFloatingHeal(int amount, GameObject target)
             {
+                Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
+
                 if (floatingDamagePrefab == null)
                 {
                     Debug.LogError("Missing floatingDamagePrefab!");
