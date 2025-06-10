@@ -378,6 +378,7 @@ public class GameManager : MonoBehaviour
     public void SendToGraveyard(Card card, Player owner)
         {
             bool diedFromBattlefield = owner.Battlefield.Contains(card);
+            bool discardedFromHand = owner.Hand.Contains(card);
 
             owner.Battlefield.Remove(card);
             Debug.Log($"{card.cardName} is being sent to the graveyard.");
@@ -1574,4 +1575,37 @@ public class GameManager : MonoBehaviour
                 FindObjectOfType<WinScreenUI>().ShowLoseScreen();
             }
         }
+
+        private IEnumerator ShowDiscardVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
+            {
+                if (visual == null || !owner.Hand.Contains(card))
+                    yield break;
+
+                // Create placeholder to hold layout
+                GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
+                placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
+                placeholder.transform.localScale = visual.transform.localScale;
+                placeholder.transform.localPosition = visual.transform.localPosition + placeholder.transform.localPosition;
+
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+
+                // Optionally: wait for short discard animation
+                yield return new WaitForSeconds(0.75f);
+
+                Destroy(placeholder);
+
+                // Create graveyard visual
+                GameObject visualGO = Instantiate(cardPrefab,
+                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                CardVisual graveyardVisual = visualGO.GetComponent<CardVisual>();
+                graveyardVisual.Setup(card, this);
+                graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                graveyardVisual.transform.localPosition = Vector3.zero;
+                graveyardVisual.UpdateGraveyardVisual();
+
+                activeCardVisuals.Add(graveyardVisual);
+
+                owner.Graveyard.Add(card);
+            }
 }
