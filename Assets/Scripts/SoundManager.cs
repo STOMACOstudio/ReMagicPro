@@ -17,6 +17,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip plague;
     public AudioClip dealDamage;
     public AudioClip drink;
+    public AudioClip miner;
     public AudioClip gain_life;
 
     private AudioSource audioSource;

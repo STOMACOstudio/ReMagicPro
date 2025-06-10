@@ -755,6 +755,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         Card token = CardFactory.Create(tokenName);
                         if (token != null)
                         {
+                            if (tokenName == "Autonomous Miner")
+                            {
+                                SoundManager.Instance.PlaySound(SoundManager.Instance.miner);
+                            }
                             GameManager.Instance.SummonToken(token, player);
                             Debug.Log($"{linkedCard.cardName} created a {tokenName} token.");
                         }

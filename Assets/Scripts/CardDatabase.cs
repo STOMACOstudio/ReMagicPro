@@ -1385,32 +1385,14 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     manaToPayToActivate = 3,
+                    entersTapped = true,
                     subtypes = new List<string> { "Golem" },
-                    tokenToCreate = "Miner",
+                    tokenToCreate = "Autonomous Miner",
                     activatedAbilities = new List<ActivatedAbility> {
                         ActivatedAbility.TapToCreateToken
                     },
                     artwork = Resources.Load<Sprite>("Art/autonomous_miner")
                     });
-                Add(new CardData //Miner token
-                    {
-                    cardName = "Miner",
-                    rarity = "Token",
-                    manaCost = 0,
-                    color = "Artifact",
-                    isToken = true,
-                    entersTapped = true,
-                    cardType = CardType.Creature,
-                    power = 1,
-                    toughness = 1,
-                    subtypes = new List<string> { "Golem" },
-                    manaToPayToActivate = 3,
-                    tokenToCreate = "Miner",
-                    activatedAbilities = new List<ActivatedAbility> {
-                        ActivatedAbility.TapToCreateToken
-                    },
-                    artwork = Resources.Load<Sprite>("Art/autonomous_miner")
-                });
 
         // Sorceries
             //WHITE
