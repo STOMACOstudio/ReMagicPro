@@ -789,22 +789,27 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
             // TAP-TO-PLAGUE ability during Main Phase
-                if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlague) &&
+            if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlague) &&
                 !linkedCard.isTapped &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
                 TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                 (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
-                {
-                    linkedCard.isTapped = true;
-                    GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
-                    GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
-                    GameManager.Instance.UpdateUI();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-                    GameManager.Instance.ShowBloodSplatVFX(linkedCard);
-                    UpdateVisual();
-                    GameManager.Instance.CheckForGameEnd();
-                    return;
-                }
+            {
+                linkedCard.isTapped = true;
+
+                GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
+                GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
+
+                GameManager.Instance.ShowFloatingDamage(linkedCard.plagueAmount, GameManager.Instance.playerLifeContainer);
+                GameManager.Instance.ShowFloatingDamage(linkedCard.plagueAmount, GameManager.Instance.enemyLifeContainer);
+
+                GameManager.Instance.UpdateUI();
+                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                GameManager.Instance.ShowBloodSplatVFX(linkedCard);
+                UpdateVisual();
+                GameManager.Instance.CheckForGameEnd();
+                return;
+            }
             
             // TAP-AND-SACRIFICE-FOR-MANA or SACRIFICE-FOR-MANA during Main Phase
                 if (linkedCard.activatedAbilities != null &&
