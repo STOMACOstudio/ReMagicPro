@@ -23,14 +23,14 @@ public class Player
         public int Colorless = 0;
 
         public void Clear()
-        {
-            White = Blue = Black = Red = Green = Colorless = 0;
-        }
+            {
+                White = Blue = Black = Red = Green = Colorless = 0;
+            }
 
         public int Total()
-        {
-            return White + Blue + Black + Red + Green + Colorless;
-        }
+            {
+                return White + Blue + Black + Red + Green + Colorless;
+            }
 
         public bool CanPay(Dictionary<string, int> cost)
             {
@@ -98,7 +98,7 @@ public class Player
                 SpendGeneric(genericToSpend);
             }
 
-            private void SpendGeneric(int amount)
+        private void SpendGeneric(int amount)
             {
                 int remaining = amount;
 
@@ -115,51 +115,50 @@ public class Player
                     Debug.LogWarning("Tried to spend more generic mana than available. This should not happen if CanPay() was used.");
                 }
             }
-
-    }
+        }
 
     public void PlayCard(Card card)
-    {
-        if (!Hand.Contains(card)) return;
-
-        Hand.Remove(card);
-
-        if (card.entersTapped)
         {
-            card.isTapped = true;
-            Debug.Log($"{card.cardName} enters the battlefield tapped.");
+            if (!Hand.Contains(card)) return;
+
+            Hand.Remove(card);
+
+            if (card.entersTapped)
+            {
+                card.isTapped = true;
+                Debug.Log($"{card.cardName} enters the battlefield tapped.");
+            }
+            Battlefield.Add(card);
+            Debug.Log($"{card.cardName} is entering the battlefield.");
+            card.OnEnterPlay(this);
         }
-        Battlefield.Add(card);
-        Debug.Log($"{card.cardName} is entering the battlefield.");
-        card.OnEnterPlay(this);
-    }
 
     public void SendToGraveyard(Card card)
-    {
-        Battlefield.Remove(card);
-        Debug.Log($"{card.cardName} is being sent to the graveyard.");
-        card.OnLeavePlay(this);
-        Graveyard.Add(card);
-    }
-    public void DiscardRandomCard(int count = 1)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            if (Hand.Count == 0)
             {
-                Debug.Log("Player has no cards left to discard.");
-                return;
+                Battlefield.Remove(card);
+                Debug.Log($"{card.cardName} is being sent to the graveyard.");
+                card.OnLeavePlay(this);
+                Graveyard.Add(card);
+            }
+            
+    public void DiscardRandomCard(int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (Hand.Count == 0)
+                {
+                    Debug.Log("Player has no cards left to discard.");
+                    return;
+                }
+
+                int index = Random.Range(0, Hand.Count);
+                Card discarded = Hand[index];
+
+                Debug.Log($"{discarded.cardName} was randomly discarded.");
+                GameManager.Instance.SendToGraveyard(discarded, this);
             }
 
-            int index = Random.Range(0, Hand.Count);
-            Card discarded = Hand[index];
-            Hand.RemoveAt(index);
-
-            Debug.Log($"{discarded.cardName} was randomly discarded.");
-            GameManager.Instance.SendToGraveyard(discarded, this);
+            if (GameManager.Instance.enemyHandText != null && this == GameManager.Instance.aiPlayer)
+                GameManager.Instance.enemyHandText.text = "Hand: " + Hand.Count;
         }
-
-        if (GameManager.Instance.enemyHandText != null && this == GameManager.Instance.aiPlayer)
-            GameManager.Instance.enemyHandText.text = "Hand: " + Hand.Count;
-    }
 }

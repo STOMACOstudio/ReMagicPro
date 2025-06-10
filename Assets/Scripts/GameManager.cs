@@ -381,6 +381,7 @@ public class GameManager : MonoBehaviour
             bool discardedFromHand = owner.Hand.Contains(card);
 
             owner.Battlefield.Remove(card);
+            owner.Hand.Remove(card);
             Debug.Log($"{card.cardName} is being sent to the graveyard.");
 
             if (diedFromBattlefield)
@@ -390,11 +391,16 @@ public class GameManager : MonoBehaviour
 
             card.isTapped = false;
 
-            CardVisual visual = FindCardVisual(card);
+            CardVisual visual = FindCardVisual(card); // <-- Moved up
             if (visual != null && visual.tapIcon != null)
                 visual.tapIcon.SetActive(false);
 
-            // Reset summoning sickness and toughness
+            if (discardedFromHand && visual != null)
+            {
+                StartCoroutine(ShowHandDiscardVFX(card, owner, visual));
+                return;
+            }
+
             if (card is CreatureCard deadCreature)
             {
                 deadCreature.hasSummoningSickness = false;
@@ -405,7 +411,6 @@ public class GameManager : MonoBehaviour
                     visual.sicknessText.text = "";
                 }
 
-                // Handle token destruction
                 if (card.isToken && diedFromBattlefield)
                 {
                     if (visual != null)
@@ -415,7 +420,6 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
-                // If not a token, still show death VFX only if it died from battlefield
                 if (diedFromBattlefield && visual != null)
                 {
                     StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
@@ -423,7 +427,7 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            // Find or create visual for graveyard
+            // Fallback: create graveyard visual normally
             CardVisual graveyardVisual = FindCardVisual(card);
             if (graveyardVisual == null)
             {
@@ -434,7 +438,6 @@ public class GameManager : MonoBehaviour
                 activeCardVisuals.Add(graveyardVisual);
             }
 
-            // Move and update
             graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
             graveyardVisual.transform.localPosition = Vector3.zero;
             graveyardVisual.UpdateGraveyardVisual();
@@ -1551,6 +1554,44 @@ public class GameManager : MonoBehaviour
                 owner.Graveyard.Add(card);
             }
 
+        private IEnumerator ShowHandDiscardVFX(Card card, Player owner, CardVisual visual)
+            {
+                // 1. Create placeholder
+                Transform parent = visual.transform.parent;
+                GameObject placeholder = Instantiate(deathPlaceholderPrefab, parent);
+                placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
+                placeholder.transform.localScale = visual.transform.localScale;
+                placeholder.transform.localPosition = visual.transform.localPosition;
+
+                // 2. Remove the visual (like battlefield death)
+                GameManager.Instance.activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+
+                // 3. Wait for VFX duration (even shorter than battlefield)
+                yield return new WaitForSeconds(0.5f);
+
+                // 4. Destroy placeholder to allow layout rebuild
+                Destroy(placeholder);
+
+                // 5. Create graveyard visual
+                if (!card.isToken)
+                {
+                    GameObject visualGO = Instantiate(GameManager.Instance.cardPrefab,
+                        owner == GameManager.Instance.humanPlayer
+                            ? GameManager.Instance.playerGraveyardArea
+                            : GameManager.Instance.aiGraveyardArea);
+                    CardVisual graveyardVisual = visualGO.GetComponent<CardVisual>();
+                    graveyardVisual.Setup(card, GameManager.Instance);
+                    graveyardVisual.transform.localPosition = Vector3.zero;
+                    graveyardVisual.UpdateGraveyardVisual();
+
+                    GameManager.Instance.activeCardVisuals.Add(graveyardVisual);
+                }
+
+                // 6. Move to graveyard data list
+                owner.Graveyard.Add(card);
+            }
+
         public void GainLife(Player player, int amount)
         {
             player.Life += amount;
@@ -1575,37 +1616,4 @@ public class GameManager : MonoBehaviour
                 FindObjectOfType<WinScreenUI>().ShowLoseScreen();
             }
         }
-
-        private IEnumerator ShowDiscardVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
-            {
-                if (visual == null || !owner.Hand.Contains(card))
-                    yield break;
-
-                // Create placeholder to hold layout
-                GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
-                placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
-                placeholder.transform.localScale = visual.transform.localScale;
-                placeholder.transform.localPosition = visual.transform.localPosition + placeholder.transform.localPosition;
-
-                activeCardVisuals.Remove(visual);
-                Destroy(visual.gameObject);
-
-                // Optionally: wait for short discard animation
-                yield return new WaitForSeconds(0.75f);
-
-                Destroy(placeholder);
-
-                // Create graveyard visual
-                GameObject visualGO = Instantiate(cardPrefab,
-                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                CardVisual graveyardVisual = visualGO.GetComponent<CardVisual>();
-                graveyardVisual.Setup(card, this);
-                graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                graveyardVisual.transform.localPosition = Vector3.zero;
-                graveyardVisual.UpdateGraveyardVisual();
-
-                activeCardVisuals.Add(graveyardVisual);
-
-                owner.Graveyard.Add(card);
-            }
 }

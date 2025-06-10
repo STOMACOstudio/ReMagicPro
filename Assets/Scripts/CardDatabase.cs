@@ -470,8 +470,7 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
             //BLACK
-            Add(new CardData //Hired assassin
-                {
+                Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
                     rarity = "Uncommon",
                     manaCost = 6,

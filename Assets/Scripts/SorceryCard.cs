@@ -121,7 +121,6 @@ public class SorceryCard : Card
                         if (opponent.Hand.Count > 0)
                         {
                             Card toDiscard = opponent.Hand[Random.Range(0, opponent.Hand.Count)];
-                            opponent.Hand.Remove(toDiscard);
                             GameManager.Instance.SendToGraveyard(toDiscard, opponent);
                             Debug.Log($"{opponent} discarded {toDiscard.cardName}");
                             opponentDiscarded = true;
