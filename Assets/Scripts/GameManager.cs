@@ -376,73 +376,70 @@ public class GameManager : MonoBehaviour
         }
 
     public void SendToGraveyard(Card card, Player owner)
-    {
-        bool diedFromBattlefield = owner.Battlefield.Contains(card);
-
-        owner.Battlefield.Remove(card);
-        Debug.Log($"{card.cardName} is being sent to the graveyard.");
-
-        if (diedFromBattlefield)
         {
-            card.OnLeavePlay(owner);
-        }
+            bool diedFromBattlefield = owner.Battlefield.Contains(card);
 
-        card.isTapped = false;
+            owner.Battlefield.Remove(card);
+            Debug.Log($"{card.cardName} is being sent to the graveyard.");
 
-        CardVisual visual = FindCardVisual(card);
-        if (visual != null && visual.tapIcon != null)
-            visual.tapIcon.SetActive(false);
-
-        // Reset summoning sickness and toughness
-        if (card is CreatureCard deadCreature)
-        {
-            deadCreature.hasSummoningSickness = false;
-            deadCreature.toughness = deadCreature.baseToughness;
-
-            if (visual != null)
+            if (diedFromBattlefield)
             {
-                visual.sicknessText.text = "";
+                card.OnLeavePlay(owner);
             }
-        }
 
-        // Handle token destruction
-        if (card is CreatureCard creature && card.isToken)
-        {
-            if (visual != null)
+            card.isTapped = false;
+
+            CardVisual visual = FindCardVisual(card);
+            if (visual != null && visual.tapIcon != null)
+                visual.tapIcon.SetActive(false);
+
+            // Reset summoning sickness and toughness
+            if (card is CreatureCard deadCreature)
             {
-                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
-            }
-            return;
-        }
+                deadCreature.hasSummoningSickness = false;
+                deadCreature.toughness = deadCreature.baseToughness;
 
-        // If creature, trigger death VFX and delay layout collapse
-        if (card is CreatureCard)
-        {
-            if (visual != null)
+                if (visual != null)
+                {
+                    visual.sicknessText.text = "";
+                }
+
+                // Handle token destruction
+                if (card.isToken && diedFromBattlefield)
+                {
+                    if (visual != null)
+                    {
+                        StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
+                    }
+                    return;
+                }
+
+                // If not a token, still show death VFX only if it died from battlefield
+                if (diedFromBattlefield && visual != null)
+                {
+                    StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
+                    return;
+                }
+            }
+
+            // Find or create visual for graveyard
+            CardVisual graveyardVisual = FindCardVisual(card);
+            if (graveyardVisual == null)
             {
-                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
-                return;
+                GameObject visualGO = Instantiate(cardPrefab,
+                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                graveyardVisual = visualGO.GetComponent<CardVisual>();
+                graveyardVisual.Setup(card, this);
+                activeCardVisuals.Add(graveyardVisual);
             }
+
+            // Move and update
+            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            graveyardVisual.transform.localPosition = Vector3.zero;
+            graveyardVisual.UpdateGraveyardVisual();
+
+            owner.Graveyard.Add(card);
         }
-
-        // Find or create visual for graveyard
-        CardVisual graveyardVisual = FindCardVisual(card);
-        if (graveyardVisual == null)
-        {
-            GameObject visualGO = Instantiate(cardPrefab,
-                owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-            graveyardVisual = visualGO.GetComponent<CardVisual>();
-            graveyardVisual.Setup(card, this);
-            activeCardVisuals.Add(graveyardVisual);
-        }
-
-        // Move and update
-        graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-        graveyardVisual.transform.localPosition = Vector3.zero;
-        graveyardVisual.UpdateGraveyardVisual(); // dedicated method that sets up the correct display
-
-        owner.Graveyard.Add(card);
-    }
 
     public (int playerDamage, int aiDamage) ResolveCombat()
     {
@@ -1518,6 +1515,7 @@ public class GameManager : MonoBehaviour
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
             {
+
                 // 1. Create a placeholder object in the same layout slot
                 GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
                 placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
