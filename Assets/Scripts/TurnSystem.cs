@@ -42,6 +42,8 @@ public class TurnSystem : MonoBehaviour
     public Button nextPhaseButton;
     public Button confirmAttackersButton;
     public Button confirmBlockersButton;
+    public Button attackAllButton;
+    public Button clearAttackersButton;
 
     public TurnPhase lastPhaseBeforeStack;
     public bool waitingToResumeAI = false;
@@ -55,39 +57,56 @@ public class TurnSystem : MonoBehaviour
             nextPhaseButton.onClick.AddListener(NextPhaseButton);
             confirmAttackersButton.onClick.AddListener(ConfirmAttackers);
             confirmBlockersButton.onClick.AddListener(ConfirmBlockers);
+            attackAllButton.onClick.AddListener(SelectAllEligibleAttackers);
+            clearAttackersButton.onClick.AddListener(ClearAllSelectedAttackers);
 
             confirmAttackersButton.gameObject.SetActive(false);
             confirmBlockersButton.gameObject.SetActive(false);
+            attackAllButton.gameObject.SetActive(false);
+            clearAttackersButton.gameObject.SetActive(false);
 
             BeginTurn(PlayerType.Human);
         }
 
     void Update()
+        {
+            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
             {
-                if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
+                RunCurrentPhase();
+            }
+
+            if (nextPhaseButton != null)
+            {
+                bool allowNext = currentPlayer == PlayerType.Human &&
+                                waitingForPlayerInput &&
+                                !GameManager.Instance.isStackBusy &&
+                                currentPhase != TurnPhase.ConfirmAttackers &&
+                                currentPhase != TurnPhase.ConfirmBlockers &&
+                                currentPhase != TurnPhase.ChooseAttackers;
+
+                nextPhaseButton.interactable = allowNext;
+
+                TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
+                if (label != null)
                 {
-                    RunCurrentPhase(); // this alone is enough
-                }
-
-                // Update next phase button dynamically
-                if (nextPhaseButton != null)
-                {
-                    bool allowNext = currentPlayer == PlayerType.Human &&
-                                    waitingForPlayerInput &&
-                                    !GameManager.Instance.isStackBusy &&
-                                    currentPhase != TurnPhase.ConfirmAttackers &&
-                                    currentPhase != TurnPhase.ConfirmBlockers &&
-                                    currentPhase != TurnPhase.ChooseAttackers;
-
-                    nextPhaseButton.interactable = allowNext;
-
-                    TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
-                    if (label != null)
-                    {
-                        label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
-                    }
+                    label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
                 }
             }
+
+            // Handle spacebar shortcut
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (currentPlayer == PlayerType.Human &&
+                    waitingForPlayerInput &&
+                    !GameManager.Instance.isStackBusy &&
+                    currentPhase != TurnPhase.ConfirmAttackers &&
+                    currentPhase != TurnPhase.ConfirmBlockers &&
+                    currentPhase != TurnPhase.ChooseAttackers)
+                {
+                    NextPhaseButton();
+                }
+            }
+        }
 
     public void NextPhaseButton()
         {
@@ -119,6 +138,8 @@ public class TurnSystem : MonoBehaviour
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
                 confirmAttackersButton.gameObject.SetActive(false);
+                attackAllButton.gameObject.SetActive(false);
+                clearAttackersButton.gameObject.SetActive(false);
 
                 // Use only manually selected attackers
                 GameManager.Instance.currentAttackers.Clear();
@@ -150,6 +171,8 @@ public class TurnSystem : MonoBehaviour
         {
             confirmAttackersButton.gameObject.SetActive(false);
             confirmBlockersButton.gameObject.SetActive(false);
+            attackAllButton.gameObject.SetActive(false);
+            clearAttackersButton.gameObject.SetActive(false);
         }
 
     public void BeginTurn(PlayerType player)
@@ -805,6 +828,8 @@ public class TurnSystem : MonoBehaviour
                     if (currentPlayer == PlayerType.Human)
                     {
                         Debug.Log("→ Choose attackers.");
+                        attackAllButton.gameObject.SetActive(true);
+                        clearAttackersButton.gameObject.SetActive(true);
                         waitingForPlayerInput = true;
                         confirmAttackersButton.gameObject.SetActive(true);
                     }
@@ -1091,5 +1116,64 @@ public class TurnSystem : MonoBehaviour
                 AdvancePhase();
 
                 damageCoroutine = null;
+            }
+        
+        public void SelectAllEligibleAttackers()
+            {
+                GameManager.Instance.selectedAttackers.Clear();
+                bool anyDeclared = false;
+
+                foreach (var card in GameManager.Instance.humanPlayer.Battlefield)
+                {
+                    if (card is CreatureCard creature &&
+                        !creature.isTapped &&
+                        (!creature.hasSummoningSickness || creature.keywordAbilities.Contains(KeywordAbility.Haste)) &&
+                        !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                    {
+                        GameManager.Instance.selectedAttackers.Add(creature);
+                        anyDeclared = true;
+
+                        // Tap the creature unless it has Vigilance
+                        if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                            creature.isTapped = true;
+
+                        var visual = GameManager.Instance.FindCardVisual(creature);
+                        if (visual != null)
+                        {
+                            if (visual.swordIcon != null)
+                                visual.swordIcon.SetActive(true);
+                            visual.UpdateVisual();
+                        }
+                    }
+                }
+
+                if (anyDeclared)
+                {
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack); // Or use .attack if that's your clip name
+                }
+            }
+
+        public void ClearAllSelectedAttackers()
+            {
+                foreach (var creature in GameManager.Instance.selectedAttackers)
+                {
+                    creature.isTapped = false;
+                }
+
+                // Now clear the list BEFORE updating visuals
+                var toClear = GameManager.Instance.selectedAttackers.ToList();
+                GameManager.Instance.selectedAttackers.Clear();
+
+                foreach (var creature in toClear)
+                {
+                    var visual = GameManager.Instance.FindCardVisual(creature);
+                    if (visual != null)
+                    {
+                        if (visual.swordIcon != null)
+                            visual.swordIcon.SetActive(false);
+
+                        visual.UpdateVisual();
+                    }
+                }
             }
 }
