@@ -45,6 +45,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject tapIcon;
     public GameObject genericCostBG;
     public GameObject landIcon;
+    public GameObject highlightBorder;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -1517,11 +1518,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void EnableTargetingHighlight(bool enable)
             {
-                // Simplest version: tint the card green
-                if (backgroundImage != null)
-                {
-                    backgroundImage.color = enable ? Color.green : Color.white;
-                }
+                if (highlightBorder != null)
+                    highlightBorder.SetActive(enable);
             }
 
         private int SpendFromPool(ref int pool, int needed)

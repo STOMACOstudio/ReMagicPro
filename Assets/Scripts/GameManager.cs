@@ -375,10 +375,38 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public void SendToGraveyard(Card card, Player owner)
+    public void SendToGraveyard(Card card, Player owner, bool fromStack = false)
         {
             bool diedFromBattlefield = owner.Battlefield.Contains(card);
             bool discardedFromHand = owner.Hand.Contains(card);
+
+            if (fromStack)
+            {
+                Debug.Log($"{card.cardName} is going to the graveyard from the stack — skipping VFX.");
+
+                CardVisual stackVisual = FindCardVisual(card);
+                if (stackVisual != null)
+                {
+                    activeCardVisuals.Remove(stackVisual);
+                    Destroy(stackVisual.gameObject);
+                }
+
+                if (!card.isToken)
+                {
+                    GameObject visualGO = Instantiate(cardPrefab,
+                        owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                    CardVisual stackGraveyardVisual = visualGO.GetComponent<CardVisual>();
+                    stackGraveyardVisual.Setup(card, this);
+                    stackGraveyardVisual.transform.localPosition = Vector3.zero;
+                    stackGraveyardVisual.UpdateGraveyardVisual();
+
+                    activeCardVisuals.Add(stackGraveyardVisual);
+                }
+
+                owner.Graveyard.Add(card);
+                return;
+            }
+
 
             owner.Battlefield.Remove(card);
             owner.Hand.Remove(card);
@@ -695,7 +723,7 @@ public class GameManager : MonoBehaviour
                 sorcery.ResolveEffect(caster);
             }
 
-            SendToGraveyard(sorcery, caster);
+            SendToGraveyard(sorcery, caster, fromStack: true);
 
             if (caster == aiPlayer && visual != null)
             {
@@ -1019,6 +1047,10 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
+            // Highlight the selected card
+            if (visual != null)
+                visual.EnableTargetingHighlight(true);
+
             // Check if any valid targets exist (but do not highlight anything)
             foreach (var cv in activeCardVisuals)
             {
@@ -1055,7 +1087,7 @@ public class GameManager : MonoBehaviour
 
         sorcery.ResolveEffect(caster, target);   // run effect on the target
         sorcery.ResolveEffect(caster);          // ALSO run general effect (life loss, tokens, etc.)
-        SendToGraveyard(sorcery, caster);
+        SendToGraveyard(sorcery, caster, fromStack: true);
 
         if (caster == aiPlayer && visual != null)
         {
@@ -1194,6 +1226,9 @@ public class GameManager : MonoBehaviour
                 targetingVisual.transform.localPosition = Vector3.zero;
                 SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
+                if (targetingVisual != null)
+                    targetingVisual.EnableTargetingHighlight(false);
+
                 StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual));
 
                 targetingSorcery = null;
@@ -1204,19 +1239,23 @@ public class GameManager : MonoBehaviour
         }
 
     public void CancelTargeting()
-    {
-        foreach (var cv in activeCardVisuals)
-            cv.EnableTargetingHighlight(false);
+        {
+            foreach (var cv in activeCardVisuals)
+                cv.EnableTargetingHighlight(false); // turn off all
 
-        targetingArtifact = null;
-        targetingSorcery = null;
-        targetingPlayer = null;
-        targetingVisual = null;
-        isTargetingMode = false;
-        isStackBusy = false;
+            targetingArtifact = null;
+            targetingSorcery = null;
+            targetingPlayer = null;
 
-        UpdateUI();
-    }
+            if (targetingVisual != null)
+                targetingVisual.EnableTargetingHighlight(false); // turn off highlight
+
+            targetingVisual = null;
+            isTargetingMode = false;
+            isStackBusy = false;
+
+            UpdateUI();
+        }
 
     public void CompletePlayerTargetSelection(Player targetPlayer)
         {
@@ -1231,6 +1270,9 @@ public class GameManager : MonoBehaviour
                 UpdateUI();
                 return;
             }
+
+            if (targetingVisual != null)
+                targetingVisual.EnableTargetingHighlight(false);
 
             // Move visual to stack
             targetingVisual.transform.SetParent(stackZone, false);
@@ -1270,7 +1312,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
 
             sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
-            SendToGraveyard(sorcery, caster);
+            SendToGraveyard(sorcery, caster, fromStack: true);
 
             if (caster == aiPlayer && visual != null)
             {
