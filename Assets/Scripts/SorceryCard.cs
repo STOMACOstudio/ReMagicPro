@@ -179,7 +179,7 @@ public class SorceryCard : Card
                                     if (card is CreatureCard)
                                     {
                                         var data = CardDatabase.GetCardData(card.cardName);
-                                        if (data != null && data.color == "Artifact")
+                                        if (data != null && data.color.Contains("Artifact"))
                                             return true;
                                     }
                                 }
@@ -246,9 +246,9 @@ public class SorceryCard : Card
                         // Damage to each creature
                         foreach (var creature in player.Battlefield.OfType<CreatureCard>())
                         {
-                            KeywordAbility protectionKeyword = GetProtectionKeyword(this.color);
+                            KeywordAbility protection = GetProtectionKeyword(this.PrimaryColor);
 
-                            if (creature.keywordAbilities.Contains(protectionKeyword))
+                            if (creature.keywordAbilities.Contains(protection))
                             {
                                 continue;
                             }
@@ -269,11 +269,10 @@ public class SorceryCard : Card
             {
                 if (target != null)
                 {
-                    Debug.Log($"{cardName} is resolving on target {target.cardName}.");
 
                     if (damageToTarget > 0 && target is CreatureCard creature)
                     {
-                        KeywordAbility protection = GetProtectionKeyword(color);
+                        KeywordAbility protection = GetProtectionKeyword(PrimaryColor);
                         if (creature.keywordAbilities.Contains(protection))
                         {
                             Debug.Log($"{creature.cardName} is protected from {color}, takes no damage.");
@@ -302,7 +301,7 @@ public class SorceryCard : Card
                         if (!string.IsNullOrEmpty(requiredTargetColor))
                         {
                             CardData data = CardDatabase.GetCardData(target.cardName);
-                            colorMatches = data != null && data.color == requiredTargetColor;
+                            colorMatches = data != null && data.color.Contains(requiredTargetColor);
                         }
 
                         if (typeMatches && colorMatches)

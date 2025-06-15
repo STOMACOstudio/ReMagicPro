@@ -5,11 +5,13 @@ using UnityEngine;
 public class CardData
 {
     public string cardName;
-    public string rarity; // e.g. "Common", "Uncommon", "Rare"
-    public string color;
+    public string rarity;
     public int manaCost;
     public CardType cardType;
     public Sprite artwork;
+
+    public List<string> color = new List<string>();
+    public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 
     // Only used for creatures
     public string tokenToCreate;

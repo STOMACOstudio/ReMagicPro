@@ -164,147 +164,147 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayCard(Player player, CardVisual visual)
-    {
-        if (isStackBusy)
         {
-            Debug.Log("A spell is already on the stack. Please wait.");
-            return;
-        }
-
-        Card card = visual.linkedCard;
-
-        if (card is LandCard)
-        {
-            if (player.hasPlayedLandThisTurn)
+            if (isStackBusy)
             {
-                Debug.Log("You already played a land this turn!");
+                Debug.Log("A spell is already on the stack. Please wait.");
                 return;
             }
 
-            player.Battlefield.Add(card);
-            player.Hand.Remove(card);
-            player.hasPlayedLandThisTurn = true;
+            Card card = visual.linkedCard;
 
-            if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+            if (card is LandCard)
             {
-                card.isTapped = true;
-                Debug.Log($"{card.cardName} enters tapped (static effect or base).");
-            }
+                if (player.hasPlayedLandThisTurn)
+                {
+                    Debug.Log("You already played a land this turn!");
+                    return;
+                }
 
-            card.OnEnterPlay(player);
-
-            visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
-            visual.isInBattlefield = true;
-            visual.UpdateVisual();
-            visual.UpdateVisual();
-            SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-        }
-
-        else if (card is CreatureCard creature)
-        {
-            var cost = GetManaCostBreakdown(creature.manaCost, creature.color);
-            if (player.ColoredMana.CanPay(cost))
-            {
-                player.ColoredMana.Pay(cost);
-                card.owner = player;
-                if (player == humanPlayer) UpdateUI();
-                player.Hand.Remove(card);
                 player.Battlefield.Add(card);
+                player.Hand.Remove(card);
+                player.hasPlayedLandThisTurn = true;
 
-                card.OnEnterPlay(player);
-
-                if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                    creature.hasSummoningSickness = false;
-                else
-                    creature.hasSummoningSickness = true;
-
-                if (card.entersTapped || IsAllPermanentsEnterTappedActive())
+                if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                 {
                     card.isTapped = true;
-                    Debug.Log($"{card.cardName} enters tapped (due to static effect).");
+                    Debug.Log($"{card.cardName} enters tapped (static effect or base).");
                 }
 
-                visual.transform.SetParent(player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea, false);
-                visual.isInBattlefield = true;
-                visual.UpdateVisual();
-                SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
-            }
-            else
-            {
-                Debug.Log("Not enough colored mana to cast this creature.");
-            }
-        }
-
-        else if (card is SorceryCard sorcery)
-        {
-            if (sorcery.requiresTarget)
-            {
-                Debug.Log("This sorcery requires a target — entering targeting mode.");
-                BeginTargetSelection(sorcery, player, visual);
-                return;
-            }
-
-            var cost = GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
-            if (player.ColoredMana.CanPay(cost))
-            {
-                isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
-                player.ColoredMana.Pay(cost);
-                card.owner = player;
-                player.Hand.Remove(card);
-                UpdateUI();
-
-                // Move visual to the stack zone
-                visual.transform.SetParent(stackZone, false);
-                visual.transform.localPosition = Vector3.zero;
-                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-                StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
-            }
-            else
-            {
-                Debug.Log("Not enough colored mana to cast this sorcery.");
-            }
-        }
-        else if (card is ArtifactCard artifact)
-        {
-            var cost = GetManaCostBreakdown(artifact.manaCost, artifact.color);
-            if (player.ColoredMana.CanPay(cost))
-            {
-                player.ColoredMana.Pay(cost);
-                card.owner = player;
-                if (player == humanPlayer) UpdateUI();
-
-                player.Hand.Remove(card);
-                player.Battlefield.Add(card);
                 card.OnEnterPlay(player);
 
-                if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                {
-                    artifact.isTapped = true;
-                    Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
-                }
-
-                // Move to battlefield area visually
-                Transform visualParent = player == humanPlayer
-                    ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
-                    : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
-
-                visual.transform.SetParent(visualParent, false);
-
+                visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
-                SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+                visual.UpdateVisual();
+                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+            }
+
+            else if (card is CreatureCard creature)
+            {
+                var cost = GetManaCostBreakdown(card.manaCost, card.color);
+                if (player.ColoredMana.CanPay(cost))
+                {
+                    player.ColoredMana.Pay(cost);
+                    card.owner = player;
+                    if (player == humanPlayer) UpdateUI();
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
+
+                    card.OnEnterPlay(player);
+
+                    if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                        creature.hasSummoningSickness = false;
+                    else
+                        creature.hasSummoningSickness = true;
+
+                    if (card.entersTapped || IsAllPermanentsEnterTappedActive())
+                    {
+                        card.isTapped = true;
+                        Debug.Log($"{card.cardName} enters tapped (due to static effect).");
+                    }
+
+                    visual.transform.SetParent(player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea, false);
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
+                }
+                else
+                {
+                    Debug.Log("Not enough colored mana to cast this creature.");
+                }
+            }
+
+            else if (card is SorceryCard sorcery)
+            {
+                if (sorcery.requiresTarget)
+                {
+                    Debug.Log("This sorcery requires a target — entering targeting mode.");
+                    BeginTargetSelection(sorcery, player, visual);
+                    return;
+                }
+
+                var cost = GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
+                if (player.ColoredMana.CanPay(cost))
+                {
+                    isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
+                    player.ColoredMana.Pay(cost);
+                    card.owner = player;
+                    player.Hand.Remove(card);
+                    UpdateUI();
+
+                    // Move visual to the stack zone
+                    visual.transform.SetParent(stackZone, false);
+                    visual.transform.localPosition = Vector3.zero;
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+                    StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
+                }
+                else
+                {
+                    Debug.Log("Not enough colored mana to cast this sorcery.");
+                }
+            }
+            else if (card is ArtifactCard artifact)
+            {
+                var cost = GetManaCostBreakdown(artifact.manaCost, artifact.color);
+                if (player.ColoredMana.CanPay(cost))
+                {
+                    player.ColoredMana.Pay(cost);
+                    card.owner = player;
+                    if (player == humanPlayer) UpdateUI();
+
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
+                    card.OnEnterPlay(player);
+
+                    if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                    {
+                        artifact.isTapped = true;
+                        Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+                    }
+
+                    // Move to battlefield area visually
+                    Transform visualParent = player == humanPlayer
+                        ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
+                        : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
+
+                    visual.transform.SetParent(visualParent, false);
+
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+                }
+                else
+                {
+                    Debug.Log("Not enough colored mana to play this artifact.");
+                }
             }
             else
             {
-                Debug.Log("Not enough colored mana to play this artifact.");
+                Debug.LogWarning("Unhandled card type played: " + card.cardName);
             }
         }
-        else
-        {
-            Debug.LogWarning("Unhandled card type played: " + card.cardName);
-        }
-    }
 
     public void TapLandForMana(LandCard land, Player player)
         {
@@ -313,7 +313,8 @@ public class GameManager : MonoBehaviour
 
             land.isTapped = true;
 
-            string color = CardDatabase.GetCardData(land.cardName).color;
+            var colors = CardDatabase.GetCardData(land.cardName).color;
+            string color = (colors != null && colors.Count > 0) ? colors[0] : "Colorless";
 
             switch (color)
             {
@@ -362,7 +363,9 @@ public class GameManager : MonoBehaviour
                 return null;
             }
 
-            switch (data.color)
+            string primaryColor = (data.color != null && data.color.Count > 0) ? data.color[0] : "None";
+
+            switch (primaryColor)
             {
                 case "Blue": return blueIcon;
                 case "White": return whiteIcon;
@@ -518,8 +521,8 @@ public class GameManager : MonoBehaviour
                 }
 
                 // Blocker and attacker deal damage to each other
-                bool attackerProtected = attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color));
-                bool blockerProtected = blocker.keywordAbilities.Contains(GetProtectionKeyword(attacker.color));
+                bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
 
                 int damageFromAttacker = attacker.power;
                 int damageFromBlocker = blocker.power;
@@ -1071,7 +1074,7 @@ public class GameManager : MonoBehaviour
                 if (!string.IsNullOrEmpty(sorcery.requiredTargetColor))
                 {
                     CardData data = CardDatabase.GetCardData(target.cardName);
-                    colorMatches = data != null && data.color == sorcery.requiredTargetColor;
+                    colorMatches = data != null && data.color.Contains(targetingSorcery.requiredTargetColor);
                 }
 
                 if (correctType && isOnBattlefield && colorMatches && !IsProtectedFromSpell(target))
@@ -1196,7 +1199,7 @@ public class GameManager : MonoBehaviour
                 if (!string.IsNullOrEmpty(targetingSorcery.requiredTargetColor))
                 {
                     CardData data = CardDatabase.GetCardData(chosen.cardName);
-                    colorMatches = data != null && data.color == targetingSorcery.requiredTargetColor;
+                    colorMatches = data != null && data.color.Contains(targetingSorcery.requiredTargetColor);
                 }
 
                 if (!correctType || !colorMatches)
@@ -1300,7 +1303,7 @@ public class GameManager : MonoBehaviour
         {
             if (card is CreatureCard creature && targetingSorcery != null)
             {
-                KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.color);
+                KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.PrimaryColor);
                 return creature.keywordAbilities.Contains(protection);
             }
 
@@ -1324,22 +1327,32 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
         }
     
-    public Dictionary<string, int> GetManaCostBreakdown(int totalCost, string color)
+    public Dictionary<string, int> GetManaCostBreakdown(int totalCost, List<string> color)
         {
-            var cost = new Dictionary<string, int>();
+            Dictionary<string, int> breakdown = new Dictionary<string, int>();
 
-            // Artifacts or colorless cards require only generic mana
-            if (string.IsNullOrEmpty(color) || color == "Artifact" || color == "None")
+            // Treat empty color or "Artifact" as fully colorless
+            if (color == null || color.Count == 0 || (color.Count == 1 && color[0] == "Artifact"))
             {
-                cost["Generic"] = totalCost;
+                breakdown["Colorless"] = totalCost;
             }
             else
             {
-                cost[color] = 1;
-                cost["Generic"] = totalCost - 1;
+                foreach (string c in color)
+                {
+                    if (c == "Artifact") continue; // Don't treat Artifact as colored mana
+                    if (!breakdown.ContainsKey(c))
+                        breakdown[c] = 0;
+                    breakdown[c]++;
+                }
+
+                int coloredCount = breakdown.Values.Sum();
+                int generic = totalCost - coloredCount;
+                if (generic > 0)
+                    breakdown["Colorless"] = generic;
             }
 
-            return cost;
+            return breakdown;
         }
 
     private int SpendFromPool(ref int pool, int needed)

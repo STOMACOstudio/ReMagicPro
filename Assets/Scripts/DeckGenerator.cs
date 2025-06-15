@@ -44,8 +44,11 @@ public class DeckGenerator : MonoBehaviour
             Dictionary<string, int> colorCounts = chosenColors.ToDictionary(c => c, c => 0);
             foreach (var card in GeneratedDeck)
             {
-                if (colorCounts.ContainsKey(card.color))
-                    colorCounts[card.color]++;
+                foreach (string c in card.color)
+                {
+                    if (colorCounts.ContainsKey(c))
+                        colorCounts[c]++;
+                }
             }
 
             // 3. Add 16 lands proportionally
@@ -102,17 +105,24 @@ public class DeckGenerator : MonoBehaviour
 
     private void AddCardsByRarity(string color, string rarity, int count)
         {
+            string[] chosenColors = PlayerPrefs.GetString("PlayerColor", "Red")
+                                        .Split(',')
+                                        .Select(c => c.Trim())
+                                        .ToArray();
+
+            var chosenColorSet = new HashSet<string>(chosenColors);
+
             var pool = CardDatabase.GetAllCards()
-            .Where(card =>
-                card.rarity == rarity &&
-                (
-                    card.color == color ||
-                    card.color == "Artifact" ||
-                    card.cardType == CardType.Artifact
-                ) &&
-                card.cardType != CardType.Land
-            )
-            .ToList();
+                .Where(card =>
+                    card.rarity == rarity &&
+                    card.cardType != CardType.Land &&
+                    (
+                        card.color.All(c => chosenColorSet.Contains(c)) ||
+                        card.color.Contains("Artifact") ||
+                        card.cardType == CardType.Artifact
+                    )
+                )
+                .ToList();
 
             Dictionary<string, int> copies = GeneratedDeck
                 .GroupBy(c => c.cardName)

@@ -349,13 +349,14 @@ RectTransform:
   m_Children:
   - {fileID: 718122671327922027}
   - {fileID: 3084015169397306795}
+  - {fileID: 4961526888076571020}
   m_Father: {fileID: 6256048876094482092}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 26.113403, y: 55}
-  m_SizeDelta: {x: 17.6954, y: 10}
+  m_AnchoredPosition: {x: 19.063293, y: 55}
+  m_SizeDelta: {x: 31.7956, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2783007611166807968
 CanvasRenderer:
@@ -404,7 +405,7 @@ GameObject:
   - component: {fileID: 8426868630147881351}
   - component: {fileID: 8003509688503118465}
   m_Layer: 5
-  m_Name: ColoredManaIcon
+  m_Name: ColoredManaIcon1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1050,6 +1051,97 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 0.5, y: -0.5}
   m_UseGraphicAlpha: 1
+--- !u!1 &5649909299276138666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4961526888076571020}
+  - component: {fileID: 5885083657050018912}
+  - component: {fileID: 4626944790765300318}
+  - component: {fileID: 8743246199628776454}
+  m_Layer: 5
+  m_Name: ColoredManaIcon2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4961526888076571020
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649909299276138666}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8156176561433030185}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 10, y: 10}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5885083657050018912
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649909299276138666}
+  m_CullTransparentMesh: 1
+--- !u!114 &4626944790765300318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649909299276138666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8743246199628776454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649909299276138666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 0.4, y: 0.4}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6148380688250433790
 GameObject:
   m_ObjectHideFlags: 0
@@ -1426,7 +1518,8 @@ MonoBehaviour:
   artImage: {fileID: 1285546587198178736}
   backgroundImage: {fileID: 7762345805739480164}
   cardRarity: {fileID: 6613250637717637995}
-  coloredManaIcon: {fileID: 8426868630147881351}
+  coloredManaIcon1: {fileID: 8426868630147881351}
+  coloredManaIcon2: {fileID: 4626944790765300318}
   landBorder: {fileID: 21300000, guid: 33a86c7032f9cd6469c53180900baede, type: 3}
   whiteBorder: {fileID: 21300000, guid: aa13e8d34cc61724797079d4af176cb0, type: 3}
   blueBorder: {fileID: 21300000, guid: 75ee82e37920b1c4a91ddf36ca50e9ff, type: 3}
@@ -1435,6 +1528,7 @@ MonoBehaviour:
   greenBorder: {fileID: 21300000, guid: 929734b480b80794aa3c80f8bcf49b20, type: 3}
   artifactBorder: {fileID: 21300000, guid: 2deacdb715c0306428210130f586929b, type: 3}
   defaultBorder: {fileID: 21300000, guid: 7f05ffefb1fa5f240bde3b0d62a1e0ad, type: 3}
+  multicolorBorder: {fileID: 21300000, guid: 2e9daf79f88d03e42b7ff38f59621fd7, type: 3}
   whiteManaSymbol: {fileID: 21300000, guid: 6329de53d020a184497a49885c00318e, type: 3}
   blueManaSymbol: {fileID: 21300000, guid: 7eea3ae9dbe1edb498085a4d07295ed0, type: 3}
   blackManaSymbol: {fileID: 21300000, guid: ec0e286e58f081e4eaecc53fd6928b35, type: 3}

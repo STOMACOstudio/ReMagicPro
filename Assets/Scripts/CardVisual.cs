@@ -17,7 +17,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Image artImage;
     public Image backgroundImage;
     public Image cardRarity;
-    public Image coloredManaIcon;
+    public Image coloredManaIcon1;
+    public Image coloredManaIcon2;
 
     public Sprite landBorder;
     public Sprite whiteBorder;
@@ -27,6 +28,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Sprite greenBorder;
     public Sprite artifactBorder;
     public Sprite defaultBorder;  
+    public Sprite multicolorBorder;
     public Sprite whiteManaSymbol;
     public Sprite blueManaSymbol;
     public Sprite blackManaSymbol;
@@ -116,7 +118,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 if (linkedCard is LandCard && !isInBattlefield)
                 {
-                    Sprite landSprite = linkedCard.color switch
+                    Sprite landSprite = linkedCard.PrimaryColor switch
                     {
                         "White" => whiteLandIcon,
                         "Blue" => blueLandIcon,
@@ -179,9 +181,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             if (swordIcon != null && linkedCard is CreatureCard)
             {
-                bool showSword =
-                    GameManager.Instance.currentAttackers.Contains(linkedCard) ||
-                    GameManager.Instance.selectedAttackers.Contains(linkedCard);
+                bool showSword = false;
+
+                if (GameManager.Instance != null &&
+                    GameManager.Instance.currentAttackers != null &&
+                    GameManager.Instance.selectedAttackers != null)
+                {
+                    showSword =
+                        GameManager.Instance.currentAttackers.Contains(linkedCard) ||
+                        GameManager.Instance.selectedAttackers.Contains(linkedCard);
+                }
+
                 swordIcon.SetActive(showSword);
                 swordIcon.transform.rotation = Quaternion.identity;
             }
@@ -189,9 +199,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (shieldIcon != null && linkedCard is CreatureCard)
             {
                 CreatureCard cc = (CreatureCard)linkedCard;
-                bool showShield =
-                    cc.blockingThisAttacker != null &&
-                    GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
+
+                bool showShield = false;
+
+                if (GameManager.Instance != null &&
+                    GameManager.Instance.humanPlayer != null &&
+                    GameManager.Instance.humanPlayer.Battlefield != null)
+                {
+                    showShield = cc.blockingThisAttacker != null &&
+                                GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
+                }
 
                 shieldIcon.SetActive(showShield);
                 shieldIcon.transform.rotation = Quaternion.identity;
@@ -255,8 +272,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             int genericCost = 0;
 
             bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                        linkedCard.color != "Artifact" &&
-                        linkedCard.color != "None";
+                        linkedCard.PrimaryColor != "Artifact" &&
+                        linkedCard.PrimaryColor != "None";
 
             if (isOneColoredMana)
             {
@@ -265,21 +282,40 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else
             {
-                costText.text = genericCost.ToString();
-                if (genericCostBG != null) genericCostBG.SetActive(true);
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
             }
 
             if (linkedCard is CreatureCard creature)
             {
-                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                if (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
                 {
                     genericCost = creature.manaCost;
                 }
                 else
                 {
-                    genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                    genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
                 }
-                costText.text = genericCost.ToString();
+
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
+
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -298,8 +334,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
-                costText.text = genericCost.ToString();
+                genericCost = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0);
+
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
+
 
                 sorceryEffect(sorcery);
 
@@ -309,7 +356,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else if (linkedCard is ArtifactCard artifact)
             {
                 genericCost = artifact.manaCost;
-                costText.text = genericCost.ToString();
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
                 keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
@@ -334,26 +390,27 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsBackground.SetActive(false);
             }
 
-            if (coloredManaIcon != null)
-            {
-                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-                {
-                    coloredManaIcon.gameObject.SetActive(false);
-                }
-                else
-                {
-                    Sprite icon = null;
-                    switch (linkedCard.color)
-                    {
-                        case "White": icon = whiteManaSymbol; break;
-                        case "Blue":  icon = blueManaSymbol; break;
-                        case "Black": icon = blackManaSymbol; break;
-                        case "Red":   icon = redManaSymbol; break;
-                        case "Green": icon = greenManaSymbol; break;
-                    }
+            coloredManaIcon1.gameObject.SetActive(false);
+            coloredManaIcon2.gameObject.SetActive(false);
 
-                    coloredManaIcon.sprite = icon;
-                    coloredManaIcon.gameObject.SetActive(icon != null);
+            if (linkedCard.color != null)
+            {
+                for (int i = 0; i < linkedCard.color.Count && i < 2; i++)
+                {
+                    Sprite icon = GetIconForColor(linkedCard.color[i]);
+
+                    if (i == 0 && icon != null)
+                    {
+                        coloredManaIcon1.sprite = icon;
+                        coloredManaIcon1.gameObject.SetActive(true);
+                        coloredManaIcon1.enabled = true; // 🔧 force image repaint
+                    }
+                    else if (i == 1 && icon != null)
+                    {
+                        coloredManaIcon2.sprite = icon;
+                        coloredManaIcon2.gameObject.SetActive(true);
+                        coloredManaIcon2.enabled = true; // 🔧 force image repaint
+                    }
                 }
             }
         }
@@ -368,7 +425,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 if (linkedCard is LandCard && !isInBattlefield)
                 {
-                    Sprite landSprite = linkedCard.color switch
+                    Sprite landSprite = linkedCard.PrimaryColor switch
                     {
                         "White" => whiteLandIcon,
                         "Blue" => blueLandIcon,
@@ -444,8 +501,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             int genericCost = 0;
 
             bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                        linkedCard.color != "Artifact" &&
-                        linkedCard.color != "None";
+                        linkedCard.PrimaryColor != "Artifact" &&
+                        linkedCard.PrimaryColor != "None";
 
             if (isOneColoredMana)
             {
@@ -454,21 +511,39 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else
             {
-                costText.text = genericCost.ToString();
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
                 if (genericCostBG != null) genericCostBG.SetActive(true);
             }
 
             if (linkedCard is CreatureCard creature)
             {
-                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
+                if (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
                 {
                     genericCost = creature.manaCost;
                 }
                 else
                 {
-                    genericCost = Mathf.Max(creature.manaCost - 1, 0);
+                    genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
                 }
-                costText.text = genericCost.ToString();
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -477,8 +552,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                genericCost = Mathf.Max(sorcery.manaCost - 1, 0);
-                costText.text = genericCost.ToString();
+                genericCost = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0);
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
+
                 statsText.text = "";
                 sicknessText.text = "";
 
@@ -490,7 +575,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else if (linkedCard is ArtifactCard artifact)
             {
                 genericCost = artifact.manaCost;
-                costText.text = genericCost.ToString();
+                if (genericCost > 0)
+                {
+                    costText.text = genericCost.ToString();
+                    if (genericCostBG != null) genericCostBG.SetActive(true);
+                }
+                else
+                {
+                    costText.text = "";
+                    if (genericCostBG != null) genericCostBG.SetActive(false);
+                }
                 statsText.text = "";
                 keywordText.text = artifact.GetCardText();
 
@@ -516,29 +610,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 statsBackground.SetActive(false);
             }
 
-            // Set colored mana icon
-            if (coloredManaIcon != null)
-            {
-                if (linkedCard.color == "Artifact" || linkedCard.color == "None")
-                {
-                    coloredManaIcon.gameObject.SetActive(false); // <-- FULL DEACTIVATION
-                }
-                else
-                {
-                    Sprite icon = null;
-                    switch (linkedCard.color)
-                    {
-                        case "White": icon = whiteManaSymbol; break;
-                        case "Blue":  icon = blueManaSymbol; break;
-                        case "Black": icon = blackManaSymbol; break;
-                        case "Red":   icon = redManaSymbol; break;
-                        case "Green": icon = greenManaSymbol; break;
-                    }
+            UpdateVisual();
 
-                    coloredManaIcon.sprite = icon;
-                    coloredManaIcon.gameObject.SetActive(icon != null); // <-- Re-activate only if there's an icon
-                }
-            }
         }
 
     public void OnClick()
@@ -611,7 +684,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     // Is on battlefield and not protected
                     if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
                     {
-                        var protection = spell.GetProtectionKeyword(spell.color);
+                        var protection = spell.GetProtectionKeyword(spell.PrimaryColor);
                         if (!targetCreature.keywordAbilities.Contains(protection))
                             valid = true;
                     }
@@ -660,7 +733,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                 linkedCard.isTapped = true;
 
-                string color = linkedCard.color;
+                string color = linkedCard.PrimaryColor;
 
                 switch (color)
                 {
@@ -690,7 +763,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 Player player = GameManager.Instance.humanPlayer;
                 int cost = abilityCreature.manaToPayToActivate;
-                string cardColor = abilityCreature.color;
+                string cardColor = abilityCreature.PrimaryColor;
 
                 // Colored ability: must pay using that color (plus generic if cost > 1)
                 if (!string.IsNullOrEmpty(cardColor) && cardColor != "Artifact")
@@ -1111,7 +1184,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
                         // Prevent blocking if attacker has protection from blocker's color
-                        if (attacker.keywordAbilities.Contains(GetProtectionKeyword(clickedCreature.color)))
+                        if (clickedCreature.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
                         {
                             Debug.Log($"{attacker.cardName} has protection from {clickedCreature.color}, so it can't be blocked by {clickedCreature.cardName}.");
                             return;
@@ -1309,7 +1382,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 if (linkedCard is LandCard && !isInBattlefield)
                 {
-                    Sprite landSprite = linkedCard.color switch
+                    Sprite landSprite = linkedCard.PrimaryColor switch
                     {
                         "White" => whiteLandIcon,
                         "Blue" => blueLandIcon,
@@ -1339,7 +1412,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Show correct info by card type
             if (linkedCard is CreatureCard creature)
             {
-                costText.text = Mathf.Max(creature.manaCost - 1, 0).ToString();
+                costText.text = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0).ToString();
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -1357,7 +1430,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                costText.text = Mathf.Max(sorcery.manaCost - 1, 0).ToString();
+                costText.text = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0).ToString();
                 statsText.text = "";
 
                 sorceryEffect(sorcery);
@@ -1394,13 +1467,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     backgroundImage.sprite = landBorder;
                 }
-                else if (data.cardType == CardType.Artifact || data.color == "Artifact" || data.color == "None")
+                else if (data.cardType == CardType.Artifact || data.color.Contains("Artifact") || data.color.Count == 0)
                 {
                     backgroundImage.sprite = artifactBorder;
                 }
+                else if (data.color.Count > 1)
+                {
+                    backgroundImage.sprite = multicolorBorder;
+                }
                 else
                 {
-                    switch (data.color)
+                    switch (data.color[0])
                     {
                         case "White": backgroundImage.sprite = whiteBorder; break;
                         case "Blue":  backgroundImage.sprite = blueBorder; break;
@@ -1410,6 +1487,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         default: backgroundImage.sprite = defaultBorder; break;
                     }
                 }
+
                 backgroundImage.color = Color.white; // Prevent leftover tint
             }
 
@@ -1527,5 +1605,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 int spent = Mathf.Min(pool, needed);
                 pool -= spent;
                 return spent;
+            }
+        
+        private Sprite GetIconForColor(string color)
+            {
+                return color switch
+                {
+                    "White" => whiteManaSymbol,
+                    "Blue" => blueManaSymbol,
+                    "Black" => blackManaSymbol,
+                    "Red" => redManaSymbol,
+                    "Green" => greenManaSymbol,
+                    _ => null
+                };
             }
 }

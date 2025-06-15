@@ -693,7 +693,7 @@ public class TurnSystem : MonoBehaviour
                                 !creature.keywordAbilities.Contains(creature.abilityToGain))
                             {
                                 int cost = creature.manaToPayToActivate;
-                                string color = creature.color;
+                                string color = creature.PrimaryColor;
 
                                 bool canActivate = false;
 
@@ -929,7 +929,7 @@ public class TurnSystem : MonoBehaviour
                                 }
 
                                 // PROTECTION: attacker cannot be blocked by this blocker if it has protection from blocker's color
-                                if (attacker.keywordAbilities.Contains(GetProtectionKeyword(blocker.color)))
+                                if (blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
                                 {
                                     Debug.Log($"{attacker.cardName} has protection from {blocker.color}, so AI cannot assign {blocker.cardName} to block it.");
                                     continue;

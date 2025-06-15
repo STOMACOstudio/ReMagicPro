@@ -34,15 +34,15 @@ public class Player
 
         public bool CanPay(Dictionary<string, int> cost)
             {
-                int genericRequired = cost.ContainsKey("Generic") ? cost["Generic"] : 0;
+                int genericRequired = cost.ContainsKey("Colorless") ? cost["Colorless"] : 0;
 
-                // Check specific colored mana requirements
+                // First check for specific colors
                 foreach (var kvp in cost)
                 {
                     string color = kvp.Key;
                     int required = kvp.Value;
 
-                    if (color == "Generic") continue;
+                    if (color == "Colorless") continue;  // skip for now
 
                     int available = color switch
                     {
@@ -51,7 +51,6 @@ public class Player
                         "Black" => Black,
                         "Red" => Red,
                         "Green" => Green,
-                        "Colorless" => Colorless,
                         _ => 0
                     };
 
@@ -59,13 +58,14 @@ public class Player
                         return false;
                 }
 
-                // Now check if remaining mana can cover the generic requirement
-                int leftover = White + Blue + Black + Red + Green + Colorless;
+                // Now check if total leftover can pay the generic cost
+                int leftover = Total();
 
+                // Subtract colored requirements
                 foreach (var kvp in cost)
                 {
-                    if (kvp.Key == "Generic") continue;
-                    leftover -= kvp.Value;
+                    if (kvp.Key != "Colorless")
+                        leftover -= kvp.Value;
                 }
 
                 return leftover >= genericRequired;
@@ -73,7 +73,7 @@ public class Player
 
         public void Pay(Dictionary<string, int> cost)
             {
-                int genericToSpend = cost.ContainsKey("Generic") ? cost["Generic"] : 0;
+                int genericToSpend = cost.ContainsKey("Colorless") ? cost["Colorless"] : 0;
 
                 // Pay specific colors first
                 foreach (var kvp in cost)
@@ -81,7 +81,7 @@ public class Player
                     string color = kvp.Key;
                     int amount = kvp.Value;
 
-                    if (color == "Generic") continue;
+                    if (color == "Colorless") continue;
 
                     switch (color)
                     {

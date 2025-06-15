@@ -14,7 +14,7 @@ public static class CardDatabase
                 cardName = "Plains",
                 rarity = "Common",
                 manaCost = 0,
-                color = "White",
+                color = new List<string> { "White" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/plains")
             });
@@ -23,7 +23,7 @@ public static class CardDatabase
                 cardName = "Island",
                 rarity = "Common",
                 manaCost = 0,
-                color = "Blue",
+                color = new List<string> { "Blue" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/island")
             });
@@ -32,7 +32,7 @@ public static class CardDatabase
                 cardName = "Swamp",
                 rarity = "Common",
                 manaCost = 0,
-                color = "Black",
+                color = new List<string> { "Black" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/swamp")
             });
@@ -41,7 +41,7 @@ public static class CardDatabase
                 cardName = "Mountain",
                 rarity = "Common",
                 manaCost = 0,
-                color = "Red",
+                color = new List<string> { "Red" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/mountain")
             });
@@ -50,7 +50,7 @@ public static class CardDatabase
                 cardName = "Forest",
                 rarity = "Common",
                 manaCost = 0,
-                color = "Green",
+                color = new List<string> { "Green" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/forest")
             });
@@ -62,7 +62,7 @@ public static class CardDatabase
                         cardName = "Iconoclast Monk",
                         rarity = "Common",
                         manaCost = 3,
-                        color = "White",
+                        color = new List<string> { "White" },
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
@@ -88,7 +88,7 @@ public static class CardDatabase
                     cardName = "Beasthunter",
                     rarity = "Uncommon",
                     manaCost = 2,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -105,7 +105,7 @@ public static class CardDatabase
                     cardName = "Angry Farmer",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -118,7 +118,7 @@ public static class CardDatabase
                     cardName = "Gallant Lord",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 3,
@@ -134,7 +134,7 @@ public static class CardDatabase
                     cardName = "Gentle Giant",
                     rarity = "Uncommon",
                     manaCost = 2,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -150,7 +150,7 @@ public static class CardDatabase
                     cardName = "Waterbearer",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 3,
@@ -188,7 +188,7 @@ public static class CardDatabase
                     cardName = "Virgins Procession",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 4,
@@ -217,7 +217,7 @@ public static class CardDatabase
                     cardName = "Realm Protector",
                     rarity = "Uncommon",
                     manaCost = 5,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 7,
@@ -233,7 +233,7 @@ public static class CardDatabase
                     cardName = "Hamlet Recruiter",
                     rarity = "Uncommon",
                     manaCost = 4,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -266,7 +266,7 @@ public static class CardDatabase
                     cardName = "Skyhunter Unicorn",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
@@ -282,7 +282,7 @@ public static class CardDatabase
                     cardName = "Pure Angel",
                     rarity = "Rare",
                     manaCost = 7,
-                    color = "White",
+                    color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
@@ -313,7 +313,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "White",
+                        color = new List<string> { "White" },
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
@@ -328,7 +328,7 @@ public static class CardDatabase
                     cardName = "Skyward Whale",
                     rarity = "Common",
                     manaCost = 6,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
@@ -344,7 +344,7 @@ public static class CardDatabase
                     cardName = "Wandering Squid",
                     rarity = "Common",
                     manaCost = 6,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 6,
@@ -357,7 +357,7 @@ public static class CardDatabase
                     cardName = "Giant Crab",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 4,
@@ -370,7 +370,7 @@ public static class CardDatabase
                     cardName = "Wandering Cloud",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
@@ -387,7 +387,7 @@ public static class CardDatabase
                         cardName = "Lucky Fisherman",
                         rarity = "Common",
                         manaCost = 2,
-                        color = "Blue",
+                        color = new List<string> { "Blue" },
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
@@ -413,7 +413,7 @@ public static class CardDatabase
                     cardName = "Colossal Octopus",
                     rarity = "Common",
                     manaCost = 9,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 8,
                     toughness = 8,
@@ -426,7 +426,7 @@ public static class CardDatabase
                     cardName = "Replicator",
                     rarity = "Rare",
                     manaCost = 3,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -461,7 +461,7 @@ public static class CardDatabase
                     cardName = "Sharkmen Tribe",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 3,
@@ -474,7 +474,7 @@ public static class CardDatabase
                     cardName = "Hired Assassin",
                     rarity = "Uncommon",
                     manaCost = 6,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -500,7 +500,7 @@ public static class CardDatabase
                     cardName = "Flayed Deer",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -516,7 +516,7 @@ public static class CardDatabase
                         cardName = "Giant Bat",
                         rarity = "Common",
                         manaCost = 4,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         cardType = CardType.Creature,
                         power = 3,
                         toughness = 2,
@@ -538,7 +538,7 @@ public static class CardDatabase
                         cardName = "Bog Crocodile",
                         rarity = "Uncommon",
                         manaCost = 4,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 3,
@@ -555,7 +555,7 @@ public static class CardDatabase
                     cardName = "Undead Gorilla",
                     rarity = "Uncommon",
                     manaCost = 4,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -571,7 +571,7 @@ public static class CardDatabase
                     cardName = "Rotting Whale",
                     rarity = "Common",
                     manaCost = 6,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 6,
                     toughness = 1,
@@ -584,7 +584,7 @@ public static class CardDatabase
                     cardName = "Limping Corpse",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -598,7 +598,7 @@ public static class CardDatabase
                     cardName = "Famished Crow",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -615,7 +615,7 @@ public static class CardDatabase
                     cardName = "Giant Crow",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -645,7 +645,7 @@ public static class CardDatabase
                     cardName = "Possessed Innocent",
                     rarity = "Rare",
                     manaCost = 5,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -678,7 +678,7 @@ public static class CardDatabase
                     cardName = "Lunatic Necromancer",
                     rarity = "Uncommon",
                     manaCost = 4,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -711,7 +711,7 @@ public static class CardDatabase
                     cardName = "Sad Clown",
                     rarity = "Uncommon",
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -747,7 +747,7 @@ public static class CardDatabase
                     cardName = "Ratbat",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -765,7 +765,7 @@ public static class CardDatabase
                     cardName = "Giant Rat",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 1,
@@ -778,7 +778,7 @@ public static class CardDatabase
                     cardName = "Bog Mosquito",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -795,7 +795,7 @@ public static class CardDatabase
                     cardName = "Wicked Witch",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -812,7 +812,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
@@ -827,7 +827,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         cardType = CardType.Creature,
                         power = 5,
                         toughness = 5,
@@ -840,7 +840,7 @@ public static class CardDatabase
                     cardName = "Firedancer",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -856,7 +856,7 @@ public static class CardDatabase
                     cardName = "Rabid Dog",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -873,7 +873,7 @@ public static class CardDatabase
                     cardName = "Fireborn Dragon",
                     rarity = "Rare",
                     manaCost = 6,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
@@ -890,7 +890,7 @@ public static class CardDatabase
                     cardName = "Dragon Summoner",
                     rarity = "Rare",
                     manaCost = 7,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -923,7 +923,7 @@ public static class CardDatabase
                     cardName = "Great Boulder",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 4,
@@ -939,7 +939,7 @@ public static class CardDatabase
                     cardName = "Flying Pig",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -955,7 +955,7 @@ public static class CardDatabase
                     cardName = "Goblin Puncher",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
@@ -971,7 +971,7 @@ public static class CardDatabase
                     cardName = "Thundermare",
                     rarity = "Uncommon",
                     manaCost = 4,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 3,
@@ -988,7 +988,7 @@ public static class CardDatabase
                     cardName = "Village Idiot",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -1016,7 +1016,7 @@ public static class CardDatabase
                     cardName = "Wild Ostrich",
                     rarity = "Uncommon",
                     manaCost = 2,
-                    color = "Red",
+                    color = new List<string> { "Red" },
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 1,
@@ -1034,7 +1034,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         cardType = CardType.Creature,
                         power = 5,
                         toughness = 5,
@@ -1048,7 +1048,7 @@ public static class CardDatabase
                         cardName = "River Crocodile",
                         rarity = "Uncommon",
                         manaCost = 4,
-                        color = "Green",
+                        color = new List<string> { "Green" },
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 3,
@@ -1065,7 +1065,7 @@ public static class CardDatabase
                     cardName = "Living Tree",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 5,
@@ -1085,7 +1085,7 @@ public static class CardDatabase
                     cardName = "Wall of Roots",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 2,
@@ -1105,7 +1105,7 @@ public static class CardDatabase
                     cardName = "Cactusaurus",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
@@ -1120,7 +1120,7 @@ public static class CardDatabase
                     cardName = "Realms Crasher",
                     rarity = "Uncommon",
                     manaCost = 7,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 7,
@@ -1135,7 +1135,7 @@ public static class CardDatabase
                     cardName = "Drumming Elf",
                     rarity = "Uncommon",
                     manaCost = 5,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -1168,7 +1168,7 @@ public static class CardDatabase
                     cardName = "Crazy Cat Lady",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -1204,7 +1204,7 @@ public static class CardDatabase
                     cardName = "Domestic Cat",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -1220,7 +1220,7 @@ public static class CardDatabase
                     cardName = "Deep Forest Monkeys",
                     rarity = "Common",
                     manaCost = 2,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -1233,7 +1233,7 @@ public static class CardDatabase
                     cardName = "Violent Ape",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 3,
                     toughness = 3,
@@ -1246,7 +1246,7 @@ public static class CardDatabase
                     cardName = "Flying Donkey",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
@@ -1262,7 +1262,7 @@ public static class CardDatabase
                     cardName = "Slack Tungo",
                     rarity = "Common",
                     manaCost = 8,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 8,
                     toughness = 8,
@@ -1276,7 +1276,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "Green",
+                        color = new List<string> { "Green" },
                         cardType = CardType.Creature,
                         power = 1,
                         toughness = 1,
@@ -1290,7 +1290,7 @@ public static class CardDatabase
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
-                        color = "Green",
+                        color = new List<string> { "Green" },
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
@@ -1304,7 +1304,7 @@ public static class CardDatabase
                     cardName = "Sphynx Lynx",
                     rarity = "Common",
                     manaCost = 6,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -1322,7 +1322,7 @@ public static class CardDatabase
                     cardName = "Origin Golem",
                     rarity = "Common",
                     manaCost = 5,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 4,
@@ -1336,7 +1336,7 @@ public static class CardDatabase
                     cardName = "Omega Golemoid",
                     rarity = "Uncommon",
                     manaCost = 7,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 7,
                     toughness = 5,
@@ -1350,7 +1350,7 @@ public static class CardDatabase
                     cardName = "Glassmole",
                     rarity = "Common",
                     manaCost = 4,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 4,
                     toughness = 1,
@@ -1364,7 +1364,7 @@ public static class CardDatabase
                     cardName = "Obstacle",
                     rarity = "Common",
                     manaCost = 0,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 1,
@@ -1380,7 +1380,7 @@ public static class CardDatabase
                     cardName = "Autonomous Miner",
                     rarity = "Common",
                     manaCost = 3,
-                    color = "Artifact",
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 1,
                     toughness = 1,
@@ -1393,7 +1393,256 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/autonomous_miner")
                     });
-
+            //MULTI
+                Add(new CardData //Blazefire angel
+                    {
+                    cardName = "Blazefire Angel",
+                    rarity = "Rare",
+                    manaCost = 7,
+                    color = new List<string> { "White", "Red" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 5,
+                    subtypes = new List<string> { "Angel", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Haste,
+                        KeywordAbility.Vigilance
+                    },
+                    artwork = Resources.Load<Sprite>("Art/blazefire_angel")
+                    });
+                Add(new CardData //Wild crusher
+                        {
+                        cardName = "Wild crusher",
+                        rarity = "rare",
+                        manaCost = 4,
+                        color = new List<string> { "Red", "Green" },
+                        cardType = CardType.Creature,
+                        power = 4,
+                        toughness = 4,
+                        manaToPayToActivate = 2,
+                        subtypes = new List<string> { "Beast", "Monkey" },
+                        abilityToGain = KeywordAbility.Flying,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Haste,
+                        },
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.PayToGainAbility
+                        },
+                        artwork = Resources.Load<Sprite>("Art/wild_crusher")
+                        });
+                Add(new CardData //Wild dragon
+                    {
+                    cardName = "Wild Dragon",
+                    rarity = "Rare",
+                    manaCost = 7,
+                    color = new List<string> { "White", "Red" },
+                    cardType = CardType.Creature,
+                    power = 6,
+                    toughness = 6,
+                    subtypes = new List<string> { "Dragon" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Haste,
+                        KeywordAbility.Trample,
+                        KeywordAbility.CantBlock
+                    },
+                    artwork = Resources.Load<Sprite>("Art/wild_Dragon")
+                    });
+                Add(new CardData //Twin elves
+                    {
+                    cardName = "Twin Elves",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "White", "Green" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Elf", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Vigilance,
+                    },
+                    artwork = Resources.Load<Sprite>("Art/twin_elves")
+                    });
+                Add(new CardData //Night moth
+                    {
+                    cardName = "Night Moth",
+                    rarity = "Uncommon",
+                    manaCost = 2,
+                    color = new List<string> { "Black", "Green" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Insect" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                    },
+                    activatedAbilities = new List<ActivatedAbility> {
+                        ActivatedAbility.TapForMana
+                    },
+                    artwork = Resources.Load<Sprite>("Art/night_moth")
+                    });
+                Add(new CardData //Poison mushrooms
+                    {
+                    cardName = "Poison Mushrooms",
+                    rarity = "Uncommon",
+                    manaCost = 2,
+                    color = new List<string> { "Black", "Green" },
+                    cardType = CardType.Creature,
+                    power = 9,
+                    toughness = 1,
+                    subtypes = new List<string> { "Plant" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                    },
+                    artwork = Resources.Load<Sprite>("Art/poison_mushrooms"),
+                    });
+                Add(new CardData //Mindcat
+                    {
+                    cardName = "Mindcat",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Blue", "Black" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Cat", "Spirit" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                    },
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "opponent discards a card at random.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                Player opponent = GameManager.Instance.GetOpponentOf(owner);
+                                opponent.DiscardRandomCard();
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            description = "draw a card.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.DrawCard(owner);
+                            }
+                        },
+                    },
+                    artwork = Resources.Load<Sprite>("Art/mindcat"),
+                    });
+                Add(new CardData //Mutant gorilla
+                    {
+                    cardName = "Mutant Gorilla",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Blue", "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Monkey", "Cephalopod" },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapForMana
+                    },
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "draw a card.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.DrawCard(owner);
+                            }
+                        },
+                    },
+                    artwork = Resources.Load<Sprite>("Art/mutant_gorilla"),
+                    });
+                Add(new CardData //Battle bear
+                    {
+                    cardName = "Battle Bear",
+                    rarity = "Uncommon",
+                    manaCost = 3,
+                    color = new List<string> { "Red", "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Beast", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Haste,
+                        KeywordAbility.Trample,
+                        KeywordAbility.CantBlock
+                    },
+                    artwork = Resources.Load<Sprite>("Art/battle_bear")
+                    });
+                Add(new CardData //Robin
+                    {
+                    cardName = "Robin",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Red", "Green" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Bird" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Haste,
+                        KeywordAbility.Flying,
+                    },
+                    artwork = Resources.Load<Sprite>("Art/robin")
+                    });
+                Add(new CardData //Crazed shaman
+                    {
+                    cardName = "Crazed Shaman",
+                    rarity = "Uncommon",
+                    manaCost = 2,
+                    color = new List<string> { "Red", "Green" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Shaman" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Haste,
+                    },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapForMana
+                    },
+                    artwork = Resources.Load<Sprite>("Art/crazed_shaman")
+                    });
+                Add(new CardData //Bloodmoon vampire
+                    {
+                    cardName = "Bloodmoon Vampire",
+                    rarity = "Uncommon",
+                    manaCost = 2,
+                    color = new List<string> { "White", "Red" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Vampire", },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Haste,
+                        KeywordAbility.Vigilance,
+                        KeywordAbility.Lifelink
+                    },
+                    artwork = Resources.Load<Sprite>("Art/bloodmoon_vampire")
+                    });
         // Sorceries
             //WHITE
                 Add(new CardData { //Shattering light
@@ -1401,11 +1650,11 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
-                    color = "White",
+                    color = new List<string> { "White" },
                     requiresTarget = true,
                     destroyTargetIfTypeMatches = true,
                     requiredTargetType = SorceryCard.TargetType.Creature,
-                    requiredTargetColor = "Black",
+                    requiredTargetColor ="Black",
                     artwork = Resources.Load<Sprite>("Art/shattering_light")
                     });
                 Add(new CardData { //for glory
@@ -1413,7 +1662,7 @@ public static class CardDatabase
                     rarity = "Uncommon",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
-                    color = "White",
+                    color = new List<string> { "White" },
                     artwork = Resources.Load<Sprite>("Art/for_glory"),
                     abilities = new List<CardAbility>(),
                     tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
@@ -1425,7 +1674,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 4,
-                    color = "White",
+                    color = new List<string> { "White" },
                     artwork = Resources.Load<Sprite>("Art/rolling_army"),
                     abilities = new List<CardAbility>(),
                     tokenToCreate = "Human Soldier",       // Token name as defined in CardFactory
@@ -1437,7 +1686,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
-                    color = "White",
+                    color = new List<string> { "White" },
                     lifeToGain = 4,
                     artwork = Resources.Load<Sprite>("Art/Candlelight"),
                     abilities = new List<CardAbility>(),
@@ -1447,7 +1696,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
-                    color = "White",
+                    color = new List<string> { "White" },
                     lifeToGain = 7,
                     artwork = Resources.Load<Sprite>("Art/solid_prayer"),
                     abilities = new List<CardAbility>(),
@@ -1458,7 +1707,7 @@ public static class CardDatabase
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
-                        color = "White",
+                        color = new List<string> { "White" },
                         artwork = Resources.Load<Sprite>("Art/deny_the_afterlife"),
                         exileAllCreaturesFromGraveyards = true
                     });
@@ -1468,7 +1717,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
-                    color = "Blue",
+                    color = new List<string> { "Blue" },
                     cardsToDraw = 3,
                     artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
                     });
@@ -1478,7 +1727,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     requiresTarget = true,
                     destroyTargetIfTypeMatches = true,
                     requiredTargetType = SorceryCard.TargetType.Creature,
@@ -1490,7 +1739,7 @@ public static class CardDatabase
                         cardName = "Stain of Rot",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         manaCost = 4,
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Land,
@@ -1503,7 +1752,7 @@ public static class CardDatabase
                         cardName = "Forced Mummification",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         manaCost = 6,
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
@@ -1519,7 +1768,7 @@ public static class CardDatabase
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         destroyTargetIfTypeMatches = true,
@@ -1530,7 +1779,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     lifeToLoseForOpponent = 3,
                     artwork = Resources.Load<Sprite>("Art/witches_rite"),
                     });
@@ -1539,7 +1788,7 @@ public static class CardDatabase
                     rarity = "Rare",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
-                    color = "Black",
+                    color = new List<string> { "Black" },
                     lifeLossForBothPlayers = 4,
                     artwork = Resources.Load<Sprite>("Art/communed_rot"),
                     });
@@ -1549,7 +1798,7 @@ public static class CardDatabase
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         artwork = Resources.Load<Sprite>("Art/forget"),
                         cardsToDiscardorDraw = 1,
                     });
@@ -1559,7 +1808,7 @@ public static class CardDatabase
                         rarity = "Rare",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
-                        color = "Black",
+                        color = new List<string> { "Black" },
                         artwork = Resources.Load<Sprite>("Art/massacre"),
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
@@ -1570,7 +1819,7 @@ public static class CardDatabase
                             rarity = "Common",
                             cardType = CardType.Sorcery,
                             manaCost = 3,
-                            color = "Red",
+                            color = new List<string> { "Red" },
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Land,
                             destroyTargetIfTypeMatches = true,
@@ -1582,7 +1831,7 @@ public static class CardDatabase
                             rarity = "Common",
                             cardType = CardType.Sorcery,
                             manaCost = 1,
-                            color = "Red",
+                            color = new List<string> { "Red" },
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Artifact,
                             destroyTargetIfTypeMatches = true,
@@ -1594,7 +1843,7 @@ public static class CardDatabase
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 6,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         damageToTarget = 6,
@@ -1606,7 +1855,7 @@ public static class CardDatabase
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
                         damageToTarget = 4,
@@ -1618,7 +1867,7 @@ public static class CardDatabase
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
                         damageToTarget = 3,
@@ -1630,7 +1879,7 @@ public static class CardDatabase
                         rarity = "Rare",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         artwork = Resources.Load<Sprite>("Art/moonfall"),
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Land,
                     });
@@ -1640,7 +1889,7 @@ public static class CardDatabase
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 3,
-                        color = "Red",
+                        color = new List<string> { "Red" },
                         artwork = Resources.Load<Sprite>("Art/fire_spirals"),
                         damageToEachCreatureAndPlayer = 2
                     });
@@ -1651,7 +1900,7 @@ public static class CardDatabase
                             rarity = "Common",
                             cardType = CardType.Sorcery,
                             manaCost = 1,
-                            color = "Green",
+                            color = new List<string> { "Green" },
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Creature,
                             damageToTarget = 2,
@@ -1663,7 +1912,7 @@ public static class CardDatabase
                             rarity = "Rare",
                             cardType = CardType.Sorcery,
                             manaCost = 4,
-                            color = "Green",
+                            color = new List<string> { "Green" },
                             artwork = Resources.Load<Sprite>("Art/natures_rebuke"),
                             typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Artifact
                         });
@@ -1672,7 +1921,7 @@ public static class CardDatabase
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
-                    color = "Green",
+                    color = new List<string> { "Green" },
                     eachPlayerGainLifeEqualToLands = true,
                     artwork = Resources.Load<Sprite>("Art/feast"),
                     });
@@ -1683,7 +1932,7 @@ public static class CardDatabase
                     cardName = "Pressure Sphere",
                     rarity = "Rare",
                     manaCost = 2,
-                    color = "None",
+                    color = new List<string>(),
                     cardType = CardType.Artifact,
                     keywordAbilities = new List<KeywordAbility>
                     {
@@ -1696,7 +1945,7 @@ public static class CardDatabase
                     cardName = "Potion of Lava",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "None",
+                    color = new List<string>(),
                     cardType = CardType.Artifact,
                     entersTapped = true,
                     manaToPayToActivate = 2,
@@ -1712,7 +1961,7 @@ public static class CardDatabase
                     cardName = "Potion of Knowledge",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "None",
+                    color = new List<string>(),
                     cardType = CardType.Artifact,
                     entersTapped = true,
                     cardsToDraw = 2,
@@ -1728,7 +1977,7 @@ public static class CardDatabase
                     cardName = "Potion of Health",
                     rarity = "Common",
                     manaCost = 1,
-                    color = "None",
+                    color = new List<string>(),
                     cardType = CardType.Artifact,
                     entersTapped = true,
                     lifeToGain = 3,
@@ -1744,7 +1993,7 @@ public static class CardDatabase
                         cardName = "Potion of Mana",
                         rarity = "Common",
                         manaCost = 1,
-                        color = "None",
+                        color = new List<string>(),
                         cardType = CardType.Artifact,
                         entersTapped = true,
                         manaToGain = 3,
@@ -1760,7 +2009,7 @@ public static class CardDatabase
                         cardName = "Stone of Plague",
                         rarity = "Uncommon",
                         manaCost = 4,
-                        color = "None",
+                        color = new List<string>(),
                         cardType = CardType.Artifact,
                         plagueAmount = 1,
                         activatedAbilities = new List<ActivatedAbility>
@@ -1775,7 +2024,7 @@ public static class CardDatabase
                         cardName = "Mana Rock",
                         rarity = "Common",
                         manaCost = 3,
-                        color = "None",
+                        color = new List<string>(),
                         cardType = CardType.Artifact,
                         entersTapped = true,
                         activatedAbilities = new List<ActivatedAbility> {
@@ -1789,7 +2038,7 @@ public static class CardDatabase
                         cardName = "Crystallium",
                         rarity = "Common",
                         manaCost = 1,
-                        color = "None",
+                        color = new List<string>(),
                         cardType = CardType.Artifact,
                         manaToGain = 1,
                         activatedAbilities = new List<ActivatedAbility> {
@@ -1803,7 +2052,7 @@ public static class CardDatabase
                         cardName = "Bonfire",
                         rarity = "Common",
                         manaCost = 2,
-                        color = "None",
+                        color = new List<string>(),
                         cardType = CardType.Artifact,
                         activatedAbilities = new List<ActivatedAbility> {
                             ActivatedAbility.TapToGainLife
