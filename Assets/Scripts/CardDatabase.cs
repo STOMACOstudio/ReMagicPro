@@ -1925,6 +1925,29 @@ public static class CardDatabase
                     eachPlayerGainLifeEqualToLands = true,
                     artwork = Resources.Load<Sprite>("Art/feast"),
                     });
+            ///MULTI
+                Add(new CardData //Drain mind
+                        {
+                        cardName = "Drain Mind",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 2,
+                        color = new List<string> { "Blue", "Black" },
+                        cardsToDiscardorDraw = 1,
+                        cardsToDraw = 1,
+                        artwork = Resources.Load<Sprite>("Art/drain_mind")
+                        });
+                Add(new CardData //Burn mind
+                    {
+                    cardName = "Burn Mind",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = new List<string> { "Black", "Red" },
+                    cardsToDiscardorDraw = 1,
+                    lifeToLoseForOpponent = 2,
+                    artwork = Resources.Load<Sprite>("Art/burn_mind")
+                    });
 
         // Artifacts
             Add(new CardData // Pressure Sphere
