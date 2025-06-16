@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 7.6368, y: 7.6368}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2254922867383884259
 CanvasRenderer:
@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 7952589735356868285}
   - component: {fileID: 6486511197673698450}
   - component: {fileID: 4361675916725348544}
+  - component: {fileID: 4841291625930644988}
   m_Layer: 5
   m_Name: swordIcon
   m_TagString: Untagged
@@ -167,6 +168,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4841291625930644988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508784904614383938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: 0}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1837107983694268112
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,8 +371,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 19.063293, y: 55}
-  m_SizeDelta: {x: 31.7956, y: 10}
+  m_AnchoredPosition: {x: 24.011, y: 55}
+  m_SizeDelta: {x: 25.9773, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2783007611166807968
 CanvasRenderer:
@@ -428,7 +444,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 7.6368, y: 7.6368}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5052107236689272661
 CanvasRenderer:
@@ -494,6 +510,7 @@ GameObject:
   - component: {fileID: 8813788311069379676}
   - component: {fileID: 3889421099486030153}
   - component: {fileID: 8359916077456680081}
+  - component: {fileID: 3204859429978482875}
   m_Layer: 5
   m_Name: shieldIcon
   m_TagString: Untagged
@@ -558,6 +575,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3204859429978482875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3097404724242342598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: 0}
+  m_UseGraphicAlpha: 1
 --- !u!1 &3359690760306774395
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,8 +950,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9
-  m_fontSizeBase: 9
+  m_fontSize: 8
+  m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1087,7 +1119,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 7.6368, y: 7.6368}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5885083657050018912
 CanvasRenderer:

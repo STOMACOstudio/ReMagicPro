@@ -1488,9 +1488,9 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/night_moth")
                     });
-                Add(new CardData //Poison mushrooms
+                Add(new CardData //Poison mushroom
                     {
-                    cardName = "Poison Mushrooms",
+                    cardName = "Poison Mushroom",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Black", "Green" },
@@ -1502,7 +1502,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.Defender,
                     },
-                    artwork = Resources.Load<Sprite>("Art/poison_mushrooms"),
+                    artwork = Resources.Load<Sprite>("Art/poison_mushroom"),
                     });
                 Add(new CardData //Mindcat
                     {

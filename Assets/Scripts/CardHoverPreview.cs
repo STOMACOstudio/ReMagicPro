@@ -10,41 +10,39 @@ public class CardHoverPreview : MonoBehaviour
     private GameObject currentPreview;
 
     void Awake()
-    {
-        Instance = this;
-    }
+        {
+            Instance = this;
+        }
 
     public void ShowCard(Card card)
-    {
-        HidePreview();
-
-        currentPreview = Instantiate(cardVisualPrefab, previewSlot);
-
-        // Scale the entire object, including its children
-        currentPreview.transform.localScale = Vector3.one * 3f; // 2x size (or adjust to taste)
-
-        // Reset its anchored position to zero so it appears in the center of the slot
-        RectTransform rt = currentPreview.GetComponent<RectTransform>();
-        if (rt != null)
         {
-            rt.anchoredPosition = Vector2.zero;
+            HidePreview();
+
+            currentPreview = Instantiate(cardVisualPrefab, previewSlot);
+            currentPreview.transform.localScale = Vector3.one * 3f;
+
+            RectTransform rt = currentPreview.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
+
+            var visual = currentPreview.GetComponent<CardVisual>();
+            CardData cardData = CardDatabase.GetCardData(card.cardName);
+
+            visual.isInGraveyard = false;
+            visual.transform.localScale = Vector3.one * 3f;
+
+            visual.Setup(card, null, cardData);
+
+            visual.transform.rotation = Quaternion.identity;
+            if (visual.tapIcon != null)
+                visual.tapIcon.SetActive(false);
         }
-
-        var visual = currentPreview.GetComponent<CardVisual>();
-        CardData cardData = CardDatabase.GetCardData(card.cardName);
-
-        // Ensure it's NOT treated like a graveyard card
-        visual.isInGraveyard = false;
-        visual.transform.localScale = Vector3.one * 3f; // scale AFTER flag is cleared
-
-        visual.Setup(card, null, cardData);
-    }
 
     public void HidePreview()
-    {
-        if (currentPreview != null)
         {
-            Destroy(currentPreview);
+            if (currentPreview != null)
+            {
+                Destroy(currentPreview);
+            }
         }
-    }
 }
