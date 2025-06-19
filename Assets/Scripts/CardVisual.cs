@@ -403,13 +403,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     {
                         coloredManaIcon1.sprite = icon;
                         coloredManaIcon1.gameObject.SetActive(true);
-                        coloredManaIcon1.enabled = true; // 🔧 force image repaint
+                        coloredManaIcon1.enabled = true;
                     }
                     else if (i == 1 && icon != null)
                     {
                         coloredManaIcon2.sprite = icon;
                         coloredManaIcon2.gameObject.SetActive(true);
-                        coloredManaIcon2.enabled = true; // 🔧 force image repaint
+                        coloredManaIcon2.enabled = true;
                     }
                 }
             }
