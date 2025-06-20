@@ -1439,7 +1439,7 @@ public static class CardDatabase
                     cardName = "Wild Dragon",
                     rarity = "Rare",
                     manaCost = 7,
-                    color = new List<string> { "White", "Red" },
+                    color = new List<string> { "Red", "Green" },
                     cardType = CardType.Creature,
                     power = 6,
                     toughness = 6,
