@@ -102,11 +102,6 @@ public class Card
         {
             List<string> lines = new List<string>();
 
-            if (!string.IsNullOrEmpty(rulesText))
-            {
-                lines.Add(rulesText);
-            }
-
             // Keyword abilities — only for creatures
             if (this is CreatureCard creature)
                 {
@@ -167,6 +162,11 @@ public class Card
                         }
                     }
                 }
+
+            if (!string.IsNullOrEmpty(rulesText))
+            {
+                lines.Add(rulesText);
+            }
 
             if (this is ArtifactCard artifact)
             {

@@ -342,7 +342,7 @@ public static class CardDatabase
                     power = 0,
                     toughness = 0,
                     subtypes = new List<string> { "Horse" },
-                    rulesText = "This creature has power and toughness equal to the number of plains you control.",
+                    rulesText = "This creature has power and toughness equal to the number of Plains you control.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance,
