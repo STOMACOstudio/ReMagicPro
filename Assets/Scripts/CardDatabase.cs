@@ -1844,6 +1844,15 @@ public static class CardDatabase
                     cardsToDraw = 3,
                     artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
                     });
+                Add(new CardData { //Astral Plane
+                    cardName = "Astral Plane",
+                    rarity = "Rare",
+                    cardType = CardType.Sorcery,
+                    manaCost = 5,
+                    color = new List<string> { "Blue" },
+                    swapGraveyardAndLibrary = true,
+                    artwork = Resources.Load<Sprite>("Art/astral_plane"),
+                    });
             //BLACK
                 Add(new CardData { //Devouring shadows
                     cardName = "Devouring Shadow",

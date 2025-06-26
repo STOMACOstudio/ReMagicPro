@@ -1463,6 +1463,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += "Exile all creature cards from all graveyards.\n";
             if (sorcery.damageToEachCreatureAndPlayer > 0)
                 rules += $"Deal {sorcery.damageToEachCreatureAndPlayer} damage to each creature and each player.\n";
+            if (sorcery.swapGraveyardAndLibrary)
+                rules += "Each player exchanges their graveyard with their library, then shuffles their deck.\n";
             if (sorcery.destroyTargetIfTypeMatches)
             {
                 string destroyType = sorcery.requiredTargetType switch
