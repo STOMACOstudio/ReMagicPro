@@ -351,6 +351,9 @@ public class SorceryCard : Card
                     if (!keywordCreature.temporaryKeywordAbilities.Contains(keywordToGrant))
                         keywordCreature.temporaryKeywordAbilities.Add(keywordToGrant);
 
+                    if (keywordToGrant == KeywordAbility.Haste)
+                        keywordCreature.hasSummoningSickness = false;
+
                     var visual = GameManager.Instance.FindCardVisual(keywordCreature);
                     if (visual != null)
                         visual.UpdateVisual();
