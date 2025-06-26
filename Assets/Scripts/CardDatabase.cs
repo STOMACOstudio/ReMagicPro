@@ -332,6 +332,69 @@ public static class CardDatabase
                         }
                     }
                     });
+                Add(new CardData //Untamed Unicorn
+                    {
+                    cardName = "Untamed Unicorn",
+                    rarity = "Rare",
+                    manaCost = 6,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 0,
+                    subtypes = new List<string> { "Horse" },
+                    artwork = Resources.Load<Sprite>("Art/untamed_unicorn"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Power and toughness equal to Plains you control.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandEnter,
+                            description = "Power and toughness equal to Plains you control.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandLeave,
+                            description = "Power and toughness equal to Plains you control.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData // Human Soldier Token
                     {
                         cardName = "Human Soldier",

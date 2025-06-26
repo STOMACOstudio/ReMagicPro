@@ -131,6 +131,10 @@ public class Player
             Battlefield.Add(card);
             Debug.Log($"{card.cardName} is entering the battlefield.");
             card.OnEnterPlay(this);
+            if (card is LandCard)
+            {
+                GameManager.Instance.NotifyLandEntered(card, this);
+            }
             if ((card is ArtifactCard) || (card is CreatureCard cc && cc.color.Contains("Artifact")))
             {
                 GameManager.Instance.NotifyArtifactEntered(card, this);
@@ -140,8 +144,10 @@ public class Player
     public void SendToGraveyard(Card card)
             {
                 Battlefield.Remove(card);
-                Debug.Log($"{card.cardName} is being sent to the graveyard.");
+            Debug.Log($"{card.cardName} is being sent to the graveyard.");
                 card.OnLeavePlay(this);
+                if (card is LandCard)
+                    GameManager.Instance.NotifyLandLeft(card, this);
                 Graveyard.Add(card);
             }
             
