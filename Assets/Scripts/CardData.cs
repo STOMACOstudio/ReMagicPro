@@ -60,6 +60,7 @@ public class CardData
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public int damageToTarget = 0;
+    public KeywordAbility keywordToGrant = KeywordAbility.None;
 
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;
 

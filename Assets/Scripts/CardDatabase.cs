@@ -1969,6 +1969,19 @@ public static class CardDatabase
                             destroyTargetIfTypeMatches = true,
                             artwork = Resources.Load<Sprite>("Art/melt"),
                         });
+                Add(new CardData //Dash
+                    {
+                        cardName = "Dash",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = new List<string> { "Red" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        keywordToGrant = KeywordAbility.Haste,
+                        rulesText = "Target creature gains haste until the end of turn.",
+                        artwork = Resources.Load<Sprite>("Art/dash"),
+                    });
                 Add(new CardData //thunderstrike
                     {
                         cardName = "Thunderstrike",

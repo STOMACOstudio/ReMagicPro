@@ -1406,6 +1406,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 string rules = "";
 
+            if (!string.IsNullOrEmpty(sorcery.rulesText))
+                rules += sorcery.rulesText + "\n";
+
             if (sorcery.lifeToGain > 0)
                 rules += $"Gain {sorcery.lifeToGain} life.\n";
             if (sorcery.lifeToLoseForOpponent > 0)
