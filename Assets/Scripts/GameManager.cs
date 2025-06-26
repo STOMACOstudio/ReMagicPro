@@ -212,6 +212,8 @@ public class GameManager : MonoBehaviour
                     player.Battlefield.Add(card);
 
                     card.OnEnterPlay(player);
+                    if (card.color.Contains("Artifact"))
+                        NotifyArtifactEntered(card, player);
 
                     if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
                         creature.hasSummoningSickness = false;
@@ -276,6 +278,7 @@ public class GameManager : MonoBehaviour
                     player.Hand.Remove(card);
                     player.Battlefield.Add(card);
                     card.OnEnterPlay(player);
+                    NotifyArtifactEntered(card, player);
 
                     if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                     {
@@ -776,6 +779,11 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
+        if ((tokenCard is ArtifactCard) ||
+            (tokenCard is CreatureCard cc && cc.color.Contains("Artifact")))
+        {
+            NotifyArtifactEntered(tokenCard, owner);
+        }
     }
     public Player GetOpponentOf(Player player)
     {
@@ -1655,6 +1663,30 @@ public class GameManager : MonoBehaviour
                 // 6. Move to graveyard data list
                 owner.Graveyard.Add(card);
             }
+
+        public void NotifyArtifactEntered(Card artifact, Player controller)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnArtifactEnter && ability.effect != null)
+                        {
+                            int oldLife = player.Life;
+                            ability.effect.Invoke(player, artifact);
+                            int gained = player.Life - oldLife;
+                            if (gained > 0)
+                            {
+                                ShowFloatingHeal(gained,
+                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         public void GainLife(Player player, int amount)
         {

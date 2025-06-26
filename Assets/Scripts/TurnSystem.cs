@@ -409,9 +409,10 @@ public class TurnSystem : MonoBehaviour
                                     if (ai.ColoredMana.CanPay(cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
-                                        ai.Hand.Remove(card);
-                                        ai.Battlefield.Add(card);
-                                        card.OnEnterPlay(ai);
+                                       ai.Hand.Remove(card);
+                                       ai.Battlefield.Add(card);
+                                       card.OnEnterPlay(ai);
+                                        GameManager.Instance.NotifyArtifactEntered(card, ai);
 
                                         if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {
@@ -447,11 +448,11 @@ public class TurnSystem : MonoBehaviour
                                             }
                                         }
 
-                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
-                                        CardVisual visual = obj.GetComponent<CardVisual>();
-                                        visual.Setup(card, GameManager.Instance);
-                                        visual.isInBattlefield = true;
-                                        GameManager.Instance.activeCardVisuals.Add(visual);
+                                       GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
+                                       CardVisual visual = obj.GetComponent<CardVisual>();
+                                       visual.Setup(card, GameManager.Instance);
+                                       visual.isInBattlefield = true;
+                                       GameManager.Instance.activeCardVisuals.Add(visual);
 
                                         creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
 
@@ -608,6 +609,7 @@ public class TurnSystem : MonoBehaviour
                                         ai.Hand.Remove(card);
                                         ai.Battlefield.Add(card);
                                         card.OnEnterPlay(ai);
+                                        GameManager.Instance.NotifyArtifactEntered(card, ai);
 
                                         if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {

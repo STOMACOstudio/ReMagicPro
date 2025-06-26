@@ -210,6 +210,8 @@ public class Card
                     lines.Add("When this creature dies, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnUpkeep)
                     lines.Add("At the beginning of your upkeep, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnArtifactEnter)
+                    lines.Add("Whenever an artifact enters the battlefield, " + ability.description);
             }
 
             if (keywordAbilities != null)

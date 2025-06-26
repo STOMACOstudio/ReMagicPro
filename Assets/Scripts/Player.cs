@@ -131,6 +131,10 @@ public class Player
             Battlefield.Add(card);
             Debug.Log($"{card.cardName} is entering the battlefield.");
             card.OnEnterPlay(this);
+            if ((card is ArtifactCard) || (card is CreatureCard cc && cc.color.Contains("Artifact")))
+            {
+                GameManager.Instance.NotifyArtifactEntered(card, this);
+            }
         }
 
     public void SendToGraveyard(Card card)

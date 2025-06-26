@@ -113,6 +113,31 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/angry_farmer")
                     });
+                Add(new CardData //Trinkets Collector
+                    {
+                    cardName = "Trinkets Collector",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 1,
+                    subtypes = new List<string> { "Spirit" },
+                    artwork = Resources.Load<Sprite>("Art/trinkets_collector"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnArtifactEnter,
+                            description = "gain 1 life.",
+                            effect = (Player owner, Card artifact) =>
+                            {
+                                owner.Life += 1;
+                                GameManager.Instance.UpdateUI();
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Gallant lord
                     {
                     cardName = "Gallant Lord",
