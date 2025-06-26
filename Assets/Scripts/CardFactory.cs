@@ -91,6 +91,7 @@ public static class CardFactory
         newCard.artwork = data.artwork;
         newCard.entersTapped = data.entersTapped;
         newCard.abilities = new List<CardAbility>(data.abilities);
+        newCard.rulesText = data.rulesText;
         newCard.isToken = data.isToken;
 
         Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");

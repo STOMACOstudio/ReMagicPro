@@ -242,7 +242,7 @@ public class TurnSystem : MonoBehaviour
                                 Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
 
                                 int oldLife = player.Life;
-                                ability.effect.Invoke(player, null);
+                                ability.effect.Invoke(player, card);
                                 int gained = player.Life - oldLife;
 
                                 if (gained > 0)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class CardDatabase
 {
@@ -328,6 +329,75 @@ public static class CardDatabase
                                 owner.Life += 5;
                                 GameManager.Instance.UpdateUI();
                                 Debug.Log("Gain 5 life at upkeep.");
+                            }
+                        }
+                    }
+                    });
+                Add(new CardData //Untamed Unicorn
+                    {
+                    cardName = "Untamed Unicorn",
+                    rarity = "Rare",
+                    manaCost = 6,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 0,
+                    subtypes = new List<string> { "Horse" },
+                    rulesText = "This creature has power and toughness equal to the number of Plains you control.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Vigilance,
+                        KeywordAbility.Lifelink
+                    },
+                    artwork = Resources.Load<Sprite>("Art/untamed_unicorn"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandEnter,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandLeave,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
+                                    creature.power = plains;
+                                    creature.toughness = plains;
+                                    creature.baseToughness = plains;
+                                    GameManager.Instance.UpdateUI();
+                                }
                             }
                         }
                     }

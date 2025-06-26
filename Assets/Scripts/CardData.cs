@@ -17,6 +17,8 @@ public class CardData
     public string tokenToCreate;
     public string requiredTargetColor = null;
 
+    public string rulesText;
+
     public bool entersTapped = false;
     public bool isToken = false;
     public bool destroyTargetIfTypeMatches = false;

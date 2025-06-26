@@ -192,6 +192,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 card.OnEnterPlay(player);
+                NotifyLandEntered(card, player);
 
                 visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
                 visual.isInBattlefield = true;
@@ -422,6 +423,8 @@ public class GameManager : MonoBehaviour
             if (diedFromBattlefield)
             {
                 card.OnLeavePlay(owner);
+                if (card is LandCard)
+                    NotifyLandLeft(card, owner);
             }
 
             card.isTapped = false;
@@ -779,6 +782,8 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
+        if (tokenCard is LandCard)
+            NotifyLandEntered(tokenCard, owner);
         if ((tokenCard is ArtifactCard) ||
             (tokenCard is CreatureCard cc && cc.color.Contains("Artifact")))
         {
@@ -1676,6 +1681,54 @@ public class GameManager : MonoBehaviour
                         {
                             int oldLife = player.Life;
                             ability.effect.Invoke(player, artifact);
+                            int gained = player.Life - oldLife;
+                            if (gained > 0)
+                            {
+                                ShowFloatingHeal(gained,
+                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void NotifyLandEntered(Card land, Player controller)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnLandEnter && ability.effect != null)
+                        {
+                            int oldLife = player.Life;
+                            ability.effect.Invoke(player, card);
+                            int gained = player.Life - oldLife;
+                            if (gained > 0)
+                            {
+                                ShowFloatingHeal(gained,
+                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void NotifyLandLeft(Card land, Player controller)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnLandLeave && ability.effect != null)
+                        {
+                            int oldLife = player.Life;
+                            ability.effect.Invoke(player, card);
                             int gained = player.Life - oldLife;
                             if (gained > 0)
                             {

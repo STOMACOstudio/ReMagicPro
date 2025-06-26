@@ -14,6 +14,8 @@ public class Card
     public List<string> color = new List<string>();
     public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 
+    public string rulesText;
+
     public int plagueAmount;
     public int manaToGain;
     public int lifeToGain;
@@ -58,7 +60,7 @@ public class Card
                     if (ability.effect != null)
                     {
                         int oldLife = owner.Life;
-                        ability.effect.Invoke(owner, null);
+                        ability.effect.Invoke(owner, this);
                         int gained = owner.Life - oldLife;
 
                         if (gained > 0)
@@ -80,7 +82,7 @@ public class Card
                 if (ability.timing == TriggerTiming.OnDeath && ability.effect != null)
                 {
                     int oldLife = owner.Life;
-                    ability.effect.Invoke(owner, null);
+                    ability.effect.Invoke(owner, this);
                     int gained = owner.Life - oldLife;
 
                     if (gained > 0)
@@ -161,6 +163,11 @@ public class Card
                     }
                 }
 
+            if (!string.IsNullOrEmpty(rulesText))
+            {
+                lines.Add(rulesText);
+            }
+
             if (this is ArtifactCard artifact)
             {
                 if (entersTapped)
@@ -204,6 +211,9 @@ public class Card
             // Triggered abilities — shared across all cards
             foreach (var ability in abilities)
             {
+                if (string.IsNullOrEmpty(ability.description))
+                    continue;
+
                 if (ability.timing == TriggerTiming.OnEnter)
                     lines.Add("When this creature enters, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnDeath)
@@ -212,6 +222,10 @@ public class Card
                     lines.Add("At the beginning of your upkeep, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnArtifactEnter)
                     lines.Add("Whenever an artifact enters the battlefield, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnLandEnter)
+                    lines.Add("Whenever a land enters the battlefield, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnLandLeave)
+                    lines.Add("Whenever a land leaves the battlefield, " + ability.description);
             }
 
             if (keywordAbilities != null)
