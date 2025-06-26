@@ -981,7 +981,10 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.Damage:
                     Debug.Log("→ Resolving combat damage.");
                     if (damageCoroutine != null)
+                    {
                         StopCoroutine(damageCoroutine);
+                        damageCoroutine = null;
+                    }
 
                     damageCoroutine = StartCoroutine(WaitToShowCombatDamage());
                     break;
