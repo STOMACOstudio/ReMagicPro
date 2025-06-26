@@ -3,6 +3,7 @@ public enum TriggerTiming
     OnEnter,
     OnDeath,
     OnUpkeep,
+    OnArtifactEnter,
 }
 
 public class CardAbility
