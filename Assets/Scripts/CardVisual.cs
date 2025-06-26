@@ -12,7 +12,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Card linkedCard; // which card it represents
     public GameManager gameManager; // which manager it talks to
     public CreatureCard blockingThisAttacker; // If blocking, who am I blocking
-    public CreatureCard blockedByThisBlocker; // If attacker, who blocks me
+    public List<CreatureCard> blockedByThisBlocker = new List<CreatureCard>(); // If attacker, who blocks me
     public LineRenderer lineRenderer;
     public Image artImage;
     public Image backgroundImage;
@@ -1136,7 +1136,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         {
                             // Already blocking → remove block
                             Debug.Log($"{clickedCreature.cardName} stops blocking.");
-                            clickedCreature.blockingThisAttacker.blockedByThisBlocker = null;
+                            clickedCreature.blockingThisAttacker.blockedByThisBlocker.Remove(clickedCreature);
                             clickedCreature.blockingThisAttacker = null;
                             GameManager.Instance.UpdateUI();
                             return;
@@ -1148,18 +1148,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
 
-                        // Remove previous block from this attacker, if any
-                        if (attacker.blockedByThisBlocker != null)
-                        {
-                            CreatureCard oldBlocker = attacker.blockedByThisBlocker;
-                            oldBlocker.blockingThisAttacker = null;
-                            attacker.blockedByThisBlocker = null;
 
-                            // Force line to disappear on old blocker
-                            var oldVisual = GameManager.Instance.FindCardVisual(oldBlocker);
-                            if (oldVisual != null)
-                                oldVisual.UpdateVisual();
-                        }
 
                         // Check if this blocker is allowed to block the attacker (Flying rule)
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
@@ -1192,7 +1181,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         
                         // Assign the block
                         clickedCreature.blockingThisAttacker = attacker;
-                        attacker.blockedByThisBlocker = clickedCreature;
+                        attacker.blockedByThisBlocker.Add(clickedCreature);
                         GameManager.Instance.selectedAttackerForBlocking = null;
 
                         Debug.Log($"{clickedCreature.cardName} is blocking {attacker.cardName}");

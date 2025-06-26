@@ -12,7 +12,7 @@ public class CreatureCard : Card
     public bool hasSummoningSickness = true;
     public KeywordAbility abilityToGain = KeywordAbility.Flying;
     public CreatureCard blockingThisAttacker;  // If this is a blocker
-    public CreatureCard blockedByThisBlocker;  // If this is an attacker
+    public List<CreatureCard> blockedByThisBlocker = new List<CreatureCard>();  // If this is an attacker
 
     public override void Play(Player player)
     {
