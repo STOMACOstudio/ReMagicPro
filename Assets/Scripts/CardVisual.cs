@@ -350,6 +350,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
+            }
             else if (linkedCard is ArtifactCard artifact)
             {
                 costText.text = genericCost.ToString();
