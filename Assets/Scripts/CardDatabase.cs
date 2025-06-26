@@ -1980,7 +1980,7 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         keywordToGrant = KeywordAbility.Haste,
                         rulesText = "Target creature gains haste until the end of turn.",
-                        artwork = Resources.Load<Sprite>("Art/thundermare"),
+                        artwork = Resources.Load<Sprite>("Art/dash"),
                     });
                 Add(new CardData //thunderstrike
                     {
