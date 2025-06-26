@@ -196,7 +196,6 @@ public class GameManager : MonoBehaviour
                 visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
-                visual.UpdateVisual();
                 SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
             }
@@ -329,9 +328,11 @@ public class GameManager : MonoBehaviour
             }
 
             if (player == humanPlayer)
+            {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                 ShowManaVFX(land);
                 UpdateUI();
+            }
         }
 
     private void ShowManaVFX(LandCard land)
@@ -870,11 +871,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
+            return;
         }
-        creature.keywordAbilities.Add(creature.abilityToGain); // TEMP grant
-        Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
-
-        UpdateUI();
     }
 
     public Player GetOwnerOfCard(Card card)
