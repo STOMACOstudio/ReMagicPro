@@ -282,7 +282,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else
             {
-                if (genericCost > 0)
+                bool showGeneric = genericCost > 0 ||
+                                   linkedCard.PrimaryColor == "Artifact" ||
+                                   linkedCard.PrimaryColor == "None";
+
+                if (showGeneric)
                 {
                     costText.text = genericCost.ToString();
                     if (genericCostBG != null) genericCostBG.SetActive(true);
@@ -305,7 +309,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
                 }
 
-                if (genericCost > 0)
+                bool showGeneric = genericCost > 0 ||
+                                   linkedCard.PrimaryColor == "Artifact" ||
+                                   linkedCard.PrimaryColor == "None";
+
+                if (showGeneric)
                 {
                     costText.text = genericCost.ToString();
                     if (genericCostBG != null) genericCostBG.SetActive(true);
@@ -526,7 +534,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
                 }
-                if (genericCost > 0)
+                bool showGeneric = genericCost > 0 ||
+                                   linkedCard.PrimaryColor == "Artifact" ||
+                                   linkedCard.PrimaryColor == "None";
+
+                if (showGeneric)
                 {
                     costText.text = genericCost.ToString();
                     if (genericCostBG != null) genericCostBG.SetActive(true);
@@ -536,6 +548,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     costText.text = "";
                     if (genericCostBG != null) genericCostBG.SetActive(false);
                 }
+
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
