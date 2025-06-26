@@ -1006,17 +1006,34 @@ public class TurnSystem : MonoBehaviour
                     // Remove temporary keyword abilities
                     foreach (var card in endingPlayer.Battlefield)
                     {
-                        if (card is CreatureCard creature &&
-                            creature.activatedAbilities != null &&
-                            creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
+                        if (card is CreatureCard creature)
                         {
-                            if (creature.keywordAbilities.Contains(creature.abilityToGain))
+                            if (creature.activatedAbilities != null &&
+                                creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
                             {
-                                creature.keywordAbilities.Remove(creature.abilityToGain);
+                                if (creature.keywordAbilities.Contains(creature.abilityToGain))
+                                {
+                                    creature.keywordAbilities.Remove(creature.abilityToGain);
+                                    Debug.Log($"{creature.cardName} loses {creature.abilityToGain} at end of turn.");
+                                }
+                            }
+
+                            if (creature.temporaryKeywordAbilities.Count > 0)
+                            {
+                                foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
+                                {
+                                    if (creature.keywordAbilities.Contains(temp))
+                                    {
+                                        creature.keywordAbilities.Remove(temp);
+                                        Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                    }
+                                }
+
+                                creature.temporaryKeywordAbilities.Clear();
+
                                 var visual = GameManager.Instance.FindCardVisual(card);
                                 if (visual != null)
                                     visual.UpdateVisual();
-                                Debug.Log($"{creature.cardName} loses {creature.abilityToGain} at end of turn.");
                             }
                         }
                     }

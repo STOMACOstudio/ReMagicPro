@@ -19,6 +19,7 @@ public class SorceryCard : Card
     public Card chosenTarget = null;
     public int damageToTarget = 0;
     public bool destroyTargetIfTypeMatches = false;
+    public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
     public Player chosenPlayerTarget = null;
 
@@ -342,7 +343,21 @@ public class SorceryCard : Card
                     }
                 }
 
-                if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
+                if (keywordToGrant != KeywordAbility.None && target is CreatureCard keywordCreature)
+                {
+                    if (!keywordCreature.keywordAbilities.Contains(keywordToGrant))
+                        keywordCreature.keywordAbilities.Add(keywordToGrant);
+
+                    if (!keywordCreature.temporaryKeywordAbilities.Contains(keywordToGrant))
+                        keywordCreature.temporaryKeywordAbilities.Add(keywordToGrant);
+
+                    var visual = GameManager.Instance.FindCardVisual(keywordCreature);
+                    if (visual != null)
+                        visual.UpdateVisual();
+
+                    Debug.Log($"{keywordCreature.cardName} gains {keywordToGrant} until end of turn.");
+                }
+                else if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
                 {
                     Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
                 }
