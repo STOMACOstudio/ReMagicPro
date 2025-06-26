@@ -278,6 +278,8 @@ public class SorceryCard : Card
                             player.Deck[i] = player.Deck[rand];
                             player.Deck[rand] = temp;
                         }
+
+                        GameManager.Instance.RefreshGraveyardVisuals(player);
                     }
 
                     Debug.Log("Graveyards and libraries swapped and shuffled.");

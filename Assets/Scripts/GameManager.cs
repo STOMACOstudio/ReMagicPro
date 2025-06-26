@@ -935,6 +935,33 @@ public class GameManager : MonoBehaviour
                 label.text = amount.ToString();
         }
 
+    public void RefreshGraveyardVisuals(Player player)
+        {
+            var graveyardVisuals = activeCardVisuals
+                .Where(cv => cv.isInGraveyard && GetOwnerOfCard(cv.linkedCard) == player)
+                .ToList();
+
+            foreach (var visual in graveyardVisuals)
+            {
+                activeCardVisuals.Remove(visual);
+                Destroy(visual.gameObject);
+            }
+
+            foreach (var card in player.Graveyard)
+            {
+                if (card.isToken) continue;
+
+                GameObject visualGO = Instantiate(cardPrefab,
+                    player == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                CardVisual graveyardVisual = visualGO.GetComponent<CardVisual>();
+                graveyardVisual.Setup(card, this);
+                graveyardVisual.transform.localPosition = Vector3.zero;
+                graveyardVisual.UpdateGraveyardVisual();
+
+                activeCardVisuals.Add(graveyardVisual);
+            }
+        }
+
     public void WinBattle()
     {
         if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
