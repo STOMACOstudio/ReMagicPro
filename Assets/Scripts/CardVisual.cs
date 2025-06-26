@@ -89,7 +89,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
         }
 
-    public void OnPointerExit(PointerEventData eventData)
+        public void OnPointerExit(PointerEventData eventData)
         {
             if (isInGraveyard)
                 return;
@@ -109,37 +109,81 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
         }
 
+    private void UpdateLandIcon()
+        {
+            if (landIcon == null)
+                return;
+
+            if (linkedCard is LandCard && !isInBattlefield)
+            {
+                Sprite landSprite = linkedCard.PrimaryColor switch
+                {
+                    "White" => whiteLandIcon,
+                    "Blue" => blueLandIcon,
+                    "Black" => blackLandIcon,
+                    "Red" => redLandIcon,
+                    "Green" => greenLandIcon,
+                    _ => null
+                };
+
+                landIcon.GetComponent<Image>().sprite = landSprite;
+                landIcon.SetActive(landSprite != null);
+            }
+            else
+            {
+                landIcon.SetActive(false);
+            }
+        }
+
+    private void SetTypeLine(CardData data)
+        {
+            if (cardTypeText == null || data == null) return;
+
+            string typeLine;
+
+            if (data.cardType == CardType.Creature)
+            {
+                if (data.subtypes != null && data.subtypes.Count > 0)
+                    typeLine = $"Creature — {string.Join(" ", data.subtypes)}";
+                else
+                    typeLine = "Creature";
+            }
+            else
+            {
+                typeLine = data.cardType.ToString();
+            }
+
+            cardTypeText.text = typeLine;
+            cardTypeText.enabled = !isInBattlefield;
+        }
+
+    private int CalculateGenericCost()
+        {
+            if (linkedCard is CreatureCard c)
+            {
+                return (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
+                    ? c.manaCost
+                    : Mathf.Max(c.manaCost - linkedCard.color.Count, 0);
+            }
+            if (linkedCard is SorceryCard s)
+            {
+                return Mathf.Max(s.manaCost - linkedCard.color.Count, 0);
+            }
+            if (linkedCard is ArtifactCard a)
+            {
+                return a.manaCost;
+            }
+            return 0;
+        }
+
     public void UpdateVisual()
         {
-            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
-
-            // Ensure land icon visibility is always updated
-            if (landIcon != null)
-            {
-                if (linkedCard is LandCard && !isInBattlefield)
-                {
-                    Sprite landSprite = linkedCard.PrimaryColor switch
-                    {
-                        "White" => whiteLandIcon,
-                        "Blue" => blueLandIcon,
-                        "Black" => blackLandIcon,
-                        "Red" => redLandIcon,
-                        "Green" => greenLandIcon,
-                        _ => null
-                    };
-
-                    landIcon.GetComponent<Image>().sprite = landSprite;
-                    landIcon.SetActive(landSprite != null);
-                }
-                else
-                {
-                    landIcon.SetActive(false);
-                }
-            }
+            var data = CardDatabase.GetCardData(linkedCard.cardName);
+            SetCardBorder(data);
+            UpdateLandIcon();
 
             if (cardRarity != null)
             {
-                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
                 if (data != null && data.rarity != "Token")
                 {
                     cardRarity.color = GetRarityColor(data.rarity);
@@ -151,26 +195,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
             }
 
-            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
-            if (cardData != null && cardTypeText != null)
-            {
-                string typeLine;
-
-                if (cardData.cardType == CardType.Creature)
-                {
-                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
-                    else
-                        typeLine = "Creature";
-                }
-                else
-                {
-                    typeLine = cardData.cardType.ToString();
-                }
-
-                cardTypeText.text = typeLine;
-                cardTypeText.enabled = !isInBattlefield;
-            }
+            SetTypeLine(data);
 
             transform.rotation = linkedCard.isTapped
                 ? Quaternion.Euler(0, 0, -30)
@@ -269,15 +294,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             keywordText.text = "";
             sicknessText.text = "";
 
-            int genericCost = 0;
+            int genericCost = CalculateGenericCost();
 
             bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                        linkedCard.PrimaryColor != "Artifact" &&
-                        linkedCard.PrimaryColor != "None";
+                                    linkedCard.PrimaryColor != "Artifact" &&
+                                    linkedCard.PrimaryColor != "None";
 
             if (isOneColoredMana)
             {
-                costText.text = "";
                 if (genericCostBG != null) genericCostBG.SetActive(false);
             }
             else
@@ -286,43 +310,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                    linkedCard.PrimaryColor == "Artifact" ||
                                    linkedCard.PrimaryColor == "None";
 
-                if (showGeneric)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
             }
 
             if (linkedCard is CreatureCard creature)
             {
-                if (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
-                {
-                    genericCost = creature.manaCost;
-                }
-                else
-                {
-                    genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
-                }
-
                 bool showGeneric = genericCost > 0 ||
                                    linkedCard.PrimaryColor == "Artifact" ||
                                    linkedCard.PrimaryColor == "None";
 
-                if (showGeneric)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
@@ -340,30 +339,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costBackground.SetActive(true);
                 statsBackground.SetActive(true);
             }
+
             else if (linkedCard is SorceryCard sorcery)
             {
-                genericCost = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0);
-
-                if (genericCost > 0)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
-
+                bool showGeneric = genericCost > 0;
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 sorceryEffect(sorcery);
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
-            }
             else if (linkedCard is ArtifactCard artifact)
             {
-                genericCost = artifact.manaCost;
                 costText.text = genericCost.ToString();
                 if (genericCostBG != null) genericCostBG.SetActive(true);
                 keywordText.text = linkedCard.GetCardText();
@@ -420,29 +408,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             linkedCard = card;
             gameManager = manager;
 
-            // Ensure land icon visibility is updated before any return
-            if (landIcon != null)
-            {
-                if (linkedCard is LandCard && !isInBattlefield)
-                {
-                    Sprite landSprite = linkedCard.PrimaryColor switch
-                    {
-                        "White" => whiteLandIcon,
-                        "Blue" => blueLandIcon,
-                        "Black" => blackLandIcon,
-                        "Red" => redLandIcon,
-                        "Green" => greenLandIcon,
-                        _ => null
-                    };
-
-                    landIcon.GetComponent<Image>().sprite = landSprite;
-                    landIcon.SetActive(landSprite != null);
-                }
-                else
-                {
-                    landIcon.SetActive(false);
-                }
-            }
+            UpdateLandIcon();
 
             // Re-enable everything when card is set up (e.g., for hand, stack, etc.)
             if (backgroundImage != null) backgroundImage.enabled = true;
@@ -452,27 +418,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (statsText != null) statsText.enabled = true;
             if (keywordText != null) keywordText.enabled = true;
 
-            // Show type line based on card
-            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
-            if (cardData != null && cardTypeText != null)
-            {
-                string typeLine;
-
-                if (cardData.cardType == CardType.Creature)
-                {
-                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
-                    else
-                        typeLine = "Creature";
-                }
-                else
-                {
-                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
-                }
-
-                cardTypeText.text = typeLine;
-                cardTypeText.enabled = !isInBattlefield;
-            }
+            var data = CardDatabase.GetCardData(linkedCard.cardName);
+            SetTypeLine(data);
 
             titleText.text = card.cardName;
             lineRenderer = GetComponent<LineRenderer>();
@@ -480,7 +427,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             if (cardRarity != null)
             {
-                CardData data = CardDatabase.GetCardData(linkedCard.cardName);
                 if (data != null && data.rarity != "Token") // Don't show for tokens
                 {
                     cardRarity.color = GetRarityColor(data.rarity);
@@ -492,62 +438,38 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
             }
 
-            SetCardBorder(CardDatabase.GetCardData(linkedCard.cardName));
-
-            float scale = isInGraveyard ? 0.5f : 1f;
+            SetCardBorder(data);
 
             sicknessText.text = ""; // Clear at start
 
-            int genericCost = 0;
+            int genericCost = CalculateGenericCost();
 
             bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                        linkedCard.PrimaryColor != "Artifact" &&
-                        linkedCard.PrimaryColor != "None";
+                                    linkedCard.PrimaryColor != "Artifact" &&
+                                    linkedCard.PrimaryColor != "None";
 
             if (isOneColoredMana)
             {
-                costText.text = "";
                 if (genericCostBG != null) genericCostBG.SetActive(false);
             }
             else
             {
-                if (genericCost > 0)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
-                if (genericCostBG != null) genericCostBG.SetActive(true);
-            }
-
-            if (linkedCard is CreatureCard creature)
-            {
-                if (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
-                {
-                    genericCost = creature.manaCost;
-                }
-                else
-                {
-                    genericCost = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0);
-                }
                 bool showGeneric = genericCost > 0 ||
                                    linkedCard.PrimaryColor == "Artifact" ||
                                    linkedCard.PrimaryColor == "None";
 
-                if (showGeneric)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
+            }
+
+            if (linkedCard is CreatureCard creature)
+            {
+                bool showGeneric = genericCost > 0 ||
+                                   linkedCard.PrimaryColor == "Artifact" ||
+                                   linkedCard.PrimaryColor == "None";
+
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
@@ -557,17 +479,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                genericCost = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0);
-                if (genericCost > 0)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                bool showGeneric = genericCost > 0;
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = "";
                 sicknessText.text = "";
@@ -579,7 +493,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                genericCost = artifact.manaCost;
                 costText.text = genericCost.ToString();
                 if (genericCostBG != null) genericCostBG.SetActive(true);
                 statsText.text = "";
