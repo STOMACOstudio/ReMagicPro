@@ -14,6 +14,8 @@ public class Card
     public List<string> color = new List<string>();
     public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 
+    public string rulesText;
+
     public int plagueAmount;
     public int manaToGain;
     public int lifeToGain;
@@ -99,6 +101,11 @@ public class Card
     public virtual string GetCardText()
         {
             List<string> lines = new List<string>();
+
+            if (!string.IsNullOrEmpty(rulesText))
+            {
+                lines.Add(rulesText);
+            }
 
             // Keyword abilities — only for creatures
             if (this is CreatureCard creature)
@@ -204,6 +211,9 @@ public class Card
             // Triggered abilities — shared across all cards
             foreach (var ability in abilities)
             {
+                if (string.IsNullOrEmpty(ability.description))
+                    continue;
+
                 if (ability.timing == TriggerTiming.OnEnter)
                     lines.Add("When this creature enters, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnDeath)

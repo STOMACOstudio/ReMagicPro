@@ -342,13 +342,19 @@ public static class CardDatabase
                     power = 0,
                     toughness = 0,
                     subtypes = new List<string> { "Horse" },
+                    rulesText = "This creature has power and toughness equal to the number of plains you control.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Vigilance,
+                        KeywordAbility.Lifelink
+                    },
                     artwork = Resources.Load<Sprite>("Art/untamed_unicorn"),
                     abilities = new List<CardAbility>
                     {
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = "Power and toughness equal to Plains you control.",
+                            description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 if (selfCard is CreatureCard creature)
@@ -364,7 +370,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnLandEnter,
-                            description = "Power and toughness equal to Plains you control.",
+                            description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 if (selfCard is CreatureCard creature)
@@ -380,7 +386,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnLandLeave,
-                            description = "Power and toughness equal to Plains you control.",
+                            description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 if (selfCard is CreatureCard creature)
