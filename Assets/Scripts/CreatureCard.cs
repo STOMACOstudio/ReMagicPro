@@ -11,6 +11,7 @@ public class CreatureCard : Card
     public int tapLifeLossAmount;
     public bool hasSummoningSickness = true;
     public KeywordAbility abilityToGain = KeywordAbility.Flying;
+    public List<KeywordAbility> temporaryKeywordAbilities = new List<KeywordAbility>();
     public CreatureCard blockingThisAttacker;  // If this is a blocker
     public List<CreatureCard> blockedByThisBlocker = new List<CreatureCard>();  // If this is an attacker
 

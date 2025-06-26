@@ -1433,6 +1433,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
             if (sorcery.eachPlayerGainLifeEqualToLands)
                 rules += $"Each player gains life equal to the number of lands they control.\n";
+            if (sorcery.keywordAbilityForTarget != KeywordAbility.None &&
+                sorcery.requiredTargetType == SorceryCard.TargetType.Creature)
+                rules += $"Target creature gains {sorcery.keywordAbilityForTarget} until end of turn.\n";
             if (sorcery.damageToTarget > 0 &&
                 (sorcery.requiredTargetType == SorceryCard.TargetType.Creature ||
                 sorcery.requiredTargetType == SorceryCard.TargetType.Player ||

@@ -18,6 +18,7 @@ public class SorceryCard : Card
     public int numberOfTokensMax = 0;
     public Card chosenTarget = null;
     public int damageToTarget = 0;
+    public KeywordAbility keywordAbilityForTarget = KeywordAbility.None;
     public bool destroyTargetIfTypeMatches = false;
     public string requiredTargetColor = null;
     public Player chosenPlayerTarget = null;
@@ -292,6 +293,20 @@ public class SorceryCard : Card
             {
                 if (target != null)
                 {
+
+                    if (keywordAbilityForTarget != KeywordAbility.None && target is CreatureCard targetCreature)
+                    {
+                        if (!targetCreature.keywordAbilities.Contains(keywordAbilityForTarget))
+                            targetCreature.keywordAbilities.Add(keywordAbilityForTarget);
+                        if (keywordAbilityForTarget == KeywordAbility.Haste)
+                            targetCreature.hasSummoningSickness = false;
+                        targetCreature.temporaryKeywordAbilities.Add(keywordAbilityForTarget);
+                        GameManager.Instance.FindCardVisual(targetCreature)?.UpdateVisual();
+
+                        GameManager.Instance.UpdateUI();
+                        ResolveEffect(caster);
+                        return;
+                    }
 
                     if (damageToTarget > 0 && target is CreatureCard creature)
                     {

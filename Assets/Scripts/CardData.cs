@@ -61,6 +61,8 @@ public class CardData
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public int damageToTarget = 0;
 
+    public KeywordAbility keywordAbilityForTarget = KeywordAbility.None;
+
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;
 
     // Passive abilities like Haste, Defender

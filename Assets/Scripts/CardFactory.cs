@@ -60,6 +60,7 @@ public static class CardFactory
                 sorcery.damageToTarget = data.damageToTarget;
                 sorcery.destroyTargetIfTypeMatches = data.destroyTargetIfTypeMatches;
                 sorcery.requiredTargetColor = data.requiredTargetColor;
+                sorcery.keywordAbilityForTarget = data.keywordAbilityForTarget;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:

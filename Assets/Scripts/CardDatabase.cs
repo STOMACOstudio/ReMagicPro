@@ -2005,6 +2005,19 @@ public static class CardDatabase
                         damageToTarget = 3,
                         artwork = Resources.Load<Sprite>("Art/explosion"),
                     });
+                Add(new CardData //Burst of Speed
+                    {
+                        cardName = "Burst of Speed",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = new List<string> { "Red" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        keywordAbilityForTarget = KeywordAbility.Haste,
+                        rulesText = "Target creature gains haste until the end of turn",
+                        artwork = Resources.Load<Sprite>("Art/explosion"),
+                    });
                 Add(new CardData //Moonfall
                     {
                         cardName = "Moonfall",
