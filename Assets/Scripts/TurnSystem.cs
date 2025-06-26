@@ -1022,7 +1022,16 @@ public class TurnSystem : MonoBehaviour
                     }
 
                     // Only after cleanup, begin next turn
-                    BeginTurn(currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human);
+                    if (endingPlayer.extraTurns > 0)
+                    {
+                        endingPlayer.extraTurns--;
+                        Debug.Log($"{currentPlayer} gets an extra turn.");
+                        BeginTurn(currentPlayer);
+                    }
+                    else
+                    {
+                        BeginTurn(currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human);
+                    }
                     break;
             }
         }
