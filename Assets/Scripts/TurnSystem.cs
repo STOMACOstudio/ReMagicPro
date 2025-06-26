@@ -935,9 +935,11 @@ public class TurnSystem : MonoBehaviour
                                     continue;
                                 }
 
-                                GameManager.Instance.blockingAssignments[attacker] = blocker;
+                                if (!GameManager.Instance.blockingAssignments.ContainsKey(attacker))
+                                    GameManager.Instance.blockingAssignments[attacker] = new List<CreatureCard>();
+                                GameManager.Instance.blockingAssignments[attacker].Add(blocker);
                                 blocker.blockingThisAttacker = attacker;
-                                attacker.blockedByThisBlocker = blocker;
+                                attacker.blockedByThisBlocker.Add(blocker);
 
                                 Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
 

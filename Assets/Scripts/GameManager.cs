@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     public List<CreatureCard> selectedAttackers = new List<CreatureCard>();
     public List<CreatureCard> currentAttackers = new List<CreatureCard>();
 
-    public Dictionary<CreatureCard, CreatureCard> blockingAssignments = new Dictionary<CreatureCard, CreatureCard>();
+    public Dictionary<CreatureCard, List<CreatureCard>> blockingAssignments = new Dictionary<CreatureCard, List<CreatureCard>>();
 
     public bool isStackBusy = false;
 
@@ -483,86 +483,84 @@ public class GameManager : MonoBehaviour
 
         foreach (var attacker in currentAttackers)
         {
-            CreatureCard blocker = attacker.blockedByThisBlocker;
+            var blockers = attacker.blockedByThisBlocker;
 
-            if (blocker != null)
+            if (blockers != null && blockers.Count > 0)
             {
-                int blockerToughnessBefore = blocker.toughness;
+                int remainingDamage = attacker.power;
+                int totalDamageFromBlockers = 0;
 
-                if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
+                foreach (var blocker in blockers)
                 {
-                    int excessDamage = attacker.power - blockerToughnessBefore;
-                    if (excessDamage > 0)
+                    bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                    bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+
+                    int damageToBlocker = 0;
+                    if (!blockerProtected)
                     {
-                        if (humanPlayer.Battlefield.Contains(attacker))
-                        {
-                            aiPlayer.Life -= excessDamage;
-                            aiDamage += excessDamage;
-                            Debug.Log($"{attacker.cardName} tramples over for {excessDamage} damage!");
-                        }
+                        damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+                        blocker.toughness -= damageToBlocker;
+                        remainingDamage -= damageToBlocker;
+                    }
+
+                    int damageFromBlocker = attackerProtected ? 0 : blocker.power;
+                    if (!attackerProtected)
+                        totalDamageFromBlockers += damageFromBlocker;
+
+                    Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}.");
+
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageToBlocker > 0)
+                    {
+                        Player owner = GetOwnerOfCard(attacker);
+                        owner.Life += damageToBlocker;
+                        Debug.Log($"{attacker.cardName} lifelinks {damageToBlocker} life to {owner}.");
+
+                        if (owner == humanPlayer)
+                            ShowFloatingHeal(damageToBlocker, playerLifeContainer);
                         else
-                        {
-                            humanPlayer.Life -= excessDamage;
-                            playerDamage += excessDamage;
-                            Debug.Log($"{attacker.cardName} tramples YOU for {excessDamage} damage!");
-                        }
+                            ShowFloatingHeal(damageToBlocker, enemyLifeContainer);
+                    }
 
-                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
-                        {
-                            GetOwnerOfCard(attacker).Life += excessDamage;
-                            Debug.Log($"{attacker.cardName} lifelinks {excessDamage} trample damage.");
+                    if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
+                    {
+                        Player blockerOwner = GetOwnerOfCard(blocker);
+                        blockerOwner.Life += damageFromBlocker;
+                        Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
 
-                            if (attacker.owner == humanPlayer)
-                                ShowFloatingHeal(excessDamage, playerLifeContainer);
-                            else
-                                ShowFloatingHeal(excessDamage, enemyLifeContainer);
-                        }
+                        if (blockerOwner == humanPlayer)
+                            ShowFloatingHeal(damageFromBlocker, playerLifeContainer);
+                        else
+                            ShowFloatingHeal(damageFromBlocker, enemyLifeContainer);
                     }
                 }
 
-                // Blocker and attacker deal damage to each other
-                bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
-                bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                attacker.toughness -= totalDamageFromBlockers;
 
-                int damageFromAttacker = attacker.power;
-                int damageFromBlocker = blocker.power;
-
-                if (!blockerProtected)
-                    blocker.toughness -= damageFromAttacker;
-                else
-                    damageFromAttacker = 0;
-
-                if (!attackerProtected)
-                    attacker.toughness -= damageFromBlocker;
-                else
-                    damageFromBlocker = 0;
-
-                Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}. They deal damage to each other.");
-
-                // Lifelink: gain life equal to damage dealt by attacker
-                if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromAttacker > 0)
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Trample) && remainingDamage > 0)
                 {
-                    Player owner = GetOwnerOfCard(attacker);
-                    owner.Life += damageFromAttacker;
-                    Debug.Log($"{attacker.cardName} lifelinks {damageFromAttacker} life to {owner}.");
-
-                    if (owner == humanPlayer)
-                        ShowFloatingHeal(damageFromAttacker, playerLifeContainer);
+                    if (humanPlayer.Battlefield.Contains(attacker))
+                    {
+                        aiPlayer.Life -= remainingDamage;
+                        aiDamage += remainingDamage;
+                        Debug.Log($"{attacker.cardName} tramples over for {remainingDamage} damage!");
+                    }
                     else
-                        ShowFloatingHeal(damageFromAttacker, enemyLifeContainer);
-                }
+                    {
+                        humanPlayer.Life -= remainingDamage;
+                        playerDamage += remainingDamage;
+                        Debug.Log($"{attacker.cardName} tramples YOU for {remainingDamage} damage!");
+                    }
 
-                // Lifelink: gain life equal to damage dealt by blocker
-                if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
-                {
-                    Player blockerOwner = GetOwnerOfCard(blocker);
-                    blockerOwner.Life += damageFromBlocker;
-                    Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                    {
+                        GetOwnerOfCard(attacker).Life += remainingDamage;
+                        Debug.Log($"{attacker.cardName} lifelinks {remainingDamage} trample damage.");
 
-                    if (blockerOwner == humanPlayer)
-                        ShowFloatingHeal(damageFromBlocker, playerLifeContainer);
-                    else
-                        ShowFloatingHeal(damageFromBlocker, enemyLifeContainer);
+                        if (attacker.owner == humanPlayer)
+                            ShowFloatingHeal(remainingDamage, playerLifeContainer);
+                        else
+                            ShowFloatingHeal(remainingDamage, enemyLifeContainer);
+                    }
                 }
             }
             else
@@ -611,7 +609,7 @@ public class GameManager : MonoBehaviour
             if (card is CreatureCard c)
             {
                 c.blockingThisAttacker = null;
-                c.blockedByThisBlocker = null;
+                c.blockedByThisBlocker.Clear();
             }
         }
         foreach (var card in aiPlayer.Battlefield)
@@ -619,7 +617,7 @@ public class GameManager : MonoBehaviour
             if (card is CreatureCard c)
             {
                 c.blockingThisAttacker = null;
-                c.blockedByThisBlocker = null;
+                c.blockedByThisBlocker.Clear();
             }
         }
 
@@ -658,7 +656,7 @@ public class GameManager : MonoBehaviour
                 creature.hasSummoningSickness = false;
                 creature.toughness = creature.baseToughness;
                 creature.blockingThisAttacker = null;
-                creature.blockedByThisBlocker = null;
+                creature.blockedByThisBlocker.Clear();
             }
 
             var visual = FindCardVisual(card);
