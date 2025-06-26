@@ -624,8 +624,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 60, y: 33.5341}
+  m_AnchoredPosition: {x: -0.38673, y: -28.9351}
+  m_SizeDelta: {x: 60.773, y: 32.3773}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5969502559011522907
 CanvasRenderer:
@@ -682,8 +682,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5
-  m_fontSizeBase: 5
+  m_fontSize: 6
+  m_fontSizeBase: 6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -758,7 +758,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.3549, y: -9.7331}
+  m_AnchoredPosition: {x: -2.58, y: -8.2069}
   m_SizeDelta: {x: 58.7897, y: 6.0262}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2418139068868906345
@@ -791,8 +791,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Type
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
-  m_sharedMaterial: {fileID: -3967272074033129492, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
+  m_sharedMaterial: {fileID: 8716804017303281405, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -816,15 +816,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 4
-  m_fontSizeBase: 4
+  m_fontSize: 5
+  m_fontSizeBase: 5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -892,8 +892,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 6.0699997, y: 10}
+  m_AnchoredPosition: {x: 0.0000025928, y: -0.29}
+  m_SizeDelta: {x: 7.6368, y: 7.6368}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &915489698575088322
 CanvasRenderer:
@@ -950,8 +950,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8
-  m_fontSizeBase: 8
+  m_fontSize: 7
+  m_fontSizeBase: 7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1299,7 +1299,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.3300018, y: 52.3}
+  m_AnchoredPosition: {x: -0.90623, y: 52.6}
   m_SizeDelta: {x: 61.687, y: 6.0262}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6256048875999013833
@@ -1332,8 +1332,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Card Name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
-  m_sharedMaterial: {fileID: -3967272074033129492, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
+  m_sharedMaterial: {fileID: 8716804017303281405, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1357,15 +1357,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5
-  m_fontSizeBase: 5
+  m_fontSize: 6
+  m_fontSizeBase: 6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2094,8 +2094,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015736, y: 0.39691}
-  m_SizeDelta: {x: 15.6878, y: 9.2062}
+  m_AnchoredPosition: {x: -0.1017, y: -0.3969}
+  m_SizeDelta: {x: 16.2981, y: 9.2062}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9148928468779661844
 CanvasRenderer:
@@ -2152,17 +2152,17 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9
-  m_fontSizeBase: 9
+  m_fontSize: 8
+  m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 4
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

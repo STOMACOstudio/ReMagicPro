@@ -799,11 +799,21 @@ public class GameManager : MonoBehaviour
             return;
 
         creature.isTapped = true;
-        Player opponent = GetOpponentOf(GetOwnerOfCard(creature));
+
+        Player owner = GetOwnerOfCard(creature);            // FIXED: declare 'owner'
+        Player opponent = GetOpponentOf(owner);
+
         opponent.Life -= creature.tapLifeLossAmount;
         Debug.Log($"{creature.cardName} tapped: opponent loses {creature.tapLifeLossAmount} life.");
+
         SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
         ShowBloodSplatVFX(creature);
+
+        if (owner == humanPlayer)
+            ShowFloatingDamage(creature.tapLifeLossAmount, enemyLifeContainer);
+        else
+            ShowFloatingDamage(creature.tapLifeLossAmount, playerLifeContainer);
+
         UpdateUI();
         CheckForGameEnd();
     }
