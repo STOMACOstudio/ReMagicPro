@@ -564,6 +564,34 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
+                Add(new CardData //Cosmic Whale
+                    {
+                    cardName = "Cosmic Whale",
+                    rarity = "Rare",
+                    manaCost = 8,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 5,
+                    subtypes = new List<string> { "Leviathan" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/cosmic_whale"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "its controller takes an extra turn after this.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                owner.extraTurns += 1;
+                            }
+                        }
+                    }
+                    });
             //BLACK
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",

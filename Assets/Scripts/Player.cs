@@ -12,6 +12,9 @@ public class Player
     public ManaPool ColoredMana = new ManaPool();
     public int Life = 20;
 
+    // Number of additional turns queued for this player
+    public int extraTurns = 0;
+
     [System.Serializable]
     public class ManaPool
     {
