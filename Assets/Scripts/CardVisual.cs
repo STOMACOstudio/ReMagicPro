@@ -356,16 +356,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else if (linkedCard is ArtifactCard artifact)
             {
                 genericCost = artifact.manaCost;
-                if (genericCost > 0)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
                 keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
@@ -575,16 +567,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else if (linkedCard is ArtifactCard artifact)
             {
                 genericCost = artifact.manaCost;
-                if (genericCost > 0)
-                {
-                    costText.text = genericCost.ToString();
-                    if (genericCostBG != null) genericCostBG.SetActive(true);
-                }
-                else
-                {
-                    costText.text = "";
-                    if (genericCostBG != null) genericCostBG.SetActive(false);
-                }
+                costText.text = genericCost.ToString();
+                if (genericCostBG != null) genericCostBG.SetActive(true);
                 statsText.text = "";
                 keywordText.text = artifact.GetCardText();
 
