@@ -13,6 +13,7 @@ public class SorceryCard : Card
     public int damageToEachCreatureAndPlayer = 0;
     public bool eachPlayerGainLifeEqualToLands = false;
     public bool exileAllCreaturesFromGraveyards = false;
+    public bool swapGraveyardAndLibrary = false;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
     public Card chosenTarget = null;
@@ -260,6 +261,28 @@ public class SorceryCard : Card
                     GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                     GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                     GameManager.Instance.CheckForGameEnd();
+                    didSomething = true;
+                }
+            if (swapGraveyardAndLibrary)
+                {
+                    foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                    {
+                        List<Card> oldDeck = new List<Card>(player.Deck);
+                        player.Deck = new List<Card>(player.Graveyard);
+                        player.Graveyard = oldDeck;
+
+                        for (int i = 0; i < player.Deck.Count; i++)
+                        {
+                            Card temp = player.Deck[i];
+                            int rand = Random.Range(i, player.Deck.Count);
+                            player.Deck[i] = player.Deck[rand];
+                            player.Deck[rand] = temp;
+                        }
+
+                        GameManager.Instance.RefreshGraveyardVisuals(player);
+                    }
+
+                    Debug.Log("Graveyards and libraries swapped and shuffled.");
                     didSomething = true;
                 }
                 GameManager.Instance.UpdateUI();

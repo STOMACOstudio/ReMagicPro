@@ -56,6 +56,7 @@ public class CardData
     public int manaToGain;
     public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
+    public bool swapGraveyardAndLibrary = false;
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public int damageToTarget = 0;
