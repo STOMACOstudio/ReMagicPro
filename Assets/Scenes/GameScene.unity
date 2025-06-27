@@ -1808,6 +1808,7 @@ MonoBehaviour:
   tap_for_mana: {fileID: 8300000, guid: 875212118b46d8f4da07757905e92117, type: 3}
   plague: {fileID: 8300000, guid: 127b099b8ecb97840ba02e66449d7e1d, type: 3}
   dealDamage: {fileID: 8300000, guid: 1e5f17914b7c1b6478ff930d88ea2028, type: 3}
+  impact: {fileID: 8300000, guid: ac062084037642646a20a5fe1a35cd55, type: 3}
   drink: {fileID: 8300000, guid: 55d3a6931e2f23a4bae366c759b2aa9c, type: 3}
   miner: {fileID: 8300000, guid: e36177dde3eb74e4184484ad48b81327, type: 3}
   gain_life: {fileID: 8300000, guid: bc50d8721caf7e44c8ef036922f72ad4, type: 3}
@@ -3966,6 +3967,8 @@ MonoBehaviour:
   isStackBusy: 0
   targetingVisual: {fileID: 0}
   isTargetingMode: 0
+  lastLifeGainedAmount: 0
+  lastCardsDrawnAmount: 0
 --- !u!4 &1539663350
 Transform:
   m_ObjectHideFlags: 0

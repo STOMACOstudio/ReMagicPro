@@ -834,6 +834,16 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.ChooseBlockers:
+                    if (GameManager.Instance.currentAttackers.Count == 0)
+                    {
+                        Debug.Log("→ No attackers. Skipping combat.");
+                        GameManager.Instance.currentAttackers.Clear();
+                        waitingForPlayerInput = false;
+                        confirmBlockersButton.gameObject.SetActive(false);
+                        RunSpecificPhase(TurnPhase.Main2);
+                        break;
+                    }
+
                     if (currentPlayer == PlayerType.Human)
                     {
                         Debug.Log("→ AI is assigning blockers as defender.");
@@ -912,13 +922,8 @@ public class TurnSystem : MonoBehaviour
 
                 case TurnPhase.Damage:
                     Debug.Log("→ Resolving combat damage.");
-                    if (damageCoroutine != null)
-                    {
-                        StopCoroutine(damageCoroutine);
-                        damageCoroutine = null;
-                    }
-
-                    damageCoroutine = StartCoroutine(WaitToShowCombatDamage());
+                    if (damageCoroutine == null)
+                        damageCoroutine = StartCoroutine(WaitToShowCombatDamage());
                     break;
 
                 case TurnPhase.EndTurn:
@@ -1109,28 +1114,19 @@ public class TurnSystem : MonoBehaviour
         
         private IEnumerator WaitToShowCombatDamage()
             {
-                var (playerDamage, aiDamage) = GameManager.Instance.ResolveCombat();
+                yield return StartCoroutine(GameManager.Instance.ResolveCombatWithAnimations());
+
+                GameManager.Instance.CheckForGameEnd();
 
                 foreach (var visual in GameManager.Instance.activeCardVisuals)
                 {
                     if (visual.swordIcon != null)
                         visual.swordIcon.SetActive(false);
+                    if (visual.shieldIcon != null)
+                        visual.shieldIcon.SetActive(false);
 
                     visual.UpdateVisual();
                 }
-
-                if (playerDamage > 0)
-                {
-                    GameManager.Instance.ShowFloatingDamage(playerDamage, GameManager.Instance.playerLifeContainer);
-                }
-
-                if (aiDamage > 0)
-                {
-                    GameManager.Instance.ShowFloatingDamage(aiDamage, GameManager.Instance.enemyLifeContainer);
-                }
-
-                if (playerDamage > 0 || aiDamage > 0)
-                    yield return new WaitForSeconds(1f);
 
                 AdvancePhase();
 
