@@ -63,6 +63,7 @@ public static class CardFactory
                 sorcery.destroyTargetIfTypeMatches = data.destroyTargetIfTypeMatches;
                 sorcery.keywordToGrant = data.keywordToGrant;
                 sorcery.requiredTargetColor = data.requiredTargetColor;
+                sorcery.excludeArtifactCreatures = data.excludeArtifactCreatures;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
