@@ -31,6 +31,8 @@ public class WinScreenUI : MonoBehaviour
         if (winIconImage != null && winSprite != null)
             winIconImage.sprite = winSprite;
 
+        SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
+
         StartCoroutine(FadeIn());
     }
 
@@ -39,6 +41,8 @@ public class WinScreenUI : MonoBehaviour
         isWin = false;
         if (winIconImage != null && loseSprite != null)
             winIconImage.sprite = loseSprite;
+
+        SoundManager.Instance.PlaySound(SoundManager.Instance.defeat);
 
         StartCoroutine(FadeIn());
     }
