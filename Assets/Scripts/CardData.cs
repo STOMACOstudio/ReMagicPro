@@ -22,6 +22,7 @@ public class CardData
     public bool entersTapped = false;
     public bool isToken = false;
     public bool destroyTargetIfTypeMatches = false;
+    public bool destroyAllWithSameName = false;
     
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;   
