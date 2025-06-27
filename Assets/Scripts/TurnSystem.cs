@@ -418,7 +418,8 @@ public class TurnSystem : MonoBehaviour
                                        ai.Hand.Remove(card);
                                        ai.Battlefield.Add(card);
                                        card.OnEnterPlay(ai);
-                                        GameManager.Instance.NotifyArtifactEntered(card, ai);
+                                       if (card.color.Contains("Artifact"))
+                                           GameManager.Instance.NotifyArtifactEntered(card, ai);
 
                                         if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {
