@@ -356,9 +356,9 @@ public static class CardDatabase
                                 if (selfCard is CreatureCard creature)
                                 {
                                     int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
-                                    creature.power = plains;
-                                    creature.toughness = plains;
+                                    creature.basePower = plains;
                                     creature.baseToughness = plains;
+                                    creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
                                 }
                             }
@@ -372,9 +372,9 @@ public static class CardDatabase
                                 if (selfCard is CreatureCard creature)
                                 {
                                     int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
-                                    creature.power = plains;
-                                    creature.toughness = plains;
+                                    creature.basePower = plains;
                                     creature.baseToughness = plains;
+                                    creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
                                 }
                             }
@@ -388,9 +388,9 @@ public static class CardDatabase
                                 if (selfCard is CreatureCard creature)
                                 {
                                     int plains = owner.Battlefield.Count(c => c.cardName == "Plains");
-                                    creature.power = plains;
-                                    creature.toughness = plains;
+                                    creature.basePower = plains;
                                     creature.baseToughness = plains;
+                                    creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
                                 }
                             }
@@ -700,6 +700,40 @@ public static class CardDatabase
                     subtypes = new List<string> { "Zombie", "Leviathan" },
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/rotting_whale")
+                    });
+                Add(new CardData //Rotting Dragon
+                    {
+                    cardName = "Rotting Dragon",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Zombie", "Dragon" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/rotting_dragon"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "put a -1/-1 counter on this creature.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard c)
+                                {
+                                    c.AddMinusOneCounter();
+                                    var vis = GameManager.Instance.FindCardVisual(c);
+                                    if (vis != null) vis.UpdateVisual();
+                                    GameManager.Instance.CheckDeaths(owner);
+                                }
+                            }
+                        }
+                    }
                     });
                 Add(new CardData //Limping corpse
                     {

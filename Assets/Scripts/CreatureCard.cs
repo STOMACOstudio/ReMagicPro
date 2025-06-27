@@ -6,7 +6,28 @@ public class CreatureCard : Card
 {
     public int power;
     public int toughness; // <<< CURRENT TOUGHNESS (changing)
-    public int baseToughness; // <<< ORIGINAL TOUGHNESS (never changes)
+    public int basePower; // ORIGINAL POWER (never changes)
+    public int baseToughness; // ORIGINAL TOUGHNESS (never changes)
+    public int plusOneCounters = 0;
+    public int minusOneCounters = 0;
+
+    public void RecalculateStats()
+    {
+        power = basePower + plusOneCounters - minusOneCounters;
+        toughness = baseToughness + plusOneCounters - minusOneCounters;
+    }
+
+    public void AddPlusOneCounter()
+    {
+        plusOneCounters++;
+        RecalculateStats();
+    }
+
+    public void AddMinusOneCounter()
+    {
+        minusOneCounters++;
+        RecalculateStats();
+    }
     public int damageTaken = 0;
     public int tapLifeLossAmount;
     public bool hasSummoningSickness = true;
@@ -31,5 +52,13 @@ public class CreatureCard : Card
         {
             Debug.Log("Not enough colored mana to summon " + cardName);
         }
+    }
+
+    public override void OnLeavePlay(Player owner)
+    {
+        base.OnLeavePlay(owner);
+        plusOneCounters = 0;
+        minusOneCounters = 0;
+        RecalculateStats();
     }
 }
