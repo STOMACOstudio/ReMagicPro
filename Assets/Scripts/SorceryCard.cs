@@ -331,8 +331,8 @@ public class SorceryCard : Card
                     if (destroyTargetIfTypeMatches)
                     {
                         bool typeMatches =
-                            (requiredTargetType == TargetType.Creature && target is CreatureCard creature &&
-                                !(excludeArtifactCreatures && creature.color.Contains("Artifact"))) ||
+                            (requiredTargetType == TargetType.Creature && target is CreatureCard targetCreature &&
+                                !(excludeArtifactCreatures && targetCreature.color.Contains("Artifact"))) ||
                             (requiredTargetType == TargetType.Land && target is LandCard) ||
                             (requiredTargetType == TargetType.Artifact && target is ArtifactCard);
 

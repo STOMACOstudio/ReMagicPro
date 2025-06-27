@@ -74,7 +74,7 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = "When this creature enters, you may destroy target non-creature artifact.",
+                                description = ", you may destroy target non-creature artifact.",
                                 requiresTarget = true,
                                 requiredTargetType = SorceryCard.TargetType.Artifact,
                                 effect = (Player owner, Card target) =>

@@ -534,8 +534,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 var ability = GameManager.Instance.optionalAbility;
                 bool isValid = false;
 
-                if (ability.requiredTargetType == SorceryCard.TargetType.Creature && clicked is CreatureCard creature)
-                    isValid = !(ability.excludeArtifactCreatures && creature.color.Contains("Artifact"));
+                if (ability.requiredTargetType == SorceryCard.TargetType.Creature && clicked is CreatureCard targetCreature)
+                    isValid = !(ability.excludeArtifactCreatures && targetCreature.color.Contains("Artifact"));
 
                 if (ability.requiredTargetType == SorceryCard.TargetType.Artifact && clicked is ArtifactCard)
                     isValid = true;
