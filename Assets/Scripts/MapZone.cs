@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MapZone : MonoBehaviour
 {
@@ -37,6 +38,25 @@ public class MapZone : MonoBehaviour
     public Sprite greenIcon;
     public Sprite whiteIcon;
     public Sprite artifactIcon;
+
+    private static readonly Dictionary<string, string> DeckKeyMap = new Dictionary<string, string>
+    {
+        {"shore", "Deck_Shore"},
+        {"camp", "Deck_Camp"},
+        {"graveyard", "Deck_Graveyard"},
+        {"village", "Deck_Village"},
+        {"thicket", "Deck_Thicket"},
+        {"ruins", "Deck_Ruins"},
+        {"church", "Deck_Church"},
+        {"tower", "Deck_Tower"},
+        {"hut", "Deck_Hut"},
+        {"nest", "Deck_Nest"},
+        {"woods", "Deck_Woods"},
+        {"shack", "Deck_Starter"},
+        {"castle", "Deck_Boss"}
+    };
+
+    private readonly Dictionary<string, Sprite> colorIconMap = new Dictionary<string, Sprite>();
 
     [Header("Unlock Logic")]
     public List<MapZone> prerequisites;
@@ -109,22 +129,11 @@ public class MapZone : MonoBehaviour
                 enemyPortrait = GetPortraitForFoe(baseSpriteNameForPortrait);
                 enemyDescription = GetDescriptionForFoe(baseSpriteNameForPortrait);
 
-                // Assign deckKey based on sprite name
+                // Assign deckKey based on sprite name using dictionary lookup
                 string lowerName = chosen.name.ToLower();
-                if (lowerName.Contains("shore")) deckKey = "Deck_Shore";
-                else if (lowerName.Contains("camp")) deckKey = "Deck_Camp";
-                else if (lowerName.Contains("graveyard")) deckKey = "Deck_Graveyard";
-                else if (lowerName.Contains("village")) deckKey = "Deck_Village";
-                else if (lowerName.Contains("thicket")) deckKey = "Deck_Thicket";
-                else if (lowerName.Contains("ruins")) deckKey = "Deck_Ruins";
-                else if (lowerName.Contains("church")) deckKey = "Deck_Church";
-                else if (lowerName.Contains("tower")) deckKey = "Deck_Tower";
-                else if (lowerName.Contains("hut")) deckKey = "Deck_Hut";
-                else if (lowerName.Contains("nest")) deckKey = "Deck_Nest";
-                else if (lowerName.Contains("woods")) deckKey = "Deck_Woods";
-                else if (lowerName.Contains("shack")) deckKey = "Deck_Starter";
-                else if (lowerName.Contains("castle")) deckKey = "Deck_Boss";
-                else deckKey = "Deck_Starter";
+                deckKey = DeckKeyMap.FirstOrDefault(kvp => lowerName.Contains(kvp.Key)).Value;
+                if (string.IsNullOrEmpty(deckKey))
+                    deckKey = "Deck_Starter";
             }
         }
 
@@ -144,14 +153,20 @@ public class MapZone : MonoBehaviour
 
                 if (isUnlocked)
                 {
-                    string lowerName = assignedSprite.name.ToLower();
+                    if (colorIconMap.Count == 0)
+                    {
+                        colorIconMap["red"] = redIcon;
+                        colorIconMap["blue"] = blueIcon;
+                        colorIconMap["black"] = blackIcon;
+                        colorIconMap["green"] = greenIcon;
+                        colorIconMap["white"] = whiteIcon;
+                        colorIconMap["artifact"] = artifactIcon;
+                    }
 
-                    if (lowerName.Contains("red")) colorIcon.sprite = redIcon;
-                    else if (lowerName.Contains("blue")) colorIcon.sprite = blueIcon;
-                    else if (lowerName.Contains("black")) colorIcon.sprite = blackIcon;
-                    else if (lowerName.Contains("green")) colorIcon.sprite = greenIcon;
-                    else if (lowerName.Contains("white")) colorIcon.sprite = whiteIcon;
-                    else if (lowerName.Contains("artifact")) colorIcon.sprite = artifactIcon;
+                    string lowerName = assignedSprite.name.ToLower();
+                    Sprite found = colorIconMap.FirstOrDefault(kvp => lowerName.Contains(kvp.Key)).Value;
+                    if (found != null)
+                        colorIcon.sprite = found;
                 }
             }
         }
@@ -287,15 +302,6 @@ public class MapZone : MonoBehaviour
     {
         if (isCompleted) return;
 
-        isCompleted = true;
         CompleteZone();
-
-        if (button != null)
-            button.interactable = false;
-
-        foreach (var zone in nextZones)
-        {
-            zone.TryUnlock();
-        }
     }
 }
