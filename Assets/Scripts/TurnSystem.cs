@@ -840,21 +840,85 @@ public class TurnSystem : MonoBehaviour
                         Debug.Log("→ AI chooses attackers.");
                         GameManager.Instance.currentAttackers.Clear();
 
-                        foreach (var card in GameManager.Instance.aiPlayer.Battlefield)
+                        Player ai = GameManager.Instance.aiPlayer;
+                        Player human = GameManager.Instance.humanPlayer;
+
+                        var potentialAttackers = new List<CreatureCard>();
+
+                        foreach (var card in ai.Battlefield)
                         {
                             if (card is CreatureCard creature &&
                                 !creature.isTapped &&
                                 !creature.hasSummoningSickness &&
                                 !creature.keywordAbilities.Contains(KeywordAbility.Defender))
                             {
-                                if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance)) {
-                                    creature.isTapped = true;
+                                potentialAttackers.Add(creature);
+                            }
+                        }
+
+                        int totalPower = potentialAttackers.Sum(c => c.power);
+
+                        bool goForLethal = totalPower >= human.Life;
+
+                        const int lowLifeThreshold = 5;
+                        bool lowLifeNeedsDefense = ai.Life <= lowLifeThreshold &&
+                            human.Battlefield.OfType<CreatureCard>().Any();
+
+                        foreach (var creature in potentialAttackers)
+                        {
+                            bool attack = goForLethal;
+
+                            if (!attack)
+                            {
+                                if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                                {
+                                    attack = false; // stay back to block
                                 }
+                                else
+                                {
+                                    // Determine if creature can be profitably blocked
+                                    var possibleBlockers = new List<CreatureCard>();
+                                    foreach (var oppCard in human.Battlefield)
+                                    {
+                                        if (oppCard is CreatureCard blocker && BlockerCanBlockAttacker(blocker, creature, human))
+                                            possibleBlockers.Add(blocker);
+                                    }
+
+                                    if (possibleBlockers.Count == 0)
+                                    {
+                                        attack = true; // Unblockable
+                                    }
+                                    else
+                                    {
+                                        // Pick the cheapest blocker (by power+toughness) that can block
+                                        var best = possibleBlockers.OrderBy(b => b.power + b.baseToughness).First();
+
+                                        if (creature.power >= best.toughness)
+                                        {
+                                            if (creature.toughness > best.power)
+                                            {
+                                                attack = true; // kill and survive
+                                            }
+                                            else
+                                            {
+                                                int creatureValue = creature.power + creature.baseToughness;
+                                                int blockerValue = best.power + best.baseToughness;
+                                                if (creatureValue <= blockerValue)
+                                                    attack = true; // acceptable trade
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (attack)
+                            {
+                                if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                                    creature.isTapped = true;
 
                                 GameManager.Instance.currentAttackers.Add(creature);
                                 GameManager.Instance.FindCardVisual(creature)?.swordIcon?.SetActive(true);
                                 Debug.Log($"AI declares attacker: {creature.cardName}");
-
                                 GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                             }
                         }
@@ -890,8 +954,10 @@ public class TurnSystem : MonoBehaviour
 
                         Player ai = GameManager.Instance.aiPlayer;
                         Player human = GameManager.Instance.humanPlayer;
-                        var attackers = GameManager.Instance.currentAttackers;
+                        var attackers = GameManager.Instance.currentAttackers.OrderByDescending(a => a.power).ToList();
                         var availableBlockers = new List<CreatureCard>();
+                        int remainingDamage = attackers.Sum(a => a.power);
+                        int projectedLife = ai.Life;
 
                         // Gather untapped blockers that can block
                         foreach (var card in ai.Battlefield)
@@ -904,39 +970,12 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
-                        // Assign blockers to attackers
+                        // Assign blockers to attackers prioritizing survival/trades
                         foreach (var attacker in attackers)
                         {
-                            foreach (var blocker in availableBlockers)
+                            var blocker = ChooseBestBlocker(attacker, availableBlockers, projectedLife, remainingDamage);
+                            if (blocker != null)
                             {
-                                // FLYING rule: can only block flying if blocker has Flying or Reach
-                                if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                                    !blocker.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                                    !blocker.keywordAbilities.Contains(KeywordAbility.Reach))
-                                {
-                                    continue; // this blocker can't block this attacker
-                                }
-
-                                if (blocker.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
-                                    !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
-                                {
-                                    continue; // this blocker can't block non-flying creatures
-                                }
-                                
-                                // LANDWALK rule: attacker is unblockable if AI controls matching land
-                                if (IsLandwalkPreventingBlock(attacker, ai))
-                                {
-                                    Debug.Log($"AI can't block {attacker.cardName} due to landwalk.");
-                                    continue;
-                                }
-
-                                // PROTECTION: attacker cannot be blocked by this blocker if it has protection from blocker's color
-                                if (blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
-                                {
-                                    Debug.Log($"{attacker.cardName} has protection from {blocker.color}, so AI cannot assign {blocker.cardName} to block it.");
-                                    continue;
-                                }
-
                                 if (!GameManager.Instance.blockingAssignments.ContainsKey(attacker))
                                     GameManager.Instance.blockingAssignments[attacker] = new List<CreatureCard>();
                                 GameManager.Instance.blockingAssignments[attacker].Add(blocker);
@@ -946,7 +985,12 @@ public class TurnSystem : MonoBehaviour
                                 Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
 
                                 availableBlockers.Remove(blocker);
-                                break;
+                                remainingDamage -= attacker.power;
+                            }
+                            else
+                            {
+                                projectedLife -= attacker.power;
+                                remainingDamage -= attacker.power;
                             }
                         }
 
@@ -1097,6 +1141,62 @@ public class TurnSystem : MonoBehaviour
                     "Green" => KeywordAbility.ProtectionFromGreen,
                     _ => KeywordAbility.None
                 };
+            }
+
+        private bool BlockerCanBlockAttacker(CreatureCard blocker, CreatureCard attacker, Player defender)
+            {
+                if (blocker.isTapped) return false;
+                if (blocker.keywordAbilities.Contains(KeywordAbility.CantBlock)) return false;
+
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                    !blocker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                    !blocker.keywordAbilities.Contains(KeywordAbility.Reach))
+                    return false;
+
+                if (blocker.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
+                    !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
+                    return false;
+
+                if (IsLandwalkPreventingBlock(attacker, defender))
+                    return false;
+
+                if (blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
+                    return false;
+
+                return true;
+            }
+
+        private CreatureCard ChooseBestBlocker(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
+            {
+                var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer)).ToList();
+                if (possible.Count == 0) return null;
+
+                // Prefer blocker that kills attacker and survives
+                var killSurvive = possible
+                    .Where(b => b.power >= attacker.toughness && b.toughness > attacker.power)
+                    .OrderBy(b => b.power)
+                    .FirstOrDefault();
+                if (killSurvive != null) return killSurvive;
+
+                // Safe block that survives damage
+                var safe = possible
+                    .Where(b => b.toughness > attacker.power)
+                    .OrderBy(b => b.toughness)
+                    .FirstOrDefault();
+                if (safe != null) return safe;
+
+                // Trade if it can kill attacker
+                var trade = possible
+                    .Where(b => b.power >= attacker.toughness)
+                    .OrderBy(b => b.power + b.baseToughness)
+                    .FirstOrDefault();
+                if (trade != null) return trade;
+
+                // Block anything to avoid lethal damage
+                if (remainingDamage >= remainingLife)
+                    return possible.OrderByDescending(b => b.toughness).First();
+
+                return null;
             }
         
         public void ContinueAIAfterStack()
