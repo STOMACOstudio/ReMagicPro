@@ -1173,9 +1173,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         // The card-specific ResolveEffect(target) already invokes the general
-        // ResolveEffect method internally. Calling it again here resulted in
-        // certain sorceries (like Forced Mummification and Stain of Rot)
-        // applying their secondary effects twice. Run it only once.
+        // ResolveEffect method internally. Calling it again here caused cards
+        // such as Forced Mummification to create two zombies and Stain of Rot
+        // to make the opponent lose 4 life instead of 2. Run it only once.
         sorcery.ResolveEffect(caster, target);
         SendToGraveyard(sorcery, caster, fromStack: true);
 
