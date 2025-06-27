@@ -587,6 +587,41 @@ public static class CardDatabase
                         }
                     }
                     });
+                Add(new CardData //Tide Spirit
+                    {
+                    cardName = "Tide Spirit",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Spirit" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/tide_spirit"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnCardDraw,
+                            description = "this creature gets +2/+2 until end of turn.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature &&
+                                    TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Draw)
+                                {
+                                    creature.AddTemporaryBuff(2, 2);
+                                    var vis = GameManager.Instance.FindCardVisual(creature);
+                                    if (vis != null)
+                                        vis.UpdateVisual();
+                                }
+                            }
+                        }
+                    }
+                    });
             //BLACK
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
