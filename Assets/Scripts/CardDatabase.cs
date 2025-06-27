@@ -1025,6 +1025,41 @@ public static class CardDatabase
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/zombie_token")
                     });
+
+                Add(new CardData //Nocturnal Spectre
+                    {
+                        cardName = "Nocturnal Spectre",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        subtypes = new List<string> { "Spectre" },
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Flying
+                        },
+                        artwork = Resources.Load<Sprite>("Art/nocturnal_spectre"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnOpponentDiscard,
+                                description = "this creature gets +2/+2 until end of turn.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        creature.AddTemporaryBuff(2, 2);
+                                        var vis = GameManager.Instance.FindCardVisual(creature);
+                                        if (vis != null)
+                                            vis.UpdateVisual();
+                                    }
+                                }
+                            }
+                        }
+                    });
                 Add(new CardData // Demon Token
                     {
                         cardName = "Demon",

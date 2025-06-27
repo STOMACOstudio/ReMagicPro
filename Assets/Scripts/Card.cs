@@ -239,6 +239,8 @@ public class Card
                     lines.Add("Whenever a creature dies or is discarded, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnCombatDamageToPlayer)
                     lines.Add("Whenever a creature deals combat damage to a player, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnOpponentDiscard)
+                    lines.Add("Whenever an opponent discards a card, " + ability.description);
             }
 
             if (keywordAbilities != null)
