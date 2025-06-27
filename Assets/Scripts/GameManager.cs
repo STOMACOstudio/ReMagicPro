@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
             activeCardVisuals.Add(visual);
         }
 
-        NotifyCardDrawn(player);
+        NotifyCardDrawn(player, 1);
     }
 
     public void PlayCard(Player player, CardVisual visual)
@@ -1833,8 +1833,11 @@ public class GameManager : MonoBehaviour
             lastLifeGainedAmount = 0;
         }
 
-        public void NotifyCardDrawn(Player player)
+        public int lastCardsDrawnAmount = 0;
+
+        public void NotifyCardDrawn(Player player, int amount)
         {
+            lastCardsDrawnAmount = amount;
             foreach (var card in player.Battlefield.ToList())
             {
                 foreach (var ability in card.abilities)
@@ -1845,6 +1848,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+            lastCardsDrawnAmount = 0;
         }
 
         public void NotifyCreatureDiesOrDiscarded(Card creature, Player owner)

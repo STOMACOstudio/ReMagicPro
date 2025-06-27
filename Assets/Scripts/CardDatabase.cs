@@ -2392,12 +2392,13 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnCardDraw,
-                                description = "put a +1/+1 counter on this creature.",
+                                description = "put that many +1/+1 counters on this creature.",
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     if (selfCard is CreatureCard creature)
                                     {
-                                        creature.AddPlusOneCounter();
+                                        for (int i = 0; i < GameManager.Instance.lastCardsDrawnAmount; i++)
+                                            creature.AddPlusOneCounter();
                                         GameManager.Instance.UpdateUI();
                                     }
                                 }
