@@ -54,6 +54,8 @@ public class CardData
     public int cardsToDiscardorDraw;
     public int damageToEachCreatureAndPlayer;
     public int manaToGain;
+    public int manaToGainMin = 0;
+    public int manaToGainMax = 0;
     public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;

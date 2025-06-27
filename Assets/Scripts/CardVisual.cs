@@ -1432,6 +1432,21 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     rules += $"Create {min}–{max} {sorcery.tokenToCreate} tokens.\n";
                 }
             }
+            if (sorcery.manaToGainMax > 0)
+            {
+                int min = sorcery.manaToGainMin;
+                int max = sorcery.manaToGainMax;
+
+                string colorName = sorcery.PrimaryColor.ToLower();
+                if (min == max)
+                {
+                    rules += $"Add {min} {colorName} mana.\n";
+                }
+                else
+                {
+                    rules += $"Add {min}-{max} {colorName} mana.\n";
+                }
+            }
             if (sorcery.cardsToDiscardorDraw > 0)
                 rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
             if (sorcery.eachPlayerGainLifeEqualToLands)
