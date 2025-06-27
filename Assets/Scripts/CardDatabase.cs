@@ -708,9 +708,9 @@ public static class CardDatabase
                     manaCost = 5,
                     color = new List<string> { "Black" },
                     cardType = CardType.Creature,
-                    power = 4,
-                    toughness = 4,
-                    subtypes = new List<string> { "Zombie", "Dragon" },
+                    power = 6,
+                    toughness = 6,
+                    subtypes = new List<string> { "Dragon", "Zombie" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
