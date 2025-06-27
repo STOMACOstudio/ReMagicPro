@@ -836,10 +836,11 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.ChooseBlockers:
                     if (GameManager.Instance.currentAttackers.Count == 0)
                     {
-                        Debug.Log("→ No attackers. Skipping blockers phase.");
+                        Debug.Log("→ No attackers. Skipping combat.");
+                        GameManager.Instance.currentAttackers.Clear();
                         waitingForPlayerInput = false;
                         confirmBlockersButton.gameObject.SetActive(false);
-                        AdvancePhase();
+                        RunSpecificPhase(TurnPhase.Main2);
                         break;
                     }
 
