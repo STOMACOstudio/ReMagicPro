@@ -74,7 +74,7 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = "you may destroy target artifact.",
+                                description = "When this creature enters, you may destroy target non-creature artifact.",
                                 requiresTarget = true,
                                 requiredTargetType = SorceryCard.TargetType.Artifact,
                                 effect = (Player owner, Card target) =>
@@ -603,13 +603,17 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = "you may destroy target creature.",
+                            description = "you may destroy target non-artifact creature.",
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Creature,
+                            excludeArtifactCreatures = true,
                             effect = (Player owner, Card target) =>
                             {
-                                Player controller = GameManager.Instance.GetOwnerOfCard(target);
-                                GameManager.Instance.SendToGraveyard(target, controller);
+                                if (target is CreatureCard creature && !creature.color.Contains("Artifact"))
+                                {
+                                    Player controller = GameManager.Instance.GetOwnerOfCard(target);
+                                    GameManager.Instance.SendToGraveyard(target, controller);
+                                }
                             }
                         }
                     }
@@ -1884,6 +1888,8 @@ public static class CardDatabase
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         destroyTargetIfTypeMatches = true,
+                        excludeArtifactCreatures = true,
+                        rulesText = "Destroy target non-artifact creature. Create a Zombie token.",
                         tokenToCreate = "Zombie",
                         numberOfTokensMin = 1,
                         numberOfTokensMax = 1,
@@ -1962,6 +1968,7 @@ public static class CardDatabase
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Artifact,
                             destroyTargetIfTypeMatches = true,
+                            rulesText = "Destroy target non-creature artifact.",
                             artwork = Resources.Load<Sprite>("Art/melt"),
                         });
                 Add(new CardData //Dash

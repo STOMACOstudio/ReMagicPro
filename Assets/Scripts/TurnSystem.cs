@@ -436,7 +436,8 @@ public class TurnSystem : MonoBehaviour
 
                                                     Card target = opponent.Battlefield
                                                         .Where(c =>
-                                                            (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard) ||
+                                                            (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard creatureT &&
+                                                                !(ability.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
                                                             (ability.requiredTargetType == SorceryCard.TargetType.Artifact && c is ArtifactCard) ||
                                                             (ability.requiredTargetType == SorceryCard.TargetType.Land && c is LandCard))
                                                         .OrderByDescending(c => CardDatabase.GetCardData(c.cardName)?.manaCost ?? 0)
@@ -480,6 +481,7 @@ public class TurnSystem : MonoBehaviour
                                             // Pick enemy creature with the highest mana cost
                                             var target = opponent.Battlefield
                                                 .OfType<CreatureCard>()
+                                                .Where(c => !(sorcery.excludeArtifactCreatures && c.color.Contains("Artifact")))
                                                 .OrderByDescending(c =>
                                                 {
                                                     var data = CardDatabase.GetCardData(c.cardName);

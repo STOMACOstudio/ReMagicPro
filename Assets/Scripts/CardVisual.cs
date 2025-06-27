@@ -534,8 +534,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 var ability = GameManager.Instance.optionalAbility;
                 bool isValid = false;
 
-                if (ability.requiredTargetType == SorceryCard.TargetType.Creature && clicked is CreatureCard)
-                    isValid = true;
+                if (ability.requiredTargetType == SorceryCard.TargetType.Creature && clicked is CreatureCard creature)
+                    isValid = !(ability.excludeArtifactCreatures && creature.color.Contains("Artifact"));
 
                 if (ability.requiredTargetType == SorceryCard.TargetType.Artifact && clicked is ArtifactCard)
                     isValid = true;
@@ -596,7 +596,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
                     {
                         var protection = spell.GetProtectionKeyword(spell.PrimaryColor);
-                        if (!targetCreature.keywordAbilities.Contains(protection))
+                        bool notArtifact = !(spell.excludeArtifactCreatures && targetCreature.color.Contains("Artifact"));
+                        if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact)
                             valid = true;
                     }
                 }

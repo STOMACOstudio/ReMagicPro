@@ -23,6 +23,7 @@ public class SorceryCard : Card
     public bool destroyTargetIfTypeMatches = false;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
+    public bool excludeArtifactCreatures = false;
     public Player chosenPlayerTarget = null;
 
     public TargetType requiredTargetType = TargetType.None;
@@ -330,7 +331,8 @@ public class SorceryCard : Card
                     if (destroyTargetIfTypeMatches)
                     {
                         bool typeMatches =
-                            (requiredTargetType == TargetType.Creature && target is CreatureCard) ||
+                            (requiredTargetType == TargetType.Creature && target is CreatureCard creature &&
+                                !(excludeArtifactCreatures && creature.color.Contains("Artifact"))) ||
                             (requiredTargetType == TargetType.Land && target is LandCard) ||
                             (requiredTargetType == TargetType.Artifact && target is ArtifactCard);
 
