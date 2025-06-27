@@ -25,6 +25,7 @@ public static class CardFactory
             case CardType.Creature:
                 CreatureCard creature = new CreatureCard();
                 creature.power = data.power;
+                creature.basePower = data.power;
                 creature.toughness = data.toughness;
                 creature.baseToughness = data.toughness;
                 creature.entersTapped = data.entersTapped;

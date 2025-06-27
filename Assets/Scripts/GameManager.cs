@@ -649,7 +649,7 @@ public class GameManager : MonoBehaviour
             if (card is CreatureCard creature)
             {
                 creature.hasSummoningSickness = false;
-                creature.toughness = creature.baseToughness;
+                creature.RecalculateStats();
                 creature.blockingThisAttacker = null;
                 creature.blockedByThisBlocker.Clear();
             }
@@ -676,7 +676,7 @@ public class GameManager : MonoBehaviour
         {
             if (card is CreatureCard creature)
             {
-                creature.toughness = creature.baseToughness;
+                creature.RecalculateStats();
             }
         }
     }
