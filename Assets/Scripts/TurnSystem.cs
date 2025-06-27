@@ -402,10 +402,16 @@ public class TurnSystem : MonoBehaviour
                             for (int i = 0; i < ai.Hand.Count; i++)
                             {
                                 Card card = ai.Hand[i];
+
+                                if (GameManager.Instance.IsOnlyCastCreatureSpellsActive() && !(card is CreatureCard))
+                                    continue;
                                 
                                 if (card is CreatureCard creature)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(creature.manaCost, creature.color);
+                                    int reduction = GameManager.Instance.GetCreatureCostReduction(ai);
+                                    if (reduction > 0 && cost.ContainsKey("Colorless"))
+                                        cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                                     if (ai.ColoredMana.CanPay(cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
@@ -737,10 +743,9 @@ public class TurnSystem : MonoBehaviour
                                 if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
                                 {
                                     artifact.isTapped = true;
-                                    ai.Life += 1;
+                                    GameManager.Instance.TryGainLife(ai, 1);
                                     Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                    GameManager.Instance.UpdateUI();
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
                                 {
@@ -769,7 +774,7 @@ public class TurnSystem : MonoBehaviour
                                         return;
                                     }
 
-                                    ai.Life += artifact.lifeToGain;
+                                    GameManager.Instance.TryGainLife(ai, artifact.lifeToGain);
                                     artifact.isTapped = true;
                                     GameManager.Instance.SendToGraveyard(artifact, ai);
                                     Debug.Log($"AI sacrifices {artifact.cardName} to gain {artifact.lifeToGain} life.");

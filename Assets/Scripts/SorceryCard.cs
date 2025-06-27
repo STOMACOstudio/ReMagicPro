@@ -70,16 +70,8 @@ public class SorceryCard : Card
 
             if (lifeToGain > 0)
             {
-                caster.Life += lifeToGain;
+                GameManager.Instance.TryGainLife(caster, lifeToGain);
                 Debug.Log($"{caster} gains {lifeToGain} life.");
-
-                GameManager.Instance.ShowFloatingHeal(
-                    lifeToGain,
-                    caster == GameManager.Instance.humanPlayer
-                        ? GameManager.Instance.playerLifeContainer
-                        : GameManager.Instance.enemyLifeContainer
-                );
-
                 didSomething = true;
             }
             if (manaToGainMax > 0)
@@ -171,8 +163,8 @@ public class SorceryCard : Card
                     int humanLands = human.Battlefield.Count(card => card is LandCard);
                     int aiLands = ai.Battlefield.Count(card => card is LandCard);
 
-                    human.Life += humanLands;
-                    ai.Life += aiLands;
+                    GameManager.Instance.TryGainLife(human, humanLands);
+                    GameManager.Instance.TryGainLife(ai, aiLands);
 
                     GameManager.Instance.ShowFloatingHeal(humanLands, GameManager.Instance.playerLifeContainer);
                     GameManager.Instance.ShowFloatingHeal(aiLands, GameManager.Instance.enemyLifeContainer);

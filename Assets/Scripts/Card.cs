@@ -232,6 +232,12 @@ public class Card
             {
                 if (keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped))
                     lines.Add("All permanents enter the battlefield tapped.");
+                if (keywordAbilities.Contains(KeywordAbility.NoLifeGain))
+                    lines.Add("Players can't gain life.");
+                if (keywordAbilities.Contains(KeywordAbility.OnlyCastCreatureSpells))
+                    lines.Add("Players can only cast creature spells.");
+                if (keywordAbilities.Contains(KeywordAbility.CreatureSpellsCostOneLess))
+                    lines.Add("Creature spells you cast cost 1 less.");
             }
 
             return string.Join("\n", lines);

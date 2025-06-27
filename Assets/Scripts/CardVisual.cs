@@ -890,11 +890,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
                 {
                     linkedCard.isTapped = true;
-                    GameManager.Instance.humanPlayer.Life += 1;
-                    GameManager.Instance.UpdateUI();
+                    GameManager.Instance.TryGainLife(GameManager.Instance.humanPlayer, 1);
                     UpdateVisual();
-
-                    GameManager.Instance.ShowFloatingHeal(1, GameManager.Instance.playerLifeContainer);
                     return;
                 }
 
@@ -913,7 +910,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     if (player.ColoredMana.Total() >= remaining)
                     {
                         // ... [mana payment code]
-                        player.Life += artifact.lifeToGain;
+                        GameManager.Instance.TryGainLife(player, artifact.lifeToGain);
                         linkedCard.isTapped = true;
                         SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
                         SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
