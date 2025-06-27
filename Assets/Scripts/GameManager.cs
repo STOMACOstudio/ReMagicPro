@@ -609,6 +609,17 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        foreach (var creature in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield).OfType<CreatureCard>())
+        {
+            if (creature.cardName == "Undead Army" &&
+                (currentAttackers.Contains(creature) || creature.blockingThisAttacker != null))
+            {
+                creature.AddMinusOneCounter();
+                var vis = FindCardVisual(creature);
+                if (vis != null) vis.UpdateVisual();
+            }
+        }
+
         CheckDeaths(humanPlayer);
         CheckDeaths(aiPlayer);
 
@@ -1880,6 +1891,20 @@ public class GameManager : MonoBehaviour
 
                     yield return new WaitForSeconds(0.05f);
                 }
+
+                foreach (var creature in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield).OfType<CreatureCard>())
+                {
+                    if (creature.cardName == "Undead Army" &&
+                        (currentAttackers.Contains(creature) || creature.blockingThisAttacker != null))
+                    {
+                        creature.AddMinusOneCounter();
+                        var vis = FindCardVisual(creature);
+                        if (vis != null) vis.UpdateVisual();
+                    }
+                }
+
+                CheckDeaths(humanPlayer);
+                CheckDeaths(aiPlayer);
 
                 foreach (var card in humanPlayer.Battlefield)
                 {
