@@ -1109,7 +1109,7 @@ public class TurnSystem : MonoBehaviour
         
         private IEnumerator WaitToShowCombatDamage()
             {
-                var (playerDamage, aiDamage) = GameManager.Instance.ResolveCombat();
+                yield return StartCoroutine(GameManager.Instance.ResolveCombatWithAnimations());
 
                 foreach (var visual in GameManager.Instance.activeCardVisuals)
                 {
@@ -1118,19 +1118,6 @@ public class TurnSystem : MonoBehaviour
 
                     visual.UpdateVisual();
                 }
-
-                if (playerDamage > 0)
-                {
-                    GameManager.Instance.ShowFloatingDamage(playerDamage, GameManager.Instance.playerLifeContainer);
-                }
-
-                if (aiDamage > 0)
-                {
-                    GameManager.Instance.ShowFloatingDamage(aiDamage, GameManager.Instance.enemyLifeContainer);
-                }
-
-                if (playerDamage > 0 || aiDamage > 0)
-                    yield return new WaitForSeconds(1f);
 
                 AdvancePhase();
 

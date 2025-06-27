@@ -1601,9 +1601,9 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
             }
         
-        public void ShowFloatingHeal(int amount, GameObject target)
-            {
-                Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
+    public void ShowFloatingHeal(int amount, GameObject target)
+        {
+            Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
 
                 if (floatingDamagePrefab == null)
                 {
@@ -1656,6 +1656,182 @@ public class GameManager : MonoBehaviour
 
                 Destroy(obj);
                 yield break;
+            }
+
+        private IEnumerator MoveCard(Transform tf, Vector3 start, Vector3 end, float duration)
+            {
+                float t = 0f;
+                while (t < duration)
+                {
+                    if (tf == null) yield break;
+                    t += Time.deltaTime;
+                    tf.position = Vector3.Lerp(start, end, t / duration);
+                    yield return null;
+                }
+
+                if (tf != null)
+                    tf.position = end;
+            }
+
+        public (int playerDamage, int aiDamage) ResolveCombatForAttacker(CreatureCard attacker)
+            {
+                int playerDamage = 0;
+                int aiDamage = 0;
+
+                var blockers = attacker.blockedByThisBlocker;
+
+                if (blockers != null && blockers.Count > 0)
+                {
+                    int remainingDamage = attacker.power;
+                    int totalDamageFromBlockers = 0;
+
+                    foreach (var blocker in blockers)
+                    {
+                        bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                        bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+
+                        int damageToBlocker = 0;
+                        if (!blockerProtected)
+                        {
+                            damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+                            blocker.toughness -= damageToBlocker;
+                            remainingDamage -= damageToBlocker;
+                        }
+
+                        int damageFromBlocker = attackerProtected ? 0 : blocker.power;
+                        if (!attackerProtected)
+                            totalDamageFromBlockers += damageFromBlocker;
+
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageToBlocker > 0)
+                        {
+                            Player owner = GetOwnerOfCard(attacker);
+                            TryGainLife(owner, damageToBlocker);
+                        }
+
+                        if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
+                        {
+                            Player blockerOwner = GetOwnerOfCard(blocker);
+                            TryGainLife(blockerOwner, damageFromBlocker);
+                        }
+                    }
+
+                    attacker.toughness -= totalDamageFromBlockers;
+
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Trample) && remainingDamage > 0)
+                    {
+                        if (humanPlayer.Battlefield.Contains(attacker))
+                        {
+                            aiPlayer.Life -= remainingDamage;
+                            aiDamage += remainingDamage;
+                            NotifyCombatDamageToPlayer(attacker, aiPlayer);
+                        }
+                        else
+                        {
+                            humanPlayer.Life -= remainingDamage;
+                            playerDamage += remainingDamage;
+                            NotifyCombatDamageToPlayer(attacker, humanPlayer);
+                        }
+
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            TryGainLife(GetOwnerOfCard(attacker), remainingDamage);
+                        }
+                    }
+                }
+                else
+                {
+                    if (humanPlayer.Battlefield.Contains(attacker))
+                    {
+                        aiPlayer.Life -= attacker.power;
+                        aiDamage += attacker.power;
+                        NotifyCombatDamageToPlayer(attacker, aiPlayer);
+
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            Player owner = humanPlayer.Battlefield.Contains(attacker) ? humanPlayer : aiPlayer;
+                            TryGainLife(owner, attacker.power);
+                        }
+                    }
+                    else
+                    {
+                        humanPlayer.Life -= attacker.power;
+                        playerDamage += attacker.power;
+                        NotifyCombatDamageToPlayer(attacker, humanPlayer);
+
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                        {
+                            TryGainLife(aiPlayer, attacker.power);
+                        }
+                    }
+                }
+
+                CheckDeaths(humanPlayer);
+                CheckDeaths(aiPlayer);
+                UpdateUI();
+
+                return (playerDamage, aiDamage);
+            }
+
+        public IEnumerator ResolveCombatWithAnimations()
+            {
+                foreach (var attacker in new List<CreatureCard>(currentAttackers))
+                {
+                    CardVisual attackerVisual = FindCardVisual(attacker);
+                    if (attackerVisual == null)
+                        continue;
+
+                    Vector3 startPos = attackerVisual.transform.position;
+                    Vector3 targetPos = startPos;
+
+                    if (attacker.blockedByThisBlocker != null && attacker.blockedByThisBlocker.Count > 0)
+                    {
+                        var blockerVisual = FindCardVisual(attacker.blockedByThisBlocker[0]);
+                        if (blockerVisual != null)
+                            targetPos = blockerVisual.transform.position;
+                    }
+                    else
+                    {
+                        Transform targetLife = humanPlayer.Battlefield.Contains(attacker) ? enemyLifeContainer.transform : playerLifeContainer.transform;
+                        targetPos = targetLife.position;
+                    }
+
+                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.25f));
+                    yield return new WaitForSeconds(0.1f);
+
+                    var (pd, ad) = ResolveCombatForAttacker(attacker);
+
+                    if (pd > 0)
+                        ShowFloatingDamage(pd, playerLifeContainer);
+                    if (ad > 0)
+                        ShowFloatingDamage(ad, enemyLifeContainer);
+
+                    if (activeCardVisuals.Contains(attackerVisual))
+                    {
+                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.25f));
+                    }
+
+                    yield return new WaitForSeconds(0.2f);
+                }
+
+                foreach (var card in humanPlayer.Battlefield)
+                {
+                    if (card is CreatureCard c)
+                    {
+                        c.blockingThisAttacker = null;
+                        c.blockedByThisBlocker.Clear();
+                    }
+                }
+                foreach (var card in aiPlayer.Battlefield)
+                {
+                    if (card is CreatureCard c)
+                    {
+                        c.blockingThisAttacker = null;
+                        c.blockedByThisBlocker.Clear();
+                    }
+                }
+
+                currentAttackers.Clear();
+                selectedAttackerForBlocking = null;
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
