@@ -172,7 +172,7 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 899, y: 471}
+  m_MinSize: {x: 901, y: 492}
   m_MaxSize: {x: 18004, y: 14042}
   vertical: 0
   controlID: 61
@@ -329,7 +329,7 @@ MonoBehaviour:
     y: 0
     width: 1221
     height: 947
-  m_MinSize: {x: 422, y: 471}
+  m_MinSize: {x: 424, y: 492}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
   controlID: 112
@@ -354,8 +354,8 @@ MonoBehaviour:
     y: 0
     width: 1221
     height: 575
-  m_MinSize: {x: 422, y: 200}
-  m_MaxSize: {x: 8002, y: 4021}
+  m_MinSize: {x: 424, y: 221}
+  m_MaxSize: {x: 8004, y: 4021}
   vertical: 0
   controlID: 113
 --- !u!114 &15
@@ -377,8 +377,8 @@ MonoBehaviour:
     y: 0
     width: 997
     height: 575
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 26}
   m_Panes:
   - {fileID: 26}
@@ -669,22 +669,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Resources/Art
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets
+  - Assets/Resources/Art
   m_LastFoldersGridSize: -1
   m_LastProjectPath: U:\Game Design\ReMagic_project\ReMagicProject\ReMagicPro
   m_LockTracker:
     m_IsLocked: 1
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: d8480000
-    m_LastClickedID: 18648
-    m_ExpandedIDs: 00000000d848000000ca9a3b
+    m_SelectedIDs: fa480000
+    m_LastClickedID: 18682
+    m_ExpandedIDs: 00000000de480000e648000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -712,7 +712,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000d8480000
+    m_ExpandedIDs: 00000000de480000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -739,7 +739,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300009876000068ac0000dcac00000000000082f2ffff0e660000c8e3feff
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -833,9 +833,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: fa480000
       m_LastClickedID: 0
-      m_ExpandedIDs: 3efbffff
+      m_ExpandedIDs: 36fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
