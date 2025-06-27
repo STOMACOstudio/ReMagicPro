@@ -2234,7 +2234,7 @@ public static class CardDatabase
                           {
                               ActivatedAbility.BuffTargetCreature
                           },
-                          artwork = Resources.Load<Sprite>("Art/potion_of_mana")
+                          artwork = Resources.Load<Sprite>("Art/potion_of_strength")
                       });
                   Add(new CardData //Stone of plague
                       {
