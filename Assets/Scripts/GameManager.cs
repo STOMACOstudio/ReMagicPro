@@ -1172,8 +1172,11 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
 
-        sorcery.ResolveEffect(caster, target);   // run effect on the target
-        sorcery.ResolveEffect(caster);          // ALSO run general effect (life loss, tokens, etc.)
+        // The card-specific ResolveEffect(target) already invokes the general
+        // ResolveEffect method internally. Calling it again here resulted in
+        // certain sorceries (like Forced Mummification and Stain of Rot)
+        // applying their secondary effects twice. Run it only once.
+        sorcery.ResolveEffect(caster, target);
         SendToGraveyard(sorcery, caster, fromStack: true);
 
         if (caster == aiPlayer && visual != null)
