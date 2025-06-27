@@ -1976,6 +1976,7 @@ public static class CardDatabase
                         cardType = CardType.Sorcery,
                         manaCost = 1,
                         color = new List<string> { "Red" },
+                        rulesText = "Target creature gains haste until the end of turn.",
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         keywordToGrant = KeywordAbility.Haste,
