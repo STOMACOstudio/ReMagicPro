@@ -1881,7 +1881,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCombatDamageToPlayer && ability.effect != null)
                         {
-                            ability.effect.Invoke(player, attacker);
+                            ability.effect.Invoke(player, card);
                         }
                     }
                 }
