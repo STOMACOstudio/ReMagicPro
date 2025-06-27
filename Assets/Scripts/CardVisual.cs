@@ -1487,7 +1487,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     SorceryCard.TargetType.Creature => "creature",
                     SorceryCard.TargetType.Land => "land",
-                    SorceryCard.TargetType.Artifact => "artifact",
+                    SorceryCard.TargetType.Artifact => "non-creature artifact",
                     _ => "permanent"
                 };
 
