@@ -225,15 +225,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 CreatureCard cc = (CreatureCard)linkedCard;
 
-                bool showShield = false;
-
-                if (GameManager.Instance != null &&
-                    GameManager.Instance.humanPlayer != null &&
-                    GameManager.Instance.humanPlayer.Battlefield != null)
-                {
-                    showShield = cc.blockingThisAttacker != null &&
-                                GameManager.Instance.humanPlayer.Battlefield.Contains(cc);
-                }
+                bool showShield = cc.blockingThisAttacker != null && isInBattlefield;
 
                 shieldIcon.SetActive(showShield);
                 shieldIcon.transform.rotation = Quaternion.identity;

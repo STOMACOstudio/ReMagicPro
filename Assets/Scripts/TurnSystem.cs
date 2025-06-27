@@ -1122,6 +1122,8 @@ public class TurnSystem : MonoBehaviour
                 {
                     if (visual.swordIcon != null)
                         visual.swordIcon.SetActive(false);
+                    if (visual.shieldIcon != null)
+                        visual.shieldIcon.SetActive(false);
 
                     visual.UpdateVisual();
                 }
