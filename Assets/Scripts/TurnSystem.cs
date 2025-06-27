@@ -834,6 +834,15 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.ChooseBlockers:
+                    if (GameManager.Instance.currentAttackers.Count == 0)
+                    {
+                        Debug.Log("→ No attackers. Skipping blockers phase.");
+                        waitingForPlayerInput = false;
+                        confirmBlockersButton.gameObject.SetActive(false);
+                        AdvancePhase();
+                        break;
+                    }
+
                     if (currentPlayer == PlayerType.Human)
                     {
                         Debug.Log("→ AI is assigning blockers as defender.");
