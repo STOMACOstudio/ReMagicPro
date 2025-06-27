@@ -48,6 +48,7 @@ public static class CardFactory
                 sorcery.lifeLossForBothPlayers = data.lifeLossForBothPlayers;
                 sorcery.cardsToDraw = data.cardsToDraw;
                 sorcery.cardsToDiscardorDraw = data.cardsToDiscardorDraw;
+                sorcery.drawIfOpponentCantDiscard = data.drawIfOpponentCantDiscard;
                 sorcery.eachPlayerGainLifeEqualToLands = data.eachPlayerGainLifeEqualToLands;
                 sorcery.typeOfPermanentToDestroyAll = data.typeOfPermanentToDestroyAll;
                 sorcery.exileAllCreaturesFromGraveyards = data.exileAllCreaturesFromGraveyards;
