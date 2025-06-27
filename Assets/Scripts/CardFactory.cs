@@ -82,6 +82,8 @@ public static class CardFactory
                     ? new List<KeywordAbility>(data.keywordAbilities)
                     : new List<KeywordAbility>();
                 artifact.damageToCreature = data.damageToCreature;
+                artifact.buffPower = data.powerBuff;
+                artifact.buffToughness = data.toughnessBuff;
                 newCard = artifact;
                 break;
 

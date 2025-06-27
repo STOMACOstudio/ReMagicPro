@@ -922,7 +922,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
-                //SACRIFICE TO DEAL DAMAGE
+                    //SACRIFICE TO DEAL DAMAGE
                     if (linkedCard.activatedAbilities != null &&
                         linkedCard.activatedAbilities.Contains(ActivatedAbility.DealDamageToCreature) &&
                         !linkedCard.isTapped &&
@@ -943,6 +943,31 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         else
                         {
                             Debug.Log("Not enough mana to activate damage artifact.");
+                        }
+
+                        return;
+                    }
+
+                    // SACRIFICE TO BUFF CREATURE
+                    if (linkedCard.activatedAbilities != null &&
+                        linkedCard.activatedAbilities.Contains(ActivatedAbility.BuffTargetCreature) &&
+                        !linkedCard.isTapped &&
+                        GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                        (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    {
+                        ArtifactCard artifact = linkedCard as ArtifactCard;
+                        Player player = GameManager.Instance.humanPlayer;
+                        int totalAvailable = player.ColoredMana.Total();
+                        int cost = artifact.manaToPayToActivate;
+
+                        if (totalAvailable >= cost)
+                        {
+                            GameManager.Instance.BeginTargetingWithArtifactBuff(artifact, player, this);
+                        }
+                        else
+                        {
+                            Debug.Log("Not enough mana to activate buff artifact.");
                         }
 
                         return;

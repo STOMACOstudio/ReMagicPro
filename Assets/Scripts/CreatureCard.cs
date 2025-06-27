@@ -10,11 +10,13 @@ public class CreatureCard : Card
     public int baseToughness; // ORIGINAL TOUGHNESS (never changes)
     public int plusOneCounters = 0;
     public int minusOneCounters = 0;
+    public int tempPowerBonus = 0;
+    public int tempToughnessBonus = 0;
 
     public void RecalculateStats()
     {
-        power = basePower + plusOneCounters - minusOneCounters;
-        toughness = baseToughness + plusOneCounters - minusOneCounters;
+        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus;
     }
 
     public void AddPlusOneCounter()
@@ -27,6 +29,23 @@ public class CreatureCard : Card
     {
         minusOneCounters++;
         RecalculateStats();
+    }
+
+    public void AddTemporaryBuff(int powerAmount, int toughnessAmount)
+    {
+        tempPowerBonus += powerAmount;
+        tempToughnessBonus += toughnessAmount;
+        RecalculateStats();
+    }
+
+    public void ResetTemporaryBuff()
+    {
+        if (tempPowerBonus != 0 || tempToughnessBonus != 0)
+        {
+            tempPowerBonus = 0;
+            tempToughnessBonus = 0;
+            RecalculateStats();
+        }
     }
     public int damageTaken = 0;
     public int tapLifeLossAmount;
@@ -59,6 +78,7 @@ public class CreatureCard : Card
         base.OnLeavePlay(owner);
         plusOneCounters = 0;
         minusOneCounters = 0;
+        ResetTemporaryBuff();
         RecalculateStats();
     }
 }

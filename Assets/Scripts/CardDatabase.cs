@@ -2203,25 +2203,42 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/potion_of_health")
                 });
-                Add(new CardData // Potion of mana
-                    {
-                        cardName = "Potion of Mana",
-                        rarity = "Common",
-                        manaCost = 1,
-                        color = new List<string>(),
-                        cardType = CardType.Artifact,
-                        entersTapped = true,
-                        manaToGain = 3,
-                        manaToPayToActivate = 2,
-                        activatedAbilities = new List<ActivatedAbility>
-                        {
-                            ActivatedAbility.SacrificeForMana
-                        },
-                        artwork = Resources.Load<Sprite>("Art/potion_of_mana")
-                    });
-                Add(new CardData //Stone of plague
-                    {
-                        cardName = "Stone of Plague",
+                  Add(new CardData // Potion of mana
+                      {
+                          cardName = "Potion of Mana",
+                          rarity = "Common",
+                          manaCost = 1,
+                          color = new List<string>(),
+                          cardType = CardType.Artifact,
+                          entersTapped = true,
+                          manaToGain = 3,
+                          manaToPayToActivate = 2,
+                          activatedAbilities = new List<ActivatedAbility>
+                          {
+                              ActivatedAbility.SacrificeForMana
+                          },
+                          artwork = Resources.Load<Sprite>("Art/potion_of_mana")
+                      });
+                  Add(new CardData // Potion of strength
+                      {
+                          cardName = "Potion of Strength",
+                          rarity = "Common",
+                          manaCost = 1,
+                          color = new List<string>(),
+                          cardType = CardType.Artifact,
+                          entersTapped = true,
+                          powerBuff = 2,
+                          toughnessBuff = 2,
+                          manaToPayToActivate = 2,
+                          activatedAbilities = new List<ActivatedAbility>
+                          {
+                              ActivatedAbility.BuffTargetCreature
+                          },
+                          artwork = Resources.Load<Sprite>("Art/potion_of_strength")
+                      });
+                  Add(new CardData //Stone of plague
+                      {
+                          cardName = "Stone of Plague",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string>(),

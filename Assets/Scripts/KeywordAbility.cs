@@ -40,4 +40,5 @@ public enum ActivatedAbility
     TapToCreateToken,
     PayToGainAbility,
     DealDamageToCreature,
+    BuffTargetCreature,
 }
