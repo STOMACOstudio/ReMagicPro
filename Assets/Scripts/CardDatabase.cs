@@ -2070,6 +2070,16 @@ public static class CardDatabase
                     eachPlayerGainLifeEqualToLands = true,
                     artwork = Resources.Load<Sprite>("Art/feast"),
                     });
+                Add(new CardData { //Rolling Energy
+                    cardName = "Rolling Energy",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = new List<string> { "Green" },
+                    manaToGainMin = 1,
+                    manaToGainMax = 6,
+                    artwork = Resources.Load<Sprite>("Art/rolling_energy"),
+                    });
             ///MULTI
                 Add(new CardData //Drain mind
                         {

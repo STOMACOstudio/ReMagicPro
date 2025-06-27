@@ -51,6 +51,8 @@ public static class CardFactory
                 sorcery.typeOfPermanentToDestroyAll = data.typeOfPermanentToDestroyAll;
                 sorcery.exileAllCreaturesFromGraveyards = data.exileAllCreaturesFromGraveyards;
                 sorcery.damageToEachCreatureAndPlayer = data.damageToEachCreatureAndPlayer;
+                sorcery.manaToGainMin = data.manaToGainMin;
+                sorcery.manaToGainMax = data.manaToGainMax;
                 sorcery.swapGraveyardAndLibrary = data.swapGraveyardAndLibrary;
                 sorcery.tokenToCreate = data.tokenToCreate;
                 sorcery.numberOfTokensMin = data.numberOfTokensMin;

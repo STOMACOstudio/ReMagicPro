@@ -11,6 +11,8 @@ public class SorceryCard : Card
     public int lifeLossForBothPlayers = 0;
     public int cardsToDiscardorDraw = 0;
     public int damageToEachCreatureAndPlayer = 0;
+    public int manaToGainMin = 0;
+    public int manaToGainMax = 0;
     public bool eachPlayerGainLifeEqualToLands = false;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
@@ -78,6 +80,26 @@ public class SorceryCard : Card
                         : GameManager.Instance.enemyLifeContainer
                 );
 
+                didSomething = true;
+            }
+            if (manaToGainMax > 0)
+            {
+                int amount = (manaToGainMin == manaToGainMax)
+                    ? manaToGainMin
+                    : Random.Range(manaToGainMin, manaToGainMax + 1);
+
+                switch (PrimaryColor)
+                {
+                    case "White": caster.ColoredMana.White += amount; break;
+                    case "Blue": caster.ColoredMana.Blue += amount; break;
+                    case "Black": caster.ColoredMana.Black += amount; break;
+                    case "Red": caster.ColoredMana.Red += amount; break;
+                    case "Green": caster.ColoredMana.Green += amount; break;
+                    default: caster.ColoredMana.Colorless += amount; break;
+                }
+
+                Debug.Log($"{caster} gains {amount} {PrimaryColor} mana.");
+                GameManager.Instance.UpdateUI();
                 didSomething = true;
             }
             if (lifeToLoseForOpponent > 0)
