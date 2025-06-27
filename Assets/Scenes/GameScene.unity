@@ -1811,6 +1811,8 @@ MonoBehaviour:
   drink: {fileID: 8300000, guid: 55d3a6931e2f23a4bae366c759b2aa9c, type: 3}
   miner: {fileID: 8300000, guid: e36177dde3eb74e4184484ad48b81327, type: 3}
   gain_life: {fileID: 8300000, guid: bc50d8721caf7e44c8ef036922f72ad4, type: 3}
+  victory: {fileID: 8300000, guid: b8bf9ae1d6f7cee4588459d28268a8f2, type: 3}
+  defeat: {fileID: 8300000, guid: c89b120bb2d34f641b71689898c37be0, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0
