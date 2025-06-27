@@ -860,41 +860,52 @@ public class TurnSystem : MonoBehaviour
 
                         bool goForLethal = totalPower >= human.Life;
 
+                        const int lowLifeThreshold = 5;
+                        bool lowLifeNeedsDefense = ai.Life <= lowLifeThreshold &&
+                            human.Battlefield.OfType<CreatureCard>().Any();
+
                         foreach (var creature in potentialAttackers)
                         {
                             bool attack = goForLethal;
 
                             if (!attack)
                             {
-                                // Determine if creature can be profitably blocked
-                                var possibleBlockers = new List<CreatureCard>();
-                                foreach (var oppCard in human.Battlefield)
+                                if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
                                 {
-                                    if (oppCard is CreatureCard blocker && BlockerCanBlockAttacker(blocker, creature, human))
-                                        possibleBlockers.Add(blocker);
-                                }
-
-                                if (possibleBlockers.Count == 0)
-                                {
-                                    attack = true; // Unblockable
+                                    attack = false; // stay back to block
                                 }
                                 else
                                 {
-                                    // Pick the cheapest blocker (by power+toughness) that can block
-                                    var best = possibleBlockers.OrderBy(b => b.power + b.baseToughness).First();
-
-                                    if (creature.power >= best.toughness)
+                                    // Determine if creature can be profitably blocked
+                                    var possibleBlockers = new List<CreatureCard>();
+                                    foreach (var oppCard in human.Battlefield)
                                     {
-                                        if (creature.toughness > best.power)
+                                        if (oppCard is CreatureCard blocker && BlockerCanBlockAttacker(blocker, creature, human))
+                                            possibleBlockers.Add(blocker);
+                                    }
+
+                                    if (possibleBlockers.Count == 0)
+                                    {
+                                        attack = true; // Unblockable
+                                    }
+                                    else
+                                    {
+                                        // Pick the cheapest blocker (by power+toughness) that can block
+                                        var best = possibleBlockers.OrderBy(b => b.power + b.baseToughness).First();
+
+                                        if (creature.power >= best.toughness)
                                         {
-                                            attack = true; // kill and survive
-                                        }
-                                        else
-                                        {
-                                            int creatureValue = creature.power + creature.baseToughness;
-                                            int blockerValue = best.power + best.baseToughness;
-                                            if (creatureValue <= blockerValue)
-                                                attack = true; // acceptable trade
+                                            if (creature.toughness > best.power)
+                                            {
+                                                attack = true; // kill and survive
+                                            }
+                                            else
+                                            {
+                                                int creatureValue = creature.power + creature.baseToughness;
+                                                int blockerValue = best.power + best.baseToughness;
+                                                if (creatureValue <= blockerValue)
+                                                    attack = true; // acceptable trade
+                                            }
                                         }
                                     }
                                 }
