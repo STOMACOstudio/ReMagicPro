@@ -1889,7 +1889,6 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         destroyTargetIfTypeMatches = true,
                         excludeArtifactCreatures = true,
-                        rulesText = "Destroy target non-artifact creature. Create a Zombie token.",
                         tokenToCreate = "Zombie",
                         numberOfTokensMin = 1,
                         numberOfTokensMax = 1,
@@ -1968,7 +1967,6 @@ public static class CardDatabase
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Artifact,
                             destroyTargetIfTypeMatches = true,
-                            rulesText = "Destroy target non-creature artifact.",
                             artwork = Resources.Load<Sprite>("Art/melt"),
                         });
                 Add(new CardData //Dash
@@ -1981,7 +1979,6 @@ public static class CardDatabase
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         keywordToGrant = KeywordAbility.Haste,
-                        rulesText = "Target creature gains haste until the end of turn.",
                         artwork = Resources.Load<Sprite>("Art/dash"),
                     });
                 Add(new CardData //thunderstrike
