@@ -530,6 +530,9 @@ public class GameManager : MonoBehaviour
                     if (!attackerProtected)
                         totalDamageFromBlockers += damageFromBlocker;
 
+                    if (damageToBlocker > 0 || damageFromBlocker > 0)
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.impact);
+
                     Debug.Log($"{attacker.cardName} is blocked by {blocker.cardName}.");
 
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageToBlocker > 0)
@@ -1701,6 +1704,9 @@ public class GameManager : MonoBehaviour
                         int damageFromBlocker = attackerProtected ? 0 : blocker.power;
                         if (!attackerProtected)
                             totalDamageFromBlockers += damageFromBlocker;
+
+                        if (damageToBlocker > 0 || damageFromBlocker > 0)
+                            SoundManager.Instance.PlaySound(SoundManager.Instance.impact);
 
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageToBlocker > 0)
                         {
