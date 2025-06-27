@@ -945,6 +945,8 @@ public class TurnSystem : MonoBehaviour
                         Player human = GameManager.Instance.humanPlayer;
                         var attackers = GameManager.Instance.currentAttackers.OrderByDescending(a => a.power).ToList();
                         var availableBlockers = new List<CreatureCard>();
+                        int remainingDamage = attackers.Sum(a => a.power);
+                        int projectedLife = ai.Life;
 
                         // Gather untapped blockers that can block
                         foreach (var card in ai.Battlefield)
@@ -960,7 +962,7 @@ public class TurnSystem : MonoBehaviour
                         // Assign blockers to attackers prioritizing survival/trades
                         foreach (var attacker in attackers)
                         {
-                            var blocker = ChooseBestBlocker(attacker, availableBlockers, ai.Life);
+                            var blocker = ChooseBestBlocker(attacker, availableBlockers, projectedLife, remainingDamage);
                             if (blocker != null)
                             {
                                 if (!GameManager.Instance.blockingAssignments.ContainsKey(attacker))
@@ -972,6 +974,12 @@ public class TurnSystem : MonoBehaviour
                                 Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
 
                                 availableBlockers.Remove(blocker);
+                                remainingDamage -= attacker.power;
+                            }
+                            else
+                            {
+                                projectedLife -= attacker.power;
+                                remainingDamage -= attacker.power;
                             }
                         }
 
@@ -1147,27 +1155,34 @@ public class TurnSystem : MonoBehaviour
                 return true;
             }
 
-        private CreatureCard ChooseBestBlocker(CreatureCard attacker, List<CreatureCard> candidates, int aiLife)
+        private CreatureCard ChooseBestBlocker(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
             {
                 var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer)).ToList();
                 if (possible.Count == 0) return null;
 
-                // Prefer blocker that kills attacker and survives with smallest power
+                // Prefer blocker that kills attacker and survives
                 var killSurvive = possible
                     .Where(b => b.power >= attacker.toughness && b.toughness > attacker.power)
                     .OrderBy(b => b.power)
                     .FirstOrDefault();
                 if (killSurvive != null) return killSurvive;
 
-                // Otherwise prefer a trade with smallest value difference
+                // Safe block that survives damage
+                var safe = possible
+                    .Where(b => b.toughness > attacker.power)
+                    .OrderBy(b => b.toughness)
+                    .FirstOrDefault();
+                if (safe != null) return safe;
+
+                // Trade if it can kill attacker
                 var trade = possible
                     .Where(b => b.power >= attacker.toughness)
                     .OrderBy(b => b.power + b.baseToughness)
                     .FirstOrDefault();
                 if (trade != null) return trade;
 
-                // Desperation block to avoid lethal
-                if (aiLife <= attacker.power)
+                // Block anything to avoid lethal damage
+                if (remainingDamage >= remainingLife)
                     return possible.OrderByDescending(b => b.toughness).First();
 
                 return null;
