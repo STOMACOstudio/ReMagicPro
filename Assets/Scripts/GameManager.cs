@@ -161,6 +161,8 @@ public class GameManager : MonoBehaviour
 
             activeCardVisuals.Add(visual);
         }
+
+        NotifyCardDrawn(player);
     }
 
     public void PlayCard(Player player, CardVisual visual)
@@ -429,6 +431,11 @@ public class GameManager : MonoBehaviour
             owner.Hand.Remove(card);
             Debug.Log($"{card.cardName} is being sent to the graveyard.");
 
+            if (card is CreatureCard && (diedFromBattlefield || discardedFromHand))
+            {
+                NotifyCreatureDiesOrDiscarded(card, owner);
+            }
+
             if (diedFromBattlefield)
             {
                 card.OnLeavePlay(owner);
@@ -549,12 +556,14 @@ public class GameManager : MonoBehaviour
                         aiPlayer.Life -= remainingDamage;
                         aiDamage += remainingDamage;
                         Debug.Log($"{attacker.cardName} tramples over for {remainingDamage} damage!");
+                        NotifyCombatDamageToPlayer(attacker, aiPlayer);
                     }
                     else
                     {
                         humanPlayer.Life -= remainingDamage;
                         playerDamage += remainingDamage;
                         Debug.Log($"{attacker.cardName} tramples YOU for {remainingDamage} damage!");
+                        NotifyCombatDamageToPlayer(attacker, humanPlayer);
                     }
 
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
@@ -571,6 +580,7 @@ public class GameManager : MonoBehaviour
                 {
                     aiPlayer.Life -= attacker.power;
                     aiDamage += attacker.power;
+                    NotifyCombatDamageToPlayer(attacker, aiPlayer);
 
                     // Lifelink: gain life equal to damage dealt to AI
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
@@ -584,6 +594,7 @@ public class GameManager : MonoBehaviour
                 {
                     humanPlayer.Life -= attacker.power;
                     playerDamage += attacker.power;
+                    NotifyCombatDamageToPlayer(attacker, humanPlayer);
 
                     // Lifelink: gain life equal to damage dealt to Human
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
@@ -1085,6 +1096,8 @@ public class GameManager : MonoBehaviour
 
         player.Life += amount;
         UpdateUI();
+
+        NotifyLifeGain(player, amount);
 
         if (player == humanPlayer)
             ShowFloatingHeal(amount, playerLifeContainer);
@@ -1730,8 +1743,11 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnArtifactEnter && ability.effect != null)
                         {
+                            if (card == artifact)
+                                continue;
+
                             int oldLife = player.Life;
-                            ability.effect.Invoke(player, artifact);
+                            ability.effect.Invoke(player, card);
                             int gained = player.Life - oldLife;
                             if (gained > 0)
                             {
@@ -1786,6 +1802,82 @@ public class GameManager : MonoBehaviour
                                 ShowFloatingHeal(gained,
                                     player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        public int lastLifeGainedAmount = 0;
+
+        public void NotifyLifeGain(Player player, int amount)
+        {
+            lastLifeGainedAmount = amount;
+            foreach (var card in player.Battlefield.ToList())
+            {
+                foreach (var ability in card.abilities)
+                {
+                    if (ability.timing == TriggerTiming.OnLifeGain && ability.effect != null)
+                    {
+                        int oldLife = player.Life;
+                        ability.effect.Invoke(player, card);
+                        int gained = player.Life - oldLife;
+                        if (gained > 0)
+                        {
+                            ShowFloatingHeal(gained,
+                                player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                        }
+                    }
+                }
+            }
+            lastLifeGainedAmount = 0;
+        }
+
+        public void NotifyCardDrawn(Player player)
+        {
+            foreach (var card in player.Battlefield.ToList())
+            {
+                foreach (var ability in card.abilities)
+                {
+                    if (ability.timing == TriggerTiming.OnCardDraw && ability.effect != null)
+                    {
+                        ability.effect.Invoke(player, card);
+                    }
+                }
+            }
+        }
+
+        public void NotifyCreatureDiesOrDiscarded(Card creature, Player owner)
+        {
+            if (!(creature is CreatureCard))
+                return;
+
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, creature);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void NotifyCombatDamageToPlayer(CreatureCard attacker, Player target)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnCombatDamageToPlayer && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, attacker);
                         }
                     }
                 }
