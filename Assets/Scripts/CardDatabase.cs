@@ -997,6 +997,19 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/wicked_witch")
                     });
+                Add(new CardData //Undead Army
+                    {
+                    cardName = "Undead Army",
+                    rarity = "Uncommon",
+                    manaCost = 8,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 8,
+                    toughness = 8,
+                    subtypes = new List<string> { "Zombie" },
+                    rulesText = "Whenever this creature attacks or blocks, put a -1/-1 counter on this creature at the end of combat.",
+                    artwork = Resources.Load<Sprite>("Art/undead_army")
+                    });
                 Add(new CardData // Zombie Token
                     {
                         cardName = "Zombie",
