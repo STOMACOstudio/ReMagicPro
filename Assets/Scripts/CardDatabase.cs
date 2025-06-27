@@ -2244,7 +2244,7 @@ public static class CardDatabase
                         {
                             KeywordAbility.NoLifeGain
                         },
-                        artwork = Resources.Load<Sprite>("Art/mana_rock")
+                        artwork = Resources.Load<Sprite>("Art/blood_grail")
                     });
 
                 Add(new CardData //Anti-Magic Grid
@@ -2258,7 +2258,7 @@ public static class CardDatabase
                         {
                             KeywordAbility.OnlyCastCreatureSpells
                         },
-                        artwork = Resources.Load<Sprite>("Art/pressure_sphere")
+                        artwork = Resources.Load<Sprite>("Art/anti_magic_grid")
                     });
 
                 Add(new CardData //Tablet of Creation
@@ -2272,7 +2272,7 @@ public static class CardDatabase
                         {
                             KeywordAbility.CreatureSpellsCostOneLess
                         },
-                        artwork = Resources.Load<Sprite>("Art/crystallium")
+                        artwork = Resources.Load<Sprite>("Art/tablet_of_creation")
                     });
     }
 
