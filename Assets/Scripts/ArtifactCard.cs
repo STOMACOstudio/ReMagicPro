@@ -19,7 +19,7 @@ public class ArtifactCard : Card
                     break;
 
                 case ActivatedAbility.TapToGainLife:
-                    owner.Life += 1;
+                    GameManager.Instance.TryGainLife(owner, 1);
                     break;
 
                 case ActivatedAbility.TapAndSacrificeForMana:
@@ -50,7 +50,7 @@ public class ArtifactCard : Card
                             return;
                         }
 
-                        owner.Life += lifeToGain;
+                        GameManager.Instance.TryGainLife(owner, lifeToGain);
                         GameManager.Instance.SendToGraveyard(this, owner);
                     }
                     else

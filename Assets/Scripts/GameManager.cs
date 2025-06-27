@@ -173,6 +173,12 @@ public class GameManager : MonoBehaviour
 
             Card card = visual.linkedCard;
 
+            if (IsOnlyCastCreatureSpellsActive() && !(card is CreatureCard) && !(card is LandCard))
+            {
+                Debug.Log("Anti-Magic Grid prevents casting non-creature spells.");
+                return;
+            }
+
             if (card is LandCard)
             {
                 if (player.hasPlayedLandThisTurn)
@@ -204,6 +210,9 @@ public class GameManager : MonoBehaviour
             else if (card is CreatureCard creature)
             {
                 var cost = GetManaCostBreakdown(card.manaCost, card.color);
+                int reduction = GetCreatureCostReduction(player);
+                if (reduction > 0 && cost.ContainsKey("Colorless"))
+                    cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
@@ -519,25 +528,15 @@ public class GameManager : MonoBehaviour
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageToBlocker > 0)
                     {
                         Player owner = GetOwnerOfCard(attacker);
-                        owner.Life += damageToBlocker;
+                        GameManager.Instance.TryGainLife(owner, damageToBlocker);
                         Debug.Log($"{attacker.cardName} lifelinks {damageToBlocker} life to {owner}.");
-
-                        if (owner == humanPlayer)
-                            ShowFloatingHeal(damageToBlocker, playerLifeContainer);
-                        else
-                            ShowFloatingHeal(damageToBlocker, enemyLifeContainer);
                     }
 
                     if (blocker.keywordAbilities.Contains(KeywordAbility.Lifelink) && damageFromBlocker > 0)
                     {
                         Player blockerOwner = GetOwnerOfCard(blocker);
-                        blockerOwner.Life += damageFromBlocker;
+                        GameManager.Instance.TryGainLife(blockerOwner, damageFromBlocker);
                         Debug.Log($"{blocker.cardName} lifelinks {damageFromBlocker} life to {blockerOwner}.");
-
-                        if (blockerOwner == humanPlayer)
-                            ShowFloatingHeal(damageFromBlocker, playerLifeContainer);
-                        else
-                            ShowFloatingHeal(damageFromBlocker, enemyLifeContainer);
                     }
                 }
 
@@ -560,13 +559,8 @@ public class GameManager : MonoBehaviour
 
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        GetOwnerOfCard(attacker).Life += remainingDamage;
+                        GameManager.Instance.TryGainLife(GetOwnerOfCard(attacker), remainingDamage);
                         Debug.Log($"{attacker.cardName} lifelinks {remainingDamage} trample damage.");
-
-                        if (attacker.owner == humanPlayer)
-                            ShowFloatingHeal(remainingDamage, playerLifeContainer);
-                        else
-                            ShowFloatingHeal(remainingDamage, enemyLifeContainer);
                     }
                 }
             }
@@ -582,13 +576,8 @@ public class GameManager : MonoBehaviour
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
                         Player owner = humanPlayer.Battlefield.Contains(attacker) ? humanPlayer : aiPlayer;
-                        owner.Life += attacker.power;
+                        GameManager.Instance.TryGainLife(owner, attacker.power);
                         Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to {(owner == humanPlayer ? "Human" : "AI")}.");
-
-                        if (owner == humanPlayer)
-                            ShowFloatingHeal(attacker.power, playerLifeContainer);
-                        else
-                            ShowFloatingHeal(attacker.power, enemyLifeContainer);
                     }
                 }
                 else
@@ -599,9 +588,8 @@ public class GameManager : MonoBehaviour
                     // Lifelink: gain life equal to damage dealt to Human
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        aiPlayer.Life += attacker.power;
+                        GameManager.Instance.TryGainLife(aiPlayer, attacker.power);
                         Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
-                        ShowFloatingHeal(attacker.power, enemyLifeContainer); // ← ADD THIS
                     }
                 }
             }
@@ -1068,6 +1056,40 @@ public class GameManager : MonoBehaviour
         return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
             .Any(card => card.keywordAbilities != null &&
                         card.keywordAbilities.Contains(KeywordAbility.AllPermanentsEnterTapped));
+    }
+
+    public bool IsLifeGainPrevented()
+    {
+        return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
+            .Any(card => card.keywordAbilities != null &&
+                        card.keywordAbilities.Contains(KeywordAbility.NoLifeGain));
+    }
+
+    public bool IsOnlyCastCreatureSpellsActive()
+    {
+        return humanPlayer.Battlefield.Concat(aiPlayer.Battlefield)
+            .Any(card => card.keywordAbilities != null &&
+                        card.keywordAbilities.Contains(KeywordAbility.OnlyCastCreatureSpells));
+    }
+
+    public int GetCreatureCostReduction(Player player)
+    {
+        return player.Battlefield.Count(card => card.keywordAbilities != null &&
+            card.keywordAbilities.Contains(KeywordAbility.CreatureSpellsCostOneLess));
+    }
+
+    public void TryGainLife(Player player, int amount)
+    {
+        if (amount <= 0 || IsLifeGainPrevented())
+            return;
+
+        player.Life += amount;
+        UpdateUI();
+
+        if (player == humanPlayer)
+            ShowFloatingHeal(amount, playerLifeContainer);
+        else
+            ShowFloatingHeal(amount, enemyLifeContainer);
     }
 
     private KeywordAbility GetProtectionKeyword(string color)
@@ -1770,13 +1792,7 @@ public class GameManager : MonoBehaviour
 
         public void GainLife(Player player, int amount)
         {
-            player.Life += amount;
-            UpdateUI();
-
-            if (player == humanPlayer)
-                ShowFloatingHeal(amount, playerLifeContainer);
-            else
-                ShowFloatingHeal(amount, enemyLifeContainer);
+            TryGainLife(player, amount);
         }
 
         public void CheckForGameEnd()

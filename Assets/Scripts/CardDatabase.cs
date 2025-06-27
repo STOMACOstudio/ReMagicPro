@@ -133,8 +133,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card artifact) =>
                             {
-                                owner.Life += 1;
-                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.TryGainLife(owner, 1);
                             }
                         }
                     }
@@ -191,8 +190,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                owner.Life += 1;
-                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.TryGainLife(owner, 1);
                                 //Debug.Log("Waterbearer enters: gain 1 life.");
                             }
                         },
@@ -202,8 +200,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                owner.Life += 1;
-                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.TryGainLife(owner, 1);
                                 //Debug.Log("Waterbearer dies: gain 1 life.");
                             }
                         }
@@ -232,8 +229,7 @@ public static class CardDatabase
                             description = "Gain 4 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                owner.Life += 4;
-                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.TryGainLife(owner, 4);
                             }
                         },
                     }
@@ -326,8 +322,7 @@ public static class CardDatabase
                             description = "gain 5 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                owner.Life += 5;
-                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.TryGainLife(owner, 5);
                                 Debug.Log("Gain 5 life at upkeep.");
                             }
                         }
@@ -2236,6 +2231,48 @@ public static class CardDatabase
                             ActivatedAbility.TapToGainLife
                         },
                         artwork = Resources.Load<Sprite>("Art/bonfire")
+                    });
+
+                Add(new CardData //Blood Grail
+                    {
+                        cardName = "Blood Grail",
+                        rarity = "Rare",
+                        manaCost = 1,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.NoLifeGain
+                        },
+                        artwork = Resources.Load<Sprite>("Art/blood_grail")
+                    });
+
+                Add(new CardData //Anti-Magic Grid
+                    {
+                        cardName = "Anti-Magic Grid",
+                        rarity = "Rare",
+                        manaCost = 6,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.OnlyCastCreatureSpells
+                        },
+                        artwork = Resources.Load<Sprite>("Art/anti_magic_grid")
+                    });
+
+                Add(new CardData //Tablet of Creation
+                    {
+                        cardName = "Tablet of Creation",
+                        rarity = "Rare",
+                        manaCost = 2,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.CreatureSpellsCostOneLess
+                        },
+                        artwork = Resources.Load<Sprite>("Art/tablet_of_creation")
                     });
     }
 

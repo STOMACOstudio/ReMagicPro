@@ -18,6 +18,9 @@ public class CreatureCard : Card
     public override void Play(Player player)
     {
         var cost = GameManager.Instance.GetManaCostBreakdown(manaCost, color);
+        int reduction = GameManager.Instance.GetCreatureCostReduction(player);
+        if (reduction > 0 && cost.ContainsKey("Colorless"))
+            cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
         if (player.ColoredMana.CanPay(cost))
         {
             player.ColoredMana.Pay(cost);

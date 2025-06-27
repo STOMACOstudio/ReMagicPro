@@ -22,6 +22,9 @@ public enum KeywordAbility
     ProtectionFromBlack,
     ProtectionFromRed,
     ProtectionFromGreen,
+    NoLifeGain,
+    OnlyCastCreatureSpells,
+    CreatureSpellsCostOneLess,
 }
 
 public enum ActivatedAbility
