@@ -1226,7 +1226,8 @@ public class GameManager : MonoBehaviour
                 Card target = targetVisual.linkedCard;
 
                 bool correctType =
-                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard creature &&
+                        !(targetingAbility.excludeArtifactCreatures && creature.color.Contains("Artifact"))) ||
                     (targetingAbility.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
                     (targetingAbility.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard);
 
@@ -1257,7 +1258,8 @@ public class GameManager : MonoBehaviour
             {
                 // Validate type
                 bool correctType =
-                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Creature && chosen is CreatureCard) ||
+                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Creature && chosen is CreatureCard creatureT &&
+                        !(targetingSorcery.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Land && chosen is LandCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Artifact && chosen is ArtifactCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && chosen is CreatureCard);
