@@ -40,6 +40,12 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     private static Color startingBGColor;
     private static float bgFadeSpeed = 2f;
 
+    public static void ResetSelections()
+    {
+        selectedColors.Clear();
+        backgroundPanelStatic = null;
+    }
+
     public GameObject startButton;
 
     private bool isSelected = false;

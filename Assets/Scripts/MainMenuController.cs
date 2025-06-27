@@ -30,5 +30,9 @@ public class MainMenuController : MonoBehaviour
         Debug.LogWarning("[DEV] Clearing all PlayerPrefs!");
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
+
+        // Reset any generated deck and previously selected colors
+        DeckHolder.SelectedDeck = null;
+        ColorButtonBehavior.ResetSelections();
     }
 }
