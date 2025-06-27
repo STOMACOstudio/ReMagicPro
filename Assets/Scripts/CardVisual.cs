@@ -1497,6 +1497,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 };
                 rules += $"Destroy all {typeStr}.\n";
             }
+            if (sorcery.destroyAllWithSameName)
+                rules += "Destroy target creature and each other creature with the same name.\n";
             if (sorcery.exileAllCreaturesFromGraveyards)
                 rules += "Exile all creature cards from all graveyards.\n";
             if (sorcery.damageToEachCreatureAndPlayer > 0)

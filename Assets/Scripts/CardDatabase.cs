@@ -2027,6 +2027,18 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/massacre"),
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
+                Add(new CardData //Mirrorbreak
+                    {
+                        cardName = "Mirrorbreak",
+                        rarity = "Uncommon",
+                        cardType = CardType.Sorcery,
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        destroyAllWithSameName = true,
+                        artwork = Resources.Load<Sprite>("Art/mirrorbreak"),
+                    });
             // RED
                 Add(new CardData //To dig a hole
                         {

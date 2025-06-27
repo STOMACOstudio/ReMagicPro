@@ -22,6 +22,7 @@ public class SorceryCard : Card
     public Card chosenTarget = null;
     public int damageToTarget = 0;
     public bool destroyTargetIfTypeMatches = false;
+    public bool destroyAllWithSameName = false;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
     public bool excludeArtifactCreatures = false;
@@ -326,6 +327,28 @@ public class SorceryCard : Card
 
                         GameManager.Instance.UpdateUI();
                         ResolveEffect(caster); // Add this line
+                        return;
+                    }
+
+                    if (destroyAllWithSameName && target is CreatureCard)
+                    {
+                        string name = target.cardName;
+                        List<(Card card, Player owner)> toDestroy = new List<(Card, Player)>();
+                        foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                        {
+                            foreach (var card in player.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList())
+                            {
+                                toDestroy.Add((card, player));
+                            }
+                        }
+                        foreach (var (card, owner) in toDestroy)
+                        {
+                            GameManager.Instance.SendToGraveyard(card, owner);
+                        }
+
+                        Debug.Log($"{cardName} destroyed {toDestroy.Count} copies of {name}.");
+
+                        ResolveEffect(caster);
                         return;
                     }
 
