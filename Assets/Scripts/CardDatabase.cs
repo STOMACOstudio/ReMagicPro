@@ -2313,6 +2313,188 @@ public static class CardDatabase
                         },
                         artwork = Resources.Load<Sprite>("Art/tablet_of_creation")
                     });
+
+                // Avatar cycle gaining +1/+1 counters
+                Add(new CardData //Progress Incarnate
+                    {
+                        cardName = "Progress Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Artifact" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        artwork = Resources.Load<Sprite>("Art/progress_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnArtifactEnter,
+                                description = "put a +1/+1 counter on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //Faith Incarnate
+                    {
+                        cardName = "Faith Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Vigilance },
+                        artwork = Resources.Load<Sprite>("Art/faith_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnLifeGain,
+                                description = "put that many +1/+1 counters on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        for (int i = 0; i < GameManager.Instance.lastLifeGainedAmount; i++)
+                                            creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //Wisdom Incarnate
+                    {
+                        cardName = "Wisdom Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
+                        artwork = Resources.Load<Sprite>("Art/wisdom_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCardDraw,
+                                description = "put that many +1/+1 counters on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        for (int i = 0; i < GameManager.Instance.lastCardsDrawnAmount; i++)
+                                            creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //Death Incarnate
+                    {
+                        cardName = "Death Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Lifelink },
+                        artwork = Resources.Load<Sprite>("Art/death_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureDiesOrDiscarded,
+                                description = "put a +1/+1 counter on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //War Incarnate
+                    {
+                        cardName = "War Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Red" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Haste },
+                        artwork = Resources.Load<Sprite>("Art/war_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCombatDamageToPlayer,
+                                description = "put a +1/+1 counter on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //Nature Incarnate
+                    {
+                        cardName = "Nature Incarnate",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Green" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Avatar" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Trample },
+                        artwork = Resources.Load<Sprite>("Art/nature_incarnate"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnLandEnter,
+                                description = "put a +1/+1 counter on this creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is CreatureCard creature)
+                                    {
+                                        creature.AddPlusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
     }
 
     private static void Add(CardData data)

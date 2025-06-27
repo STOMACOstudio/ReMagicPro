@@ -6,6 +6,10 @@ public enum TriggerTiming
     OnArtifactEnter,
     OnLandEnter,
     OnLandLeave,
+    OnLifeGain,
+    OnCardDraw,
+    OnCreatureDiesOrDiscarded,
+    OnCombatDamageToPlayer,
 }
 
 public class CardAbility

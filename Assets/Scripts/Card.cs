@@ -226,6 +226,14 @@ public class Card
                     lines.Add("Whenever a land enters the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLandLeave)
                     lines.Add("Whenever a land leaves the battlefield, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnLifeGain)
+                    lines.Add("Whenever you gain life, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnCardDraw)
+                    lines.Add("Whenever you draw a card, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded)
+                    lines.Add("Whenever a creature dies or is discarded, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnCombatDamageToPlayer)
+                    lines.Add("Whenever a creature deals combat damage to a player, " + ability.description);
             }
 
             if (keywordAbilities != null)
