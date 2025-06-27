@@ -22,6 +22,8 @@ public class Card
     public int manaToPayToActivate;
     public int cardsToDraw;
     public int damageToCreature;
+    public int buffPower;
+    public int buffToughness;
 
     public string tokenToCreate;
 
@@ -204,6 +206,9 @@ public class Card
                             case ActivatedAbility.DealDamageToCreature:
                                     lines.Add($"{manaToPayToActivate}TAP, sacrifice: Deal {damageToCreature} damage to target creature.");
                                     break;
+                            case ActivatedAbility.BuffTargetCreature:
+                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
+                                break;
                         }
                     }
                 }

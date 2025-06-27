@@ -64,6 +64,8 @@ public class CardData
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public bool excludeArtifactCreatures = false;
     public int damageToTarget = 0;
+    public int powerBuff = 0;
+    public int toughnessBuff = 0;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
 
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;

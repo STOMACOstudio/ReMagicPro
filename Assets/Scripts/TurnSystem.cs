@@ -953,25 +953,34 @@ public class TurnSystem : MonoBehaviour
                                 }
                             }
 
-                            if (creature.temporaryKeywordAbilities.Count > 0)
+                             if (creature.temporaryKeywordAbilities.Count > 0)
+                             {
+                                 foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
+                                 {
+                                     if (creature.keywordAbilities.Contains(temp))
+                                     {
+                                         creature.keywordAbilities.Remove(temp);
+                                         Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                     }
+                                 }
+
+                                 creature.temporaryKeywordAbilities.Clear();
+
+                                 var visual = GameManager.Instance.FindCardVisual(card);
+                                 if (visual != null)
+                                     visual.UpdateVisual();
+                             }
+
+                            if (creature.tempPowerBonus != 0 || creature.tempToughnessBonus != 0)
                             {
-                                foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
-                                {
-                                    if (creature.keywordAbilities.Contains(temp))
-                                    {
-                                        creature.keywordAbilities.Remove(temp);
-                                        Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
-                                    }
-                                }
-
-                                creature.temporaryKeywordAbilities.Clear();
-
+                                creature.ResetTemporaryBuff();
                                 var visual = GameManager.Instance.FindCardVisual(card);
                                 if (visual != null)
                                     visual.UpdateVisual();
+                                Debug.Log($"{creature.cardName} loses temporary buff at end of turn.");
                             }
-                        }
-                    }
+                          }
+                      }
 
                     // Only after cleanup, begin next turn
                     if (endingPlayer.extraTurns > 0)

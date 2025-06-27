@@ -1217,28 +1217,76 @@ public class GameManager : MonoBehaviour
                         return;
                     }
 
-                    targetCreature.toughness -= targetingArtifact.damageToCreature;
-                    Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
+                targetCreature.toughness -= targetingArtifact.damageToCreature;
+                Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
 
-                    targetingArtifact.isTapped = true;
-                    SendToGraveyard(targetingArtifact, controller);
+                targetingArtifact.isTapped = true;
+                SendToGraveyard(targetingArtifact, controller);
 
-                    UpdateUI();
-                    CheckDeaths(humanPlayer);
-                    CheckDeaths(aiPlayer);
-                }
-                else
-                {
-                    Debug.Log("Invalid target. Artifact effect canceled.");
-                    targetingArtifact.isTapped = false;
-                }
-
-                targetingArtifact = null;
-                targetingPlayer = null;
-                targetingVisual = null;
-                isTargetingMode = false;
-                return;
+                UpdateUI();
+                CheckDeaths(humanPlayer);
+                CheckDeaths(aiPlayer);
             }
+            else
+            {
+                Debug.Log("Invalid target. Artifact effect canceled.");
+                targetingArtifact.isTapped = false;
+            }
+
+            targetingArtifact = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            return;
+        }
+        // Artifact buff ability
+        if (targetingArtifact != null &&
+            targetingArtifact.activatedAbilities.Contains(ActivatedAbility.BuffTargetCreature))
+        {
+            if (chosen is CreatureCard targetCreature &&
+                GetOwnerOfCard(targetCreature)?.Battlefield.Contains(targetCreature) == true)
+            {
+                Player controller = targetingPlayer;
+                int remaining = targetingArtifact.manaToPayToActivate;
+
+                remaining -= SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
+                remaining -= SpendFromPool(ref controller.ColoredMana.White, remaining);
+                remaining -= SpendFromPool(ref controller.ColoredMana.Blue, remaining);
+                remaining -= SpendFromPool(ref controller.ColoredMana.Black, remaining);
+                remaining -= SpendFromPool(ref controller.ColoredMana.Red, remaining);
+                remaining -= SpendFromPool(ref controller.ColoredMana.Green, remaining);
+
+                if (remaining > 0)
+                {
+                    Debug.LogWarning("Not enough mana to activate artifact.");
+                    CancelTargeting();
+                    return;
+                }
+
+                targetCreature.AddTemporaryBuff(targetingArtifact.buffPower, targetingArtifact.buffToughness);
+                Debug.Log($"{targetingArtifact.cardName} gives +{targetingArtifact.buffPower}/+{targetingArtifact.buffToughness} to {targetCreature.cardName} until end of turn");
+
+                var tVis = FindCardVisual(targetCreature);
+                if (tVis != null)
+                    tVis.UpdateVisual();
+
+                targetingArtifact.isTapped = true;
+                SendToGraveyard(targetingArtifact, controller);
+
+                UpdateUI();
+            }
+            else
+            {
+                Debug.Log("Invalid target. Artifact effect canceled.");
+                targetingArtifact.isTapped = false;
+            }
+
+            targetingArtifact = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            return;
+        }
             // Creature ETB targeting
             if (targetingCreature != null && targetingAbility != null)
             {
@@ -1452,15 +1500,26 @@ public class GameManager : MonoBehaviour
         }
 
     public void BeginTargetingWithArtifactDamage(ArtifactCard artifact, Player player, CardVisual visual)
-        {
-            targetingArtifact = artifact; // << Store the artifact being used
-            targetingSorcery = null;
-            targetingPlayer = player;
-            targetingVisual = visual;
-            isTargetingMode = true;
+    {
+        targetingArtifact = artifact; // << Store the artifact being used
+        targetingSorcery = null;
+        targetingPlayer = player;
+        targetingVisual = visual;
+        isTargetingMode = true;
 
-            Debug.Log("Targeting creature to deal damage with artifact.");
-        }
+        Debug.Log("Targeting creature to deal damage with artifact.");
+    }
+
+    public void BeginTargetingWithArtifactBuff(ArtifactCard artifact, Player player, CardVisual visual)
+    {
+        targetingArtifact = artifact;
+        targetingSorcery = null;
+        targetingPlayer = player;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        Debug.Log("Targeting creature to buff with artifact.");
+    }
 
     public IEnumerator ResolveArtifactDamageAfterDelay(CardVisual targetVisual, Card targetCard)
         {
