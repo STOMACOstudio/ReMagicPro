@@ -1864,7 +1864,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded && ability.effect != null)
                         {
-                            ability.effect.Invoke(player, creature);
+                            ability.effect.Invoke(player, card);
                         }
                     }
                 }
