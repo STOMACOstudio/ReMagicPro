@@ -1438,7 +1438,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
             }
             if (sorcery.cardsToDiscardorDraw > 0)
-                rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random. If can't, you draw a card.\n";
+            {
+                rules += $"Opponent discards {sorcery.cardsToDiscardorDraw} card(s) at random.";
+                if (sorcery.drawIfOpponentCantDiscard)
+                    rules += " If can't, you draw a card.";
+                rules += "\n";
+            }
             if (sorcery.eachPlayerGainLifeEqualToLands)
                 rules += $"Each player gains life equal to the number of lands they control.\n";
             if (sorcery.damageToTarget > 0 &&

@@ -10,6 +10,7 @@ public class SorceryCard : Card
     public int lifeToLoseForOpponent = 0;
     public int lifeLossForBothPlayers = 0;
     public int cardsToDiscardorDraw = 0;
+    public bool drawIfOpponentCantDiscard = true;
     public int damageToEachCreatureAndPlayer = 0;
     public int manaToGainMin = 0;
     public int manaToGainMax = 0;
@@ -148,7 +149,7 @@ public class SorceryCard : Card
                         }
                     }
 
-                    if (!opponentDiscarded)
+                    if (!opponentDiscarded && drawIfOpponentCantDiscard)
                     {
                         GameManager.Instance.DrawCard(caster);
                         Debug.Log($"{caster} draws a card because opponent had nothing to discard.");

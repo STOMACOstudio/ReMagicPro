@@ -1967,6 +1967,7 @@ public static class CardDatabase
                         color = new List<string> { "Black" },
                         artwork = Resources.Load<Sprite>("Art/forget"),
                         cardsToDiscardorDraw = 1,
+                        drawIfOpponentCantDiscard = true,
                     });
                 Add(new CardData //Massacre
                     {
@@ -2123,6 +2124,7 @@ public static class CardDatabase
                         manaCost = 2,
                         color = new List<string> { "Blue", "Black" },
                         cardsToDiscardorDraw = 1,
+                        drawIfOpponentCantDiscard = false,
                         cardsToDraw = 1,
                         artwork = Resources.Load<Sprite>("Art/drain_mind")
                         });
@@ -2134,6 +2136,7 @@ public static class CardDatabase
                     manaCost = 2,
                     color = new List<string> { "Black", "Red" },
                     cardsToDiscardorDraw = 1,
+                    drawIfOpponentCantDiscard = false,
                     lifeToLoseForOpponent = 2,
                     artwork = Resources.Load<Sprite>("Art/burn_mind")
                     });

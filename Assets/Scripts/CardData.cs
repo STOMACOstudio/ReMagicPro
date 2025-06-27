@@ -52,6 +52,7 @@ public class CardData
     public int lifeToLoseForOpponent;
     public int lifeLossForBothPlayers;
     public int cardsToDiscardorDraw;
+    public bool drawIfOpponentCantDiscard = true;
     public int damageToEachCreatureAndPlayer;
     public int manaToGain;
     public int manaToGainMin = 0;
