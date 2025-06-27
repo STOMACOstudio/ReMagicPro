@@ -1795,8 +1795,8 @@ public class GameManager : MonoBehaviour
                         targetPos = targetLife.position;
                     }
 
-                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.25f));
-                    yield return new WaitForSeconds(0.1f);
+                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.15f));
+                    yield return new WaitForSeconds(0.05f);
 
                     var (pd, ad) = ResolveCombatForAttacker(attacker);
 
@@ -1807,10 +1807,10 @@ public class GameManager : MonoBehaviour
 
                     if (activeCardVisuals.Contains(attackerVisual))
                     {
-                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.25f));
+                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.15f));
                     }
 
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.05f);
                 }
 
                 foreach (var card in humanPlayer.Battlefield)
@@ -1832,6 +1832,8 @@ public class GameManager : MonoBehaviour
 
                 currentAttackers.Clear();
                 selectedAttackerForBlocking = null;
+                UpdateUI();
+                CheckForGameEnd();
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)

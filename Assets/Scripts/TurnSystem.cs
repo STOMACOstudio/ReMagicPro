@@ -1116,6 +1116,8 @@ public class TurnSystem : MonoBehaviour
             {
                 yield return StartCoroutine(GameManager.Instance.ResolveCombatWithAnimations());
 
+                GameManager.Instance.CheckForGameEnd();
+
                 foreach (var visual in GameManager.Instance.activeCardVisuals)
                 {
                     if (visual.swordIcon != null)
