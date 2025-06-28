@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Card
 {
@@ -75,6 +76,34 @@ public class Card
                     }
                 }
             }
+
+            // Apply Gorilla Chief buffs
+            if (this is CreatureCard enteringCreature)
+            {
+                CardData enteringData = CardDatabase.GetCardData(cardName);
+
+                // If the entering creature is Gorilla Chief, buff existing monkeys
+                if (cardName == "Gorilla Chief")
+                {
+                    foreach (var card in owner.Battlefield)
+                    {
+                        if (card is CreatureCard creature)
+                        {
+                            CardData data = CardDatabase.GetCardData(card.cardName);
+                            if (data != null && data.subtypes.Contains("Monkey"))
+                                creature.AddMonkeyBuff();
+                        }
+                    }
+                }
+
+                // If the entering creature is a Monkey, apply buffs from existing Chiefs
+                if (enteringData != null && enteringData.subtypes.Contains("Monkey"))
+                {
+                    int chiefCount = owner.Battlefield.Count(c => c.cardName == "Gorilla Chief");
+                    for (int i = 0; i < chiefCount; i++)
+                        enteringCreature.AddMonkeyBuff();
+                }
+            }
         }
 
     public virtual void OnLeavePlay(Player owner)
@@ -97,6 +126,23 @@ public class Card
                         );
                     }
                 }
+            }
+
+            // Remove Gorilla Chief buffs if this card is Gorilla Chief
+            if (cardName == "Gorilla Chief")
+            {
+                foreach (var card in owner.Battlefield)
+                {
+                    if (card is CreatureCard creature)
+                    {
+                        CardData data = CardDatabase.GetCardData(card.cardName);
+                        if (data != null && data.subtypes.Contains("Monkey"))
+                            creature.RemoveMonkeyBuff();
+                    }
+                }
+
+                if (this is CreatureCard selfCreature)
+                    selfCreature.RemoveMonkeyBuff();
             }
         }
 

@@ -1496,6 +1496,41 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
+                Add(new CardData //Gorilla Chief
+                    {
+                    cardName = "Gorilla Chief",
+                    rarity = "Rare",
+                    manaCost = 3,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Monkey" },
+                    artwork = Resources.Load<Sprite>("Art/gorilla_chief"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Monkeys you control get +1/+1.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                foreach (var card in owner.Battlefield)
+                                {
+                                    if (card is CreatureCard creature)
+                                    {
+                                        CardData data = CardDatabase.GetCardData(card.cardName);
+                                        if (data != null && data.subtypes.Contains("Monkey"))
+                                            creature.AddMonkeyBuff();
+                                    }
+                                }
+
+                                if (selfCard is CreatureCard self)
+                                    self.AddMonkeyBuff();
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Flying donkey
                     {
                     cardName = "Flying Donkey",
