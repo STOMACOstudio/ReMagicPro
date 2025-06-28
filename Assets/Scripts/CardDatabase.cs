@@ -1496,6 +1496,19 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
+                Add(new CardData //Gorilla Chief
+                    {
+                    cardName = "Gorilla Chief",
+                    rarity = "Rare",
+                    manaCost = 4,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Monkey" },
+                    artwork = Resources.Load<Sprite>("Art/gorilla_chief"),
+                    rulesText = "Monkeys you control get +1/+1."
+                    });
                 Add(new CardData //Flying donkey
                     {
                     cardName = "Flying Donkey",
