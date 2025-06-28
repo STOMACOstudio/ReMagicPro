@@ -400,7 +400,16 @@ public class SorceryCard : Card
 
                     Debug.Log($"{keywordCreature.cardName} gains {keywordToGrant} until end of turn.");
                 }
-                else if (!destroyTargetIfTypeMatches && damageToTarget <= 0)
+                if ((buffPower != 0 || buffToughness != 0) && target is CreatureCard buffCreature)
+                {
+                    buffCreature.AddTemporaryBuff(buffPower, buffToughness);
+                    var visual = GameManager.Instance.FindCardVisual(buffCreature);
+                    if (visual != null)
+                        visual.UpdateVisual();
+
+                    Debug.Log($"{buffCreature.cardName} gets +{buffPower}/+{buffToughness} until end of turn.");
+                }
+                else if (!destroyTargetIfTypeMatches && damageToTarget <= 0 && keywordToGrant == KeywordAbility.None)
                 {
                     Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
                 }

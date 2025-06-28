@@ -2226,6 +2226,18 @@ public static class CardDatabase
                     manaToGainMax = 6,
                     artwork = Resources.Load<Sprite>("Art/rolling_energy"),
                     });
+                Add(new CardData { //Muscle Blast
+                    cardName = "Muscle Blast",
+                    rarity = "Uncommon",
+                    cardType = CardType.Sorcery,
+                    manaCost = 6,
+                    color = new List<string> { "Green" },
+                    requiresTarget = true,
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    powerBuff = 6,
+                    toughnessBuff = 6,
+                    artwork = Resources.Load<Sprite>("Art/muscle_blast"),
+                    });
             ///MULTI
                 Add(new CardData //Drain mind
                         {

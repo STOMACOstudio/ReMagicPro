@@ -67,6 +67,8 @@ public static class CardFactory
                 sorcery.keywordToGrant = data.keywordToGrant;
                 sorcery.requiredTargetColor = data.requiredTargetColor;
                 sorcery.excludeArtifactCreatures = data.excludeArtifactCreatures;
+                sorcery.buffPower = data.powerBuff;
+                sorcery.buffToughness = data.toughnessBuff;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
