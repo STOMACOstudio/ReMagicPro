@@ -273,6 +273,8 @@ public class GameManager : MonoBehaviour
                     // Move visual to the stack zone
                     visual.transform.SetParent(stackZone, false);
                     visual.transform.localPosition = Vector3.zero;
+                    visual.transform.localRotation = Quaternion.identity;
+                    visual.transform.localScale = Vector3.one;
                     SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
                     StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
                 }
@@ -1388,6 +1390,8 @@ public class GameManager : MonoBehaviour
 
                 targetingVisual.transform.SetParent(stackZone, false);
                 targetingVisual.transform.localPosition = Vector3.zero;
+                targetingVisual.transform.localRotation = Quaternion.identity;
+                targetingVisual.transform.localScale = Vector3.one;
                 SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
                 if (targetingVisual != null)
@@ -1441,6 +1445,8 @@ public class GameManager : MonoBehaviour
             // Move visual to stack
             targetingVisual.transform.SetParent(stackZone, false);
             targetingVisual.transform.localPosition = Vector3.zero;
+            targetingVisual.transform.localRotation = Quaternion.identity;
+            targetingVisual.transform.localScale = Vector3.one;
             SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
             StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual));
