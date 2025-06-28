@@ -12,11 +12,27 @@ public class CreatureCard : Card
     public int minusOneCounters = 0;
     public int tempPowerBonus = 0;
     public int tempToughnessBonus = 0;
+    public int monkeyBuffSources = 0; // number of Gorilla Chief effects
 
     public void RecalculateStats()
     {
-        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus;
-        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus;
+        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus + monkeyBuffSources;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + monkeyBuffSources;
+    }
+
+    public void AddMonkeyBuff()
+    {
+        monkeyBuffSources++;
+        RecalculateStats();
+    }
+
+    public void RemoveMonkeyBuff()
+    {
+        if (monkeyBuffSources > 0)
+        {
+            monkeyBuffSources--;
+            RecalculateStats();
+        }
     }
 
     public void AddPlusOneCounter()
