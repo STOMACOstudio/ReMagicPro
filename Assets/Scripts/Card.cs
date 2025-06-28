@@ -112,7 +112,8 @@ public class Card
                     if (keyword == KeywordAbility.CantBlock ||
                         keyword == KeywordAbility.CanOnlyBlockFlying ||
                         keyword == KeywordAbility.CantBlockWithoutForest ||
-                        keyword.ToString().StartsWith("ProtectionFrom")) //
+                        keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
+                        keyword.ToString().StartsWith("ProtectionFrom"))
                         continue;
 
                     lines.Add(keyword.ToString());
@@ -253,6 +254,8 @@ public class Card
                     lines.Add("Players can only cast creature spells.");
                 if (keywordAbilities.Contains(KeywordAbility.CreatureSpellsCostOneLess))
                     lines.Add("Creature spells you cast cost 1 less.");
+                if (keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess))
+                    lines.Add("Beast creature spells you cast cost 1 less.");
             }
 
             return string.Join("\n", lines);
