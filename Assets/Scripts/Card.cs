@@ -112,7 +112,8 @@ public class Card
                     if (keyword == KeywordAbility.CantBlock ||
                         keyword == KeywordAbility.CanOnlyBlockFlying ||
                         keyword == KeywordAbility.CantBlockWithoutForest ||
-                        keyword.ToString().StartsWith("ProtectionFrom")) //
+                        keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
+                        keyword.ToString().StartsWith("ProtectionFrom"))
                         continue;
 
                     lines.Add(keyword.ToString());
