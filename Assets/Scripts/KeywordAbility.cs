@@ -25,6 +25,7 @@ public enum KeywordAbility
     NoLifeGain,
     OnlyCastCreatureSpells,
     CreatureSpellsCostOneLess,
+    BeastCreatureSpellsCostOneLess,
 }
 
 public enum ActivatedAbility

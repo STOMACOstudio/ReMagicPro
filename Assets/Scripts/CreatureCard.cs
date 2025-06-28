@@ -59,6 +59,9 @@ public class CreatureCard : Card
     {
         var cost = GameManager.Instance.GetManaCostBreakdown(manaCost, color);
         int reduction = GameManager.Instance.GetCreatureCostReduction(player);
+        CardData data = CardDatabase.GetCardData(cardName);
+        if (data != null && data.subtypes.Contains("Beast"))
+            reduction += GameManager.Instance.GetBeastCreatureCostReduction(player);
         if (reduction > 0 && cost.ContainsKey("Colorless"))
             cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
         if (player.ColoredMana.CanPay(cost))

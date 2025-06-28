@@ -213,6 +213,9 @@ public class GameManager : MonoBehaviour
             {
                 var cost = GetManaCostBreakdown(card.manaCost, card.color);
                 int reduction = GetCreatureCostReduction(player);
+                CardData data = CardDatabase.GetCardData(card.cardName);
+                if (data != null && data.subtypes.Contains("Beast"))
+                    reduction += GetBeastCreatureCostReduction(player);
                 if (reduction > 0 && cost.ContainsKey("Colorless"))
                     cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
@@ -1105,6 +1108,12 @@ public class GameManager : MonoBehaviour
     {
         return player.Battlefield.Count(card => card.keywordAbilities != null &&
             card.keywordAbilities.Contains(KeywordAbility.CreatureSpellsCostOneLess));
+    }
+
+    public int GetBeastCreatureCostReduction(Player player)
+    {
+        return player.Battlefield.Count(card => card.keywordAbilities != null &&
+            card.keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess));
     }
 
     public void TryGainLife(Player player, int amount)
