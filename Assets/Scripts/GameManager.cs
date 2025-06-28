@@ -146,7 +146,21 @@ public class GameManager : MonoBehaviour
     }
     public void DrawCard(Player player)
     {
-        if (player.Deck.Count == 0) return;
+        if (player.Deck.Count == 0)
+        {
+            if (player == aiPlayer)
+            {
+                Debug.Log("AI tried to draw from an empty deck — player wins by mill.");
+                FindObjectOfType<WinScreenUI>().ShowWinScreen();
+            }
+            else if (player == humanPlayer)
+            {
+                Debug.Log("Player tried to draw from an empty deck — player loses by mill.");
+                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+            }
+            return;
+        }
+
         Card card = player.Deck[0];
         player.Deck.RemoveAt(0);
         player.Hand.Add(card);
