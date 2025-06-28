@@ -1500,7 +1500,7 @@ public static class CardDatabase
                     {
                     cardName = "Gorilla Chief",
                     rarity = "Rare",
-                    manaCost = 4,
+                    manaCost = 3,
                     color = new List<string> { "Green" },
                     cardType = CardType.Creature,
                     power = 3,
