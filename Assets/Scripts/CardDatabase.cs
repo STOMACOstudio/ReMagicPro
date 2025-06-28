@@ -2233,6 +2233,7 @@ public static class CardDatabase
                     manaCost = 6,
                     color = new List<string> { "Green" },
                     requiresTarget = true,
+                    rulesText = "Target creature gets +6/+6 until the end of turn.",
                     requiredTargetType = SorceryCard.TargetType.Creature,
                     powerBuff = 6,
                     toughnessBuff = 6,
