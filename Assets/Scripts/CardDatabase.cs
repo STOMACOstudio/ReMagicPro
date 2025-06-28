@@ -1205,6 +1205,22 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/goblin_puncher")
                     });
+                Add(new CardData //Goblin Beastmaster
+                    {
+                    cardName = "Goblin Beastmaster",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Goblin", "Shaman" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.BeastCreatureSpellsCostOneLess
+                    },
+                    artwork = Resources.Load<Sprite>("Art/goblin_beastmaster")
+                    });
                 Add(new CardData //Thundermare
                     {
                     cardName = "Thundermare",

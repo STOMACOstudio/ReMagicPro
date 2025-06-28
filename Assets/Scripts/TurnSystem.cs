@@ -338,6 +338,9 @@ public class TurnSystem : MonoBehaviour
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(creature.manaCost, creature.color);
                                     int reduction = GameManager.Instance.GetCreatureCostReduction(ai);
+                                    CardData data = CardDatabase.GetCardData(creature.cardName);
+                                    if (data != null && data.subtypes.Contains("Beast"))
+                                        reduction += GameManager.Instance.GetBeastCreatureCostReduction(ai);
                                     if (reduction > 0 && cost.ContainsKey("Colorless"))
                                         cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                                     if (EnsureManaForCost(ai, cost))
