@@ -755,50 +755,7 @@ public class TurnSystem : MonoBehaviour
 
                         foreach (var creature in potentialAttackers)
                         {
-                            bool attack = goForLethal;
-
-                            if (!attack)
-                            {
-                                if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                                {
-                                    attack = false; // stay back to block
-                                }
-                                else
-                                {
-                                    // Determine if creature can be profitably blocked
-                                    var possibleBlockers = new List<CreatureCard>();
-                                    foreach (var oppCard in human.Battlefield)
-                                    {
-                                        if (oppCard is CreatureCard blocker && BlockerCanBlockAttacker(blocker, creature, human))
-                                            possibleBlockers.Add(blocker);
-                                    }
-
-                                    if (possibleBlockers.Count == 0)
-                                    {
-                                        attack = true; // Unblockable
-                                    }
-                                    else
-                                    {
-                                        // Pick the cheapest blocker (by power+toughness) that can block
-                                        var best = possibleBlockers.OrderBy(b => b.power + b.baseToughness).First();
-
-                                        if (creature.power >= best.toughness)
-                                        {
-                                            if (creature.toughness > best.power)
-                                            {
-                                                attack = true; // kill and survive
-                                            }
-                                            else
-                                            {
-                                                int creatureValue = creature.power + creature.baseToughness;
-                                                int blockerValue = best.power + best.baseToughness;
-                                                if (creatureValue <= blockerValue)
-                                                    attack = true; // acceptable trade
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            bool attack = ShouldAIAttackCreature(creature, ai, human, goForLethal, lowLifeNeedsDefense);
 
                             if (attack)
                             {
@@ -1093,13 +1050,52 @@ public class TurnSystem : MonoBehaviour
                     .Where(b => b.power >= attacker.toughness)
                     .OrderBy(b => b.power + b.baseToughness)
                     .FirstOrDefault();
-                if (trade != null) return trade;
+                if (trade != null)
+                {
+                    int blockerValue = trade.power + trade.baseToughness;
+                    int attackerValue = attacker.power + attacker.baseToughness;
+                    if (attackerValue >= blockerValue || remainingDamage >= remainingLife)
+                        return trade;
+                }
 
                 // Block anything to avoid lethal damage
                 if (remainingDamage >= remainingLife)
                     return possible.OrderByDescending(b => b.toughness).First();
 
                 return null;
+            }
+
+        private bool ShouldAIAttackCreature(CreatureCard creature, Player ai, Player human, bool goForLethal, bool lowLifeNeedsDefense)
+            {
+                if (goForLethal)
+                    return true;
+
+                if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                    return false;
+
+                var possibleBlockers = human.Battlefield
+                    .OfType<CreatureCard>()
+                    .Where(b => BlockerCanBlockAttacker(b, creature, human) &&
+                                !b.isTapped &&
+                                !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                    .OrderBy(b => b.power + b.baseToughness)
+                    .ToList();
+
+                if (possibleBlockers.Count == 0)
+                    return true;
+
+                var best = possibleBlockers.First();
+
+                bool killAndSurvive = creature.power >= best.toughness && creature.toughness > best.power;
+                if (killAndSurvive)
+                    return true;
+
+                int creatureValue = creature.power + creature.baseToughness;
+                int blockerValue = best.power + best.baseToughness;
+                bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue;
+                bool aggressive = ai.Life >= human.Life;
+
+                return tradeUp || (aggressive && creatureValue >= blockerValue);
             }
         
         public void ContinueAIAfterStack()
