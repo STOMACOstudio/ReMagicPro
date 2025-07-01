@@ -38,11 +38,11 @@ public class ArtifactCard : Card
                         remaining -= useColorless;
 
                         // 2. Spend colored mana in WUBRG order
-                        remaining -= SpendFromPool(ref owner.ColoredMana.White, remaining);
-                        remaining -= SpendFromPool(ref owner.ColoredMana.Blue, remaining);
-                        remaining -= SpendFromPool(ref owner.ColoredMana.Black, remaining);
-                        remaining -= SpendFromPool(ref owner.ColoredMana.Red, remaining);
-                        remaining -= SpendFromPool(ref owner.ColoredMana.Green, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
 
                         if (remaining > 0)
                         {
@@ -64,11 +64,5 @@ public class ArtifactCard : Card
         GameManager.Instance.UpdateUI();
     }
 
-    private int SpendFromPool(ref int pool, int needed)
-        {
-            int spent = Mathf.Min(pool, needed);
-            pool -= spent;
-            return spent;
-        }
 
 }

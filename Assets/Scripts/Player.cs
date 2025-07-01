@@ -118,6 +118,13 @@ public class Player
                     Debug.LogWarning("Tried to spend more generic mana than available. This should not happen if CanPay() was used.");
                 }
             }
+
+        public static int SpendFromPool(ref int pool, int needed)
+            {
+                int spent = Mathf.Min(pool, needed);
+                pool -= spent;
+                return spent;
+            }
         }
 
     public void PlayCard(Card card)
