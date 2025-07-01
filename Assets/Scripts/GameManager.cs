@@ -538,8 +538,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var blocker in blockers)
                 {
-                    bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
-                    bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                    bool attackerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                    bool blockerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                     int damageToBlocker = 0;
                     if (!blockerProtected)
@@ -1779,8 +1779,8 @@ public class GameManager : MonoBehaviour
 
                     foreach (var blocker in blockers)
                     {
-                        bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
-                        bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                        bool attackerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                        bool blockerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                         int damageToBlocker = 0;
                         if (!blockerProtected)
