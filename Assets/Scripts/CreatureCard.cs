@@ -15,6 +15,7 @@ public class CreatureCard : Card
     public int enchantPowerBonus = 0;
     public int enchantToughnessBonus = 0;
     public List<EnchantmentCard> attachedEnchantments = new List<EnchantmentCard>();
+    public List<KeywordAbility> enchantKeywordAbilities = new List<KeywordAbility>();
 
     public void RecalculateStats()
     {
@@ -58,6 +59,11 @@ public class CreatureCard : Card
             attachedEnchantments.Add(aura);
             enchantPowerBonus += aura.buffPower;
             enchantToughnessBonus += aura.buffToughness;
+            if (aura.keywordToGrant != KeywordAbility.None && !keywordAbilities.Contains(aura.keywordToGrant))
+            {
+                keywordAbilities.Add(aura.keywordToGrant);
+                enchantKeywordAbilities.Add(aura.keywordToGrant);
+            }
             RecalculateStats();
         }
     }
@@ -68,6 +74,14 @@ public class CreatureCard : Card
         {
             enchantPowerBonus -= aura.buffPower;
             enchantToughnessBonus -= aura.buffToughness;
+            if (aura.keywordToGrant != KeywordAbility.None)
+            {
+                if (attachedEnchantments.TrueForAll(e => e.keywordToGrant != aura.keywordToGrant))
+                {
+                    keywordAbilities.Remove(aura.keywordToGrant);
+                    enchantKeywordAbilities.Remove(aura.keywordToGrant);
+                }
+            }
             RecalculateStats();
         }
     }

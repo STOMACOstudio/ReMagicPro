@@ -6,6 +6,7 @@ public class EnchantmentCard : Card
     public int buffPower = 0;
     public int buffToughness = 0;
     public CreatureCard enchantedCreature;
+    public KeywordAbility keywordToGrant = KeywordAbility.None;
     public bool requiresTarget = true;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.Creature;
     public bool isAura = false;

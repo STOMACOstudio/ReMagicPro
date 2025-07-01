@@ -2640,37 +2640,21 @@ public static class CardDatabase
                         }
                     });
 
-                // Simple aura enchantments
-                Add(new CardData
+                Add(new CardData //Sacred Horn
                     {
-                        cardName = "Blessing of Strength",
+                        cardName = "Sacred Horn",
                         rarity = "Common",
                         manaCost = 2,
-                        color = new List<string> { "Green" },
+                        color = new List<string> { "White" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
-                        powerBuff = 2,
-                        toughnessBuff = 2,
+                        powerBuff = 1,
+                        toughnessBuff = 1,
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
-                        rulesText = "Enchant creature. Enchanted creature gets +2/+2.",
-                        artwork = Resources.Load<Sprite>("Art/blessing_strength")
-                    });
-
-                Add(new CardData
-                    {
-                        cardName = "Chains of Weakness",
-                        rarity = "Common",
-                        manaCost = 1,
-                        color = new List<string> { "Black" },
-                        cardType = CardType.Enchantment,
-                        subtypes = new List<string> { "Aura" },
-                        powerBuff = -2,
-                        toughnessBuff = 0,
-                        requiresTarget = true,
-                        requiredTargetType = SorceryCard.TargetType.Creature,
-                        rulesText = "Enchant creature. Enchanted creature gets -2/-0.",
-                        artwork = Resources.Load<Sprite>("Art/chains_weakness")
+                        keywordToGrant = KeywordAbility.Lifelink,
+                        rulesText = "Enchant creature. Enchanted creature gets +1/+1 and lifelink.",
+                        artwork = Resources.Load<Sprite>("Art/sacred_horn")
                     });
             }
 

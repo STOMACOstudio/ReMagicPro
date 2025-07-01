@@ -75,6 +75,7 @@ public static class CardFactory
                 EnchantmentCard enchantment = new EnchantmentCard();
                 enchantment.buffPower = data.powerBuff;
                 enchantment.buffToughness = data.toughnessBuff;
+                enchantment.keywordToGrant = data.keywordToGrant;
                 enchantment.requiresTarget = data.requiresTarget;
                 enchantment.requiredTargetType = data.requiredTargetType;
                 enchantment.isAura = data.subtypes != null && data.subtypes.Contains("Aura");
