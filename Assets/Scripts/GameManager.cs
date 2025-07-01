@@ -901,11 +901,11 @@ public class GameManager : MonoBehaviour
             remaining -= useColorless;
 
             // Spend from WUBRG
-            remaining -= SpendFromPool(ref owner.ColoredMana.White, remaining);
-            remaining -= SpendFromPool(ref owner.ColoredMana.Blue, remaining);
-            remaining -= SpendFromPool(ref owner.ColoredMana.Black, remaining);
-            remaining -= SpendFromPool(ref owner.ColoredMana.Red, remaining);
-            remaining -= SpendFromPool(ref owner.ColoredMana.Green, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
 
             if (remaining > 0)
             {
@@ -1232,12 +1232,12 @@ public class GameManager : MonoBehaviour
                     Player controller = targetingPlayer;
                     int remaining = targetingArtifact.manaToPayToActivate;
 
-                    remaining -= SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
-                    remaining -= SpendFromPool(ref controller.ColoredMana.White, remaining);
-                    remaining -= SpendFromPool(ref controller.ColoredMana.Blue, remaining);
-                    remaining -= SpendFromPool(ref controller.ColoredMana.Black, remaining);
-                    remaining -= SpendFromPool(ref controller.ColoredMana.Red, remaining);
-                    remaining -= SpendFromPool(ref controller.ColoredMana.Green, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.White, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Blue, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Black, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Red, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Green, remaining);
 
                     if (remaining > 0)
                     {
@@ -1278,12 +1278,12 @@ public class GameManager : MonoBehaviour
                 Player controller = targetingPlayer;
                 int remaining = targetingArtifact.manaToPayToActivate;
 
-                remaining -= SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
-                remaining -= SpendFromPool(ref controller.ColoredMana.White, remaining);
-                remaining -= SpendFromPool(ref controller.ColoredMana.Blue, remaining);
-                remaining -= SpendFromPool(ref controller.ColoredMana.Black, remaining);
-                remaining -= SpendFromPool(ref controller.ColoredMana.Red, remaining);
-                remaining -= SpendFromPool(ref controller.ColoredMana.Green, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.White, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Blue, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Black, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Red, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Green, remaining);
 
                 if (remaining > 0)
                 {
@@ -1525,12 +1525,6 @@ public class GameManager : MonoBehaviour
             return breakdown;
         }
 
-    private int SpendFromPool(ref int pool, int needed)
-        {
-            int spent = Mathf.Min(pool, needed);
-            pool -= spent;
-            return spent;
-        }
 
     public void BeginTargetingWithArtifactDamage(ArtifactCard artifact, Player player, CardVisual visual)
     {

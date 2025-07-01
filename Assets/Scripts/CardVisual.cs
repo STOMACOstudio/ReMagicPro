@@ -731,11 +731,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         remaining -= useColorless;
 
                         // Spend from WUBRG
-                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
 
                         if (remaining > 0)
                         {
@@ -836,11 +836,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             remaining -= useColorless;
 
                             // Spend from WUBRG
-                            remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
-                            remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                            remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
-                            remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
-                            remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
 
                             if (remaining > 0)
                             {
@@ -997,11 +997,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         remaining -= useColorless;
 
                         // 2. Spend from WUBRG
-                        remaining -= SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= SpendFromPool(ref player.ColoredMana.Green, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
 
                         if (remaining > 0)
                         {
@@ -1531,12 +1531,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     highlightBorder.SetActive(enable);
             }
 
-        private int SpendFromPool(ref int pool, int needed)
-            {
-                int spent = Mathf.Min(pool, needed);
-                pool -= spent;
-                return spent;
-            }
         
         private Sprite GetIconForColor(string color)
             {

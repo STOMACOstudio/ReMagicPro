@@ -1102,12 +1102,6 @@ public class TurnSystem : MonoBehaviour
                 RunCurrentPhase();
             }
         
-        private int SpendFromPool(ref int pool, int needed)
-            {
-                int spent = Mathf.Min(pool, needed);
-                pool -= spent;
-                return spent;
-            }
         
         private IEnumerator WaitToShowCombatDamage()
             {
