@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     public bool isStackBusy = false;
 
     public SorceryCard targetingSorcery;
+    public EnchantmentCard targetingEnchantment;
     public Player targetingPlayer;
     public CardVisual targetingVisual;
     public bool isTargetingMode = false;
@@ -295,6 +296,43 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     Debug.Log("Not enough colored mana to cast this sorcery.");
+                }
+            }
+            else if (card is EnchantmentCard enchantment)
+            {
+                if (enchantment.isAura && enchantment.requiresTarget)
+                {
+                    Debug.Log("This enchantment requires a target — entering targeting mode.");
+                    BeginEnchantmentTargetSelection(enchantment, player, visual);
+                    return;
+                }
+
+                var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+                if (player.ColoredMana.CanPay(cost))
+                {
+                    player.ColoredMana.Pay(cost);
+                    card.owner = player;
+                    if (player == humanPlayer) UpdateUI();
+
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
+                    card.OnEnterPlay(player);
+
+                    if (enchantment.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                    {
+                        enchantment.isTapped = true;
+                        Debug.Log($"{enchantment.cardName} enters tapped (due to static effect).");
+                    }
+
+                    Transform parent = player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+                    visual.transform.SetParent(parent, false);
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+                }
+                else
+                {
+                    Debug.Log("Not enough colored mana to cast this enchantment.");
                 }
             }
             else if (card is ArtifactCard artifact)
@@ -827,9 +865,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CastEnchantment(EnchantmentCard enchantment, Player owner, CreatureCard target)
+    public void CastEnchantment(EnchantmentCard enchantment, Player owner, CreatureCard target = null)
     {
-        if (!owner.Hand.Contains(enchantment) || target == null)
+        if (!owner.Hand.Contains(enchantment))
+            return;
+
+        if (enchantment.isAura && target == null)
             return;
 
         var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
@@ -837,7 +878,8 @@ public class GameManager : MonoBehaviour
             return;
 
         owner.ColoredMana.Pay(cost);
-        enchantment.enchantedCreature = target;
+        if (enchantment.isAura)
+            enchantment.enchantedCreature = target;
         owner.PlayCard(enchantment);
         UpdateUI();
     }
@@ -1212,6 +1254,23 @@ public class GameManager : MonoBehaviour
             }
         }
 
+    public void BeginEnchantmentTargetSelection(EnchantmentCard enchantment, Player caster, CardVisual visual)
+        {
+            targetingEnchantment = enchantment;
+            targetingPlayer = caster;
+            targetingVisual = visual;
+            isTargetingMode = true;
+
+            if (!enchantment.isAura || !enchantment.requiresTarget)
+            {
+                Debug.LogWarning("BeginEnchantmentTargetSelection called for non-targeting enchantment.");
+                return;
+            }
+
+            if (visual != null)
+                visual.EnableTargetingHighlight(true);
+        }
+
     private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
     {
         yield return new WaitForSeconds(2f);
@@ -1331,9 +1390,50 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             return;
         }
-            // Creature ETB targeting
-            if (targetingCreature != null && targetingAbility != null)
+
+        if (targetingEnchantment != null)
+        {
+            if (chosen is CreatureCard targetCreature &&
+                GetOwnerOfCard(targetCreature)?.Battlefield.Contains(targetCreature) == true)
             {
+                var cost = GetManaCostBreakdown(targetingEnchantment.manaCost, targetingEnchantment.color);
+                if (!targetingPlayer.ColoredMana.CanPay(cost))
+                {
+                    Debug.LogWarning("Not enough mana to cast aura.");
+                    CancelTargeting();
+                    return;
+                }
+
+                targetingPlayer.ColoredMana.Pay(cost);
+                targetingPlayer.Hand.Remove(targetingEnchantment);
+                targetingEnchantment.enchantedCreature = targetCreature;
+                targetingPlayer.PlayCard(targetingEnchantment);
+
+                Transform parent = targetingPlayer == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+                if (targetingVisual != null)
+                {
+                    targetingVisual.transform.SetParent(parent, false);
+                    targetingVisual.isInBattlefield = true;
+                    targetingVisual.UpdateVisual();
+                    targetingVisual.EnableTargetingHighlight(false);
+                }
+
+                UpdateUI();
+            }
+            else
+            {
+                Debug.Log("Invalid target. Enchantment canceled.");
+            }
+
+            targetingEnchantment = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            return;
+        }
+        // Creature ETB targeting
+        if (targetingCreature != null && targetingAbility != null)
+        {
                 Card target = targetVisual.linkedCard;
 
                 bool correctType =
@@ -1431,6 +1531,7 @@ public class GameManager : MonoBehaviour
 
             targetingArtifact = null;
             targetingSorcery = null;
+            targetingEnchantment = null;
             targetingPlayer = null;
 
             if (targetingVisual != null)

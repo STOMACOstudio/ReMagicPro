@@ -8,17 +8,20 @@ public class EnchantmentCard : Card
     public CreatureCard enchantedCreature;
     public bool requiresTarget = true;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.Creature;
+    public bool isAura = false;
 
-    public void Play(Player player, CreatureCard target)
+    public void Play(Player player, CreatureCard target = null)
     {
-        enchantedCreature = target;
+        if (isAura)
+            enchantedCreature = target;
+
         base.Play(player);
     }
 
     public override void OnEnterPlay(Player owner)
     {
         base.OnEnterPlay(owner);
-        if (enchantedCreature != null)
+        if (isAura && enchantedCreature != null)
         {
             enchantedCreature.AttachEnchantment(this);
         }
@@ -26,7 +29,7 @@ public class EnchantmentCard : Card
 
     public override void OnLeavePlay(Player owner)
     {
-        if (enchantedCreature != null)
+        if (isAura && enchantedCreature != null)
         {
             enchantedCreature.DetachEnchantment(this);
             enchantedCreature = null;

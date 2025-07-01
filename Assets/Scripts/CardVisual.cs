@@ -148,6 +148,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 else
                     typeLine = "Creature";
             }
+            else if (data.cardType == CardType.Enchantment && data.subtypes != null && data.subtypes.Contains("Aura"))
+            {
+                typeLine = "Enchantment — Aura";
+            }
             else
             {
                 typeLine = data.cardType.ToString();

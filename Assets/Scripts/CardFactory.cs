@@ -77,6 +77,7 @@ public static class CardFactory
                 enchantment.buffToughness = data.toughnessBuff;
                 enchantment.requiresTarget = data.requiresTarget;
                 enchantment.requiredTargetType = data.requiredTargetType;
+                enchantment.isAura = data.subtypes != null && data.subtypes.Contains("Aura");
                 newCard = enchantment;
                 break;
             case CardType.Artifact:
