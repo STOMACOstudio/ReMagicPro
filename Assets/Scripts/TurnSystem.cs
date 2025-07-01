@@ -990,18 +990,7 @@ public class TurnSystem : MonoBehaviour
                 return false;
             }
         
-        private KeywordAbility GetProtectionKeyword(string color)
-            {
-                return color switch
-                {
-                    "White" => KeywordAbility.ProtectionFromWhite,
-                    "Blue" => KeywordAbility.ProtectionFromBlue,
-                    "Black" => KeywordAbility.ProtectionFromBlack,
-                    "Red" => KeywordAbility.ProtectionFromRed,
-                    "Green" => KeywordAbility.ProtectionFromGreen,
-                    _ => KeywordAbility.None
-                };
-            }
+
 
         private bool BlockerCanBlockAttacker(CreatureCard blocker, CreatureCard attacker, Player defender)
             {
@@ -1020,7 +1009,7 @@ public class TurnSystem : MonoBehaviour
                 if (IsLandwalkPreventingBlock(attacker, defender))
                     return false;
 
-                if (blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
+                if (blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
                     return false;
 
                 return true;

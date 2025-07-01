@@ -538,8 +538,8 @@ public class GameManager : MonoBehaviour
 
                 foreach (var blocker in blockers)
                 {
-                    bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
-                    bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                    bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                    bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                     int damageToBlocker = 0;
                     if (!blockerProtected)
@@ -1148,18 +1148,7 @@ public class GameManager : MonoBehaviour
             ShowFloatingHeal(amount, enemyLifeContainer);
     }
 
-    private KeywordAbility GetProtectionKeyword(string color)
-    {
-        return color switch
-        {
-            "White" => KeywordAbility.ProtectionFromWhite,
-            "Blue" => KeywordAbility.ProtectionFromBlue,
-            "Black" => KeywordAbility.ProtectionFromBlack,
-            "Red" => KeywordAbility.ProtectionFromRed,
-            "Green" => KeywordAbility.ProtectionFromGreen,
-            _ => KeywordAbility.None
-        };
-    }
+
 
     public void BeginTargetSelection(SorceryCard sorcery, Player caster, CardVisual visual)
         {
@@ -1484,7 +1473,7 @@ public class GameManager : MonoBehaviour
         {
             if (card is CreatureCard creature && targetingSorcery != null)
             {
-                KeywordAbility protection = targetingSorcery.GetProtectionKeyword(targetingSorcery.PrimaryColor);
+                KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(targetingSorcery.PrimaryColor);
                 return creature.keywordAbilities.Contains(protection);
             }
 
@@ -1796,8 +1785,8 @@ public class GameManager : MonoBehaviour
 
                     foreach (var blocker in blockers)
                     {
-                        bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(GetProtectionKeyword(c)));
-                        bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c)));
+                        bool attackerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
+                        bool blockerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                         int damageToBlocker = 0;
                         if (!blockerProtected)
