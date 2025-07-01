@@ -826,6 +826,21 @@ public class GameManager : MonoBehaviour
             NotifyArtifactEntered(tokenCard, owner);
         }
     }
+
+    public void CastEnchantment(EnchantmentCard enchantment, Player owner, CreatureCard target)
+    {
+        if (!owner.Hand.Contains(enchantment) || target == null)
+            return;
+
+        var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+        if (!owner.ColoredMana.CanPay(cost))
+            return;
+
+        owner.ColoredMana.Pay(cost);
+        enchantment.enchantedCreature = target;
+        owner.PlayCard(enchantment);
+        UpdateUI();
+    }
     public Player GetOpponentOf(Player player)
     {
         return player == humanPlayer ? aiPlayer : humanPlayer;

@@ -12,11 +12,14 @@ public class CreatureCard : Card
     public int minusOneCounters = 0;
     public int tempPowerBonus = 0;
     public int tempToughnessBonus = 0;
+    public int enchantPowerBonus = 0;
+    public int enchantToughnessBonus = 0;
+    public List<EnchantmentCard> attachedEnchantments = new List<EnchantmentCard>();
 
     public void RecalculateStats()
     {
-        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus;
-        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus;
+        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus + enchantPowerBonus;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + enchantToughnessBonus;
     }
 
     public void AddPlusOneCounter()
@@ -44,6 +47,27 @@ public class CreatureCard : Card
         {
             tempPowerBonus = 0;
             tempToughnessBonus = 0;
+            RecalculateStats();
+        }
+    }
+
+    public void AttachEnchantment(EnchantmentCard aura)
+    {
+        if (!attachedEnchantments.Contains(aura))
+        {
+            attachedEnchantments.Add(aura);
+            enchantPowerBonus += aura.buffPower;
+            enchantToughnessBonus += aura.buffToughness;
+            RecalculateStats();
+        }
+    }
+
+    public void DetachEnchantment(EnchantmentCard aura)
+    {
+        if (attachedEnchantments.Remove(aura))
+        {
+            enchantPowerBonus -= aura.buffPower;
+            enchantToughnessBonus -= aura.buffToughness;
             RecalculateStats();
         }
     }
@@ -78,6 +102,12 @@ public class CreatureCard : Card
 
     public override void OnLeavePlay(Player owner)
     {
+        foreach (var aura in new List<EnchantmentCard>(attachedEnchantments))
+        {
+            GameManager.Instance.SendToGraveyard(aura, aura.owner);
+        }
+        attachedEnchantments.Clear();
+
         base.OnLeavePlay(owner);
         plusOneCounters = 0;
         minusOneCounters = 0;

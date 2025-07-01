@@ -71,6 +71,14 @@ public static class CardFactory
                 sorcery.buffToughness = data.toughnessBuff;
                 newCard = sorcery;
                 break;
+            case CardType.Enchantment:
+                EnchantmentCard enchantment = new EnchantmentCard();
+                enchantment.buffPower = data.powerBuff;
+                enchantment.buffToughness = data.toughnessBuff;
+                enchantment.requiresTarget = data.requiresTarget;
+                enchantment.requiredTargetType = data.requiredTargetType;
+                newCard = enchantment;
+                break;
             case CardType.Artifact:
                 ArtifactCard artifact = new ArtifactCard();
                 artifact.entersTapped = data.entersTapped;
