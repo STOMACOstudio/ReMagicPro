@@ -587,7 +587,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     // Is on battlefield and not protected
                     if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
                     {
-                        var protection = spell.GetProtectionKeyword(spell.PrimaryColor);
+                        var protection = ProtectionUtils.GetProtectionKeyword(spell.PrimaryColor);
                         bool notArtifact = !(spell.excludeArtifactCreatures && targetCreature.color.Contains("Artifact"));
                         if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact)
                             valid = true;
@@ -1099,7 +1099,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
                         // Prevent blocking if attacker has protection from blocker's color
-                        if (clickedCreature.color.Any(c => attacker.keywordAbilities.Contains(GetProtectionKeyword(c))))
+                        if (clickedCreature.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
                         {
                             Debug.Log($"{attacker.cardName} has protection from {clickedCreature.color}, so it can't be blocked by {clickedCreature.cardName}.");
                             return;
@@ -1523,18 +1523,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             keywordText.text = rules.Trim();
             }
 
-        private KeywordAbility GetProtectionKeyword(string color)
-            {
-                return color switch
-                {
-                    "White" => KeywordAbility.ProtectionFromWhite,
-                    "Blue" => KeywordAbility.ProtectionFromBlue,
-                    "Black" => KeywordAbility.ProtectionFromBlack,
-                    "Red" => KeywordAbility.ProtectionFromRed,
-                    "Green" => KeywordAbility.ProtectionFromGreen,
-                    _ => KeywordAbility.None
-                };
-            }
+
 
         public void EnableTargetingHighlight(bool enable)
             {

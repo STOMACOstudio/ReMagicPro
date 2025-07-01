@@ -265,7 +265,7 @@ public class SorceryCard : Card
                         // Damage to each creature
                         foreach (var creature in player.Battlefield.OfType<CreatureCard>())
                         {
-                            KeywordAbility protection = GetProtectionKeyword(this.PrimaryColor);
+                            KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(this.PrimaryColor);
 
                             if (creature.keywordAbilities.Contains(protection))
                             {
@@ -313,7 +313,7 @@ public class SorceryCard : Card
 
                     if (damageToTarget > 0 && target is CreatureCard creature)
                     {
-                        KeywordAbility protection = GetProtectionKeyword(PrimaryColor);
+                        KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(PrimaryColor);
                         if (creature.keywordAbilities.Contains(protection))
                         {
                             Debug.Log($"{creature.cardName} is protected from {color}, takes no damage.");
@@ -418,18 +418,7 @@ public class SorceryCard : Card
                 ResolveEffect(caster);
             }
 
-        public KeywordAbility GetProtectionKeyword(string color)
-            {
-                return color switch
-                {
-                    "White" => KeywordAbility.ProtectionFromWhite,
-                    "Blue" => KeywordAbility.ProtectionFromBlue,
-                    "Black" => KeywordAbility.ProtectionFromBlack,
-                    "Red" => KeywordAbility.ProtectionFromRed,
-                    "Green" => KeywordAbility.ProtectionFromGreen,
-                    _ => KeywordAbility.None
-                };
-            }
+
         
         public virtual void ResolveEffectOnPlayer(Player caster, Player targetPlayer)
         {
