@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System.Threading;
 
 public class TurnSystem : MonoBehaviour
 {
@@ -47,6 +48,8 @@ public class TurnSystem : MonoBehaviour
 
     public TurnPhase lastPhaseBeforeStack;
     public bool waitingToResumeAI = false;
+    // Delay in seconds between AI actions for better readability
+    public float aiActionDelay = 0.5f;
 
     private Coroutine damageCoroutine;
 
@@ -312,6 +315,7 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.activeCardVisuals.Add(visual);
 
                                     Debug.Log("AI played land: " + land.cardName);
+                                    Thread.Sleep((int)(aiActionDelay * 1000));
                                     ai.hasPlayedLandThisTurn = true;
                                     break;
                                 }
@@ -396,6 +400,7 @@ public class TurnSystem : MonoBehaviour
                                         creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
 
                                         Debug.Log($"AI played creature: {card.cardName}");
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
                                         playedCard = true;
                                         break;
                                     }
@@ -535,10 +540,11 @@ public class TurnSystem : MonoBehaviour
                                         TurnSystem.Instance.lastPhaseBeforeStack = currentPhase;
 
                                         GameManager.Instance.StartCoroutine(GameManager.Instance.ResolveSorceryAfterDelay(sorcery, visual, ai));
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
 
                                         playedCard = true;
                                         break;
-                                    }   
+                                    }
                                 }
                                 else if (card is ArtifactCard artifact)
                                 {
@@ -564,6 +570,7 @@ public class TurnSystem : MonoBehaviour
                                         GameManager.Instance.activeCardVisuals.Add(visual);
 
                                         Debug.Log($"AI played artifact: {card.cardName}");
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
                                         playedCard = true;
                                         break;
                                     }
@@ -599,11 +606,12 @@ public class TurnSystem : MonoBehaviour
                                         Card token = CardFactory.Create(tokenName);
                                         if (token != null)
                                         {
-                                            GameManager.Instance.SummonToken(token, ai);
-                                            Debug.Log($"AI created a {tokenName} token.");
-                                        }
-                                        else
-                                        {
+                                        GameManager.Instance.SummonToken(token, ai);
+                                        Debug.Log($"AI created a {tokenName} token.");
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
+                                    }
+                                    else
+                                    {
                                             Debug.LogError($"AI failed to create token: {tokenName}");
                                         }
 
@@ -637,6 +645,7 @@ public class TurnSystem : MonoBehaviour
                                 {
                                     GameManager.Instance.PayToGainAbility(creature);
                                     GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    Thread.Sleep((int)(aiActionDelay * 1000));
                                 }
                             }
                             }
@@ -648,19 +657,21 @@ public class TurnSystem : MonoBehaviour
                             {
                                 if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
                                 {
-                                    artifact.isTapped = true;
-                                    GameManager.Instance.TryGainLife(ai, 1);
-                                    Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
-                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                }
-                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
-                                {
+                                artifact.isTapped = true;
+                                GameManager.Instance.TryGainLife(ai, 1);
+                                Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
+                                GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                Thread.Sleep((int)(aiActionDelay * 1000));
+                            }
+                            else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
+                            {
                                     artifact.isTapped = true;
                                     GameManager.Instance.humanPlayer.Life -= artifact.plagueAmount;
                                     GameManager.Instance.aiPlayer.Life -= artifact.plagueAmount;
                                     GameManager.Instance.CheckForGameEnd();
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                     GameManager.Instance.UpdateUI();
+                                    Thread.Sleep((int)(aiActionDelay * 1000));
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeForLife))
                                 {
@@ -674,6 +685,7 @@ public class TurnSystem : MonoBehaviour
                                         Debug.Log($"AI sacrifices {artifact.cardName} to gain {artifact.lifeToGain} life.");
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
                                     }
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards))
@@ -693,6 +705,7 @@ public class TurnSystem : MonoBehaviour
                                         Debug.Log($"AI sacrifices {artifact.cardName} to draw {artifact.cardsToDraw} card(s).");
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
+                                        Thread.Sleep((int)(aiActionDelay * 1000));
                                     }
                                 }
                             }
@@ -766,6 +779,7 @@ public class TurnSystem : MonoBehaviour
                                 GameManager.Instance.FindCardVisual(creature)?.swordIcon?.SetActive(true);
                                 Debug.Log($"AI declares attacker: {creature.cardName}");
                                 GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                Thread.Sleep((int)(aiActionDelay * 1000));
                             }
                         }
 
@@ -839,6 +853,7 @@ public class TurnSystem : MonoBehaviour
                                 attacker.blockedByThisBlocker.Add(blocker);
 
                                 Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                Thread.Sleep((int)(aiActionDelay * 1000));
 
                                 availableBlockers.Remove(blocker);
                                 remainingDamage -= attacker.power;
@@ -943,6 +958,9 @@ public class TurnSystem : MonoBehaviour
                       }
 
                     // Only after cleanup, begin next turn
+                    if (currentPlayer == PlayerType.AI)
+                        Thread.Sleep((int)(aiActionDelay * 1000));
+
                     if (endingPlayer.extraTurns > 0)
                     {
                         endingPlayer.extraTurns--;
@@ -1180,6 +1198,7 @@ public class TurnSystem : MonoBehaviour
                         {
                             GameManager.Instance.TapLandForMana(land, ai);
                             GameManager.Instance.FindCardVisual(land)?.UpdateVisual();
+                            Thread.Sleep((int)(aiActionDelay * 1000));
                             return true;
                         }
                     }
@@ -1195,6 +1214,7 @@ public class TurnSystem : MonoBehaviour
                     {
                         GameManager.Instance.TapLandForMana(land, ai);
                         GameManager.Instance.FindCardVisual(land)?.UpdateVisual();
+                        Thread.Sleep((int)(aiActionDelay * 1000));
                         return true;
                     }
                 }
@@ -1206,6 +1226,7 @@ public class TurnSystem : MonoBehaviour
                         creature.isTapped = true;
                         ai.ColoredMana.Colorless += 1;
                         GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                        Thread.Sleep((int)(aiActionDelay * 1000));
                         return true;
                     }
                     if (card is ArtifactCard artifact && !artifact.isTapped && artifact.activatedAbilities.Contains(ActivatedAbility.TapForMana))
@@ -1213,6 +1234,7 @@ public class TurnSystem : MonoBehaviour
                         artifact.isTapped = true;
                         ai.ColoredMana.Colorless += 1;
                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                        Thread.Sleep((int)(aiActionDelay * 1000));
                         return true;
                     }
                     if (card is ArtifactCard artifact2 && !artifact2.isTapped && artifact2.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana))
@@ -1221,6 +1243,7 @@ public class TurnSystem : MonoBehaviour
                         ai.ColoredMana.Colorless += 1;
                         GameManager.Instance.SendToGraveyard(artifact2, ai);
                         GameManager.Instance.FindCardVisual(artifact2)?.UpdateVisual();
+                        Thread.Sleep((int)(aiActionDelay * 1000));
                         return true;
                     }
                 }
