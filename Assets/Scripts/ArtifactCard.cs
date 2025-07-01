@@ -15,7 +15,7 @@ public class ArtifactCard : Card
             switch (ability)
             {
                 case ActivatedAbility.TapForMana:
-                    owner.ColoredMana.Colorless += 1; // TEMP: All artifact mana goes to white for now
+                    owner.ColoredMana.Colorless += 1; // TEMP: Artifact mana produces colorless mana for now
                     break;
 
                 case ActivatedAbility.TapToGainLife:
@@ -23,7 +23,7 @@ public class ArtifactCard : Card
                     break;
 
                 case ActivatedAbility.TapAndSacrificeForMana:
-                    owner.ColoredMana.Colorless += 1; // TEMP again
+                    owner.ColoredMana.Colorless += 1; // TEMP: Artifact mana produces colorless mana for now
                     GameManager.Instance.SendToGraveyard(this, owner);
                     break;
 
