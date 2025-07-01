@@ -176,6 +176,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return 0;
         }
 
+    private string ColorStat(int current, int baseValue)
+        {
+            if (current > baseValue)
+                return $"<color=#00ff00>{current}</color>";
+            if (current < baseValue)
+                return $"<color=#ff0000>{current}</color>";
+            return current.ToString();
+        }
+
+    private string FormatStats(CreatureCard creature)
+        {
+            return $"{ColorStat(creature.power, creature.basePower)}/{ColorStat(creature.toughness, creature.baseToughness)}";
+        }
+
     public void UpdateVisual()
         {
             var data = CardDatabase.GetCardData(linkedCard.cardName);
@@ -243,7 +257,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 if (linkedCard is CreatureCard battlefieldCreature)
                 {
-                    statsText.text = $"{battlefieldCreature.power}/{battlefieldCreature.toughness}";
+                    statsText.text = FormatStats(battlefieldCreature);
 
                     if (isInBattlefield)
                     {
@@ -315,7 +329,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costText.text = showGeneric ? genericCost.ToString() : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
-                statsText.text = $"{creature.power}/{creature.toughness}";
+                statsText.text = FormatStats(creature);
                 keywordText.text = linkedCard.GetCardText();
 
                 if (isInBattlefield)
@@ -464,7 +478,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costText.text = showGeneric ? genericCost.ToString() : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
-                statsText.text = $"{creature.power}/{creature.toughness}";
+                statsText.text = FormatStats(creature);
                 keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
