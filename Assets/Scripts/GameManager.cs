@@ -932,8 +932,24 @@ public class GameManager : MonoBehaviour
 
     public Player GetOwnerOfCard(Card card)
     {
-        if (humanPlayer.Battlefield.Contains(card)) return humanPlayer;
-        if (aiPlayer.Battlefield.Contains(card)) return aiPlayer;
+        if (humanPlayer.Battlefield.Contains(card) ||
+            humanPlayer.Hand.Contains(card) ||
+            humanPlayer.Graveyard.Contains(card) ||
+            humanPlayer.Deck.Contains(card))
+        {
+            return humanPlayer;
+        }
+
+        if (aiPlayer.Battlefield.Contains(card) ||
+            aiPlayer.Hand.Contains(card) ||
+            aiPlayer.Graveyard.Contains(card) ||
+            aiPlayer.Deck.Contains(card))
+        {
+            return aiPlayer;
+        }
+
+        if (card.owner != null)
+            return card.owner;
 
         Debug.LogWarning($"[GetOwnerOfCard] Couldn't find owner of {card.cardName}");
         return null;
