@@ -1253,10 +1253,13 @@ public class GameManager : MonoBehaviour
                     }
 
                 targetCreature.toughness -= targetingArtifact.damageToCreature;
-                if (targetingArtifact is CreatureCard srcCreature &&
+                Card asCard = targetingArtifact;
+                if (asCard is CreatureCard srcCreature &&
                     srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
                     targetingArtifact.damageToCreature > 0)
+                {
                     targetCreature.toughness = 0;
+                }
                 Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
 
                 targetingArtifact.isTapped = true;
@@ -1567,10 +1570,13 @@ public class GameManager : MonoBehaviour
                 targetingArtifact != null)
             {
                 creature.toughness -= targetingArtifact.damageToCreature;
-                if (targetingArtifact is CreatureCard srcCreature &&
+                Card asCard = targetingArtifact;
+                if (asCard is CreatureCard srcCreature &&
                     srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
                     targetingArtifact.damageToCreature > 0)
+                {
                     creature.toughness = 0;
+                }
                 Debug.Log($"{targetingArtifact.cardName} dealt {targetingArtifact.damageToCreature} damage to {creature.cardName}");
                 targetingArtifact.isTapped = true;
                 SendToGraveyard(targetingArtifact, targetingPlayer);
