@@ -546,12 +546,18 @@ public class GameManager : MonoBehaviour
                     {
                         damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
                         blocker.toughness -= damageToBlocker;
+                        if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
+                            blocker.toughness = 0;
                         remainingDamage -= damageToBlocker;
                     }
 
                     int damageFromBlocker = attackerProtected ? 0 : blocker.power;
                     if (!attackerProtected)
+                    {
                         totalDamageFromBlockers += damageFromBlocker;
+                        if (blocker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageFromBlocker > 0)
+                            attacker.toughness = 0;
+                    }
 
                     if (damageToBlocker > 0 || damageFromBlocker > 0)
                         SoundManager.Instance.PlaySound(SoundManager.Instance.impact);
@@ -1247,6 +1253,13 @@ public class GameManager : MonoBehaviour
                     }
 
                 targetCreature.toughness -= targetingArtifact.damageToCreature;
+                Card asCard = targetingArtifact;
+                if (asCard is CreatureCard srcCreature &&
+                    srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
+                    targetingArtifact.damageToCreature > 0)
+                {
+                    targetCreature.toughness = 0;
+                }
                 Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
 
                 targetingArtifact.isTapped = true;
@@ -1557,6 +1570,13 @@ public class GameManager : MonoBehaviour
                 targetingArtifact != null)
             {
                 creature.toughness -= targetingArtifact.damageToCreature;
+                Card asCard = targetingArtifact;
+                if (asCard is CreatureCard srcCreature &&
+                    srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
+                    targetingArtifact.damageToCreature > 0)
+                {
+                    creature.toughness = 0;
+                }
                 Debug.Log($"{targetingArtifact.cardName} dealt {targetingArtifact.damageToCreature} damage to {creature.cardName}");
                 targetingArtifact.isTapped = true;
                 SendToGraveyard(targetingArtifact, targetingPlayer);
@@ -1804,12 +1824,18 @@ public class GameManager : MonoBehaviour
                         {
                             damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
                             blocker.toughness -= damageToBlocker;
+                            if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
+                                blocker.toughness = 0;
                             remainingDamage -= damageToBlocker;
                         }
 
                         int damageFromBlocker = attackerProtected ? 0 : blocker.power;
                         if (!attackerProtected)
+                        {
                             totalDamageFromBlockers += damageFromBlocker;
+                            if (blocker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageFromBlocker > 0)
+                                attacker.toughness = 0;
+                        }
 
                         if (damageToBlocker > 0 || damageFromBlocker > 0)
                             SoundManager.Instance.PlaySound(SoundManager.Instance.impact);

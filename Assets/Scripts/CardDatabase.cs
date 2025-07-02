@@ -1750,12 +1750,13 @@ public static class CardDatabase
                     manaCost = 2,
                     color = new List<string> { "Black", "Green" },
                     cardType = CardType.Creature,
-                    power = 9,
+                    power = 1,
                     toughness = 1,
                     subtypes = new List<string> { "Plant" },
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Defender,
+                        KeywordAbility.Deathtouch
                     },
                     artwork = Resources.Load<Sprite>("Art/poison_mushroom"),
                     });
