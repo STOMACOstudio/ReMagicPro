@@ -9,6 +9,7 @@ public enum KeywordAbility
     Reach,
     CanOnlyBlockFlying,
     Lifelink,
+    Deathtouch,
     CantBlockWithoutForest,
     Plainswalk,
     Islandwalk,
