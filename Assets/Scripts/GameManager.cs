@@ -1752,6 +1752,17 @@ public class GameManager : MonoBehaviour
 
         private IEnumerator MoveCard(Transform tf, Vector3 start, Vector3 end, float duration)
             {
+                Canvas cardCanvas = tf.GetComponentInChildren<Canvas>();
+                int originalOrder = 0;
+                bool originalOverride = false;
+                if (cardCanvas != null)
+                {
+                    originalOrder = cardCanvas.sortingOrder;
+                    originalOverride = cardCanvas.overrideSorting;
+                    cardCanvas.overrideSorting = true;
+                    cardCanvas.sortingOrder = 100;
+                }
+
                 float t = 0f;
                 while (t < duration)
                 {
@@ -1763,6 +1774,12 @@ public class GameManager : MonoBehaviour
 
                 if (tf != null)
                     tf.position = end;
+
+                if (cardCanvas != null)
+                {
+                    cardCanvas.sortingOrder = originalOrder;
+                    cardCanvas.overrideSorting = originalOverride;
+                }
             }
 
         public (int playerDamage, int aiDamage) ResolveCombatForAttacker(CreatureCard attacker)
