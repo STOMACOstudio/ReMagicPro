@@ -177,6 +177,7 @@ public class GameManager : MonoBehaviour
         }
 
         NotifyCardDrawn(player, 1);
+        SoundManager.Instance.PlaySound(SoundManager.Instance.drawCard);
     }
 
     public void PlayCard(Player player, CardVisual visual)
