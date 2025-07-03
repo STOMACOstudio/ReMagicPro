@@ -1027,10 +1027,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
 
-                        for (int i = 0; i < artifact.cardsToDraw; i++)
-                        {
-                            GameManager.Instance.DrawCard(player);
-                        }
+                        GameManager.Instance.DrawCards(player, artifact.cardsToDraw);
 
                         SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
                         linkedCard.isTapped = true;

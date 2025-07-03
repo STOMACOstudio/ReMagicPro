@@ -124,9 +124,7 @@ public class SorceryCard : Card
             }
             if (cardsToDraw > 0)
                 {
-                    for (int i = 0; i < cardsToDraw; i++)
-                        GameManager.Instance.DrawCard(caster);
-
+                    GameManager.Instance.DrawCards(caster, cardsToDraw);
                     Debug.Log($"{caster} draws {cardsToDraw} card(s).");
                     didSomething = true;
                 }
