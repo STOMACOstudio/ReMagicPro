@@ -286,6 +286,7 @@ public class GameManager : MonoBehaviour
 
                     // Move visual to the stack zone
                     visual.transform.SetParent(stackZone, false);
+                    visual.isInStack = true;
                     visual.transform.localPosition = Vector3.zero;
                     visual.transform.localRotation = Quaternion.identity;
                     visual.transform.localScale = Vector3.one;
@@ -1421,6 +1422,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"Target selected: {chosen.cardName}");
 
                 targetingVisual.transform.SetParent(stackZone, false);
+                targetingVisual.isInStack = true;
                 targetingVisual.transform.localPosition = Vector3.zero;
                 targetingVisual.transform.localRotation = Quaternion.identity;
                 targetingVisual.transform.localScale = Vector3.one;
@@ -1476,6 +1478,7 @@ public class GameManager : MonoBehaviour
 
             // Move visual to stack
             targetingVisual.transform.SetParent(stackZone, false);
+            targetingVisual.isInStack = true;
             targetingVisual.transform.localPosition = Vector3.zero;
             targetingVisual.transform.localRotation = Quaternion.identity;
             targetingVisual.transform.localScale = Vector3.one;
