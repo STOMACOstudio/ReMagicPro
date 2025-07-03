@@ -105,11 +105,8 @@ public class GameManager : MonoBehaviour
         ShuffleDeck(humanPlayer);
         ShuffleDeck(aiPlayer);
 
-        for (int i = 0; i < 7; i++)
-        {
-            DrawCard(humanPlayer);
-            DrawCard(aiPlayer);
-        }
+        DrawCards(humanPlayer, 7);
+        DrawCards(aiPlayer, 7);
     }
 
     void Update()
@@ -144,7 +141,20 @@ public class GameManager : MonoBehaviour
             player.Deck[randomIndex] = temp;
         }
     }
-    public void DrawCard(Player player)
+
+    public void DrawCards(Player player, int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        for (int i = 0; i < amount; i++)
+        {
+            // only play the draw sound on the first card if this is the human player
+            bool playSfx = (i == 0);
+            DrawCard(player, playSfx);
+        }
+    }
+    public void DrawCard(Player player, bool playSfx = true)
     {
         if (player.Deck.Count == 0)
         {
@@ -177,7 +187,10 @@ public class GameManager : MonoBehaviour
         }
 
         NotifyCardDrawn(player, 1);
-        SoundManager.Instance.PlaySound(SoundManager.Instance.drawCard);
+        if (player == humanPlayer && playSfx)
+        {
+            SoundManager.Instance.PlaySound(SoundManager.Instance.drawCard);
+        }
     }
 
     public void PlayCard(Player player, CardVisual visual)

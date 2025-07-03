@@ -686,10 +686,7 @@ public class TurnSystem : MonoBehaviour
                                         ai.ColoredMana.Pay(abilityCost);
                                         artifact.isTapped = true;
 
-                                        for (int i = 0; i < artifact.cardsToDraw; i++)
-                                        {
-                                            GameManager.Instance.DrawCard(ai);
-                                        }
+                                        GameManager.Instance.DrawCards(ai, artifact.cardsToDraw);
 
                                         GameManager.Instance.SendToGraveyard(artifact, ai);
                                         Debug.Log($"AI sacrifices {artifact.cardName} to draw {artifact.cardsToDraw} card(s).");
