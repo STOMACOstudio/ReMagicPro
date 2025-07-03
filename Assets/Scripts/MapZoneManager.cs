@@ -16,17 +16,24 @@ public class MapZoneManager : MonoBehaviour
 
     void Start()
     {
-        if (mapZones == null || mapZones.Count != 10)
+        if (mapZones == null || mapZones.Count == 0)
         {
-            Debug.LogError("You must assign exactly 10 map zones!");
+            Debug.LogError("You must assign at least one map zone!");
             return;
         }
 
-        // STEP 1: Set zone types (important before AssignSprite)
-        mapZones[0].zoneType = MapZone.ZoneType.Shack;
-        for (int i = 1; i <= 5; i++) mapZones[i].zoneType = MapZone.ZoneType.Beginner;
-        for (int i = 6; i <= 8; i++) mapZones[i].zoneType = MapZone.ZoneType.Advanced;
-        mapZones[9].zoneType = MapZone.ZoneType.Boss;
+        // STEP 1: Set default zone types for the original 10-zone layout
+        // When more zones are added, their types can be set in the Inspector.
+        if (mapZones.Count >= 10)
+        {
+            mapZones[0].zoneType = MapZone.ZoneType.Shack;
+            for (int i = 1; i <= 5 && i < mapZones.Count; i++)
+                mapZones[i].zoneType = MapZone.ZoneType.Beginner;
+            for (int i = 6; i <= 8 && i < mapZones.Count; i++)
+                mapZones[i].zoneType = MapZone.ZoneType.Advanced;
+            if (mapZones.Count > 9)
+                mapZones[9].zoneType = MapZone.ZoneType.Boss;
+        }
 
         // STEP 2: Generate or load sprite layout
         string spriteIndexCSV = PlayerPrefs.GetString("MapSpriteIndices", null);
