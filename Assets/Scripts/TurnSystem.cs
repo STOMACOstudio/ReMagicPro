@@ -953,7 +953,12 @@ public class TurnSystem : MonoBehaviour
                     }
                     else
                     {
-                        BeginTurn(currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human);
+                        PlayerType nextPlayer = currentPlayer == PlayerType.Human ? PlayerType.AI : PlayerType.Human;
+
+                        if (currentPlayer == PlayerType.AI)
+                            StartCoroutine(BeginTurnAfterDelay(nextPlayer));
+                        else
+                            BeginTurn(nextPlayer);
                     }
                     break;
             }
@@ -1125,6 +1130,12 @@ public class TurnSystem : MonoBehaviour
 
 
                 damageCoroutine = null;
+            }
+
+        private IEnumerator BeginTurnAfterDelay(PlayerType player)
+            {
+                yield return new WaitForSeconds(1f);
+                BeginTurn(player);
             }
 
         private Player.ManaPool GetPotentialManaPool(Player ai)
