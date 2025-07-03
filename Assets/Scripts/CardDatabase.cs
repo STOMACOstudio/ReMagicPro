@@ -99,6 +99,7 @@ public static class CardDatabase
                         KeywordAbility.ProtectionFromRed,
                         KeywordAbility.ProtectionFromGreen,
                     },
+                    flavorText = "When hunting, reflexes and training matter more than your sword.",
                     artwork = Resources.Load<Sprite>("Art/beasthunter")
                     });
                 Add(new CardData // Angry farmer
@@ -112,6 +113,7 @@ public static class CardDatabase
                     toughness = 1,
                     subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "The Lich Queen took his land, his livestock, and his family. Now, all that remains are vengeance and a rusted fork.",
                     artwork = Resources.Load<Sprite>("Art/angry_farmer")
                     });
                 Add(new CardData //Trinkets Collector
@@ -339,7 +341,6 @@ public static class CardDatabase
                     toughness = 0,
                     subtypes = new List<string> { "Horse" },
                     rulesText = "This creature has power and toughness equal to the number of Plains you control.",
-                    flavorText = "A symbol of hope galloping through untouched meadows.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance,
@@ -523,6 +524,7 @@ public static class CardDatabase
                     toughness = 1,
                     subtypes = new List<string> { "Wizard" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "You can't get rid of me.",
                     artwork = Resources.Load<Sprite>("Art/replicator"),
                     abilities = new List<CardAbility>
                     {
@@ -558,6 +560,7 @@ public static class CardDatabase
                     toughness = 3,
                     subtypes = new List<string> { "Merfolk", "Warrior" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Their spears are for fishing: their real weapons are rows of sharpened teeth and a cold thirst for blood.",
                     artwork = Resources.Load<Sprite>("Art/sharkmen_tribe")
                     });
                 Add(new CardData //Cosmic Whale
@@ -735,6 +738,7 @@ public static class CardDatabase
                     toughness = 1,
                     subtypes = new List<string> { "Zombie", "Leviathan" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Not even the largest creatures escape the cold touch of the Lich Queen.",
                     artwork = Resources.Load<Sprite>("Art/rotting_whale")
                     });
                 Add(new CardData //Rotting Dragon
@@ -783,6 +787,7 @@ public static class CardDatabase
                     entersTapped = true,
                     subtypes = new List<string> { "Zombie" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Beware the night when the dead begin crawling out of their graves.",
                     artwork = Resources.Load<Sprite>("Art/limping_corpse")
                     });
                 Add(new CardData //Famished crow
@@ -963,6 +968,7 @@ public static class CardDatabase
                     toughness = 1,
                     subtypes = new List<string> { "Rat" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "It lives to feed: and the more it feeds, the more it remembers the taste of flesh.",
                     artwork = Resources.Load<Sprite>("Art/giant_rat")
                     });
                 Add(new CardData //Bog mosquito
@@ -996,6 +1002,7 @@ public static class CardDatabase
                     activatedAbilities = new List<ActivatedAbility> {
                         ActivatedAbility.TapToLoseLife
                     },
+                    flavorText = "Some humans serve the Lich Queen out of fear, others after a curse. But the witches simply enjoy being cruel.",
                     artwork = Resources.Load<Sprite>("Art/wicked_witch")
                     });
                 Add(new CardData //Undead Army
@@ -1172,6 +1179,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.Defender,
                     },
+                    flavorText = "I swear, the street was empty yesterday.",
                     artwork = Resources.Load<Sprite>("Art/great_boulder")
                     });
                 Add(new CardData //Flying pig
@@ -1204,6 +1212,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.CantBlock
                     },
+                    flavorText = "Goblins are raised as bullies from youth, trained to charge into battle without a single thought in their heads.",
                     artwork = Resources.Load<Sprite>("Art/goblin_puncher")
                     });
                 Add(new CardData //Goblin Beastmaster
@@ -1237,6 +1246,7 @@ public static class CardDatabase
                         KeywordAbility.Haste,
                         KeywordAbility.Trample,
                     },
+                    flavorText = "The storm is coming.",
                     artwork = Resources.Load<Sprite>("Art/thundermare")
                     });
                 Add(new CardData //Village idiot
@@ -1282,6 +1292,7 @@ public static class CardDatabase
                         KeywordAbility.Haste,
                         KeywordAbility.CantBlock
                     },
+                    flavorText = "Meep meep",
                     artwork = Resources.Load<Sprite>("Art/wild_ostrich")
                     });
                 Add(new CardData // Dragon Token
@@ -1369,6 +1380,7 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> {
                         KeywordAbility.Trample
                     },
+                    flavorText = "One day, a mad wizard crossed ancient bones with a cactus. He was eaten by his own creation shortly after.",
                     artwork = Resources.Load<Sprite>("Art/cactusaurus")
                     });
                 Add(new CardData //Realms crasher
@@ -1452,7 +1464,6 @@ public static class CardDatabase
                             }
                         }
                     }
-
                     }
                     });
                 Add(new CardData //Domestic cat
@@ -1469,6 +1480,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.Reach
                     },
+                    flavorText = "Cats are just tiny tigers living in your home.",
                     artwork = Resources.Load<Sprite>("Art/domestic_cat")
                     });
                 Add(new CardData //Deep forest monkeys
@@ -1482,6 +1494,7 @@ public static class CardDatabase
                     toughness = 2,
                     subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Beneath the fur and teeth lies a mind that knows the forest better than any map ever could.",
                     artwork = Resources.Load<Sprite>("Art/deep_forest_monkeys")
                     });
                 Add(new CardData //Violent Monkey
@@ -1495,6 +1508,7 @@ public static class CardDatabase
                     toughness = 3,
                     subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "They’ve learned which bones snap easiest. And they enjoy the sound.",
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
                 Add(new CardData //Flying donkey
@@ -1524,6 +1538,7 @@ public static class CardDatabase
                     toughness = 8,
                     subtypes = new List<string> { "Beast" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "To most, it's a slumbering monster. To the elves, it's a playground, a guardian, and the softest spot for a midsummer nap.",
                     artwork = Resources.Load<Sprite>("Art/slack_tungo")
                     });
                 Add(new CardData // Cat Token
@@ -1585,6 +1600,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Golem" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "A lost relic of a forgotten time: a weapon from another war, waiting to be activated.",
                     artwork = Resources.Load<Sprite>("Art/origin_golem")
                     });
                 Add(new CardData //Omega golemoid
@@ -1599,6 +1615,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Golem" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "In a field of ancient ruins, it stands as a silent, cold guardian: an echo of a long-forgotten war.",
                     artwork = Resources.Load<Sprite>("Art/omega_golemoid")
                     });
                 Add(new CardData //Glassmole
@@ -1629,6 +1646,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.Defender,
                     },
+                    flavorText = "Whether physical or psychological, obstacles are what allow people to act and overcome their fears.",
                     artwork = Resources.Load<Sprite>("Art/obstacle")
                     });
                 Add(new CardData //Autonomous miner
@@ -1723,6 +1741,7 @@ public static class CardDatabase
                     {
                         KeywordAbility.Vigilance,
                     },
+                    flavorText = "Bound by ancient blood, elves sometimes follow each other even into death.",
                     artwork = Resources.Load<Sprite>("Art/twin_elves")
                     });
                 Add(new CardData //Night moth
@@ -1843,6 +1862,7 @@ public static class CardDatabase
                         KeywordAbility.Trample,
                         KeywordAbility.CantBlock
                     },
+                    flavorText = "What's more deadly than an angry bear?",
                     artwork = Resources.Load<Sprite>("Art/battle_bear")
                     });
                 Add(new CardData //Robin
@@ -1860,6 +1880,7 @@ public static class CardDatabase
                         KeywordAbility.Haste,
                         KeywordAbility.Flying,
                     },
+                    flavorText = "Though phoenixes are long extinct, some birds still seem to carry a flicker of their flame.",
                     artwork = Resources.Load<Sprite>("Art/robin")
                     });
                 Add(new CardData //Crazed shaman
