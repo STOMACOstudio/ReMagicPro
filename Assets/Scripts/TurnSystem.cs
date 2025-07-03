@@ -527,6 +527,7 @@ public class TurnSystem : MonoBehaviour
 
                                         visual.transform.localPosition = Vector3.zero;
                                         visual.transform.SetParent(GameManager.Instance.stackZone, false);
+                                        visual.isInStack = true;
 
                                         GameManager.Instance.UpdateUI();
                                         SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);

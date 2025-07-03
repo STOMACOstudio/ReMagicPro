@@ -62,6 +62,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
+    public bool isInStack = false; // when true, card is on the stack
 
     void Start()
         {
@@ -70,7 +71,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isInGraveyard || linkedCard == null || linkedCard.artwork == null)
+            if (isInGraveyard || isInStack || linkedCard == null || linkedCard.artwork == null)
                 return;
 
             CardHoverPreview.Instance.ShowCard(linkedCard);
@@ -91,7 +92,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (isInGraveyard)
+            if (isInGraveyard || isInStack)
                 return;
 
             CardHoverPreview.Instance.HidePreview();
@@ -414,6 +415,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             linkedCard = card;
             gameManager = manager;
+            isInStack = false;
 
             UpdateLandIcon();
 
@@ -533,6 +535,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            if (isInStack)
+                return;
             // Optional ETB targeting (e.g. Monk: "You may destroy target artifact")
             if (GameManager.Instance.targetingCreatureOptional != null)
             {
@@ -1215,6 +1219,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             isInBattlefield = false;
             isInGraveyard = true;
+            isInStack = false;
 
             if (lineRenderer != null)
                 lineRenderer.enabled = false;
@@ -1234,6 +1239,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             isInBattlefield = false;
             isInGraveyard = true;
+            isInStack = false;
 
             // Re-enable UI components in case they were disabled on battlefield
             if (backgroundImage != null) backgroundImage.enabled = true;
@@ -1258,6 +1264,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // General setup
             isInBattlefield = false;
             isInGraveyard = true;
+            isInStack = false;
 
             CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
             if (cardData != null && cardTypeText != null)
