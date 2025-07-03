@@ -16,20 +16,16 @@ public class MapZoneManager : MonoBehaviour
 
     void Start()
     {
-        if (mapZones == null || mapZones.Count != 20)
+        if (mapZones == null || mapZones.Count == 0)
         {
-            Debug.LogError("You must assign exactly 20 map zones!");
+            Debug.LogError("You must assign at least one map zone!");
             return;
         }
 
-        // STEP 1: Set zone types
+        // STEP 1: Ensure first and last zones are Shack and Boss
         mapZones[0].zoneType = MapZone.ZoneType.Shack;
         mapZones[mapZones.Count - 1].zoneType = MapZone.ZoneType.Boss;
-        for (int i = 1; i < mapZones.Count - 1; i++)
-        {
-            mapZones[i].zoneType =
-                Random.value < 0.5f ? MapZone.ZoneType.Beginner : MapZone.ZoneType.Advanced;
-        }
+
 
         // STEP 2: Generate or load sprite layout
         string spriteIndexCSV = PlayerPrefs.GetString("MapSpriteIndices", null);
