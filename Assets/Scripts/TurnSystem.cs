@@ -65,7 +65,8 @@ public class TurnSystem : MonoBehaviour
             attackAllButton.gameObject.SetActive(false);
             clearAttackersButton.gameObject.SetActive(false);
 
-            BeginTurn(PlayerType.Human);
+            PlayerType startingPlayer = Random.value < 0.5f ? PlayerType.Human : PlayerType.AI;
+            BeginTurn(startingPlayer);
         }
 
     void Update()
