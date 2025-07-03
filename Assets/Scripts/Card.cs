@@ -16,6 +16,7 @@ public class Card
     public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 
     public string rulesText;
+    public string flavorText;
 
     public int plagueAmount;
     public int manaToGain;
@@ -258,6 +259,9 @@ public class Card
                 if (keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess))
                     lines.Add("Beast creature spells you cast cost 1 less.");
             }
+
+            if (!string.IsNullOrEmpty(flavorText))
+                lines.Add($"<i>{flavorText}</i>");
 
             return string.Join("\n", lines);
         }

@@ -18,6 +18,7 @@ public class CardData
     public string requiredTargetColor = null;
 
     public string rulesText;
+    public string flavorText;
 
     public bool entersTapped = false;
     public bool isToken = false;

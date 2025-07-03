@@ -1534,6 +1534,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 rules += $"Destroy target {destroyType}.\n";
             }
+            rules = rules.TrimEnd();
+            if (!string.IsNullOrEmpty(sorcery.flavorText))
+            {
+                if (!string.IsNullOrEmpty(rules))
+                    rules += "\n";
+                rules += $"<i>{sorcery.flavorText}</i>";
+            }
             keywordText.text = rules.Trim();
             }
 

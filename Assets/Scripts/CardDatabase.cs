@@ -339,6 +339,7 @@ public static class CardDatabase
                     toughness = 0,
                     subtypes = new List<string> { "Horse" },
                     rulesText = "This creature has power and toughness equal to the number of Plains you control.",
+                    flavorText = "A symbol of hope galloping through untouched meadows.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance,
