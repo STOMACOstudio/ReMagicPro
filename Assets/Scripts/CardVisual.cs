@@ -726,6 +726,56 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            // PAY-TO-BUFF-SELF during Main Phase
+            if (linkedCard is CreatureCard pumpCreature &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(pumpCreature) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                pumpCreature.activatedAbilities != null &&
+                pumpCreature.activatedAbilities.Contains(ActivatedAbility.PayToBuffSelf))
+            {
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = pumpCreature.manaToPayToActivate;
+                string color = pumpCreature.PrimaryColor;
+
+                if (!string.IsNullOrEmpty(color) && color != "Artifact")
+                {
+                    int available = color switch
+                    {
+                        "White" => player.ColoredMana.White,
+                        "Blue" => player.ColoredMana.Blue,
+                        "Black" => player.ColoredMana.Black,
+                        "Red" => player.ColoredMana.Red,
+                        "Green" => player.ColoredMana.Green,
+                        _ => 0
+                    };
+
+                    if (available >= cost)
+                    {
+                        GameManager.Instance.PayToBuffSelf(pumpCreature);
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log($"Not enough {color} mana to activate {pumpCreature.cardName}'s ability.");
+                    }
+                }
+                else
+                {
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        GameManager.Instance.PayToBuffSelf(pumpCreature);
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log($"Not enough mana to activate {pumpCreature.cardName}'s ability.");
+                    }
+                }
+
+                return;
+            }
+
                 
             // TAP-TO-CREATE-TOKEN generic ability
                 if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken) &&

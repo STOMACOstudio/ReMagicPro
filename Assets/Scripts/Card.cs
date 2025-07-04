@@ -163,6 +163,9 @@ public class Card
                                 case ActivatedAbility.PayToGainAbility:
                                     lines.Add($"{creature.manaToPayToActivate}: Gains {creature.abilityToGain} until end of turn.");
                                     break;
+                                case ActivatedAbility.PayToBuffSelf:
+                                    lines.Add($"{creature.manaToPayToActivate}: +1/+0 until end of turn.");
+                                    break;
                             }
                         }
                     }
