@@ -71,6 +71,9 @@ public class TurnSystem : MonoBehaviour
 
     void Update()
         {
+            if (GameManager.Instance.gameOver)
+                return;
+
             if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
             {
                 RunCurrentPhase();
@@ -111,6 +114,9 @@ public class TurnSystem : MonoBehaviour
 
     public void NextPhaseButton()
         {
+            if (GameManager.Instance.gameOver)
+                return;
+
             if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
@@ -178,6 +184,9 @@ public class TurnSystem : MonoBehaviour
 
     public void BeginTurn(PlayerType player)
         {
+            if (GameManager.Instance.gameOver)
+                return;
+
             currentPlayer = player;
             currentPhase = TurnPhase.StartTurn;
             Debug.Log($"\n=== {player} TURN START ===");
@@ -186,6 +195,9 @@ public class TurnSystem : MonoBehaviour
 
     void AdvancePhase()
         {
+            if (GameManager.Instance.gameOver)
+                return;
+
             GameManager.Instance.UpdateUI();
 
             // Empty mana at the end of each phase
@@ -204,6 +216,9 @@ public class TurnSystem : MonoBehaviour
 
     void RunCurrentPhase()
         {
+            if (GameManager.Instance.gameOver)
+                return;
+
             Debug.Log($"[Phase] {currentPlayer} - {currentPhase}");
 
             if (GameManager.Instance.isStackBusy)
@@ -959,11 +974,12 @@ public class TurnSystem : MonoBehaviour
         private IEnumerator WaitAndAdvancePhase()
             {
                 yield return new WaitUntil(() => !GameManager.Instance.isStackBusy);
-                
+
                 // Wait a frame to ensure any triggered UI changes or effects have finished
                 yield return null;
 
-                AdvancePhase(); // <-- This must always be called
+                if (!GameManager.Instance.gameOver)
+                    AdvancePhase(); // <-- This must always be called
             }
         
         private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
