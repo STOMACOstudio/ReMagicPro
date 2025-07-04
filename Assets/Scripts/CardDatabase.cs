@@ -1954,7 +1954,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = ", deal 2 damage to any target.",
+                            description = " deal 2 damage to any target.",
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
                             effect = (Player owner, Card target) =>
