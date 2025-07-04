@@ -2023,7 +2023,6 @@ public class GameManager : MonoBehaviour
                 currentAttackers.Clear();
                 selectedAttackerForBlocking = null;
                 UpdateUI();
-                CheckForGameEnd();
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
