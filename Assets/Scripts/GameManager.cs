@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     public bool isStackBusy = false;
     public bool gameOver = false;
+    public int pendingGraveyardAnimations = 0;
 
     public SorceryCard targetingSorcery;
     public Player targetingPlayer;
@@ -2022,11 +2023,11 @@ public class GameManager : MonoBehaviour
                 currentAttackers.Clear();
                 selectedAttackerForBlocking = null;
                 UpdateUI();
-                CheckForGameEnd();
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
             {
+                pendingGraveyardAnimations++;
 
                 // 1. Create a placeholder object in the same layout slot
                 GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
@@ -2060,6 +2061,7 @@ public class GameManager : MonoBehaviour
 
                 // 6. Move to graveyard data list
                 owner.Graveyard.Add(card);
+                pendingGraveyardAnimations--;
             }
 
         private IEnumerator ShowHandDiscardVFX(Card card, Player owner, CardVisual visual)

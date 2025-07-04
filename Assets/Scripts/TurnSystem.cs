@@ -1121,6 +1121,7 @@ public class TurnSystem : MonoBehaviour
         private IEnumerator WaitToShowCombatDamage()
             {
                 yield return StartCoroutine(GameManager.Instance.ResolveCombatWithAnimations());
+                yield return new WaitUntil(() => GameManager.Instance.pendingGraveyardAnimations == 0);
 
                 GameManager.Instance.CheckForGameEnd();
 
