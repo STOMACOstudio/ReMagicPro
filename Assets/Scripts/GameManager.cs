@@ -1742,7 +1742,7 @@ public class GameManager : MonoBehaviour
                 isTargetingMode = true;
                 targetingVisual = FindCardVisual(creature); // Optional, for visual link
 
-                Debug.Log($"Optional ETB targeting started for {creature.cardName}. Click an artifact if you want to destroy it.");
+                Debug.Log($"Optional ETB targeting started for {creature.cardName}. Click a valid target if you want to use the ability.");
             }
 
         public void CancelOptionalTargeting()
