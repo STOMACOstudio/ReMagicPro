@@ -43,4 +43,5 @@ public enum ActivatedAbility
     PayToGainAbility,
     DealDamageToCreature,
     BuffTargetCreature,
+    PayToBuffSelf,
 }

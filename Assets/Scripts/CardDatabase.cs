@@ -1295,6 +1295,23 @@ public static class CardDatabase
                     flavorText = "Meep meep",
                     artwork = Resources.Load<Sprite>("Art/wild_ostrich")
                     });
+                Add(new CardData //Spitfire Cobrox
+                    {
+                    cardName = "Spitfire Cobrox",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Beast", "Reptile", "Dog" },
+                    manaToPayToActivate = 1,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.PayToBuffSelf
+                    },
+                    artwork = Resources.Load<Sprite>("Art/rabid_dog")
+                    });
                 Add(new CardData // Dragon Token
                     {
                         cardName = "Dragon",

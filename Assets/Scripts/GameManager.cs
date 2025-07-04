@@ -950,6 +950,43 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PayToBuffSelf(CreatureCard creature)
+    {
+        Player owner = GetOwnerOfCard(creature);
+        int remaining = creature.manaToPayToActivate;
+
+        if (owner.ColoredMana.Total() >= remaining)
+        {
+            int useColorless = Mathf.Min(owner.ColoredMana.Colorless, remaining);
+            owner.ColoredMana.Colorless -= useColorless;
+            remaining -= useColorless;
+
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
+            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
+
+            if (remaining > 0)
+            {
+                Debug.LogWarning("PayToBuffSelf: Not enough mana despite Total() check.");
+                return;
+            }
+
+            creature.AddTemporaryBuff(1, 0);
+            var vis = FindCardVisual(creature);
+            if (vis != null)
+                vis.UpdateVisual();
+
+            Debug.Log($"{creature.cardName} gets +1/+0 until end of turn.");
+            UpdateUI();
+        }
+        else
+        {
+            Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
+        }
+    }
+
     public Player GetOwnerOfCard(Card card)
     {
         if (humanPlayer.Battlefield.Contains(card) ||
