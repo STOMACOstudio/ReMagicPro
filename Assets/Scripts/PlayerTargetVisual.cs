@@ -20,5 +20,16 @@ public class PlayerTargetVisual : MonoBehaviour, IPointerClickHandler
 
             GameManager.Instance.CompletePlayerTargetSelection(target);
         }
+        else if (GameManager.Instance.targetingCreatureOptional != null &&
+                 GameManager.Instance.optionalAbility != null &&
+                 (GameManager.Instance.optionalAbility.requiredTargetType == SorceryCard.TargetType.Player ||
+                  GameManager.Instance.optionalAbility.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer))
+        {
+            Player target = isHuman ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer;
+            GameManager.Instance.optionalTargetPlayer = target;
+            var ability = GameManager.Instance.optionalAbility;
+            ability.effect?.Invoke(GameManager.Instance.GetOwnerOfCard(GameManager.Instance.targetingCreatureOptional), null);
+            GameManager.Instance.CancelOptionalTargeting();
+        }
     }
 }

@@ -1938,6 +1938,52 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/bloodmoon_vampire")
                     });
+                Add(new CardData //Battle Mage
+                    {
+                    cardName = "Battle Mage",
+                    rarity = "Uncommon",
+                    manaCost = 3,
+                    color = new List<string> { "Blue", "Red" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Wizard", "Warrior" },
+                    artwork = Resources.Load<Sprite>("Art/battle_mage"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = ", deal 2 damage to any target.",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                            effect = (Player owner, Card target) =>
+                            {
+                                Player pTarget = GameManager.Instance.optionalTargetPlayer;
+                                if (pTarget != null)
+                                {
+                                    pTarget.Life -= 2;
+                                    GameObject ui = (pTarget == GameManager.Instance.humanPlayer)
+                                        ? GameManager.Instance.playerLifeContainer
+                                        : GameManager.Instance.enemyLifeContainer;
+                                    GameManager.Instance.ShowFloatingDamage(2, ui);
+                                    GameManager.Instance.CheckForGameEnd();
+                                    GameManager.Instance.optionalTargetPlayer = null;
+                                }
+                                else if (target is CreatureCard creature)
+                                {
+                                    creature.toughness -= 2;
+                                    var vis = GameManager.Instance.FindCardVisual(creature);
+                                    if (vis != null)
+                                        GameManager.Instance.ShowFloatingDamage(2, vis.gameObject);
+                                    GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                                    GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                                }
+                                GameManager.Instance.UpdateUI();
+                            }
+                        }
+                    }
+                    });
         // Sorceries
             //WHITE
                 Add(new CardData { //Shattering light

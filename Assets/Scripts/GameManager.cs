@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
     public CardAbility targetingAbility;
     public Card targetingCreatureOptional;
     public CardAbility optionalAbility;
+    public Player optionalTargetPlayer;
 
     void Awake()
     {
@@ -1737,6 +1738,7 @@ public class GameManager : MonoBehaviour
             {
                 targetingCreatureOptional = creature;
                 optionalAbility = ability;
+                optionalTargetPlayer = null;
                 isTargetingMode = true;
                 targetingVisual = FindCardVisual(creature); // Optional, for visual link
 
@@ -1750,6 +1752,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log("Optional targeting cancelled.");
                     targetingCreatureOptional = null;
                     optionalAbility = null;
+                    optionalTargetPlayer = null;
                     isTargetingMode = false;
                     targetingVisual = null;
                 }
