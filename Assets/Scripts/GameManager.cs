@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<CreatureCard, List<CreatureCard>> blockingAssignments = new Dictionary<CreatureCard, List<CreatureCard>>();
 
     public bool isStackBusy = false;
+    public bool gameOver = false;
 
     public SorceryCard targetingSorcery;
     public Player targetingPlayer;
@@ -116,6 +117,7 @@ public class GameManager : MonoBehaviour
             if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
             {
                 Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
+                gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
             else
@@ -161,11 +163,13 @@ public class GameManager : MonoBehaviour
             if (player == aiPlayer)
             {
                 Debug.Log("AI tried to draw from an empty deck — player wins by mill.");
+                gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
             else if (player == humanPlayer)
             {
                 Debug.Log("Player tried to draw from an empty deck — player loses by mill.");
+                gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowLoseScreen();
             }
             return;
@@ -2281,11 +2285,13 @@ public class GameManager : MonoBehaviour
             if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
+                gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
             else if (humanPlayer.Life <= 0)
             {
                 Debug.Log("Human player defeated — game lost.");
+                gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowLoseScreen();
             }
         }

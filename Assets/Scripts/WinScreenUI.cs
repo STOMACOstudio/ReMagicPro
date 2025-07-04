@@ -31,6 +31,9 @@ public class WinScreenUI : MonoBehaviour
         if (winIconImage != null && winSprite != null)
             winIconImage.sprite = winSprite;
 
+        if (GameManager.Instance != null)
+            GameManager.Instance.gameOver = true;
+
         SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
 
         StartCoroutine(FadeIn());
@@ -41,6 +44,9 @@ public class WinScreenUI : MonoBehaviour
         isWin = false;
         if (winIconImage != null && loseSprite != null)
             winIconImage.sprite = loseSprite;
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.defeat);
 
