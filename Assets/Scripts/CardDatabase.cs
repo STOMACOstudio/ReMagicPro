@@ -1310,7 +1310,7 @@ public static class CardDatabase
                     {
                         ActivatedAbility.PayToBuffSelf
                     },
-                    artwork = Resources.Load<Sprite>("Art/rabid_dog")
+                    artwork = Resources.Load<Sprite>("Art/spitfire_cobrox")
                     });
                 Add(new CardData // Dragon Token
                     {
