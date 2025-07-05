@@ -265,6 +265,8 @@ public class Card
                     lines.Add("Creature spells you cast cost 1 less.");
                 if (keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess))
                     lines.Add("Beast creature spells you cast cost 1 less.");
+                if (keywordAbilities.Contains(KeywordAbility.OpponentSpellsCostOneMore))
+                    lines.Add("Spells cast by your opponent cost 1 more.");
             }
 
             if (!string.IsNullOrEmpty(flavorText))
