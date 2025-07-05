@@ -2816,6 +2816,28 @@ public static class CardDatabase
                             }
                         }
                     });
+
+                Add(new CardData //Rot Renewal
+                    {
+                        cardName = "Rot Renewal",
+                        rarity = "Uncommon",
+                        manaCost = 3,
+                        color = new List<string> { "Black", "Green" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/communed_rot"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnUpkeep,
+                                description = "return a random land card from your graveyard to your hand.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    GameManager.Instance.ReturnRandomLandFromGraveyard(owner);
+                                }
+                            }
+                        }
+                    });
             }
 
     private static void Add(CardData data)

@@ -929,6 +929,33 @@ public class GameManager : MonoBehaviour
         return player == humanPlayer ? aiPlayer : humanPlayer;
     }
 
+    public void ReturnRandomLandFromGraveyard(Player player)
+    {
+        var lands = player.Graveyard.OfType<LandCard>().ToList();
+        if (lands.Count == 0)
+            return;
+
+        Card chosen = lands[Random.Range(0, lands.Count)];
+        player.Graveyard.Remove(chosen);
+        player.Hand.Add(chosen);
+
+        if (player == humanPlayer)
+        {
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(chosen.cardName);
+            visual.Setup(chosen, this, data);
+            activeCardVisuals.Add(visual);
+        }
+        else if (enemyHandText != null)
+        {
+            enemyHandText.text = "Hand: " + player.Hand.Count;
+        }
+
+        RefreshGraveyardVisuals(player);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)
