@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class DeckGenerator : MonoBehaviour
 {
     public List<CardData> GeneratedDeck { get; private set; } = new List<CardData>();
+    private System.Random rng = new System.Random();
 
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject cardVisualPrefab;
@@ -24,6 +25,7 @@ public class DeckGenerator : MonoBehaviour
     [ContextMenu("Generate Deck")]
     public void Generate()
         {
+            rng = new System.Random();
             string colorPref = PlayerPrefs.GetString("PlayerColor", "Red");
             string[] chosenColors = colorPref.Split(',').Select(c => c.Trim()).ToArray();
 
@@ -117,9 +119,9 @@ public class DeckGenerator : MonoBehaviour
                     card.rarity == rarity &&
                     card.cardType != CardType.Land &&
                     (
-                        card.color.All(c => chosenColorSet.Contains(c)) ||
-                        card.color.Contains("Artifact") ||
-                        card.cardType == CardType.Artifact
+                        (card.color.Contains(color) && card.color.All(c => chosenColorSet.Contains(c))) ||
+                        card.cardType == CardType.Artifact ||
+                        card.color.Contains("Artifact")
                     )
                 )
                 .ToList();
@@ -128,7 +130,6 @@ public class DeckGenerator : MonoBehaviour
                 .GroupBy(c => c.cardName)
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            System.Random rng = new System.Random();
             int attempts = 0;
             int maxAttempts = 500;
 
