@@ -1528,6 +1528,33 @@ public static class CardDatabase
                     flavorText = "They’ve learned which bones snap easiest. And they enjoy the sound.",
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
+                Add(new CardData //Veilbreaker Druid
+                    {
+                    cardName = "Veilbreaker Druid",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Druid" },
+                    artwork = Resources.Load<Sprite>("Art/veilbreaker_druid"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = ", you may destroy target enchantment.",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Enchantment,
+                            effect = (Player owner, Card target) =>
+                            {
+                                Player controller = GameManager.Instance.GetOwnerOfCard(target);
+                                GameManager.Instance.SendToGraveyard(target, controller);
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Flying donkey
                     {
                     cardName = "Flying Donkey",

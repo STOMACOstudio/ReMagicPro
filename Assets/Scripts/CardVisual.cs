@@ -566,6 +566,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (ability.requiredTargetType == SorceryCard.TargetType.Artifact && clicked is ArtifactCard)
                     isValid = true;
 
+                if (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && clicked is EnchantmentCard)
+                    isValid = true;
+
                 if (ability.requiredTargetType == SorceryCard.TargetType.Land && clicked is LandCard)
                     isValid = true;
 
@@ -636,6 +639,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
                 if (spell.requiredTargetType == SorceryCard.TargetType.Artifact && card is ArtifactCard)
+                {
+                    if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
+                        valid = true;
+                }
+
+                if (spell.requiredTargetType == SorceryCard.TargetType.Enchantment && card is EnchantmentCard)
                 {
                     if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
                         valid = true;
@@ -1577,6 +1586,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SorceryCard.PermanentTypeToDestroy.Land => "lands",
                     SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
                     SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
+                    SorceryCard.PermanentTypeToDestroy.Enchantment => "enchantments",
                     _ => "permanents"
                 };
                 rules += $"Destroy all {typeStr}.\n";
@@ -1596,6 +1606,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SorceryCard.TargetType.Creature => "creature",
                     SorceryCard.TargetType.Land => "land",
                     SorceryCard.TargetType.Artifact => "non-creature artifact",
+                    SorceryCard.TargetType.Enchantment => "enchantment",
                     _ => "permanent"
                 };
 

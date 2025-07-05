@@ -37,6 +37,7 @@ public class SorceryCard : Card
         Creature,
         Land,
         Artifact,
+        Enchantment,
         Player,
         CreatureOrPlayer
     }
@@ -47,6 +48,7 @@ public class SorceryCard : Card
             Land,
             Creature,
             Artifact,
+            Enchantment,
             // Add more as needed later (Artifacts, Enchantments, etc.)
         }
 
@@ -200,6 +202,9 @@ public class SorceryCard : Card
                                             return true;
                                     }
                                 }
+
+                                if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Enchantment && card is EnchantmentCard)
+                                    return true;
 
                                 return false;
                             })
@@ -356,7 +361,8 @@ public class SorceryCard : Card
                             (requiredTargetType == TargetType.Creature && target is CreatureCard targetCreature &&
                                 !(excludeArtifactCreatures && targetCreature.color.Contains("Artifact"))) ||
                             (requiredTargetType == TargetType.Land && target is LandCard) ||
-                            (requiredTargetType == TargetType.Artifact && target is ArtifactCard);
+                            (requiredTargetType == TargetType.Artifact && target is ArtifactCard) ||
+                            (requiredTargetType == TargetType.Enchantment && target is EnchantmentCard);
 
                         bool colorMatches = true;
 
