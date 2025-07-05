@@ -249,6 +249,13 @@ public class GameManager : MonoBehaviour
             else if (card is CreatureCard creature)
             {
                 var cost = GetManaCostBreakdown(card.manaCost, card.color);
+                int tax = GetOpponentSpellTax(player);
+                if (tax > 0)
+                {
+                    if (!cost.ContainsKey("Colorless"))
+                        cost["Colorless"] = 0;
+                    cost["Colorless"] += tax;
+                }
                 int reduction = GetCreatureCostReduction(player);
                 CardData data = CardDatabase.GetCardData(card.cardName);
                 if (data != null && data.subtypes.Contains("Beast"))
@@ -299,6 +306,13 @@ public class GameManager : MonoBehaviour
                 }
 
                 var cost = GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
+                int tax = GetOpponentSpellTax(player);
+                if (tax > 0)
+                {
+                    if (!cost.ContainsKey("Colorless"))
+                        cost["Colorless"] = 0;
+                    cost["Colorless"] += tax;
+                }
                 if (player.ColoredMana.CanPay(cost))
                 {
                     isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
@@ -324,6 +338,13 @@ public class GameManager : MonoBehaviour
             else if (card is ArtifactCard artifact)
             {
                 var cost = GetManaCostBreakdown(artifact.manaCost, artifact.color);
+                int tax = GetOpponentSpellTax(player);
+                if (tax > 0)
+                {
+                    if (!cost.ContainsKey("Colorless"))
+                        cost["Colorless"] = 0;
+                    cost["Colorless"] += tax;
+                }
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
@@ -360,6 +381,13 @@ public class GameManager : MonoBehaviour
             else if (card is EnchantmentCard enchantment)
             {
                 var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+                int tax = GetOpponentSpellTax(player);
+                if (tax > 0)
+                {
+                    if (!cost.ContainsKey("Colorless"))
+                        cost["Colorless"] = 0;
+                    cost["Colorless"] += tax;
+                }
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
@@ -1252,6 +1280,13 @@ public class GameManager : MonoBehaviour
             card.keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess));
     }
 
+    public int GetOpponentSpellTax(Player player)
+    {
+        Player opponent = GetOpponentOf(player);
+        return opponent.Battlefield.Count(card => card.keywordAbilities != null &&
+            card.keywordAbilities.Contains(KeywordAbility.OpponentSpellsCostOneMore));
+    }
+
     public void TryGainLife(Player player, int amount)
     {
         if (amount <= 0 || IsLifeGainPrevented())
@@ -1503,6 +1538,13 @@ public class GameManager : MonoBehaviour
 
                 // Pay mana before resolving
                 var cost = GetManaCostBreakdown(targetingSorcery.manaCost, targetingSorcery.color);
+                int tax = GetOpponentSpellTax(targetingPlayer);
+                if (tax > 0)
+                {
+                    if (!cost.ContainsKey("Colorless"))
+                        cost["Colorless"] = 0;
+                    cost["Colorless"] += tax;
+                }
                 if (!targetingPlayer.ColoredMana.CanPay(cost))
                 {
                     Debug.LogWarning("Not enough mana to cast targeted sorcery.");

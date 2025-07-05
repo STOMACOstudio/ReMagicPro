@@ -353,6 +353,13 @@ public class TurnSystem : MonoBehaviour
                                 if (card is CreatureCard creature)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(creature.manaCost, creature.color);
+                                    int tax = GameManager.Instance.GetOpponentSpellTax(ai);
+                                    if (tax > 0)
+                                    {
+                                        if (!cost.ContainsKey("Colorless"))
+                                            cost["Colorless"] = 0;
+                                        cost["Colorless"] += tax;
+                                    }
                                     int reduction = GameManager.Instance.GetCreatureCostReduction(ai);
                                     CardData data = CardDatabase.GetCardData(creature.cardName);
                                     if (data != null && data.subtypes.Contains("Beast"))
@@ -419,6 +426,13 @@ public class TurnSystem : MonoBehaviour
                                 else if (card is SorceryCard sorcery)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
+                                    int tax = GameManager.Instance.GetOpponentSpellTax(ai);
+                                    if (tax > 0)
+                                    {
+                                        if (!cost.ContainsKey("Colorless"))
+                                            cost["Colorless"] = 0;
+                                        cost["Colorless"] += tax;
+                                    }
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
@@ -560,6 +574,13 @@ public class TurnSystem : MonoBehaviour
                                 else if (card is ArtifactCard artifact)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(artifact.manaCost, artifact.color);
+                                    int tax = GameManager.Instance.GetOpponentSpellTax(ai);
+                                    if (tax > 0)
+                                    {
+                                        if (!cost.ContainsKey("Colorless"))
+                                            cost["Colorless"] = 0;
+                                        cost["Colorless"] += tax;
+                                    }
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
@@ -588,6 +609,13 @@ public class TurnSystem : MonoBehaviour
                                 else if (card is EnchantmentCard enchantment)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+                                    int tax = GameManager.Instance.GetOpponentSpellTax(ai);
+                                    if (tax > 0)
+                                    {
+                                        if (!cost.ContainsKey("Colorless"))
+                                            cost["Colorless"] = 0;
+                                        cost["Colorless"] += tax;
+                                    }
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         ai.ColoredMana.Pay(cost);

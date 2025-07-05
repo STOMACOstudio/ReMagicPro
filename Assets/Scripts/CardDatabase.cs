@@ -2770,6 +2770,20 @@ public static class CardDatabase
                             }
                         }
                     });
+
+                Add(new CardData //Heavy Taxation
+                    {
+                        cardName = "Heavy Taxation",
+                        rarity = "Rare",
+                        manaCost = 4,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/heavy_taxation"),
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.OpponentSpellsCostOneMore
+                        }
+                    });
             }
 
     private static void Add(CardData data)
