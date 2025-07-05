@@ -1544,7 +1544,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = ", you may destroy target enchantment.",
+                            description = " you may destroy target enchantment.",
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Enchantment,
                             effect = (Player owner, Card target) =>
@@ -2846,12 +2846,12 @@ public static class CardDatabase
 
                 Add(new CardData //Rot Renewal
                     {
-                        cardName = "Rot Renewal",
+                        cardName = "Shrine of Rot",
                         rarity = "Uncommon",
                         manaCost = 3,
                         color = new List<string> { "Black", "Green" },
                         cardType = CardType.Enchantment,
-                        artwork = Resources.Load<Sprite>("Art/communed_rot"),
+                        artwork = Resources.Load<Sprite>("Art/shrine_of_rot"),
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
