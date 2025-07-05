@@ -1364,6 +1364,7 @@ public class GameManager : MonoBehaviour
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                    (sorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && target is CreatureCard);
 
                 bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
@@ -1517,7 +1518,8 @@ public class GameManager : MonoBehaviour
                     (targetingAbility.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard creature &&
                         !(targetingAbility.excludeArtifactCreatures && creature.color.Contains("Artifact"))) ||
                     (targetingAbility.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
-                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard);
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                    (targetingAbility.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard);
 
                 bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
 
@@ -1550,6 +1552,7 @@ public class GameManager : MonoBehaviour
                         !(targetingSorcery.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Land && chosen is LandCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Artifact && chosen is ArtifactCard) ||
+                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && chosen is EnchantmentCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && chosen is CreatureCard);
 
                 // Validate color
@@ -1802,6 +1805,7 @@ public class GameManager : MonoBehaviour
                 bool correctType =
                     (ability.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
                     (ability.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                    (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard) ||
                     (ability.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard);
 
                 bool isOnBattlefield = GetOwnerOfCard(target)?.Battlefield.Contains(target) == true;
@@ -1837,6 +1841,7 @@ public class GameManager : MonoBehaviour
                     bool correctType =
                         (ability.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
                         (ability.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                        (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard) ||
                         (ability.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard);
 
                     if (correctType)

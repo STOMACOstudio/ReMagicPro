@@ -394,6 +394,7 @@ public class TurnSystem : MonoBehaviour
                                                             (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard creatureT &&
                                                                 !(ability.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
                                                             (ability.requiredTargetType == SorceryCard.TargetType.Artifact && c is ArtifactCard) ||
+                                                            (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && c is EnchantmentCard) ||
                                                             (ability.requiredTargetType == SorceryCard.TargetType.Land && c is LandCard))
                                                         .OrderByDescending(c => CardDatabase.GetCardData(c.cardName)?.manaCost ?? 0)
                                                         .FirstOrDefault();
@@ -477,7 +478,28 @@ public class TurnSystem : MonoBehaviour
                                             {
                                                 sorcery.chosenTarget = target;
                                                 sorcery.chosenPlayerTarget = null;
-                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost artifact).");
+                                            Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost artifact).");
+                                            }
+                                        }
+                                        else if (sorcery.requiredTargetType == SorceryCard.TargetType.Enchantment &&
+                                                sorcery.destroyTargetIfTypeMatches)
+                                        {
+                                            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+
+                                            var target = opponent.Battlefield
+                                                .OfType<EnchantmentCard>()
+                                                .OrderByDescending(c =>
+                                                {
+                                                    var data = CardDatabase.GetCardData(c.cardName);
+                                                    return data != null ? data.manaCost : 0;
+                                                })
+                                                .FirstOrDefault();
+
+                                            if (target != null)
+                                            {
+                                                sorcery.chosenTarget = target;
+                                                sorcery.chosenPlayerTarget = null;
+                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost enchantment).");
                                             }
                                         }
                                         else if (sorcery.requiredTargetType == SorceryCard.TargetType.Land &&
