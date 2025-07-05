@@ -149,6 +149,10 @@ public class Player
             {
                 GameManager.Instance.NotifyArtifactEntered(card, this);
             }
+            if (card is EnchantmentCard)
+            {
+                GameManager.Instance.NotifyEnchantmentEntered(card, this);
+            }
         }
 
     public void SendToGraveyard(Card card)

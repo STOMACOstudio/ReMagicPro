@@ -585,6 +585,34 @@ public class TurnSystem : MonoBehaviour
                                         break;
                                     }
                                 }
+                                else if (card is EnchantmentCard enchantment)
+                                {
+                                    var cost = GameManager.Instance.GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+                                    if (EnsureManaForCost(ai, cost))
+                                    {
+                                        ai.ColoredMana.Pay(cost);
+                                        ai.Hand.Remove(card);
+                                        ai.Battlefield.Add(card);
+                                        card.OnEnterPlay(ai);
+                                        GameManager.Instance.NotifyEnchantmentEntered(card, ai);
+
+                                        if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        {
+                                            card.isTapped = true;
+                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                        }
+
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        visual.Setup(card, GameManager.Instance);
+                                        visual.isInBattlefield = true;
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                        Debug.Log($"AI played enchantment: {card.cardName}");
+                                        playedCard = true;
+                                        break;
+                                    }
+                                }
                             }
                         }
 

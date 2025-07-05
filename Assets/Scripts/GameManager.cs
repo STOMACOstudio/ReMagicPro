@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public Transform playerGraveyardArea;
     public Transform playerLandArea;
     public Transform playerArtifactArea;
+    public Transform playerEnchantmentArea;
 
     public Transform stackZone; //shared zone
 
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
     public Transform aiGraveyardArea;
     public Transform aiLandArea;
     public Transform aiArtifactArea;
+    public Transform aiEnchantmentArea;
 
     public GameObject cardPrefab;
     public GameObject manaVFXPrefab;
@@ -352,6 +354,39 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     Debug.Log("Not enough colored mana to play this artifact.");
+                }
+            }
+            else if (card is EnchantmentCard enchantment)
+            {
+                var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
+                if (player.ColoredMana.CanPay(cost))
+                {
+                    player.ColoredMana.Pay(cost);
+                    card.owner = player;
+                    if (player == humanPlayer) UpdateUI();
+
+                    player.Hand.Remove(card);
+                    player.Battlefield.Add(card);
+                    card.OnEnterPlay(player);
+                    NotifyEnchantmentEntered(card, player);
+
+                    if (enchantment.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                    {
+                        enchantment.isTapped = true;
+                        Debug.Log($"{enchantment.cardName} enters tapped (due to static effect).");
+                    }
+
+                    Transform visualParent = player == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+
+                    visual.transform.SetParent(visualParent, false);
+
+                    visual.isInBattlefield = true;
+                    visual.UpdateVisual();
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+                }
+                else
+                {
+                    Debug.Log("Not enough colored mana to play this enchantment.");
                 }
             }
             else
@@ -851,6 +886,10 @@ public class GameManager : MonoBehaviour
             (tokenCard is CreatureCard cc && cc.color.Contains("Artifact")))
         {
             NotifyArtifactEntered(tokenCard, owner);
+        }
+        if (tokenCard is EnchantmentCard)
+        {
+            NotifyEnchantmentEntered(tokenCard, owner);
         }
     }
     public Player GetOpponentOf(Player player)
@@ -2153,6 +2192,33 @@ public class GameManager : MonoBehaviour
                         if (ability.timing == TriggerTiming.OnArtifactEnter && ability.effect != null)
                         {
                             if (card == artifact)
+                                continue;
+
+                            int oldLife = player.Life;
+                            ability.effect.Invoke(player, card);
+                            int gained = player.Life - oldLife;
+                            if (gained > 0)
+                            {
+                                ShowFloatingHeal(gained,
+                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void NotifyEnchantmentEntered(Card enchantment, Player controller)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnEnchantmentEnter && ability.effect != null)
+                        {
+                            if (card == enchantment)
                                 continue;
 
                             int oldLife = player.Life;

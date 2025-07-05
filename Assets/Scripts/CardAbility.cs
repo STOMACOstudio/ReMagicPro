@@ -4,6 +4,7 @@ public enum TriggerTiming
     OnDeath,
     OnUpkeep,
     OnArtifactEnter,
+    OnEnchantmentEnter,
     OnLandEnter,
     OnLandLeave,
     OnLifeGain,

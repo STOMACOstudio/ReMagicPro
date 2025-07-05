@@ -233,6 +233,8 @@ public class Card
                     lines.Add("At the beginning of your upkeep, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnArtifactEnter)
                     lines.Add("Whenever an artifact enters the battlefield, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnEnchantmentEnter)
+                    lines.Add("Whenever an enchantment enters the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLandEnter)
                     lines.Add("Whenever a land enters the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLandLeave)
