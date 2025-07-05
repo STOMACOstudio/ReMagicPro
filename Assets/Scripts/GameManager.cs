@@ -535,7 +535,10 @@ public class GameManager : MonoBehaviour
             owner.Hand.Remove(card);
 
             if (discardedFromHand)
+            {
                 NotifyOpponentDiscard(owner);
+                NotifyPlayerDiscard(owner);
+            }
 
             Debug.Log($"{card.cardName} is being sent to the graveyard.");
 
@@ -2353,6 +2356,8 @@ public class GameManager : MonoBehaviour
 
         public int lastCardsDrawnAmount = 0;
 
+        public Player lastDiscardingPlayer = null;
+
         public void NotifyCardDrawn(Player player, int amount)
         {
             lastCardsDrawnAmount = amount;
@@ -2407,6 +2412,25 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        public void NotifyPlayerDiscard(Player discardingPlayer)
+        {
+            lastDiscardingPlayer = discardingPlayer;
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnPlayerDiscard && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, card);
+                        }
+                    }
+                }
+            }
+            lastDiscardingPlayer = null;
         }
 
         public void NotifyCreatureDiesOrDiscarded(Card creature, Player owner)

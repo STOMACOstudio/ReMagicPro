@@ -2784,6 +2784,38 @@ public static class CardDatabase
                             KeywordAbility.OpponentSpellsCostOneMore
                         }
                     });
+
+                Add(new CardData //Headeache
+                    {
+                        cardName = "Headeache",
+                        rarity = "Uncommon",
+                        manaCost = 2,
+                        color = new List<string> { "Red" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/headeache"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnPlayerDiscard,
+                                description = "that player takes 1 damage.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Player target = GameManager.Instance.lastDiscardingPlayer;
+                                    if (target != null)
+                                    {
+                                        target.Life -= 1;
+                                        GameObject ui = target == GameManager.Instance.humanPlayer ?
+                                            GameManager.Instance.playerLifeContainer :
+                                            GameManager.Instance.enemyLifeContainer;
+                                        GameManager.Instance.ShowFloatingDamage(1, ui);
+                                        GameManager.Instance.UpdateUI();
+                                        GameManager.Instance.CheckForGameEnd();
+                                    }
+                                }
+                            }
+                        }
+                    });
             }
 
     private static void Add(CardData data)
