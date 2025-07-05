@@ -2725,7 +2725,52 @@ public static class CardDatabase
                             }
                         }
                     });
-    }
+
+                Add(new CardData //Pyramid of Pain
+                    {
+                        cardName = "Pyramid of Pain",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/pyramid_of_pain"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnOpponentDraw,
+                                description = "that player loses 1 life.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Player opp = GameManager.Instance.GetOpponentOf(owner);
+                                    opp.Life -= 1;
+                                    GameObject ui = opp == GameManager.Instance.humanPlayer ?
+                                        GameManager.Instance.playerLifeContainer :
+                                        GameManager.Instance.enemyLifeContainer;
+                                    GameManager.Instance.ShowFloatingDamage(1, ui);
+                                    GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckForGameEnd();
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnOpponentDiscard,
+                                description = "that player loses 1 life.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Player opp = GameManager.Instance.GetOpponentOf(owner);
+                                    opp.Life -= 1;
+                                    GameObject ui = opp == GameManager.Instance.humanPlayer ?
+                                        GameManager.Instance.playerLifeContainer :
+                                        GameManager.Instance.enemyLifeContainer;
+                                    GameManager.Instance.ShowFloatingDamage(1, ui);
+                                    GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckForGameEnd();
+                                }
+                            }
+                        }
+                    });
+            }
 
     private static void Add(CardData data)
         {

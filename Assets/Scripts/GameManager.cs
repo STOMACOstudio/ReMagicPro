@@ -195,6 +195,7 @@ public class GameManager : MonoBehaviour
         }
 
         NotifyCardDrawn(player, 1);
+        NotifyOpponentDraw(player);
         if (player == humanPlayer && playSfx)
         {
             SoundManager.Instance.PlaySound(SoundManager.Instance.drawCard);
@@ -2324,6 +2325,26 @@ public class GameManager : MonoBehaviour
                 }
             }
             lastCardsDrawnAmount = 0;
+        }
+
+        public void NotifyOpponentDraw(Player drawingPlayer)
+        {
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                if (player == drawingPlayer)
+                    continue;
+
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnOpponentDraw && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, card);
+                        }
+                    }
+                }
+            }
         }
 
         public void NotifyOpponentDiscard(Player discardingPlayer)
