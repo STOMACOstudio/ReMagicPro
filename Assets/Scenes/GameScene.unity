@@ -4039,11 +4039,13 @@ MonoBehaviour:
   playerGraveyardArea: {fileID: 1564124844}
   playerLandArea: {fileID: 694764205}
   playerArtifactArea: {fileID: 888174895}
+  playerEnchantmentArea: {fileID: 2062240158}
   stackZone: {fileID: 342265607}
   aiBattlefieldArea: {fileID: 612636613}
   aiGraveyardArea: {fileID: 1586552183}
   aiLandArea: {fileID: 1177050440}
   aiArtifactArea: {fileID: 486761870}
+  aiEnchantmentArea: {fileID: 898821971}
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
   manaVFXPrefab: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
   bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
