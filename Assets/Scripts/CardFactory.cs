@@ -89,6 +89,24 @@ public static class CardFactory
                 artifact.buffToughness = data.toughnessBuff;
                 newCard = artifact;
                 break;
+            case CardType.Enchantment:
+                EnchantmentCard enchantment = new EnchantmentCard();
+                enchantment.entersTapped = data.entersTapped;
+                enchantment.plagueAmount = data.plagueAmount;
+                enchantment.manaToGain = data.manaToGain;
+                enchantment.lifeToGain = data.lifeToGain;
+                enchantment.cardsToDraw = data.cardsToDraw;
+                enchantment.tokenToCreate = data.tokenToCreate;
+                enchantment.manaToPayToActivate = data.manaToPayToActivate;
+                enchantment.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
+                enchantment.keywordAbilities = data.keywordAbilities != null
+                    ? new List<KeywordAbility>(data.keywordAbilities)
+                    : new List<KeywordAbility>();
+                enchantment.damageToCreature = data.damageToCreature;
+                enchantment.buffPower = data.powerBuff;
+                enchantment.buffToughness = data.toughnessBuff;
+                newCard = enchantment;
+                break;
 
             default:
                 Debug.LogWarning("Unsupported card type: " + data.cardType);

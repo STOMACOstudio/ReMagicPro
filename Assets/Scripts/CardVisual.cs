@@ -174,6 +174,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 return a.manaCost;
             }
+            if (linkedCard is EnchantmentCard e)
+            {
+                return Mathf.Max(e.manaCost - linkedCard.color.Count, 0);
+            }
             return 0;
         }
 
@@ -362,6 +366,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = genericCost.ToString();
                 if (genericCostBG != null) genericCostBG.SetActive(true);
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is EnchantmentCard enchantment)
+            {
+                bool showGeneric = genericCost > 0;
+                costText.text = showGeneric ? genericCost.ToString() : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
                 keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
