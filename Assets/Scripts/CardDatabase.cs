@@ -2915,17 +2915,17 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnCreatureDiesOrDiscarded,
-                                description = "its owner creates a 1/1 white Spirit token with flying.",
+                                description = "whenever a nontoken creature dies, create a 1/1 white Spirit token with flying.",
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     Card dead = GameManager.Instance.lastDeadCreature;
-                                    Player deadOwner = GameManager.Instance.lastDeadCreatureOwner;
-                                    if (dead != null && !dead.isToken && deadOwner != null)
+                                    bool died = GameManager.Instance.lastDeadCreatureDiedFromBattlefield;
+                                    if (dead != null && !dead.isToken && died)
                                     {
                                         Card spirit = CardFactory.Create("Spirit");
                                         if (spirit != null)
                                         {
-                                            GameManager.Instance.SummonToken(spirit, deadOwner);
+                                            GameManager.Instance.SummonToken(spirit, owner);
                                         }
                                     }
                                 }
