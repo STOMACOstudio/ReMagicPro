@@ -2889,12 +2889,13 @@ public static class CardDatabase
                         color = new List<string> { "White", "Black" },
                         cardType = CardType.Enchantment,
                         artwork = Resources.Load<Sprite>("Art/afterlife_jinx_lantern"),
+                        rulesText = "Whenever a non-token creature dies, create a Spirit.",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnCreatureDies,
-                                description = "create a Spirit.",
+                                description = string.Empty,
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     Card dead = GameManager.Instance.lastDeadCreature;
