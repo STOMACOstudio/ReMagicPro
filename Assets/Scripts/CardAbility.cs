@@ -10,6 +10,7 @@ public enum TriggerTiming
     OnLifeGain,
     OnCardDraw,
     OnOpponentDraw,
+    OnCreatureDies,
     OnCreatureDiesOrDiscarded,
     OnPlayerDiscard,
     OnOpponentDiscard,

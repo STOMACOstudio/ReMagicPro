@@ -245,6 +245,8 @@ public class Card
                     lines.Add("Whenever you draw a card, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnOpponentDraw)
                     lines.Add("Whenever an opponent draws a card, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnCreatureDies)
+                    lines.Add("Whenever a creature dies, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded)
                     lines.Add("Whenever a creature dies or is discarded, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnPlayerDiscard)

@@ -413,6 +413,21 @@ public static class CardDatabase
                         keywordAbilities = new List<KeywordAbility> { },
                         artwork = Resources.Load<Sprite>("Art/human_soldier_token")
                     });
+
+                Add(new CardData // Spirit Token
+                    {
+                        cardName = "Spirit",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Spirit" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
+                        artwork = Resources.Load<Sprite>("Art/spirit_token")
+                    });
             
             //BLUE
                 Add(new CardData //Skyward whale
@@ -2861,6 +2876,38 @@ public static class CardDatabase
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     GameManager.Instance.ReturnRandomLandFromGraveyard(owner);
+                                }
+                            }
+                        }
+                    });
+
+                Add(new CardData //Afterlife Jinx Lantern
+                    {
+                        cardName = "Afterlife Jinx Lantern",
+                        rarity = "Rare",
+                        manaCost = 4,
+                        color = new List<string> { "White", "Black" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/afterlife_jinx_lantern"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureDies,
+                                description = "create a Spirit.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Card dead = GameManager.Instance.lastDeadCreature;
+                                    if (dead != null && dead.isToken)
+                                        return;
+
+                                    Card spirit = CardFactory.Create("Spirit");
+                                    if (spirit == null)
+                                    {
+                                        Debug.LogError("Failed to spawn Spirit Token — check card database!");
+                                        return;
+                                    }
+                                    GameManager.Instance.SummonToken(spirit, owner);
                                 }
                             }
                         }

@@ -546,6 +546,10 @@ public class GameManager : MonoBehaviour
             {
                 NotifyCreatureDiesOrDiscarded(card, owner);
             }
+            if (card is CreatureCard && diedFromBattlefield)
+            {
+                NotifyCreatureDies(card, owner);
+            }
 
             if (diedFromBattlefield)
             {
@@ -2390,6 +2394,8 @@ public class GameManager : MonoBehaviour
 
         public Player lastDiscardingPlayer = null;
 
+        public Card lastDeadCreature = null;
+
         public void NotifyCardDrawn(Player player, int amount)
         {
             lastCardsDrawnAmount = amount;
@@ -2483,6 +2489,30 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        public void NotifyCreatureDies(Card creature, Player owner)
+        {
+            if (!(creature is CreatureCard))
+                return;
+
+            lastDeadCreature = creature;
+
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnCreatureDies && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, card);
+                        }
+                    }
+                }
+            }
+
+            lastDeadCreature = null;
         }
 
         public void NotifyCombatDamageToPlayer(CreatureCard attacker, Player target)
