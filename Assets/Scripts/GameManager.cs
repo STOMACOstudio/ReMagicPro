@@ -2390,6 +2390,9 @@ public class GameManager : MonoBehaviour
 
         public Player lastDiscardingPlayer = null;
 
+        public Card lastDeadCreature = null;
+        public Player lastDeadCreatureOwner = null;
+
         public void NotifyCardDrawn(Player player, int amount)
         {
             lastCardsDrawnAmount = amount;
@@ -2470,6 +2473,9 @@ public class GameManager : MonoBehaviour
             if (!(creature is CreatureCard))
                 return;
 
+            lastDeadCreature = creature;
+            lastDeadCreatureOwner = owner;
+
             foreach (var player in new[] { humanPlayer, aiPlayer })
             {
                 foreach (var card in player.Battlefield.ToList())
@@ -2483,6 +2489,9 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+
+            lastDeadCreature = null;
+            lastDeadCreatureOwner = null;
         }
 
         public void NotifyCombatDamageToPlayer(CreatureCard attacker, Player target)

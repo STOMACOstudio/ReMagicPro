@@ -1080,7 +1080,21 @@ public static class CardDatabase
                         toughness = 5,
                         subtypes = new List<string> { "Demon" },
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
-                        artwork = Resources.Load<Sprite>("Art/demon_token")
+                    artwork = Resources.Load<Sprite>("Art/demon_token")
+                    });
+                Add(new CardData // Spirit Token
+                    {
+                        cardName = "Spirit",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Spirit" },
+                        keywordAbilities = new List<KeywordAbility> { KeywordAbility.Flying },
+                        artwork = Resources.Load<Sprite>("Art/tide_spirit")
                     });
             //RED
                 Add (new CardData { //Firedancer
@@ -2861,6 +2875,59 @@ public static class CardDatabase
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     GameManager.Instance.ReturnRandomLandFromGraveyard(owner);
+                                }
+                            }
+                        }
+                    });
+                Add(new CardData //Afterlife Jinx Lantern
+                    {
+                        cardName = "Afterlife Jinx Lantern",
+                        rarity = "Rare",
+                        manaCost = 4,
+                        color = new List<string> { "White", "Black" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/astral_plane"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "each player sacrifices a creature.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    var ai = GameManager.Instance.aiPlayer;
+                                    var aiChoices = ai.Battlefield.Where(c => c is CreatureCard).ToList();
+                                    if (aiChoices.Count > 0)
+                                    {
+                                        Card target = aiChoices[Random.Range(0, aiChoices.Count)];
+                                        GameManager.Instance.SendToGraveyard(target, ai);
+                                    }
+
+                                    var human = GameManager.Instance.humanPlayer;
+                                    var humanChoices = human.Battlefield.Where(c => c is CreatureCard).ToList();
+                                    if (humanChoices.Count > 0)
+                                    {
+                                        Card target = humanChoices[Random.Range(0, humanChoices.Count)];
+                                        GameManager.Instance.SendToGraveyard(target, human);
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureDiesOrDiscarded,
+                                description = "its owner creates a 1/1 white Spirit token with flying.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Card dead = GameManager.Instance.lastDeadCreature;
+                                    Player deadOwner = GameManager.Instance.lastDeadCreatureOwner;
+                                    if (dead != null && !dead.isToken && deadOwner != null)
+                                    {
+                                        Card spirit = CardFactory.Create("Spirit");
+                                        if (spirit != null)
+                                        {
+                                            GameManager.Instance.SummonToken(spirit, deadOwner);
+                                        }
+                                    }
                                 }
                             }
                         }
