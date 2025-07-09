@@ -645,11 +645,13 @@ public class GameManager : MonoBehaviour
 
         foreach (var attacker in currentAttackers)
         {
+            // Clamp negative power to zero when dealing damage
+            int attackerDamage = Mathf.Max(attacker.power, 0);
             var blockers = attacker.blockedByThisBlocker;
 
             if (blockers != null && blockers.Count > 0)
             {
-                int remainingDamage = attacker.power;
+                int remainingDamage = attackerDamage;
                 int totalDamageFromBlockers = 0;
 
                 foreach (var blocker in blockers)
@@ -667,7 +669,7 @@ public class GameManager : MonoBehaviour
                         remainingDamage -= damageToBlocker;
                     }
 
-                    int damageFromBlocker = attackerProtected ? 0 : blocker.power;
+                    int damageFromBlocker = attackerProtected ? 0 : Mathf.Max(blocker.power, 0);
                     if (!attackerProtected)
                     {
                         totalDamageFromBlockers += damageFromBlocker;
@@ -726,29 +728,29 @@ public class GameManager : MonoBehaviour
                 // Attacker goes unblocked
                 if (humanPlayer.Battlefield.Contains(attacker))
                 {
-                    aiPlayer.Life -= attacker.power;
-                    aiDamage += attacker.power;
+                    aiPlayer.Life -= attackerDamage;
+                    aiDamage += attackerDamage;
                     NotifyCombatDamageToPlayer(attacker, aiPlayer);
 
                     // Lifelink: gain life equal to damage dealt to AI
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
                         Player owner = humanPlayer.Battlefield.Contains(attacker) ? humanPlayer : aiPlayer;
-                        GameManager.Instance.TryGainLife(owner, attacker.power);
-                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to {(owner == humanPlayer ? "Human" : "AI")}.");
+                        GameManager.Instance.TryGainLife(owner, attackerDamage);
+                        Debug.Log($"{attacker.cardName} lifelinks {attackerDamage} life to {(owner == humanPlayer ? "Human" : "AI")}.");
                     }
                 }
                 else
                 {
-                    humanPlayer.Life -= attacker.power;
-                    playerDamage += attacker.power;
+                    humanPlayer.Life -= attackerDamage;
+                    playerDamage += attackerDamage;
                     NotifyCombatDamageToPlayer(attacker, humanPlayer);
 
                     // Lifelink: gain life equal to damage dealt to Human
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                     {
-                        GameManager.Instance.TryGainLife(aiPlayer, attacker.power);
-                        Debug.Log($"{attacker.cardName} lifelinks {attacker.power} life to AI.");
+                        GameManager.Instance.TryGainLife(aiPlayer, attackerDamage);
+                        Debug.Log($"{attacker.cardName} lifelinks {attackerDamage} life to AI.");
                     }
                 }
             }
@@ -2036,11 +2038,14 @@ public class GameManager : MonoBehaviour
                 int playerDamage = 0;
                 int aiDamage = 0;
 
+                // Clamp negative power to zero when dealing damage
+                int attackerDamage = Mathf.Max(attacker.power, 0);
+
                 var blockers = attacker.blockedByThisBlocker;
 
                 if (blockers != null && blockers.Count > 0)
                 {
-                    int remainingDamage = attacker.power;
+                    int remainingDamage = attackerDamage;
                     int totalDamageFromBlockers = 0;
 
                     foreach (var blocker in blockers)
@@ -2058,7 +2063,7 @@ public class GameManager : MonoBehaviour
                             remainingDamage -= damageToBlocker;
                         }
 
-                        int damageFromBlocker = attackerProtected ? 0 : blocker.power;
+                        int damageFromBlocker = attackerProtected ? 0 : Mathf.Max(blocker.power, 0);
                         if (!attackerProtected)
                         {
                             totalDamageFromBlockers += damageFromBlocker;
@@ -2109,25 +2114,25 @@ public class GameManager : MonoBehaviour
                 {
                     if (humanPlayer.Battlefield.Contains(attacker))
                     {
-                        aiPlayer.Life -= attacker.power;
-                        aiDamage += attacker.power;
+                        aiPlayer.Life -= attackerDamage;
+                        aiDamage += attackerDamage;
                         NotifyCombatDamageToPlayer(attacker, aiPlayer);
 
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                         {
                             Player owner = humanPlayer.Battlefield.Contains(attacker) ? humanPlayer : aiPlayer;
-                            TryGainLife(owner, attacker.power);
+                            TryGainLife(owner, attackerDamage);
                         }
                     }
                     else
                     {
-                        humanPlayer.Life -= attacker.power;
-                        playerDamage += attacker.power;
+                        humanPlayer.Life -= attackerDamage;
+                        playerDamage += attackerDamage;
                         NotifyCombatDamageToPlayer(attacker, humanPlayer);
 
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
                         {
-                            TryGainLife(aiPlayer, attacker.power);
+                            TryGainLife(aiPlayer, attackerDamage);
                         }
                     }
                 }
