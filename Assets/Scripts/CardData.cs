@@ -24,6 +24,9 @@ public class CardData
     public bool isToken = false;
     public bool destroyTargetIfTypeMatches = false;
     public bool destroyAllWithSameName = false;
+
+    // Indicates that this card has an additional variable cost "X".
+    public bool hasXCost = false;
     
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;   
@@ -69,6 +72,8 @@ public class CardData
     public int powerBuff = 0;
     public int toughnessBuff = 0;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
+    public bool addXPlusOneCounters = false;
+    public bool addXMinusOneCounters = false;
 
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;
 
@@ -79,5 +84,4 @@ public class CardData
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
 
     // Future: active effects like "on enter" or "on death"
-    public List<CardAbility> abilities = new List<CardAbility>();
-}
+    public List<CardAbility> abilities = new List<CardAbility>();}

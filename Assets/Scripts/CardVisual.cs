@@ -181,6 +181,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return 0;
         }
 
+    private string GetCostDisplay(int genericCost)
+        {
+            if (linkedCard.hasXCost)
+            {
+                string basePart = genericCost > 0 ? genericCost.ToString() : "";
+                string xPart = (linkedCard.xValue > 0 && (isInBattlefield || isInStack))
+                    ? linkedCard.xValue.ToString()
+                    : "X";
+                return string.IsNullOrEmpty(basePart) ? xPart : basePart + "+" + xPart;
+            }
+            return genericCost > 0 ? genericCost.ToString() : "";
+        }
+
     private string ColorStat(int current, int baseValue)
         {
             if (current > baseValue)
@@ -319,9 +332,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 bool showGeneric = genericCost > 0 ||
                                    linkedCard.PrimaryColor == "Artifact" ||
-                                   linkedCard.PrimaryColor == "None";
+                                   linkedCard.PrimaryColor == "None" ||
+                                   linkedCard.hasXCost;
 
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
             }
 
@@ -329,9 +343,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 bool showGeneric = genericCost > 0 ||
                                    linkedCard.PrimaryColor == "Artifact" ||
-                                   linkedCard.PrimaryColor == "None";
+                                   linkedCard.PrimaryColor == "None" ||
+                                   linkedCard.hasXCost;
 
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = FormatStats(creature);
@@ -353,8 +368,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             else if (linkedCard is SorceryCard sorcery)
             {
-                bool showGeneric = genericCost > 0;
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 sorceryEffect(sorcery);
@@ -364,7 +379,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                costText.text = genericCost.ToString();
+                costText.text = GetCostDisplay(genericCost);
                 if (genericCostBG != null) genericCostBG.SetActive(true);
                 keywordText.text = linkedCard.GetCardText();
 
@@ -373,8 +388,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is EnchantmentCard enchantment)
             {
-                bool showGeneric = genericCost > 0;
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
                 keywordText.text = linkedCard.GetCardText();
 
@@ -479,9 +494,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 bool showGeneric = genericCost > 0 ||
                                    linkedCard.PrimaryColor == "Artifact" ||
-                                   linkedCard.PrimaryColor == "None";
+                                   linkedCard.PrimaryColor == "None" ||
+                                   linkedCard.hasXCost;
 
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
             }
 
@@ -502,8 +518,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                bool showGeneric = genericCost > 0;
-                costText.text = showGeneric ? genericCost.ToString() : "";
+                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = "";
@@ -516,10 +532,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                costText.text = genericCost.ToString();
+                costText.text = GetCostDisplay(genericCost);
                 if (genericCostBG != null) genericCostBG.SetActive(true);
                 statsText.text = "";
                 keywordText.text = artifact.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
+            else if (linkedCard is EnchantmentCard enchantment)
+            {
+                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
+                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
+                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
+                keywordText.text = linkedCard.GetCardText();
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);

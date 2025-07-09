@@ -265,6 +265,12 @@ public class GameManager : MonoBehaviour
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
+                    if (card.hasXCost)
+                    {
+                        card.xValue = player.ColoredMana.Total();
+                        if (card.xValue > 0)
+                            player.ColoredMana.SpendGeneric(card.xValue);
+                    }
                     card.owner = player;
                     if (player == humanPlayer) UpdateUI();
                     player.Hand.Remove(card);
@@ -317,6 +323,12 @@ public class GameManager : MonoBehaviour
                 {
                     isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
                     player.ColoredMana.Pay(cost);
+                    if (card.hasXCost)
+                    {
+                        card.xValue = player.ColoredMana.Total();
+                        if (card.xValue > 0)
+                            player.ColoredMana.SpendGeneric(card.xValue);
+                    }
                     card.owner = player;
                     player.Hand.Remove(card);
                     UpdateUI();
@@ -348,6 +360,12 @@ public class GameManager : MonoBehaviour
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
+                    if (card.hasXCost)
+                    {
+                        card.xValue = player.ColoredMana.Total();
+                        if (card.xValue > 0)
+                            player.ColoredMana.SpendGeneric(card.xValue);
+                    }
                     card.owner = player;
                     if (player == humanPlayer) UpdateUI();
 
@@ -391,6 +409,12 @@ public class GameManager : MonoBehaviour
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
+                    if (card.hasXCost)
+                    {
+                        card.xValue = player.ColoredMana.Total();
+                        if (card.xValue > 0)
+                            player.ColoredMana.SpendGeneric(card.xValue);
+                    }
                     card.owner = player;
                     if (player == humanPlayer) UpdateUI();
 
@@ -1590,6 +1614,12 @@ public class GameManager : MonoBehaviour
                 }
 
                 targetingPlayer.ColoredMana.Pay(cost);
+                if (targetingSorcery.hasXCost)
+                {
+                    targetingSorcery.xValue = targetingPlayer.ColoredMana.Total();
+                    if (targetingSorcery.xValue > 0)
+                        targetingPlayer.ColoredMana.SpendGeneric(targetingSorcery.xValue);
+                }
                 targetingPlayer.Hand.Remove(targetingSorcery);
                 UpdateUI();
 

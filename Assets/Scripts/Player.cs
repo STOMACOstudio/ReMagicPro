@@ -101,7 +101,7 @@ public class Player
                 SpendGeneric(genericToSpend);
             }
 
-        private void SpendGeneric(int amount)
+        public void SpendGeneric(int amount)
             {
                 int remaining = amount;
 
@@ -117,6 +117,13 @@ public class Player
                 {
                     Debug.LogWarning("Tried to spend more generic mana than available. This should not happen if CanPay() was used.");
                 }
+            }
+
+        public int SpendAll()
+            {
+                int total = Total();
+                SpendGeneric(total);
+                return total;
             }
 
         public static int SpendFromPool(ref int pool, int needed)

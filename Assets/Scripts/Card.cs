@@ -12,6 +12,12 @@ public class Card
     public bool isTapped = false;
     public bool entersTapped = false;
 
+    // If true, this card has an additional variable mana cost "X".
+    public bool hasXCost = false;
+
+    // Holds the value paid for X when the card was cast.
+    public int xValue = 0;
+
     public List<string> color = new List<string>();
     public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 

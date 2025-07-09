@@ -2218,6 +2218,20 @@ public static class CardDatabase
                         destroyAllWithSameName = true,
                         artwork = Resources.Load<Sprite>("Art/mirrorbreak"),
                     });
+                Add(new CardData //Filth Discharge
+                    {
+                        cardName = "Filth Discharge",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        hasXCost = true,
+                        color = new List<string> { "Black" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        addXMinusOneCounters = true,
+                        rulesText = "Put X -1/-1 counters on target creature.",
+                        artwork = Resources.Load<Sprite>("Art/filth_discharge"),
+                    });
             // RED
                 Add(new CardData //To dig a hole
                         {
@@ -2366,6 +2380,20 @@ public static class CardDatabase
                     powerBuff = 6,
                     toughnessBuff = 6,
                     artwork = Resources.Load<Sprite>("Art/muscle_blast"),
+                    });
+                Add(new CardData //Empowering Charge
+                    {
+                        cardName = "Empowering Charge",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        hasXCost = true,
+                        color = new List<string> { "Green" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        addXPlusOneCounters = true,
+                        rulesText = "Put X +1/+1 counters on target creature.",
+                        artwork = Resources.Load<Sprite>("Art/empowering_charge"),
                     });
             ///MULTI
                 Add(new CardData //Drain mind
