@@ -27,6 +27,8 @@ public class SorceryCard : Card
     public string requiredTargetColor = null;
     public bool excludeArtifactCreatures = false;
     public Player chosenPlayerTarget = null;
+    public bool addXPlusOneCounters = false;
+    public bool addXMinusOneCounters = false;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -412,6 +414,31 @@ public class SorceryCard : Card
                         visual.UpdateVisual();
 
                     Debug.Log($"{buffCreature.cardName} gets +{buffPower}/+{buffToughness} until end of turn.");
+                }
+                if (addXPlusOneCounters && target is CreatureCard plusTarget && xValue > 0)
+                {
+                    for (int i = 0; i < xValue; i++)
+                        plusTarget.AddPlusOneCounter();
+
+                    var visual = GameManager.Instance.FindCardVisual(plusTarget);
+                    if (visual != null)
+                        visual.UpdateVisual();
+
+                    Debug.Log($"{plusTarget.cardName} receives {xValue} +1/+1 counters.");
+                }
+                if (addXMinusOneCounters && target is CreatureCard minusTarget && xValue > 0)
+                {
+                    for (int i = 0; i < xValue; i++)
+                        minusTarget.AddMinusOneCounter();
+
+                    var visual = GameManager.Instance.FindCardVisual(minusTarget);
+                    if (visual != null)
+                        visual.UpdateVisual();
+
+                    GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                    GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+
+                    Debug.Log($"{minusTarget.cardName} receives {xValue} -1/-1 counters.");
                 }
                 else if (!destroyTargetIfTypeMatches && damageToTarget <= 0 && keywordToGrant == KeywordAbility.None)
                 {

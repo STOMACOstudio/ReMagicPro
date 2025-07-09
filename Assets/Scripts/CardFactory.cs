@@ -69,6 +69,8 @@ public static class CardFactory
                 sorcery.excludeArtifactCreatures = data.excludeArtifactCreatures;
                 sorcery.buffPower = data.powerBuff;
                 sorcery.buffToughness = data.toughnessBuff;
+                sorcery.addXPlusOneCounters = data.addXPlusOneCounters;
+                sorcery.addXMinusOneCounters = data.addXMinusOneCounters;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
