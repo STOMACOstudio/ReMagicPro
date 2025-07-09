@@ -1815,6 +1815,7 @@ MonoBehaviour:
   victory: {fileID: 8300000, guid: b8bf9ae1d6f7cee4588459d28268a8f2, type: 3}
   defeat: {fileID: 8300000, guid: c89b120bb2d34f641b71689898c37be0, type: 3}
   drawCard: {fileID: 8300000, guid: fdc89dd0452c2f34183085bed1590d6c, type: 3}
+  turnChange: {fileID: 8300000, guid: 145e09f516398b544a9e0753e1fe4ce3, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0
@@ -2868,6 +2869,7 @@ GameObject:
   - component: {fileID: 1238055020}
   - component: {fileID: 1238055019}
   - component: {fileID: 1238055018}
+  - component: {fileID: 1238055021}
   m_Layer: 5
   m_Name: NextTurn
   m_TagString: Untagged
@@ -2891,8 +2893,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.60004, y: 0}
-  m_SizeDelta: {x: 874.9, y: 538.98}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 721.82, y: 444.67}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1238055018
 CanvasGroup:
@@ -2902,7 +2904,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238055016}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -2944,6 +2946,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238055016}
   m_CullTransparentMesh: 1
+--- !u!114 &1238055021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238055016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d03dc7b4a234061bf7b4bda809a1186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  group: {fileID: 1238055018}
+  fadeDuration: 0.25
+  displayTime: 0.5
 --- !u!1 &1262504148
 GameObject:
   m_ObjectHideFlags: 0
@@ -4961,6 +4978,7 @@ MonoBehaviour:
   currentPhase: 0
   waitingForPlayerInput: 0
   phaseText: {fileID: 1399332687}
+  turnBanner: {fileID: 1238055016}
   nextPhaseButton: {fileID: 100762448}
   confirmAttackersButton: {fileID: 1269708710}
   confirmBlockersButton: {fileID: 1639133045}
