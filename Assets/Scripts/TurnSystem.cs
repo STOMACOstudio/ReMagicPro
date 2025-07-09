@@ -37,6 +37,8 @@ public class TurnSystem : MonoBehaviour
 
     public bool waitingForPlayerInput = false;
     public TMP_Text phaseText;
+    public GameObject turnBanner;
+    private bool firstTurn = true;
 
     [Header("Buttons")]
     public Button nextPhaseButton;
@@ -64,6 +66,9 @@ public class TurnSystem : MonoBehaviour
             confirmBlockersButton.gameObject.SetActive(false);
             attackAllButton.gameObject.SetActive(false);
             clearAttackersButton.gameObject.SetActive(false);
+
+            if (turnBanner != null)
+                turnBanner.SetActive(false);
 
             PlayerType startingPlayer = Random.value < 0.5f ? PlayerType.Human : PlayerType.AI;
             BeginTurn(startingPlayer);
@@ -190,7 +195,21 @@ public class TurnSystem : MonoBehaviour
             currentPlayer = player;
             currentPhase = TurnPhase.StartTurn;
             Debug.Log($"\n=== {player} TURN START ===");
-            AdvancePhase();
+
+            if (!firstTurn && turnBanner != null)
+            {
+                if (turnBanner.activeSelf)
+                    turnBanner.SetActive(false);
+
+                turnBanner.SetActive(true);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.turnChange);
+                StartCoroutine(WaitForBannerAndStart());
+            }
+            else
+            {
+                firstTurn = false;
+                AdvancePhase();
+            }
         }
 
     void AdvancePhase()
@@ -1082,6 +1101,12 @@ public class TurnSystem : MonoBehaviour
 
                 if (!GameManager.Instance.gameOver)
                     AdvancePhase(); // <-- This must always be called
+            }
+
+        private IEnumerator WaitForBannerAndStart()
+            {
+                yield return new WaitWhile(() => turnBanner.activeSelf);
+                AdvancePhase();
             }
         
         private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)

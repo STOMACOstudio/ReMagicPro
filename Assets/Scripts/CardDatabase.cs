@@ -2857,12 +2857,12 @@ public static class CardDatabase
 
                 Add(new CardData //Headeache
                     {
-                        cardName = "Headeache",
+                        cardName = "Headache",
                         rarity = "Uncommon",
                         manaCost = 2,
                         color = new List<string> { "Red" },
                         cardType = CardType.Enchantment,
-                        artwork = Resources.Load<Sprite>("Art/headeache"),
+                        artwork = Resources.Load<Sprite>("Art/headache"),
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
