@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip victory;
     public AudioClip defeat;
     public AudioClip drawCard;
+    public AudioClip turnChange;
 
     private AudioSource audioSource;
 
