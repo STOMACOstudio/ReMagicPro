@@ -24,6 +24,9 @@ public class CardData
     public bool isToken = false;
     public bool destroyTargetIfTypeMatches = false;
     public bool destroyAllWithSameName = false;
+
+    // Indicates that this card has an additional variable cost "X".
+    public bool hasXCost = false;
     
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;   

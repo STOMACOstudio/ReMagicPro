@@ -369,6 +369,12 @@ public class TurnSystem : MonoBehaviour
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
+                                        if (card.hasXCost)
+                                        {
+                                            card.xValue = ai.ColoredMana.Total();
+                                            if (card.xValue > 0)
+                                                ai.ColoredMana.SpendGeneric(card.xValue);
+                                        }
                                        ai.Hand.Remove(card);
                                        ai.Battlefield.Add(card);
                                        card.OnEnterPlay(ai);
@@ -568,6 +574,12 @@ public class TurnSystem : MonoBehaviour
                                         }
                                         
                                         ai.ColoredMana.Pay(cost);
+                                        if (sorcery.hasXCost)
+                                        {
+                                            sorcery.xValue = ai.ColoredMana.Total();
+                                            if (sorcery.xValue > 0)
+                                                ai.ColoredMana.SpendGeneric(sorcery.xValue);
+                                        }
                                         ai.Hand.Remove(sorcery);
                                         sorcery.owner = ai;
 
@@ -606,6 +618,12 @@ public class TurnSystem : MonoBehaviour
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
+                                        if (card.hasXCost)
+                                        {
+                                            card.xValue = ai.ColoredMana.Total();
+                                            if (card.xValue > 0)
+                                                ai.ColoredMana.SpendGeneric(card.xValue);
+                                        }
                                         ai.Hand.Remove(card);
                                         ai.Battlefield.Add(card);
                                         card.OnEnterPlay(ai);
@@ -641,6 +659,12 @@ public class TurnSystem : MonoBehaviour
                                     if (EnsureManaForCost(ai, cost))
                                     {
                                         ai.ColoredMana.Pay(cost);
+                                        if (card.hasXCost)
+                                        {
+                                            card.xValue = ai.ColoredMana.Total();
+                                            if (card.xValue > 0)
+                                                ai.ColoredMana.SpendGeneric(card.xValue);
+                                        }
                                         ai.Hand.Remove(card);
                                         ai.Battlefield.Add(card);
                                         card.OnEnterPlay(ai);
