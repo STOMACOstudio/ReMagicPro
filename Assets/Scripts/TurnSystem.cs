@@ -36,6 +36,7 @@ public class TurnSystem : MonoBehaviour
     public TurnPhase currentPhase = TurnPhase.StartTurn;
 
     public bool waitingForPlayerInput = false;
+    private bool waitingForAIAction = false;
     public TMP_Text phaseText;
     public GameObject turnBanner;
     private bool firstTurn = true;
@@ -79,7 +80,7 @@ public class TurnSystem : MonoBehaviour
             if (GameManager.Instance.gameOver)
                 return;
 
-            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !GameManager.Instance.isStackBusy)
+            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !waitingForAIAction && !GameManager.Instance.isStackBusy)
             {
                 RunCurrentPhase();
             }
@@ -348,7 +349,10 @@ public class TurnSystem : MonoBehaviour
 
                                     Debug.Log("AI played land: " + land.cardName);
                                     ai.hasPlayedLandThisTurn = true;
-                                    break;
+
+                                    waitingForAIAction = true;
+                                    StartCoroutine(WaitForAIAction(1f));
+                                    return;
                                 }
                             }
                         }
@@ -446,7 +450,10 @@ public class TurnSystem : MonoBehaviour
 
                                         Debug.Log($"AI played creature: {card.cardName}");
                                         playedCard = true;
-                                        break;
+
+                                        waitingForAIAction = true;
+                                        StartCoroutine(WaitForAIAction(1f));
+                                        return;
                                     }
                                 }
                                 else if (card is SorceryCard sorcery)
@@ -1107,6 +1114,12 @@ public class TurnSystem : MonoBehaviour
             {
                 yield return new WaitWhile(() => turnBanner.activeSelf);
                 AdvancePhase();
+            }
+
+        private IEnumerator WaitForAIAction(float seconds)
+            {
+                yield return new WaitForSeconds(seconds);
+                waitingForAIAction = false;
             }
         
         private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
