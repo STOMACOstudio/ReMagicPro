@@ -1013,6 +1013,35 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnRandomPotionFromGraveyard(Player player)
+    {
+        var potions = player.Graveyard
+            .Where(card => card.cardName.Contains("Potion"))
+            .ToList();
+        if (potions.Count == 0)
+            return;
+
+        Card chosen = potions[Random.Range(0, potions.Count)];
+        player.Graveyard.Remove(chosen);
+        player.Hand.Add(chosen);
+
+        if (player == humanPlayer)
+        {
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(chosen.cardName);
+            visual.Setup(chosen, this, data);
+            activeCardVisuals.Add(visual);
+        }
+        else if (enemyHandText != null)
+        {
+            enemyHandText.text = "Hand: " + player.Hand.Count;
+        }
+
+        RefreshGraveyardVisuals(player);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)

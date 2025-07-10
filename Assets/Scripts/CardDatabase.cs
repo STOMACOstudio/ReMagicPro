@@ -1080,6 +1080,30 @@ public static class CardDatabase
                                             vis.UpdateVisual();
                                     }
                                 }
+                        }
+                    }
+                });
+                Add(new CardData //Alchemist Renegade
+                    {
+                        cardName = "Alchemist Renegade",
+                        rarity = "Uncommon",
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        subtypes = new List<string> { "Human", "Wizard" },
+                        artwork = Resources.Load<Sprite>("Art/alchemist_renegade"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "return a random Potion card from your graveyard to your hand.",
+                                effect = (Player owner, Card unused) =>
+                                {
+                                    GameManager.Instance.ReturnRandomPotionFromGraveyard(owner);
+                                }
                             }
                         }
                     });
