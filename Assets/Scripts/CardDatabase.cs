@@ -1083,9 +1083,9 @@ public static class CardDatabase
                         }
                     }
                 });
-                Add(new CardData //Alchimist Renegate
+                Add(new CardData //Alchemist Renegade
                     {
-                        cardName = "Alchimist Renegate",
+                        cardName = "Alchemist Renegade",
                         rarity = "Uncommon",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -1093,7 +1093,7 @@ public static class CardDatabase
                         power = 2,
                         toughness = 2,
                         subtypes = new List<string> { "Human", "Wizard" },
-                        artwork = Resources.Load<Sprite>("Art/poison_mushroom"),
+                        artwork = Resources.Load<Sprite>("Art/alchemist_renegade"),
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
