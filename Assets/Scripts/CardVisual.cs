@@ -1321,6 +1321,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             if (lineRenderer != null)
                 lineRenderer.enabled = false;
+            if (swordIcon != null) swordIcon.SetActive(false);
+            if (shieldIcon != null) shieldIcon.SetActive(false);
 
             transform.localScale = Vector3.one * 0.5f;
             transform.rotation = Quaternion.identity;
@@ -1351,6 +1353,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             statsBackground.SetActive(true);
 
             if (lineRenderer != null) lineRenderer.enabled = false;
+            if (swordIcon != null) swordIcon.SetActive(false);
+            if (shieldIcon != null) shieldIcon.SetActive(false);
 
             // Reset rotation & scale
             transform.rotation = Quaternion.identity;
@@ -1411,6 +1415,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             titleText.text = linkedCard.cardName;
             sicknessText.text = "";
             lineRenderer.enabled = false;
+            if (swordIcon != null) swordIcon.SetActive(false);
+            if (shieldIcon != null) shieldIcon.SetActive(false);
 
             if (landIcon != null)
             {
