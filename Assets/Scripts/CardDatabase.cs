@@ -1107,6 +1107,64 @@ public static class CardDatabase
                             }
                         }
                     });
+                Add(new CardData //The Worlds Evil
+                    {
+                        cardName = "The Worlds Evil",
+                        rarity = "Rare",
+                        manaCost = 8,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 8,
+                        toughness = 8,
+                        subtypes = new List<string> { "Demon" },
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.Flying,
+                            KeywordAbility.Trample
+                        },
+                        artwork = Resources.Load<Sprite>("Art/the_worlds_evil"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "exile 8 random creature cards from your graveyard. If you can't, you lose 8 life",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    var creatures = owner.Graveyard.OfType<CreatureCard>().ToList();
+                                    if (creatures.Count < 8)
+                                    {
+                                        owner.Life -= 8;
+                                        GameObject ui = owner == GameManager.Instance.humanPlayer ?
+                                            GameManager.Instance.playerLifeContainer :
+                                            GameManager.Instance.enemyLifeContainer;
+                                        GameManager.Instance.ShowFloatingDamage(8, ui);
+                                        GameManager.Instance.UpdateUI();
+                                        GameManager.Instance.CheckForGameEnd();
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                            int index = Random.Range(0, creatures.Count);
+                                            Card chosen = creatures[index];
+                                            creatures.RemoveAt(index);
+                                            owner.Graveyard.Remove(chosen);
+
+                                            CardVisual vis = GameManager.Instance.FindCardVisual(chosen);
+                                            if (vis != null)
+                                            {
+                                                GameManager.Instance.activeCardVisuals.Remove(vis);
+                                                GameObject.Destroy(vis.gameObject);
+                                            }
+                                        }
+                                        GameManager.Instance.RefreshGraveyardVisuals(owner);
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
                 Add(new CardData // Demon Token
                     {
                         cardName = "Demon",
