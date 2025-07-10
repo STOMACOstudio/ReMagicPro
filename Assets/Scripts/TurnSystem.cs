@@ -351,7 +351,7 @@ public class TurnSystem : MonoBehaviour
                                     ai.hasPlayedLandThisTurn = true;
 
                                     waitingForAIAction = true;
-                                    StartCoroutine(WaitForAIAction(0.5f));
+                                    StartCoroutine(WaitForAIAction(1f));
                                     return;
                                 }
                             }
@@ -452,7 +452,7 @@ public class TurnSystem : MonoBehaviour
                                         playedCard = true;
 
                                         waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(0.5f));
+                                        StartCoroutine(WaitForAIAction(1f));
                                         return;
                                     }
                                 }
