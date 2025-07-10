@@ -1122,7 +1122,7 @@ public static class CardDatabase
                             KeywordAbility.Flying,
                             KeywordAbility.Trample
                         },
-                        artwork = Resources.Load<Sprite>("Art/war_incarnate"),
+                        artwork = Resources.Load<Sprite>("Art/the_worlds_evil"),
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
