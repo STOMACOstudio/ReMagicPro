@@ -2242,7 +2242,7 @@ public static class CardDatabase
                         rulesText = "Return a random creature card from your graveyard to your hand.",
                         returnRandomCreatureFromGraveyard = true,
                         cardsToDraw = 1,
-                        artwork = Resources.Load<Sprite>("Art/witches_rite")
+                        artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
                     });
             // RED
                 Add(new CardData //To dig a hole
