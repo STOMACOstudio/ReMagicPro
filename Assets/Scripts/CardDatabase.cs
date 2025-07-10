@@ -2239,6 +2239,7 @@ public static class CardDatabase
                         cardType = CardType.Sorcery,
                         manaCost = 3,
                         color = new List<string> { "Black" },
+                        rulesText = "Return a random creature card from your graveyard to your hand.",
                         returnRandomCreatureFromGraveyard = true,
                         cardsToDraw = 1,
                         artwork = Resources.Load<Sprite>("Art/witches_rite")
