@@ -56,6 +56,7 @@ public static class CardFactory
                 sorcery.manaToGainMin = data.manaToGainMin;
                 sorcery.manaToGainMax = data.manaToGainMax;
                 sorcery.swapGraveyardAndLibrary = data.swapGraveyardAndLibrary;
+                sorcery.returnRandomCreatureFromGraveyard = data.returnRandomCreatureFromGraveyard;
                 sorcery.tokenToCreate = data.tokenToCreate;
                 sorcery.numberOfTokensMin = data.numberOfTokensMin;
                 sorcery.numberOfTokensMax = data.numberOfTokensMax;

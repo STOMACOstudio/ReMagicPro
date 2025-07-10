@@ -65,6 +65,7 @@ public class CardData
     public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
+    public bool returnRandomCreatureFromGraveyard = false;
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public bool excludeArtifactCreatures = false;
