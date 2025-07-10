@@ -2230,7 +2230,18 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         addXMinusOneCounters = true,
                         rulesText = "Put X -1/-1 counters on target creature.",
-                        artwork = Resources.Load<Sprite>("Art/filth_discharge"),
+                    artwork = Resources.Load<Sprite>("Art/filth_discharge"),
+                });
+                Add(new CardData //Sinister Murmurs
+                    {
+                        cardName = "Sinister Murmurs",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        returnRandomCreatureFromGraveyard = true,
+                        cardsToDraw = 1,
+                        artwork = Resources.Load<Sprite>("Art/witches_rite")
                     });
             // RED
                 Add(new CardData //To dig a hole

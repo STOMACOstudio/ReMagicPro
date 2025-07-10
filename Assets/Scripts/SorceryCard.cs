@@ -17,6 +17,7 @@ public class SorceryCard : Card
     public bool eachPlayerGainLifeEqualToLands = false;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
+    public bool returnRandomCreatureFromGraveyard = false;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
     public Card chosenTarget = null;
@@ -73,6 +74,12 @@ public class SorceryCard : Card
                 }
 
                 Debug.Log($"Spawned {amount} {tokenToCreate} tokens.");
+            }
+
+            if (returnRandomCreatureFromGraveyard)
+            {
+                GameManager.Instance.ReturnRandomCreatureFromGraveyard(caster);
+                didSomething = true;
             }
 
             if (lifeToGain > 0)
