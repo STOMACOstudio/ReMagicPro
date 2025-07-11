@@ -3121,3 +3121,4 @@ public static class CardDatabase
         {
             return cardsByName.Values;
         }
+}
