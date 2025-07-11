@@ -2364,7 +2364,7 @@ public static class CardDatabase
                         rulesText = "Return a random creature card with mana value 1 or less from your graveyard to the battlefield.",
                         returnRandomCheapCreatureToBattlefield = true,
                         maxManaCostForReturn = 1,
-                        artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
+                        artwork = Resources.Load<Sprite>("Art/pact_of_bones")
                     });
             // RED
                 Add(new CardData //To dig a hole
