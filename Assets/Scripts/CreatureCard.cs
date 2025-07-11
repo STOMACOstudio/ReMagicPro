@@ -79,6 +79,10 @@ public class CreatureCard : Card
     public override void OnLeavePlay(Player owner)
     {
         base.OnLeavePlay(owner);
+        // Clear combat state when this creature leaves the battlefield so
+        // it won't retain old attack/block icons if it returns later.
+        blockingThisAttacker = null;
+        blockedByThisBlocker.Clear();
         plusOneCounters = 0;
         minusOneCounters = 0;
         ResetTemporaryBuff();
