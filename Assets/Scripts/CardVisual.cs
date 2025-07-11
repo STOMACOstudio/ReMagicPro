@@ -142,17 +142,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             string typeLine;
 
-            if (data.cardType == CardType.Creature)
-            {
-                if (data.subtypes != null && data.subtypes.Count > 0)
-                    typeLine = $"Creature — {string.Join(" ", data.subtypes)}";
-                else
-                    typeLine = "Creature";
-            }
+        if (data.cardType == CardType.Creature)
+        {
+            bool isArtifactCreature = data.color != null && data.color.Contains("Artifact");
+            string baseType = isArtifactCreature ? "Artifact Creature" : "Creature";
+
+            if (data.subtypes != null && data.subtypes.Count > 0)
+                typeLine = $"{baseType} — {string.Join(" ", data.subtypes)}";
             else
-            {
-                typeLine = data.cardType.ToString();
-            }
+                typeLine = baseType;
+        }
+        else
+        {
+            typeLine = data.cardType.ToString();
+        }
 
             cardTypeText.text = typeLine;
             cardTypeText.enabled = !isInBattlefield;
@@ -1373,17 +1376,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 string typeLine;
 
-                if (cardData.cardType == CardType.Creature)
-                {
-                    if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                        typeLine = $"Creature — {string.Join(" ", cardData.subtypes)}";
-                    else
-                        typeLine = "Creature";
-                }
+            if (cardData.cardType == CardType.Creature)
+            {
+                bool isArtifactCreature = cardData.color != null && cardData.color.Contains("Artifact");
+                string baseType = isArtifactCreature ? "Artifact Creature" : "Creature";
+
+                if (cardData.subtypes != null && cardData.subtypes.Count > 0)
+                    typeLine = $"{baseType} — {string.Join(" ", cardData.subtypes)}";
                 else
-                {
-                    typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
-                }
+                    typeLine = baseType;
+            }
+            else
+            {
+                typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
+            }
 
                 cardTypeText.text = typeLine;
                 cardTypeText.enabled = !isInBattlefield;
