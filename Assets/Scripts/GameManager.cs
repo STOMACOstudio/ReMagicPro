@@ -1071,6 +1071,49 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnRandomCreatureFromGraveyardToBattlefield(Player player, int maxManaCost)
+    {
+        var creatures = player.Graveyard
+            .OfType<CreatureCard>()
+            .Where(c => c.manaCost <= maxManaCost)
+            .ToList();
+        if (creatures.Count == 0)
+            return;
+
+        Card chosen = creatures[Random.Range(0, creatures.Count)];
+        player.Graveyard.Remove(chosen);
+        player.Battlefield.Add(chosen);
+
+        if (chosen is CreatureCard creature)
+        {
+            creature.hasSummoningSickness = true;
+            if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                creature.isTapped = true;
+                Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+            }
+        }
+
+        GameObject obj = Instantiate(cardPrefab, player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData data = CardDatabase.GetCardData(chosen.cardName);
+        visual.Setup(chosen, this, data);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        chosen.OnEnterPlay(player);
+        if (chosen is LandCard)
+            NotifyLandEntered(chosen, player);
+        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
+            NotifyArtifactEntered(chosen, player);
+        if (chosen is EnchantmentCard)
+            NotifyEnchantmentEntered(chosen, player);
+
+        RefreshGraveyardVisuals(player);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)

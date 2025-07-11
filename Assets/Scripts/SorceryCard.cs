@@ -18,6 +18,8 @@ public class SorceryCard : Card
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
     public bool returnRandomCreatureFromGraveyard = false;
+    public bool returnRandomCheapCreatureToBattlefield = false;
+    public int maxManaCostForReturn = 0;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
     public Card chosenTarget = null;
@@ -79,6 +81,12 @@ public class SorceryCard : Card
             if (returnRandomCreatureFromGraveyard)
             {
                 GameManager.Instance.ReturnRandomCreatureFromGraveyard(caster);
+                didSomething = true;
+            }
+
+            if (returnRandomCheapCreatureToBattlefield)
+            {
+                GameManager.Instance.ReturnRandomCreatureFromGraveyardToBattlefield(caster, maxManaCostForReturn);
                 didSomething = true;
             }
 
