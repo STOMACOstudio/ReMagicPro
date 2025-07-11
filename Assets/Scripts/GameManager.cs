@@ -1042,6 +1042,35 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnRandomInstantOrSorceryFromGraveyard(Player player)
+    {
+        var spells = player.Graveyard
+            .Where(card => card is SorceryCard)
+            .ToList();
+        if (spells.Count == 0)
+            return;
+
+        Card chosen = spells[Random.Range(0, spells.Count)];
+        player.Graveyard.Remove(chosen);
+        player.Hand.Add(chosen);
+
+        if (player == humanPlayer)
+        {
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(chosen.cardName);
+            visual.Setup(chosen, this, data);
+            activeCardVisuals.Add(visual);
+        }
+        else if (enemyHandText != null)
+        {
+            enemyHandText.text = "Hand: " + player.Hand.Count;
+        }
+
+        RefreshGraveyardVisuals(player);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)

@@ -1791,7 +1791,7 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/obstacle")
                     });
                 Add(new CardData //Autonomous miner
-                    { 
+                    {
                     cardName = "Autonomous Miner",
                     rarity = "Common",
                     manaCost = 3,
@@ -1807,6 +1807,34 @@ public static class CardDatabase
                         ActivatedAbility.TapToCreateToken
                     },
                     artwork = Resources.Load<Sprite>("Art/autonomous_miner")
+                    });
+                Add(new CardData //Stormcutter Galleon
+                    {
+                    cardName = "Stormcutter Galleon",
+                    rarity = "Uncommon",
+                    manaCost = 6,
+                    color = new List<string> { "Red", "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 4,
+                    subtypes = new List<string> { "Ship" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/stormcutter_galleon"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "return a random instant or sorcery card from your graveyard to your hand.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                GameManager.Instance.ReturnRandomInstantOrSorceryFromGraveyard(owner);
+                            }
+                        }
+                    }
                     });
             //MULTI
                 Add(new CardData //Blazefire angel
