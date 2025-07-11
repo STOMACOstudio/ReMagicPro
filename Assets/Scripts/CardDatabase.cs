@@ -2354,6 +2354,18 @@ public static class CardDatabase
                         cardsToDraw = 1,
                         artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
                     });
+                Add(new CardData //Pact of Bones
+                    {
+                        cardName = "Pact of Bones",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        rulesText = "Return a random creature card with mana value 1 or less from your graveyard to the battlefield.",
+                        returnRandomCheapCreatureToBattlefield = true,
+                        maxManaCostForReturn = 1,
+                        artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
+                    });
             // RED
                 Add(new CardData //To dig a hole
                         {
