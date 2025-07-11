@@ -124,6 +124,7 @@ public static class CardFactory
         newCard.manaCost = data.manaCost;
         newCard.hasXCost = data.hasXCost;
         newCard.color = data.color != null ? new List<string>(data.color) : new List<string>();
+        newCard.subtypes = data.subtypes != null ? new List<string>(data.subtypes) : new List<string>();
         newCard.artwork = data.artwork;
         newCard.entersTapped = data.entersTapped;
         newCard.abilities = new List<CardAbility>(data.abilities);

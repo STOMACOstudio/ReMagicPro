@@ -21,6 +21,9 @@ public class Card
     public List<string> color = new List<string>();
     public string PrimaryColor => color.Count > 0 ? color[0] : "None";
 
+    // e.g. "Human", "Wizard"
+    public List<string> subtypes = new List<string>();
+
     public string rulesText;
     public string flavorText;
 
