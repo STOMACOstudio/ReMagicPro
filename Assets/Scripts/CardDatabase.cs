@@ -1116,7 +1116,7 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
-                        subtypes = new List<string> { "Human", "Wizard" },
+                        subtypes = new List<string> { "Zombie", "Wizard" },
                         artwork = Resources.Load<Sprite>("Art/cursed_necromancer"),
                         abilities = new List<CardAbility>
                         {
