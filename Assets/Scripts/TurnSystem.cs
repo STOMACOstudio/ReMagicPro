@@ -669,7 +669,10 @@ public class TurnSystem : MonoBehaviour
 
                                         Debug.Log($"AI played artifact: {card.cardName}");
                                         playedCard = true;
-                                        break;
+
+                                        waitingForAIAction = true;
+                                        StartCoroutine(WaitForAIAction(1f));
+                                        return;
                                     }
                                 }
                                 else if (card is EnchantmentCard enchantment)
@@ -710,7 +713,10 @@ public class TurnSystem : MonoBehaviour
 
                                         Debug.Log($"AI played enchantment: {card.cardName}");
                                         playedCard = true;
-                                        break;
+
+                                        waitingForAIAction = true;
+                                        StartCoroutine(WaitForAIAction(1f));
+                                        return;
                                     }
                                 }
                             }
