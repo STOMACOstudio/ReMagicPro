@@ -1813,7 +1813,7 @@ public static class CardDatabase
                     cardName = "Stormcutter Galleon",
                     rarity = "Uncommon",
                     manaCost = 6,
-                    color = new List<string> { "Red", "Artifact" },
+                    color = new List<string> { "Artifact" },
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 4,
