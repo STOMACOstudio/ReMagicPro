@@ -1107,6 +1107,30 @@ public static class CardDatabase
                             }
                         }
                     });
+                Add(new CardData //Cursed Necromancer
+                    {
+                        cardName = "Cursed Necromancer",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 2,
+                        toughness = 2,
+                        subtypes = new List<string> { "Human", "Wizard" },
+                        artwork = Resources.Load<Sprite>("Art/cursed_necromancer"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "return a random Zombie from your graveyard to the battlefield.",
+                                effect = (Player owner, Card unused) =>
+                                {
+                                    GameManager.Instance.ReturnRandomZombieFromGraveyardToBattlefield(owner);
+                                }
+                            }
+                        }
+                    });
                 Add(new CardData //The Worlds Evil
                     {
                         cardName = "The Worlds Evil",
@@ -3097,4 +3121,3 @@ public static class CardDatabase
         {
             return cardsByName.Values;
         }
-}
