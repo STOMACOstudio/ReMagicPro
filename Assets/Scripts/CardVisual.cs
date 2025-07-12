@@ -64,6 +64,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool isInGraveyard = false;
     public bool isInStack = false; // when true, card is on the stack
 
+    private bool isPointerOver = false;
+
     void Start()
         {
             GetComponent<Button>().onClick.AddListener(OnClick);
@@ -89,6 +91,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 transform.localScale = Vector3.one * 1.1f;
             }
 
+            isPointerOver = true;
             UpdateConnectionLine();
         }
 
@@ -111,8 +114,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 transform.localScale = Vector3.one;
             }
 
+            isPointerOver = false;
+
             if (lineRenderer != null &&
-                !(linkedCard is AuraCard aura && aura.attachedTo != null) &&
                 !(linkedCard is CreatureCard creature && creature.blockingThisAttacker != null))
             {
                 lineRenderer.enabled = false;
@@ -233,9 +237,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (lineRenderer == null)
                 return;
 
+            if (gameManager == null)
+            {
+                lineRenderer.enabled = false;
+                return;
+            }
+
             if (linkedCard is CreatureCard creature && creature.blockingThisAttacker != null)
             {
-                var attackerVisual = GameManager.Instance.FindCardVisual(creature.blockingThisAttacker);
+                var attackerVisual = gameManager.FindCardVisual(creature.blockingThisAttacker);
                 if (attackerVisual != null)
                 {
                     lineRenderer.enabled = true;
@@ -247,9 +257,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     lineRenderer.enabled = false;
                 }
             }
-            else if (isInBattlefield && linkedCard is AuraCard aura && aura.attachedTo != null)
+            else if (isPointerOver && isInBattlefield && linkedCard is AuraCard aura && aura.attachedTo != null)
             {
-                var targetVisual = GameManager.Instance.FindCardVisual(aura.attachedTo);
+                var targetVisual = gameManager.FindCardVisual(aura.attachedTo);
                 if (targetVisual != null)
                 {
                     lineRenderer.enabled = true;
@@ -269,7 +279,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void Update()
         {
-            UpdateConnectionLine();
+            if (lineRenderer == null || gameManager == null)
+                return;
+
+            bool isBlocking = linkedCard is CreatureCard creature && creature.blockingThisAttacker != null;
+
+            if (isPointerOver || isBlocking)
+            {
+                UpdateConnectionLine();
+            }
         }
 
     public void UpdateVisual()
