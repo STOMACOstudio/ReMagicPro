@@ -3114,6 +3114,21 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets +0/+4",
                     });
 
+                Add(new CardData // Sacred Horn
+                    {
+                        cardName = "Sacred Horn",
+                        rarity = "Common",
+                        manaCost = 2,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 1,
+                        toughnessBuff = 1,
+                        keywordBuff = KeywordAbility.Lifelink,
+                        artwork = Resources.Load<Sprite>("Art/sacred_horn"),
+                        rulesText = "Enchanted creature gets +1/+1 and has lifelink",
+                    });
+
                 Add(new CardData // Cut off Hands
                     {
                         cardName = "Cut off Hands",

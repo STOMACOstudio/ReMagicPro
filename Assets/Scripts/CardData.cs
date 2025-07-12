@@ -74,6 +74,7 @@ public class CardData
     public int damageToTarget = 0;
     public int powerBuff = 0;
     public int toughnessBuff = 0;
+    public KeywordAbility keywordBuff = KeywordAbility.None;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;

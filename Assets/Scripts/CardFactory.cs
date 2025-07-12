@@ -114,6 +114,7 @@ public static class CardFactory
                 enchantment.damageToCreature = data.damageToCreature;
                 enchantment.buffPower = data.powerBuff;
                 enchantment.buffToughness = data.toughnessBuff;
+                enchantment.keywordBuff = data.keywordBuff;
                 newCard = enchantment;
                 break;
 
@@ -135,6 +136,7 @@ public static class CardFactory
         newCard.rulesText = data.rulesText;
         newCard.flavorText = data.flavorText;
         newCard.isToken = data.isToken;
+        newCard.keywordBuff = data.keywordBuff;
 
         Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");
 

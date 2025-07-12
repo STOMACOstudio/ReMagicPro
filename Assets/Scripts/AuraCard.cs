@@ -13,6 +13,9 @@ public class AuraCard : EnchantmentCard
         if (attachedTo is CreatureCard creature)
         {
             creature.AddAuraBuff(buffPower, buffToughness);
+            if (keywordBuff != KeywordAbility.None)
+                creature.AddAuraKeyword(keywordBuff);
+            GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
         }
     }
 
@@ -21,6 +24,9 @@ public class AuraCard : EnchantmentCard
         if (attachedTo is CreatureCard creature)
         {
             creature.RemoveAuraBuff(buffPower, buffToughness);
+            if (keywordBuff != KeywordAbility.None)
+                creature.RemoveAuraKeyword(keywordBuff);
+            GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
         }
         attachedTo = null;
         base.OnLeavePlay(owner);
