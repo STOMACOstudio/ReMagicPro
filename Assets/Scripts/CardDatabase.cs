@@ -3111,7 +3111,7 @@ public static class CardDatabase
                         powerBuff = 0,
                         toughnessBuff = 4,
                         artwork = Resources.Load<Sprite>("Art/solid_prayer"),
-                        rulesText = "+0/+4",
+                        rulesText = "Enchanted creature gets +0/+4",
                     });
 
                 Add(new CardData // Cut off Hands
@@ -3125,7 +3125,7 @@ public static class CardDatabase
                         powerBuff = -4,
                         toughnessBuff = 0,
                         artwork = Resources.Load<Sprite>("Art/forget"),
-                        rulesText = "-4/-0",
+                        rulesText = "Enchanted creature gets -4/-0",
                     });
             }
 
