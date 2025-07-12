@@ -675,6 +675,55 @@ public class TurnSystem : MonoBehaviour
                                         return;
                                     }
                                 }
+                                else if (card is AuraCard auraCard)
+                                {
+                                    var cost = GameManager.Instance.GetManaCostBreakdown(auraCard.manaCost, auraCard.color);
+                                    int tax = GameManager.Instance.GetOpponentSpellTax(ai);
+                                    if (tax > 0)
+                                    {
+                                        if (!cost.ContainsKey("Colorless"))
+                                            cost["Colorless"] = 0;
+                                        cost["Colorless"] += tax;
+                                    }
+                                    if (EnsureManaForCost(ai, cost))
+                                    {
+                                        CreatureCard target;
+                                        if (auraCard.buffPower >= 0 && auraCard.buffToughness >= 0)
+                                            target = ai.Battlefield.OfType<CreatureCard>().FirstOrDefault();
+                                        else
+                                            target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>().FirstOrDefault();
+
+                                        if (target == null)
+                                            continue;
+
+                                        ai.ColoredMana.Pay(cost);
+                                        ai.Hand.Remove(card);
+                                        auraCard.attachedTo = target;
+                                        auraCard.owner = ai;
+                                        ai.Battlefield.Add(auraCard);
+                                        auraCard.OnEnterPlay(ai);
+                                        GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
+
+                                        if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        {
+                                            auraCard.isTapped = true;
+                                            Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
+                                        }
+
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        visual.Setup(auraCard, GameManager.Instance);
+                                        visual.isInBattlefield = true;
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+
+                                        Debug.Log($"AI played aura: {card.cardName}");
+                                        playedCard = true;
+
+                                        waitingForAIAction = true;
+                                        StartCoroutine(WaitForAIAction(1f));
+                                        return;
+                                    }
+                                }
                                 else if (card is EnchantmentCard enchantment)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(enchantment.manaCost, enchantment.color);

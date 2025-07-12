@@ -95,7 +95,11 @@ public static class CardFactory
                 newCard = artifact;
                 break;
             case CardType.Enchantment:
-                EnchantmentCard enchantment = new EnchantmentCard();
+                EnchantmentCard enchantment;
+                if (data.subtypes != null && data.subtypes.Contains("Aura"))
+                    enchantment = new AuraCard();
+                else
+                    enchantment = new EnchantmentCard();
                 enchantment.entersTapped = data.entersTapped;
                 enchantment.plagueAmount = data.plagueAmount;
                 enchantment.manaToGain = data.manaToGain;
