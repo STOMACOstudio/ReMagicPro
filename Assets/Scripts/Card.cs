@@ -35,6 +35,7 @@ public class Card
     public int damageToCreature;
     public int buffPower;
     public int buffToughness;
+    public KeywordAbility keywordBuff = KeywordAbility.None;
 
     public string tokenToCreate;
 

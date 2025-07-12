@@ -14,6 +14,7 @@ public class CreatureCard : Card
     public int tempToughnessBonus = 0;
     public int auraPowerBonus = 0;
     public int auraToughnessBonus = 0;
+    public List<KeywordAbility> auraKeywordAbilities = new List<KeywordAbility>();
 
     public void RecalculateStats()
     {
@@ -57,11 +58,27 @@ public class CreatureCard : Card
         RecalculateStats();
     }
 
+    public void AddAuraKeyword(KeywordAbility ability)
+    {
+        if (!keywordAbilities.Contains(ability))
+            keywordAbilities.Add(ability);
+        if (!auraKeywordAbilities.Contains(ability))
+            auraKeywordAbilities.Add(ability);
+    }
+
     public void RemoveAuraBuff(int powerAmount, int toughnessAmount)
     {
         auraPowerBonus -= powerAmount;
         auraToughnessBonus -= toughnessAmount;
         RecalculateStats();
+    }
+
+    public void RemoveAuraKeyword(KeywordAbility ability)
+    {
+        if (auraKeywordAbilities.Contains(ability))
+            auraKeywordAbilities.Remove(ability);
+        if (keywordAbilities.Contains(ability))
+            keywordAbilities.Remove(ability);
     }
     public int damageTaken = 0;
     public int tapLifeLossAmount;
