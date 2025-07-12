@@ -166,6 +166,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else
                 typeLine = baseType;
         }
+        else if (data.cardType == CardType.Enchantment && data.subtypes != null && data.subtypes.Count > 0)
+        {
+            typeLine = $"Enchantment — {string.Join(" ", data.subtypes)}";
+        }
         else
         {
             typeLine = data.cardType.ToString();
@@ -1413,6 +1417,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     typeLine = $"{baseType} — {string.Join(" ", cardData.subtypes)}";
                 else
                     typeLine = baseType;
+            }
+            else if (cardData.cardType == CardType.Enchantment && cardData.subtypes != null && cardData.subtypes.Count > 0)
+            {
+                typeLine = $"Enchantment — {string.Join(" ", cardData.subtypes)}"; // e.g. Aura
             }
             else
             {
