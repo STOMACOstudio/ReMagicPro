@@ -89,16 +89,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 transform.localScale = Vector3.one * 1.1f;
             }
 
-            if (isInBattlefield && linkedCard is AuraCard aura && aura.attachedTo != null)
-            {
-                var targetVisual = GameManager.Instance.FindCardVisual(aura.attachedTo);
-                if (targetVisual != null)
-                {
-                    lineRenderer.enabled = true;
-                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
-                    lineRenderer.SetPosition(1, new Vector3(targetVisual.transform.position.x, targetVisual.transform.position.y, 0));
-                }
-            }
+            UpdateConnectionLine();
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -120,8 +111,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 transform.localScale = Vector3.one;
             }
 
-            if (lineRenderer != null)
+            if (lineRenderer != null &&
+                !(linkedCard is AuraCard aura && aura.attachedTo != null) &&
+                !(linkedCard is CreatureCard creature && creature.blockingThisAttacker != null))
+            {
                 lineRenderer.enabled = false;
+            }
         }
 
     private void UpdateLandIcon()
@@ -233,6 +228,50 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return $"{ColorStat(creature.power, creature.basePower)}/{ColorStat(creature.toughness, creature.baseToughness)}";
         }
 
+    private void UpdateConnectionLine()
+        {
+            if (lineRenderer == null)
+                return;
+
+            if (linkedCard is CreatureCard creature && creature.blockingThisAttacker != null)
+            {
+                var attackerVisual = GameManager.Instance.FindCardVisual(creature.blockingThisAttacker);
+                if (attackerVisual != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                    lineRenderer.SetPosition(1, new Vector3(attackerVisual.transform.position.x, attackerVisual.transform.position.y, 0));
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+            }
+            else if (isInBattlefield && linkedCard is AuraCard aura && aura.attachedTo != null)
+            {
+                var targetVisual = GameManager.Instance.FindCardVisual(aura.attachedTo);
+                if (targetVisual != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                    lineRenderer.SetPosition(1, new Vector3(targetVisual.transform.position.x, targetVisual.transform.position.y, 0));
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+            }
+            else
+            {
+                lineRenderer.enabled = false;
+            }
+        }
+
+    private void Update()
+        {
+            UpdateConnectionLine();
+        }
+
     public void UpdateVisual()
         {
             var data = CardDatabase.GetCardData(linkedCard.cardName);
@@ -315,26 +354,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
                     if (statsRect != null)
                         statsRect.anchoredPosition = battlefieldStatsPosition;
-
-                    if (battlefieldCreature.blockingThisAttacker != null)
-                    {
-                        lineRenderer.enabled = true;
-                        lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
-
-                        var attackerVisual = GameManager.Instance.FindCardVisual(battlefieldCreature.blockingThisAttacker);
-                        if (attackerVisual != null)
-                            lineRenderer.SetPosition(1, new Vector3(attackerVisual.transform.position.x, attackerVisual.transform.position.y, 0));
-                    }
-                    else
-                    {
-                        lineRenderer.enabled = false;
-                    }
-                }
-                else
-                {
-                    lineRenderer.enabled = false;
                 }
 
+                UpdateConnectionLine();
                 return;
             }
 
