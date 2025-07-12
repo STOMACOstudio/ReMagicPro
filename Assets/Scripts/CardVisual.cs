@@ -69,7 +69,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             GetComponent<Button>().onClick.AddListener(OnClick);
         }
 
-    public void OnPointerEnter(PointerEventData eventData)
+        public void OnPointerEnter(PointerEventData eventData)
         {
             if (isInGraveyard || isInStack || linkedCard == null || linkedCard.artwork == null)
                 return;
@@ -87,6 +87,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             else
             {
                 transform.localScale = Vector3.one * 1.1f;
+            }
+
+            if (isInBattlefield && linkedCard is AuraCard aura && aura.attachedTo != null)
+            {
+                var targetVisual = GameManager.Instance.FindCardVisual(aura.attachedTo);
+                if (targetVisual != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                    lineRenderer.SetPosition(1, new Vector3(targetVisual.transform.position.x, targetVisual.transform.position.y, 0));
+                }
             }
         }
 
@@ -108,6 +119,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 transform.localScale = Vector3.one;
             }
+
+            if (lineRenderer != null)
+                lineRenderer.enabled = false;
         }
 
     private void UpdateLandIcon()
