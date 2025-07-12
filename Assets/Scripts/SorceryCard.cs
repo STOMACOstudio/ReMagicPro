@@ -485,5 +485,6 @@ public class SorceryCard : Card
             }
 
             GameManager.Instance.UpdateUI();
+            ResolveEffect(caster);
         }
 }
