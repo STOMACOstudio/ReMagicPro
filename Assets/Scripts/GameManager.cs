@@ -558,6 +558,8 @@ public class GameManager : MonoBehaviour
                     stackGraveyardVisual.Setup(card, this);
                     stackGraveyardVisual.transform.localPosition = Vector3.zero;
                     stackGraveyardVisual.UpdateGraveyardVisual();
+                    // Ensure logo and count remain on top
+                    stackGraveyardVisual.transform.SetAsFirstSibling();
 
                     activeCardVisuals.Add(stackGraveyardVisual);
                 }
@@ -660,6 +662,8 @@ public class GameManager : MonoBehaviour
             graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
             graveyardVisual.transform.localPosition = Vector3.zero;
             graveyardVisual.UpdateGraveyardVisual();
+            // Ensure graveyard UI elements stay above the cards
+            graveyardVisual.transform.SetAsFirstSibling();
 
             owner.Graveyard.Add(card);
         }
@@ -1407,6 +1411,8 @@ public class GameManager : MonoBehaviour
                 graveyardVisual.Setup(card, this);
                 graveyardVisual.transform.localPosition = Vector3.zero;
                 graveyardVisual.UpdateGraveyardVisual();
+                // Keep UI overlay elements above the cards
+                graveyardVisual.transform.SetAsFirstSibling();
 
                 activeCardVisuals.Add(graveyardVisual);
             }
@@ -2532,6 +2538,8 @@ public class GameManager : MonoBehaviour
                     graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
                     graveyardVisual.transform.localPosition = Vector3.zero;
                     graveyardVisual.UpdateGraveyardVisual();
+                    // Ensure overlay elements appear above
+                    graveyardVisual.transform.SetAsFirstSibling();
 
                     activeCardVisuals.Add(graveyardVisual);
                 }
@@ -2571,6 +2579,8 @@ public class GameManager : MonoBehaviour
                     graveyardVisual.Setup(card, GameManager.Instance);
                     graveyardVisual.transform.localPosition = Vector3.zero;
                     graveyardVisual.UpdateGraveyardVisual();
+                    // Keep UI overlay elements on top
+                    graveyardVisual.transform.SetAsFirstSibling();
 
                     GameManager.Instance.activeCardVisuals.Add(graveyardVisual);
                 }
