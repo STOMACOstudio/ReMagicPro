@@ -12,11 +12,13 @@ public class CreatureCard : Card
     public int minusOneCounters = 0;
     public int tempPowerBonus = 0;
     public int tempToughnessBonus = 0;
+    public int auraPowerBonus = 0;
+    public int auraToughnessBonus = 0;
 
     public void RecalculateStats()
     {
-        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus;
-        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus;
+        power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus + auraPowerBonus;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus;
     }
 
     public void AddPlusOneCounter()
@@ -46,6 +48,20 @@ public class CreatureCard : Card
             tempToughnessBonus = 0;
             RecalculateStats();
         }
+    }
+
+    public void AddAuraBuff(int powerAmount, int toughnessAmount)
+    {
+        auraPowerBonus += powerAmount;
+        auraToughnessBonus += toughnessAmount;
+        RecalculateStats();
+    }
+
+    public void RemoveAuraBuff(int powerAmount, int toughnessAmount)
+    {
+        auraPowerBonus -= powerAmount;
+        auraToughnessBonus -= toughnessAmount;
+        RecalculateStats();
     }
     public int damageTaken = 0;
     public int tapLifeLossAmount;

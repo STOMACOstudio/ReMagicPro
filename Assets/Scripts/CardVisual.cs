@@ -631,6 +631,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 return;
             }
+            if (GameManager.Instance.targetingAura != null)
+            {
+                if (linkedCard is CreatureCard)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Invalid target for aura.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
             if (GameManager.Instance.targetingSorcery != null)
             {
                 if (GameManager.Instance.targetingVisual == this)

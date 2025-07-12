@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
     public int pendingGraveyardAnimations = 0;
 
     public SorceryCard targetingSorcery;
+    public AuraCard targetingAura;
     public Player targetingPlayer;
     public CardVisual targetingVisual;
     public bool isTargetingMode = false;
@@ -396,6 +397,12 @@ public class GameManager : MonoBehaviour
                     Debug.Log("Not enough colored mana to play this artifact.");
                 }
             }
+            else if (card is AuraCard aura)
+            {
+                Debug.Log("Aura requires target — entering targeting mode.");
+                BeginAuraTargetSelection(aura, player, visual);
+                return;
+            }
             else if (card is EnchantmentCard enchantment)
             {
                 var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
@@ -580,6 +587,20 @@ public class GameManager : MonoBehaviour
                 card.OnLeavePlay(owner);
                 if (card is LandCard)
                     NotifyLandLeft(card, owner);
+
+                if (card is CreatureCard leftCreature)
+                {
+                    foreach (var player in new[] { humanPlayer, aiPlayer })
+                    {
+                        var attached = player.Battlefield
+                            .OfType<AuraCard>()
+                            .Where(a => a.attachedTo == leftCreature)
+                            .ToList();
+
+                        foreach (var aura in attached)
+                            SendToGraveyard(aura, player);
+                    }
+                }
             }
 
             card.isTapped = false;
@@ -1710,9 +1731,69 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             return;
         }
-            // Creature ETB targeting
-            if (targetingCreature != null && targetingAbility != null)
+        // Aura casting
+        if (targetingAura != null)
+        {
+            Card targetCard = chosen;
+            bool correctType = (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard);
+            bool isOnBattlefield = GetOwnerOfCard(targetCard)?.Battlefield.Contains(targetCard) == true;
+
+            if (!correctType || !isOnBattlefield)
             {
+                Debug.Log("Invalid target for aura.");
+                CancelTargeting();
+                return;
+            }
+
+            var cost = GetManaCostBreakdown(targetingAura.manaCost, targetingAura.color);
+            int tax = GetOpponentSpellTax(targetingPlayer);
+            if (tax > 0)
+            {
+                if (!cost.ContainsKey("Colorless"))
+                    cost["Colorless"] = 0;
+                cost["Colorless"] += tax;
+            }
+            if (!targetingPlayer.ColoredMana.CanPay(cost))
+            {
+                Debug.LogWarning("Not enough mana to cast aura.");
+                CancelTargeting();
+                return;
+            }
+
+            targetingPlayer.ColoredMana.Pay(cost);
+            targetingPlayer.Hand.Remove(targetingAura);
+
+            targetingAura.owner = targetingPlayer;
+            targetingAura.attachedTo = targetCard;
+
+            targetingPlayer.Battlefield.Add(targetingAura);
+            targetingAura.OnEnterPlay(targetingPlayer);
+            NotifyEnchantmentEntered(targetingAura, targetingPlayer);
+
+            if (targetingAura.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                targetingAura.isTapped = true;
+                Debug.Log($"{targetingAura.cardName} enters tapped (due to static effect).");
+            }
+
+            Transform vp = targetingPlayer == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+            targetingVisual.transform.SetParent(vp, false);
+            targetingVisual.isInBattlefield = true;
+            targetingVisual.UpdateVisual();
+            if (targetingVisual != null)
+                targetingVisual.EnableTargetingHighlight(false);
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+
+            targetingAura = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            UpdateUI();
+            return;
+        }
+        // Creature ETB targeting
+        if (targetingCreature != null && targetingAbility != null)
+        {
                 Card target = targetVisual.linkedCard;
 
                 bool correctType =
@@ -1826,6 +1907,7 @@ public class GameManager : MonoBehaviour
 
             targetingArtifact = null;
             targetingSorcery = null;
+            targetingAura = null;
             targetingPlayer = null;
 
             if (targetingVisual != null)
@@ -1952,11 +2034,25 @@ public class GameManager : MonoBehaviour
     {
         targetingArtifact = artifact;
         targetingSorcery = null;
+        targetingAura = null;
         targetingPlayer = player;
         targetingVisual = visual;
         isTargetingMode = true;
 
         Debug.Log("Targeting creature to buff with artifact.");
+    }
+
+    public void BeginAuraTargetSelection(AuraCard aura, Player caster, CardVisual visual)
+    {
+        targetingAura = aura;
+        targetingSorcery = null;
+        targetingArtifact = null;
+        targetingPlayer = caster;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        if (visual != null)
+            visual.EnableTargetingHighlight(true);
     }
 
     public IEnumerator ResolveArtifactDamageAfterDelay(CardVisual targetVisual, Card targetCard)

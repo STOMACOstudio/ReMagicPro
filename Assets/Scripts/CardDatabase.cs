@@ -3099,6 +3099,34 @@ public static class CardDatabase
                             }
                         }
                     });
+
+                Add(new CardData // Shield of Faith
+                    {
+                        cardName = "Shield of Faith",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 0,
+                        toughnessBuff = 4,
+                        artwork = Resources.Load<Sprite>("Art/solid_prayer"),
+                        rulesText = "+0/+4",
+                    });
+
+                Add(new CardData // Cut off Hands
+                    {
+                        cardName = "Cut off Hands",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = -4,
+                        toughnessBuff = 0,
+                        artwork = Resources.Load<Sprite>("Art/forget"),
+                        rulesText = "-4/-0",
+                    });
             }
 
     private static void Add(CardData data)

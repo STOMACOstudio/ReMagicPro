@@ -115,6 +115,12 @@ public class Card
         {
             List<string> lines = new List<string>();
 
+            if (this is AuraCard aura)
+            {
+                if (aura.requiredTargetType == SorceryCard.TargetType.Creature)
+                    lines.Add("Enchant creature");
+            }
+
             // Keyword abilities — only for creatures
             if (this is CreatureCard creature)
                 {
