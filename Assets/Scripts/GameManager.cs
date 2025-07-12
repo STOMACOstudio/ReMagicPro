@@ -1780,6 +1780,8 @@ public class GameManager : MonoBehaviour
             targetingVisual.transform.SetParent(vp, false);
             targetingVisual.isInBattlefield = true;
             targetingVisual.UpdateVisual();
+            if (targetingVisual != null)
+                targetingVisual.EnableTargetingHighlight(false);
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             targetingAura = null;
