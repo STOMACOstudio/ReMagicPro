@@ -212,6 +212,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     : "X";
                 return string.IsNullOrEmpty(basePart) ? xPart : basePart + "+" + xPart;
             }
+            if (genericCost == 0 && linkedCard is ArtifactCard)
+            {
+                return "0";
+            }
             return genericCost > 0 ? genericCost.ToString() : "";
         }
 
