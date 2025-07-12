@@ -1356,13 +1356,13 @@ public class GameManager : MonoBehaviour
             enemyLifeText.text = "" + aiPlayer.Life;
 
         if (playerDeckCountText != null)
-            playerDeckCountText.text = "Deck: " + humanPlayer.Deck.Count;
+            playerDeckCountText.text = "" + humanPlayer.Deck.Count;
         if (playerGraveyardCountText != null)
-            playerGraveyardCountText.text = "Graveyard: " + humanPlayer.Graveyard.Count;
+            playerGraveyardCountText.text = "" + humanPlayer.Graveyard.Count;
         if (enemyDeckCountText != null)
-            enemyDeckCountText.text = "Deck: " + aiPlayer.Deck.Count;
+            enemyDeckCountText.text = "" + aiPlayer.Deck.Count;
         if (enemyGraveyardCountText != null)
-            enemyGraveyardCountText.text = "Graveyard: " + aiPlayer.Graveyard.Count;
+            enemyGraveyardCountText.text = "" + aiPlayer.Graveyard.Count;
 
         if (manaPoolText != null)
         {
