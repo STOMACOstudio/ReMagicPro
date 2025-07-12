@@ -3127,6 +3127,34 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/cut_off_hands"),
                         rulesText = "Enchanted creature gets -4/-0",
                     });
+
+                Add(new CardData // Sickness
+                    {
+                        cardName = "Sickness",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = -2,
+                        toughnessBuff = -2,
+                        artwork = Resources.Load<Sprite>("Art/poison_mushroom"),
+                        rulesText = "Enchanted creature gets -2/-2",
+                    });
+
+                Add(new CardData // Woodskin
+                    {
+                        cardName = "Woodskin",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Green" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 2,
+                        toughnessBuff = 2,
+                        artwork = Resources.Load<Sprite>("Art/natures_rebuke"),
+                        rulesText = "Enchanted creature gets +2/+2",
+                    });
             }
 
     private static void Add(CardData data)
