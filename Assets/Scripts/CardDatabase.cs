@@ -3110,7 +3110,7 @@ public static class CardDatabase
                         subtypes = new List<string> { "Aura" },
                         powerBuff = 0,
                         toughnessBuff = 4,
-                        artwork = Resources.Load<Sprite>("Art/solid_prayer"),
+                        artwork = Resources.Load<Sprite>("Art/shield_of_faith"),
                         rulesText = "Enchanted creature gets +0/+4",
                     });
 
@@ -3124,7 +3124,7 @@ public static class CardDatabase
                         subtypes = new List<string> { "Aura" },
                         powerBuff = -4,
                         toughnessBuff = 0,
-                        artwork = Resources.Load<Sprite>("Art/forget"),
+                        artwork = Resources.Load<Sprite>("Art/cut_off_hands"),
                         rulesText = "Enchanted creature gets -4/-0",
                     });
             }
