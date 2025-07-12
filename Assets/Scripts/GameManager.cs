@@ -17,6 +17,10 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerLifeText;
     public TMP_Text enemyLifeText;
     public TMP_Text enemyHandText;
+    public TMP_Text playerDeckCountText;
+    public TMP_Text playerGraveyardCountText;
+    public TMP_Text enemyDeckCountText;
+    public TMP_Text enemyGraveyardCountText;
 
     public Transform playerHandArea;
     public Transform playerBattlefieldArea;
@@ -113,6 +117,7 @@ public class GameManager : MonoBehaviour
 
         DrawCards(humanPlayer, 7);
         DrawCards(aiPlayer, 7);
+        UpdateUI();
     }
 
     void Update()
@@ -1349,6 +1354,15 @@ public class GameManager : MonoBehaviour
 
         if (enemyLifeText != null)
             enemyLifeText.text = "" + aiPlayer.Life;
+
+        if (playerDeckCountText != null)
+            playerDeckCountText.text = "Deck: " + humanPlayer.Deck.Count;
+        if (playerGraveyardCountText != null)
+            playerGraveyardCountText.text = "Graveyard: " + humanPlayer.Graveyard.Count;
+        if (enemyDeckCountText != null)
+            enemyDeckCountText.text = "Deck: " + aiPlayer.Deck.Count;
+        if (enemyGraveyardCountText != null)
+            enemyGraveyardCountText.text = "Graveyard: " + aiPlayer.Graveyard.Count;
 
         if (manaPoolText != null)
         {
