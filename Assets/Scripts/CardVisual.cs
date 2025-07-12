@@ -211,11 +211,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     : "X";
                 return string.IsNullOrEmpty(basePart) ? xPart : basePart + "+" + xPart;
             }
-            if (genericCost == 0 && linkedCard is ArtifactCard)
+        if (genericCost == 0)
+        {
+            if (linkedCard is ArtifactCard)
             {
                 return "0";
             }
-            return genericCost > 0 ? genericCost.ToString() : "";
+            if (linkedCard is CreatureCard && linkedCard.PrimaryColor == "Artifact")
+            {
+                return "0";
+            }
+        }
+        return genericCost > 0 ? genericCost.ToString() : "";
         }
 
     private string ColorStat(int current, int baseValue)
