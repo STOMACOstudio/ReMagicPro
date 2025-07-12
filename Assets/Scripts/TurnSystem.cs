@@ -366,6 +366,13 @@ public class TurnSystem : MonoBehaviour
                         {
                             playedCard = false;
 
+                            ai.Hand.Sort((a, b) =>
+                            {
+                                int costA = CardDatabase.GetCardData(a.cardName)?.manaCost ?? 0;
+                                int costB = CardDatabase.GetCardData(b.cardName)?.manaCost ?? 0;
+                                return costB.CompareTo(costA);
+                            });
+
                             for (int i = 0; i < ai.Hand.Count; i++)
                             {
                                 Card card = ai.Hand[i];
@@ -1277,7 +1284,7 @@ public class TurnSystem : MonoBehaviour
                     .Where(b => BlockerCanBlockAttacker(b, creature, human) &&
                                 !b.isTapped &&
                                 !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
-                    .OrderBy(b => b.power + b.baseToughness)
+                    .OrderByDescending(b => b.power + b.baseToughness)
                     .ToList();
 
                 if (possibleBlockers.Count == 0)
@@ -1285,16 +1292,16 @@ public class TurnSystem : MonoBehaviour
 
                 var best = possibleBlockers.First();
 
-                bool killAndSurvive = creature.power >= best.toughness && creature.toughness > best.power;
-                if (killAndSurvive)
-                    return true;
+                bool blockerKillsAndSurvives = best.power >= creature.toughness && best.toughness > creature.power;
+                if (blockerKillsAndSurvives && !goForLethal)
+                    return false;
 
                 int creatureValue = creature.power + creature.baseToughness;
                 int blockerValue = best.power + best.baseToughness;
                 bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue;
                 bool aggressive = ai.Life >= human.Life;
 
-                return tradeUp || (aggressive && creatureValue >= blockerValue);
+                return tradeUp || goForLethal || (aggressive && creatureValue >= blockerValue);
             }
         
         public void ContinueAIAfterStack()
