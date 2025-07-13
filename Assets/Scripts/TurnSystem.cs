@@ -698,9 +698,11 @@ public class TurnSystem : MonoBehaviour
                                     {
                                         CreatureCard target;
                                         if (auraCard.buffPower >= 0 && auraCard.buffToughness >= 0)
-                                            target = ai.Battlefield.OfType<CreatureCard>().FirstOrDefault();
+                                            target = ai.Battlefield.OfType<CreatureCard>()
+                                                .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
                                         else
-                                            target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>().FirstOrDefault();
+                                            target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>()
+                                                .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
 
                                         if (target == null)
                                             continue;

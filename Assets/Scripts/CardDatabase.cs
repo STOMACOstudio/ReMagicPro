@@ -3243,6 +3243,8 @@ public static class CardDatabase
                         color = new List<string> { "Blue" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
+                        requiredTargetType = SorceryCard.TargetType.TappedCreature,
+                        keywordBuff = KeywordAbility.CantUntap,
                         artwork = Resources.Load<Sprite>("Art/sleep"),
                         rulesText = "Enchant tapped creature. Enchanted creature cannot untap",
                     });

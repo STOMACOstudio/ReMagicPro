@@ -115,6 +115,11 @@ public static class CardFactory
                 enchantment.buffPower = data.powerBuff;
                 enchantment.buffToughness = data.toughnessBuff;
                 enchantment.keywordBuff = data.keywordBuff;
+                if (enchantment is AuraCard aura)
+                    aura.requiredTargetType =
+                        data.requiredTargetType == SorceryCard.TargetType.None
+                            ? SorceryCard.TargetType.Creature
+                            : data.requiredTargetType;
                 newCard = enchantment;
                 break;
 

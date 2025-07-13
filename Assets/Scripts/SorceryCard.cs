@@ -40,6 +40,7 @@ public class SorceryCard : Card
     {
         None,
         Creature,
+        TappedCreature,
         Land,
         Artifact,
         Enchantment,
