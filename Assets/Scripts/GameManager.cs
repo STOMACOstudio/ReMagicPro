@@ -614,6 +614,8 @@ public class GameManager : MonoBehaviour
             card.isTapped = false;
 
             CardVisual visual = FindCardVisual(card); // <-- Moved up
+            if (visual != null)
+                visual.EnableTargetingHighlight(false); // ensure highlight removed
             if (visual != null && visual.tapIcon != null)
                 visual.tapIcon.SetActive(false);
 
@@ -2544,6 +2546,9 @@ public class GameManager : MonoBehaviour
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
             {
+                if (visual != null)
+                    visual.EnableTargetingHighlight(false); // ensure highlight removed
+
                 pendingGraveyardAnimations++;
 
                 // 1. Create a placeholder object in the same layout slot
@@ -2585,6 +2590,9 @@ public class GameManager : MonoBehaviour
 
         private IEnumerator ShowHandDiscardVFX(Card card, Player owner, CardVisual visual)
             {
+                if (visual != null)
+                    visual.EnableTargetingHighlight(false); // ensure highlight removed
+
                 // 1. Create placeholder
                 Transform parent = visual.transform.parent;
                 GameObject placeholder = Instantiate(deathPlaceholderPrefab, parent);
