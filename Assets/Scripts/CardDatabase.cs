@@ -3175,7 +3175,7 @@ public static class CardDatabase
                         powerBuff = 0,
                         toughnessBuff = 4,
                         artwork = Resources.Load<Sprite>("Art/shield_of_faith"),
-                        rulesText = "Enchanted creature gets +0/+4",
+                        rulesText = "Enchanted creature gets +0/+4.",
                     });
 
                 Add(new CardData // Sacred Horn
@@ -3190,7 +3190,7 @@ public static class CardDatabase
                         toughnessBuff = 1,
                         keywordBuff = KeywordAbility.Lifelink,
                         artwork = Resources.Load<Sprite>("Art/sacred_horn"),
-                        rulesText = "Enchanted creature gets +1/+1 and has lifelink",
+                        rulesText = "Enchanted creature gets +1/+1 and has lifelink.",
                     });
 
                 Add(new CardData // Cut off Hands
@@ -3246,7 +3246,7 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.TappedCreature,
                         keywordBuff = KeywordAbility.CantUntap,
                         artwork = Resources.Load<Sprite>("Art/sleep"),
-                        rulesText = "Enchant tapped creature. Enchanted creature cannot untap",
+                        rulesText = "Enchanted creature cannot untap.",
                     });
             }
 
