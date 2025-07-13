@@ -120,6 +120,8 @@ public class Card
             {
                 if (aura.requiredTargetType == SorceryCard.TargetType.Creature)
                     lines.Add("Enchant creature");
+                else if (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature)
+                    lines.Add("Enchant tapped creature");
             }
 
             // Keyword abilities — only for creatures
@@ -145,6 +147,8 @@ public class Card
                     lines.Add("This creature can't block if you don't control a forest.");
                 if (entersTapped)
                     lines.Add("This creature enters the battlefield tapped.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.CantUntap))
+                    lines.Add("This creature doesn't untap during its controller's untap step.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromWhite))
                     lines.Add("Protection from White");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlue))
