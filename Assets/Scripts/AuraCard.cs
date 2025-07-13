@@ -17,6 +17,11 @@ public class AuraCard : EnchantmentCard
             if (keywordBuff != KeywordAbility.None)
                 creature.AddAuraKeyword(keywordBuff);
             GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+
+            // If toughness falls to zero or less, creature (and this aura)
+            // should immediately die.
+            GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+            GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
         }
     }
 

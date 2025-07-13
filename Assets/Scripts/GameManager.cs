@@ -1809,6 +1809,17 @@ public class GameManager : MonoBehaviour
             targetingAura.OnEnterPlay(targetingPlayer);
             NotifyEnchantmentEntered(targetingAura, targetingPlayer);
 
+            // The enchanted creature might have died from the aura's effect.
+            if (!targetingPlayer.Battlefield.Contains(targetingAura))
+            {
+                targetingAura = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                UpdateUI();
+                return;
+            }
+
             if (targetingAura.entersTapped || IsAllPermanentsEnterTappedActive())
             {
                 targetingAura.isTapped = true;
