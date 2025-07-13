@@ -116,13 +116,15 @@ public class Card
         {
             List<string> lines = new List<string>();
 
-            if (this is AuraCard aura)
-            {
-                if (aura.requiredTargetType == SorceryCard.TargetType.Creature)
-                    lines.Add("Enchant creature");
-                else if (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature)
-                    lines.Add("Enchant tapped creature");
-            }
+        if (this is AuraCard aura)
+        {
+            string enchantText = aura.requiredTargetType == SorceryCard.TargetType.TappedCreature
+                ? "Enchant tapped creature"
+                : "Enchant creature";
+            if (aura.targetMustBeControlledCreature)
+                enchantText += " you control";
+            lines.Add(enchantText);
+        }
 
             // Keyword abilities — only for creatures
             if (this is CreatureCard creature)
