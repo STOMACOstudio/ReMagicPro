@@ -28,6 +28,7 @@ public enum KeywordAbility
     CreatureSpellsCostOneLess,
     BeastCreatureSpellsCostOneLess,
     OpponentSpellsCostOneMore,
+    CantUntap,
 }
 
 public enum ActivatedAbility

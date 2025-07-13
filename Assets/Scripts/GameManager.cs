@@ -847,7 +847,14 @@ public class GameManager : MonoBehaviour
     {
         foreach (var card in player.Battlefield)
         {
-            card.isTapped = false;
+            bool cantUntap = false;
+            if (card is CreatureCard checkCreature)
+                cantUntap = checkCreature.keywordAbilities.Contains(KeywordAbility.CantUntap);
+            else if (card.keywordAbilities != null)
+                cantUntap = card.keywordAbilities.Contains(KeywordAbility.CantUntap);
+
+            if (!cantUntap)
+                card.isTapped = false;
 
             if (card is CreatureCard creature)
             {
@@ -1611,6 +1618,7 @@ public class GameManager : MonoBehaviour
 
                 bool correctType =
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
+                    (sorcery.requiredTargetType == SorceryCard.TargetType.TappedCreature && target is CreatureCard tc && tc.isTapped) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard) ||
@@ -1762,7 +1770,9 @@ public class GameManager : MonoBehaviour
         if (targetingAura != null)
         {
             Card targetCard = chosen;
-            bool correctType = (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard);
+            bool correctType =
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard) ||
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped);
             bool isOnBattlefield = GetOwnerOfCard(targetCard)?.Battlefield.Contains(targetCard) == true;
 
             if (!correctType || !isOnBattlefield)
