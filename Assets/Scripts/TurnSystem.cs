@@ -711,9 +711,17 @@ public class TurnSystem : MonoBehaviour
                                         ai.Hand.Remove(card);
                                         auraCard.attachedTo = target;
                                         auraCard.owner = ai;
-                                        ai.Battlefield.Add(auraCard);
-                                        auraCard.OnEnterPlay(ai);
-                                        GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
+                                       ai.Battlefield.Add(auraCard);
+                                       auraCard.OnEnterPlay(ai);
+                                       GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
+
+                                        // Aura or enchanted creature might die upon entry
+                                        if (!ai.Battlefield.Contains(auraCard))
+                                        {
+                                            waitingForAIAction = true;
+                                            StartCoroutine(WaitForAIAction(1f));
+                                            return;
+                                        }
 
                                         if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {
