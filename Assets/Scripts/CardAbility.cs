@@ -6,6 +6,7 @@ public enum TriggerTiming
     OnArtifactEnter,
     OnEnchantmentEnter,
     OnLandEnter,
+    OnCreatureEnter,
     OnLandLeave,
     OnLifeGain,
     OnCardDraw,

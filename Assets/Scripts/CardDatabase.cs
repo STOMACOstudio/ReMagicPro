@@ -1649,6 +1649,68 @@ public static class CardDatabase
                     flavorText = "They’ve learned which bones snap easiest. And they enjoy the sound.",
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
                     });
+                Add(new CardData //Gorilla Chief
+                    {
+                    cardName = "Gorilla Chief",
+                    rarity = "Rare",
+                    manaCost = 3,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Monkey" },
+                    artwork = Resources.Load<Sprite>("Art/gorilla_chief"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Monkeys you control get +1/+1.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                foreach (var c in owner.Battlefield.OfType<CreatureCard>())
+                                {
+                                    if (c.subtypes.Contains("Monkey"))
+                                    {
+                                        c.AddAuraBuff(1,1);
+                                        GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                    }
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnCreatureEnter,
+                            description = "Monkeys you control get +1/+1.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                Card entering = GameManager.Instance.lastEnteredCreature;
+                                if (entering is CreatureCard creature && creature.subtypes.Contains("Monkey") &&
+                                    GameManager.Instance.GetOwnerOfCard(entering) == owner)
+                                {
+                                    creature.AddAuraBuff(1,1);
+                                    GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                foreach (var c in owner.Battlefield.OfType<CreatureCard>())
+                                {
+                                    if (c.subtypes.Contains("Monkey"))
+                                    {
+                                        c.RemoveAuraBuff(1,1);
+                                        GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Veilbreaker Druid
                     {
                     cardName = "Veilbreaker Druid",

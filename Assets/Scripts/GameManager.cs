@@ -283,6 +283,7 @@ public class GameManager : MonoBehaviour
                     player.Battlefield.Add(card);
 
                     card.OnEnterPlay(player);
+                    NotifyCreatureEntered(card, player);
                     if (card.color.Contains("Artifact"))
                         NotifyArtifactEntered(card, player);
 
@@ -972,6 +973,8 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
+        if (tokenCard is CreatureCard)
+            NotifyCreatureEntered(tokenCard, owner);
         if (tokenCard is LandCard)
             NotifyLandEntered(tokenCard, owner);
         if ((tokenCard is ArtifactCard) ||
@@ -1133,6 +1136,8 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
+        if (chosen is CreatureCard)
+            NotifyCreatureEntered(chosen, player);
         if (chosen is LandCard)
             NotifyLandEntered(chosen, player);
         if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
@@ -1176,6 +1181,8 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
+        if (chosen is CreatureCard)
+            NotifyCreatureEntered(chosen, player);
         if (chosen is LandCard)
             NotifyLandEntered(chosen, player);
         if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
@@ -2667,6 +2674,28 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        public void NotifyCreatureEntered(Card creature, Player controller)
+        {
+            if (!(creature is CreatureCard))
+                return;
+
+            lastEnteredCreature = creature;
+            foreach (var player in new[] { humanPlayer, aiPlayer })
+            {
+                foreach (var card in player.Battlefield.ToList())
+                {
+                    foreach (var ability in card.abilities)
+                    {
+                        if (ability.timing == TriggerTiming.OnCreatureEnter && ability.effect != null)
+                        {
+                            ability.effect.Invoke(player, card);
+                        }
+                    }
+                }
+            }
+            lastEnteredCreature = null;
+        }
+
         public void NotifyLandLeft(Card land, Player controller)
         {
             foreach (var player in new[] { humanPlayer, aiPlayer })
@@ -2721,6 +2750,8 @@ public class GameManager : MonoBehaviour
         public Player lastDiscardingPlayer = null;
 
         public Card lastDeadCreature = null;
+
+        public Card lastEnteredCreature = null;
 
         public void NotifyCardDrawn(Player player, int amount)
         {
