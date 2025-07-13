@@ -715,6 +715,14 @@ public class TurnSystem : MonoBehaviour
                                        auraCard.OnEnterPlay(ai);
                                        GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
 
+                                        // Aura or enchanted creature might die upon entry
+                                        if (!ai.Battlefield.Contains(auraCard))
+                                        {
+                                            waitingForAIAction = true;
+                                            StartCoroutine(WaitForAIAction(1f));
+                                            return;
+                                        }
+
                                         bool auraSurvived = ai.Battlefield.Contains(auraCard);
 
                                         if (auraSurvived)
