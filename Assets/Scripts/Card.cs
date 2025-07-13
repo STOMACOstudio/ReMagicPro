@@ -253,6 +253,8 @@ public class Card
                     lines.Add("Whenever an enchantment enters the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLandEnter)
                     lines.Add("Whenever a land enters the battlefield, " + ability.description);
+                else if (ability.timing == TriggerTiming.OnCreatureEnter)
+                    lines.Add("Whenever a creature enters the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLandLeave)
                     lines.Add("Whenever a land leaves the battlefield, " + ability.description);
                 else if (ability.timing == TriggerTiming.OnLifeGain)
