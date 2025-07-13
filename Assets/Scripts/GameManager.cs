@@ -1827,9 +1827,13 @@ public class GameManager : MonoBehaviour
             }
 
             Transform vp = targetingPlayer == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
-            targetingVisual.transform.SetParent(vp, false);
-            targetingVisual.isInBattlefield = true;
-            targetingVisual.UpdateVisual();
+            if (targetingVisual != null)
+            {
+                targetingVisual.transform.SetParent(vp, false);
+                targetingVisual.isInBattlefield = true;
+                targetingVisual.UpdateVisual();
+            }
+
             if (targetingVisual != null)
                 targetingVisual.EnableTargetingHighlight(false);
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
