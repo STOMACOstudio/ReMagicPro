@@ -1660,12 +1660,13 @@ public static class CardDatabase
                     toughness = 2,
                     subtypes = new List<string> { "Monkey" },
                     artwork = Resources.Load<Sprite>("Art/gorilla_chief"),
+                    rulesText = "Monkeys you control get +1/+1.",
                     abilities = new List<CardAbility>
                     {
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
-                            description = "Monkeys you control get +1/+1.",
+                            description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 foreach (var c in owner.Battlefield.OfType<CreatureCard>())
@@ -1681,11 +1682,12 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnCreatureEnter,
-                            description = "Monkeys you control get +1/+1.",
+                            description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 Card entering = GameManager.Instance.lastEnteredCreature;
-                                if (entering is CreatureCard creature && creature.subtypes.Contains("Monkey") &&
+                                if (entering is CreatureCard creature && entering != selfCard &&
+                                    creature.subtypes.Contains("Monkey") &&
                                     GameManager.Instance.GetOwnerOfCard(entering) == owner)
                                 {
                                     creature.AddAuraBuff(1,1);
