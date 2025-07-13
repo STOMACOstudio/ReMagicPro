@@ -1809,16 +1809,26 @@ public class GameManager : MonoBehaviour
             targetingAura.OnEnterPlay(targetingPlayer);
             NotifyEnchantmentEntered(targetingAura, targetingPlayer);
 
-            if (targetingAura.entersTapped || IsAllPermanentsEnterTappedActive())
+            // The enchanted creature might have died from the aura's effect.
+            bool auraSurvived = targetingPlayer.Battlefield.Contains(targetingAura);
+
+            if (auraSurvived)
             {
-                targetingAura.isTapped = true;
-                Debug.Log($"{targetingAura.cardName} enters tapped (due to static effect).");
+                if (targetingAura.entersTapped || IsAllPermanentsEnterTappedActive())
+                {
+                    targetingAura.isTapped = true;
+                    Debug.Log($"{targetingAura.cardName} enters tapped (due to static effect).");
+                }
+
+                Transform vp = targetingPlayer == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+                if (targetingVisual != null)
+                {
+                    targetingVisual.transform.SetParent(vp, false);
+                    targetingVisual.isInBattlefield = true;
+                    targetingVisual.UpdateVisual();
+                }
             }
 
-            Transform vp = targetingPlayer == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
-            targetingVisual.transform.SetParent(vp, false);
-            targetingVisual.isInBattlefield = true;
-            targetingVisual.UpdateVisual();
             if (targetingVisual != null)
                 targetingVisual.EnableTargetingHighlight(false);
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
