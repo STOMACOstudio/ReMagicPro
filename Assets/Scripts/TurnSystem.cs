@@ -715,25 +715,22 @@ public class TurnSystem : MonoBehaviour
                                        auraCard.OnEnterPlay(ai);
                                        GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
 
-                                        // Aura or enchanted creature might die upon entry
-                                        if (!ai.Battlefield.Contains(auraCard))
-                                        {
-                                            waitingForAIAction = true;
-                                            StartCoroutine(WaitForAIAction(1f));
-                                            return;
-                                        }
+                                        bool auraSurvived = ai.Battlefield.Contains(auraCard);
 
-                                        if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        if (auraSurvived)
                                         {
-                                            auraCard.isTapped = true;
-                                            Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
-                                        }
+                                            if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                            {
+                                                auraCard.isTapped = true;
+                                                Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
+                                            }
 
-                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
-                                        CardVisual visual = obj.GetComponent<CardVisual>();
-                                        visual.Setup(auraCard, GameManager.Instance);
-                                        visual.isInBattlefield = true;
-                                        GameManager.Instance.activeCardVisuals.Add(visual);
+                                            GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
+                                            CardVisual visual = obj.GetComponent<CardVisual>();
+                                            visual.Setup(auraCard, GameManager.Instance);
+                                            visual.isInBattlefield = true;
+                                            GameManager.Instance.activeCardVisuals.Add(visual);
+                                        }
 
                                         Debug.Log($"AI played aura: {card.cardName}");
                                         playedCard = true;
