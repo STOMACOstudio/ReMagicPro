@@ -566,6 +566,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 owner.Graveyard.Add(card);
+                UpdateUI();
                 return;
             }
 
@@ -669,6 +670,7 @@ public class GameManager : MonoBehaviour
             graveyardVisual.transform.SetAsFirstSibling();
 
             owner.Graveyard.Add(card);
+            UpdateUI();
         }
 
     public (int playerDamage, int aiDamage) ResolveCombat()
@@ -2585,6 +2587,7 @@ public class GameManager : MonoBehaviour
 
                 // 6. Move to graveyard data list
                 owner.Graveyard.Add(card);
+                UpdateUI();
                 pendingGraveyardAnimations--;
             }
 
@@ -2629,6 +2632,7 @@ public class GameManager : MonoBehaviour
 
                 // 6. Move to graveyard data list
                 owner.Graveyard.Add(card);
+                UpdateUI();
             }
 
         public void NotifyArtifactEntered(Card artifact, Player controller)
