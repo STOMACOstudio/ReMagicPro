@@ -1773,9 +1773,11 @@ public class GameManager : MonoBehaviour
             bool correctType =
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard) ||
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped);
-            bool isOnBattlefield = GetOwnerOfCard(targetCard)?.Battlefield.Contains(targetCard) == true;
+            Player targetOwner = GetOwnerOfCard(targetCard);
+            bool isOnBattlefield = targetOwner?.Battlefield.Contains(targetCard) == true;
+            bool correctController = !targetingAura.targetMustBeControlledCreature || targetOwner == targetingPlayer;
 
-            if (!correctType || !isOnBattlefield)
+            if (!correctType || !isOnBattlefield || !correctController)
             {
                 Debug.Log("Invalid target for aura.");
                 CancelTargeting();

@@ -6,6 +6,7 @@ public class AuraCard : EnchantmentCard
 {
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.Creature;
     public Card attachedTo;
+    public bool targetMustBeControlledCreature = false;
 
     public override void OnEnterPlay(Player owner)
     {

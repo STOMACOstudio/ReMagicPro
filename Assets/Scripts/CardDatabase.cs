@@ -3221,6 +3221,21 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets -2/-2",
                     });
 
+                Add(new CardData // Devouring Fury
+                    {
+                        cardName = "Devouring Fury",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Red" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 4,
+                        toughnessBuff = -2,
+                        targetMustBeControlledCreature = true,
+                        artwork = Resources.Load<Sprite>("Art/devouring_fury"),
+                        rulesText = "Enchanted creature gets +4/-2.",
+                    });
+
                 Add(new CardData // Woodskin
                     {
                         cardName = "Woodskin",
