@@ -3234,6 +3234,18 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/woodskin"),
                         rulesText = "Enchanted creature gets +2/+2",
                     });
+
+                Add(new CardData // Sleep
+                    {
+                        cardName = "Sleep",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        artwork = Resources.Load<Sprite>("Art/sleep"),
+                        rulesText = "Enchant tapped creature. Enchanted creature cannot untap",
+                    });
             }
 
     private static void Add(CardData data)
