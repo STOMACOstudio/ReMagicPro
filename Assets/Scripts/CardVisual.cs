@@ -228,7 +228,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private string ColorStat(int current, int baseValue)
         {
             if (current > baseValue)
-                return $"<color=#00ff00>{current}</color>";
+                // Use a darker shade of green (emerald) when stats are boosted
+                return $"<color=#50C878>{current}</color>";
             if (current < baseValue)
                 return $"<color=#ff0000>{current}</color>";
             return current.ToString();
