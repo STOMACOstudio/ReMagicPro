@@ -9,7 +9,10 @@ using System.Linq;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public CreatureCard selectedAttackerForBlocking = null;
+    // Temporarily stores the player's selected blocker creature during the
+    // Choose Blockers phase. The player first selects their own creature and
+    // then clicks an attacking enemy creature to assign the block.
+    public CreatureCard selectedBlockerForBlocking = null;
 
     public Player humanPlayer;
     public Player aiPlayer;
@@ -824,7 +827,7 @@ public class GameManager : MonoBehaviour
         }
 
         currentAttackers.Clear();
-        selectedAttackerForBlocking = null;
+        selectedBlockerForBlocking = null;
         UpdateUI();
         CheckForGameEnd();
         return (playerDamage, aiDamage);
@@ -2542,7 +2545,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 currentAttackers.Clear();
-                selectedAttackerForBlocking = null;
+                selectedBlockerForBlocking = null;
                 UpdateUI();
             }
 
