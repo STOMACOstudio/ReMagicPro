@@ -108,8 +108,8 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Beasthunter"));
             ai.Deck.Add(CardFactory.Create("Candlelight"));
             ai.Deck.Add(CardFactory.Create("Candlelight"));
-            ai.Deck.Add(CardFactory.Create("Bonefire"));
-            ai.Deck.Add(CardFactory.Create("Bonefire"));
+            ai.Deck.Add(CardFactory.Create("Bonfire"));
+            ai.Deck.Add(CardFactory.Create("Bonfire"));
         }
 
     public static void BuildWhiteAdvancedDeck(Player ai)
@@ -134,7 +134,7 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Waterbearer"));
             ai.Deck.Add(CardFactory.Create("Waterbearer"));
             ai.Deck.Add(CardFactory.Create("Waterbearer"));
-            ai.Deck.Add(CardFactory.Create("Faith Incarnated"));
+            ai.Deck.Add(CardFactory.Create("Faith Incarnate"));
             ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
             ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
             ai.Deck.Add(CardFactory.Create("Iconoclast Monk"));
@@ -226,7 +226,7 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
             ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
             ai.Deck.Add(CardFactory.Create("Lucky Fisherman"));
-            ai.Deck.Add(CardFactory.Create("Windsom Incarnate"));
+            ai.Deck.Add(CardFactory.Create("Wisdom Incarnate"));
             ai.Deck.Add(CardFactory.Create("Tide Spirit"));
             ai.Deck.Add(CardFactory.Create("Tide Spirit"));
             ai.Deck.Add(CardFactory.Create("Tide Spirit"));
@@ -379,8 +379,8 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("To Dig a Hole"));
             ai.Deck.Add(CardFactory.Create("Crystallium"));
             ai.Deck.Add(CardFactory.Create("Crystallium"));
-            ai.Deck.Add(CardFactory.Create("Wild OStrich"));
-            ai.Deck.Add(CardFactory.Create("Wild OStrich"));
+            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
+            ai.Deck.Add(CardFactory.Create("Wild Ostrich"));
         }
 
     public static void BuildRedAdvancedDeck(Player ai)
@@ -416,13 +416,13 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Thundermare"));
             ai.Deck.Add(CardFactory.Create("Thundermare"));
             ai.Deck.Add(CardFactory.Create("Thundermare"));
-            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
+            ai.Deck.Add(CardFactory.Create("Fire Spirals"));
             ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
             ai.Deck.Add(CardFactory.Create("Fireborn Dragon"));
             ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
             ai.Deck.Add(CardFactory.Create("Dragon Summoner"));
             ai.Deck.Add(CardFactory.Create("Potion of Knowledge"));
-            ai.Deck.Add(CardFactory.Create("Fire Spirlas"));
+            ai.Deck.Add(CardFactory.Create("Fire Spirals"));
             ai.Deck.Add(CardFactory.Create("Thunderstrike"));
             ai.Deck.Add(CardFactory.Create("War Incarnate"));
             ai.Deck.Add(CardFactory.Create("Melt"));
@@ -605,6 +605,6 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Potion of Lava"));
             ai.Deck.Add(CardFactory.Create("Pressure Sphere"));
             ai.Deck.Add(CardFactory.Create("Trinkets Collector"));
-            ai.Deck.Add(CardFactory.Create("Blast Oìof Knowledge"));
+            ai.Deck.Add(CardFactory.Create("Blast of Knowledge"));
         }
 }
