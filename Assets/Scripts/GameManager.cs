@@ -125,25 +125,26 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
-            {
-                Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
-                gameOver = true;
-                FindObjectOfType<WinScreenUI>().ShowWinScreen();
-            }
-            else
-            {
-                Debug.LogWarning("[DEV] No zone ID found — can't win");
-            }
-        }
-        
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
-            Debug.Log("D key pressed — drew a card.");
-        }
+        // Debug helpers for testing win and draw functions. Commented out for release build.
+        // if (Input.GetKeyDown(KeyCode.W))
+        // {
+        //     if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
+        //     {
+        //         Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
+        //         gameOver = true;
+        //         FindObjectOfType<WinScreenUI>().ShowWinScreen();
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning("[DEV] No zone ID found — can't win");
+        //     }
+        // }
+
+        // if (Input.GetKeyDown(KeyCode.D))
+        // {
+        //     GameManager.Instance.DrawCard(GameManager.Instance.humanPlayer);
+        //     Debug.Log("D key pressed — drew a card.");
+        // }
     }
 
     void ShuffleDeck(Player player)
