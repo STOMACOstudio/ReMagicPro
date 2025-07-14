@@ -1254,16 +1254,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Player you = GameManager.Instance.humanPlayer;
                     Player enemy = GameManager.Instance.aiPlayer;
 
-                    // If you click an attacker first
-                    if (enemy.Battlefield.Contains(clickedCreature) &&
-                        GameManager.Instance.currentAttackers.Contains(clickedCreature))
-                    {
-                        GameManager.Instance.selectedAttackerForBlocking = clickedCreature;
-                        Debug.Log($"Selected attacker to block: {clickedCreature.cardName}");
-                        return;
-                    }
-
-                    // If you click your own untapped creature next
+                    // If you click your own untapped creature first
                     if (you.Battlefield.Contains(clickedCreature) &&
                         !clickedCreature.isTapped &&
                         !clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBlock) &&
@@ -1272,11 +1263,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             !you.Battlefield.Exists(card => card is LandCard land && land.cardName.ToLower().Contains("forest"))
                         ))
                     {
-                        var attacker = GameManager.Instance.selectedAttackerForBlocking;
-
+                        // Already blocking something -> remove block
                         if (clickedCreature.blockingThisAttacker != null)
                         {
-                            // Already blocking → remove block
                             Debug.Log($"{clickedCreature.cardName} stops blocking.");
                             clickedCreature.blockingThisAttacker.blockedByThisBlocker.Remove(clickedCreature);
                             clickedCreature.blockingThisAttacker = null;
@@ -1284,49 +1273,58 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
 
-                        if (attacker == null)
+                        GameManager.Instance.selectedBlockerForBlocking = clickedCreature;
+                        Debug.Log($"Selected blocker: {clickedCreature.cardName}");
+                        return;
+                    }
+
+                    // If you click an attacker after selecting a blocker
+                    if (enemy.Battlefield.Contains(clickedCreature) &&
+                        GameManager.Instance.currentAttackers.Contains(clickedCreature))
+                    {
+                        var blocker = GameManager.Instance.selectedBlockerForBlocking;
+
+                        if (blocker == null)
                         {
-                            Debug.Log("Click an attacking enemy creature first to block.");
+                            Debug.Log("Click one of your untapped creatures first to block.");
                             return;
                         }
-
-
 
                         // Check if this blocker is allowed to block the attacker (Flying rule)
-                        if (attacker.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                            !clickedCreature.keywordAbilities.Contains(KeywordAbility.Flying) &&
-                            !clickedCreature.keywordAbilities.Contains(KeywordAbility.Reach))
+                        if (clickedCreature.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                            !blocker.keywordAbilities.Contains(KeywordAbility.Flying) &&
+                            !blocker.keywordAbilities.Contains(KeywordAbility.Reach))
                         {
-                            Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} because it lacks Flying or Reach.");
+                            Debug.Log($"{blocker.cardName} can't block {clickedCreature.cardName} because it lacks Flying or Reach.");
                             return;
                         }
-                    
+
                         // Check if blocker is restricted to flying-only
-                        if (clickedCreature.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
-                            !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
+                        if (blocker.keywordAbilities.Contains(KeywordAbility.CanOnlyBlockFlying) &&
+                            !clickedCreature.keywordAbilities.Contains(KeywordAbility.Flying))
                         {
-                            Debug.Log($"{clickedCreature.cardName} can only block flying creatures.");
+                            Debug.Log($"{blocker.cardName} can only block flying creatures.");
                             return;
                         }
                         // Check if attacker is unblockable due to landwalk
-                        if (IsLandwalkPreventingBlock(attacker, you))
+                        if (IsLandwalkPreventingBlock(clickedCreature, you))
                         {
-                            Debug.Log($"{clickedCreature.cardName} can't block {attacker.cardName} due to landwalk.");
+                            Debug.Log($"{blocker.cardName} can't block {clickedCreature.cardName} due to landwalk.");
                             return;
                         }
                         // Prevent blocking if attacker has protection from blocker's color
-                        if (clickedCreature.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
+                        if (blocker.color.Any(c => clickedCreature.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
                         {
-                            Debug.Log($"{attacker.cardName} has protection from {clickedCreature.color}, so it can't be blocked by {clickedCreature.cardName}.");
+                            Debug.Log($"{clickedCreature.cardName} has protection from {blocker.color}, so it can't be blocked by {blocker.cardName}.");
                             return;
                         }
-                        
-                        // Assign the block
-                        clickedCreature.blockingThisAttacker = attacker;
-                        attacker.blockedByThisBlocker.Add(clickedCreature);
-                        GameManager.Instance.selectedAttackerForBlocking = null;
 
-                        Debug.Log($"{clickedCreature.cardName} is blocking {attacker.cardName}");
+                        // Assign the block
+                        blocker.blockingThisAttacker = clickedCreature;
+                        clickedCreature.blockedByThisBlocker.Add(blocker);
+                        GameManager.Instance.selectedBlockerForBlocking = null;
+
+                        Debug.Log($"{blocker.cardName} is blocking {clickedCreature.cardName}");
                         SoundManager.Instance.PlaySound(SoundManager.Instance.declareBlock);
                         GameManager.Instance.UpdateUI();
                         return;
