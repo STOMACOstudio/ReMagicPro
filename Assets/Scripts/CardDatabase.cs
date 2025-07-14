@@ -74,7 +74,7 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = ", you may destroy target non-creature artifact.",
+                                description = " you may destroy target non-creature artifact.",
                                 requiresTarget = true,
                                 requiredTargetType = SorceryCard.TargetType.Artifact,
                                 effect = (Player owner, Card target) =>
@@ -1152,7 +1152,7 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = "exile 8 random creature cards from your graveyard. If you can't, you lose 8 life",
+                                description = "exile 8 random creature cards from your graveyard. If you can't, you lose 8 life.",
                                 effect = (Player owner, Card selfCard) =>
                                 {
                                     var creatures = owner.Graveyard.OfType<CreatureCard>().ToList();
@@ -3247,7 +3247,7 @@ public static class CardDatabase
                         powerBuff = 2,
                         toughnessBuff = 2,
                         artwork = Resources.Load<Sprite>("Art/woodskin"),
-                        rulesText = "Enchanted creature gets +2/+2",
+                        rulesText = "Enchanted creature gets +2/+2.",
                     });
 
                 Add(new CardData // Sleep
