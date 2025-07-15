@@ -1017,7 +1017,6 @@ public static class CardDatabase
                     activatedAbilities = new List<ActivatedAbility> {
                         ActivatedAbility.TapToLoseLife
                     },
-                    flavorText = "Some humans serve the Lich Queen out of fear, others after a curse. But the witches simply enjoy being cruel.",
                     artwork = Resources.Load<Sprite>("Art/wicked_witch")
                     });
                 Add(new CardData //Undead Army

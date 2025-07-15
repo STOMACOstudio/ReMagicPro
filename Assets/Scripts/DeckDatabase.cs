@@ -52,7 +52,6 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Waterbearer"));
             ai.Deck.Add(CardFactory.Create("For Glory"));
             ai.Deck.Add(CardFactory.Create("For Glory"));
-            ai.Deck.Add(CardFactory.Create("For Glory"));
             ai.Deck.Add(CardFactory.Create("Candlelight"));
             ai.Deck.Add(CardFactory.Create("Candlelight"));
             ai.Deck.Add(CardFactory.Create("Candlelight"));
@@ -61,10 +60,11 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Virgins Procession"));
             ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
             ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
-            ai.Deck.Add(CardFactory.Create("Skyhunter Unicorn"));
             ai.Deck.Add(CardFactory.Create("Crystallium"));
             ai.Deck.Add(CardFactory.Create("Crystallium"));
             ai.Deck.Add(CardFactory.Create("Crystallium"));
+            ai.Deck.Add(CardFactory.Create("Mana Rock"));
+            ai.Deck.Add(CardFactory.Create("Mana Rock"));
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
@@ -529,38 +529,39 @@ public static class DeckDatabase
             ai.Deck.Add(CardFactory.Create("Swamp"));
             ai.Deck.Add(CardFactory.Create("Swamp"));
             ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Swamp"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Forget"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Sad Clown"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Giant Crow"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
-            ai.Deck.Add(CardFactory.Create("Witches Rite"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Plains"));
+            ai.Deck.Add(CardFactory.Create("Waterbearer"));
+            ai.Deck.Add(CardFactory.Create("Waterbearer"));
+            ai.Deck.Add(CardFactory.Create("Waterbearer"));
+            ai.Deck.Add(CardFactory.Create("Ratbat"));
+            ai.Deck.Add(CardFactory.Create("Ratbat"));
+            ai.Deck.Add(CardFactory.Create("Ratbat"));
+            ai.Deck.Add(CardFactory.Create("Death Incarnate"));
+            ai.Deck.Add(CardFactory.Create("Death Incarnate"));
+            ai.Deck.Add(CardFactory.Create("Faith Incarnate"));
+            ai.Deck.Add(CardFactory.Create("Faith Incarnate"));
             ai.Deck.Add(CardFactory.Create("Lights Out"));
             ai.Deck.Add(CardFactory.Create("Lights Out"));
             ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
             ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
-            ai.Deck.Add(CardFactory.Create("Possessed Innocent"));
+            ai.Deck.Add(CardFactory.Create("Pure Angel"));
             ai.Deck.Add(CardFactory.Create("The Worlds Evil"));
             ai.Deck.Add(CardFactory.Create("Massacre"));
-            ai.Deck.Add(CardFactory.Create("Death Incarnate"));
             ai.Deck.Add(CardFactory.Create("Rotting Dragon"));
+            ai.Deck.Add(CardFactory.Create("Afterlife Jinx Lantern"));
+            ai.Deck.Add(CardFactory.Create("Giant Bat"));
+            ai.Deck.Add(CardFactory.Create("Giant Bat"));
+            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+            ai.Deck.Add(CardFactory.Create("Bog Mosquito"));
+            ai.Deck.Add(CardFactory.Create("Pure Angel"));
+
         }
 
     public static void BuildRuinsDeck(Player ai)
