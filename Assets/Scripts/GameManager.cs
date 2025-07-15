@@ -566,6 +566,7 @@ public class GameManager : MonoBehaviour
                     // Ensure logo and count remain on top
                     // Last card in should appear on top, so send to end of hierarchy
                     stackGraveyardVisual.transform.SetAsLastSibling();
+                    EnsureGraveyardCounterOnTop(owner);
 
                     activeCardVisuals.Add(stackGraveyardVisual);
                 }
@@ -674,6 +675,7 @@ public class GameManager : MonoBehaviour
             // Ensure graveyard UI elements stay above the cards
             // Newest card should appear on top
             graveyardVisual.transform.SetAsLastSibling();
+            EnsureGraveyardCounterOnTop(owner);
 
             owner.Graveyard.Add(card);
             UpdateUI();
@@ -1413,6 +1415,21 @@ public class GameManager : MonoBehaviour
                 label.text = amount.ToString();
         }
 
+    // Ensures the graveyard count text stays above newly added cards
+    private void EnsureGraveyardCounterOnTop(Player owner)
+    {
+        if (owner == humanPlayer)
+        {
+            if (playerGraveyardCountText != null)
+                playerGraveyardCountText.transform.SetAsLastSibling();
+        }
+        else if (owner == aiPlayer)
+        {
+            if (enemyGraveyardCountText != null)
+                enemyGraveyardCountText.transform.SetAsLastSibling();
+        }
+    }
+
     public void RefreshGraveyardVisuals(Player player)
         {
             var graveyardVisuals = activeCardVisuals
@@ -1438,6 +1455,7 @@ public class GameManager : MonoBehaviour
                 // Keep UI overlay elements above the cards
                 // Newest card should appear on top
                 graveyardVisual.transform.SetAsLastSibling();
+                EnsureGraveyardCounterOnTop(player);
 
                 activeCardVisuals.Add(graveyardVisual);
             }
@@ -2589,6 +2607,7 @@ public class GameManager : MonoBehaviour
                     // Ensure overlay elements appear above
                     // Place newest card on top of pile
                     graveyardVisual.transform.SetAsLastSibling();
+                    EnsureGraveyardCounterOnTop(owner);
 
                     activeCardVisuals.Add(graveyardVisual);
                 }
@@ -2635,6 +2654,7 @@ public class GameManager : MonoBehaviour
                     // Keep UI overlay elements on top
                     // Maintain newest card on top of pile
                     graveyardVisual.transform.SetAsLastSibling();
+                    EnsureGraveyardCounterOnTop(owner);
 
                     GameManager.Instance.activeCardVisuals.Add(graveyardVisual);
                 }
