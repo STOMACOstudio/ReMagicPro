@@ -312,10 +312,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Display +1/+1 or -1/-1 counters if present
             if (counterContainer != null)
             {
-                if (linkedCard is CreatureCard creature)
+                if (linkedCard is CreatureCard contersCreature)
                 {
-                    int plus = creature.plusOneCounters;
-                    int minus = creature.minusOneCounters;
+                    int plus = contersCreature.plusOneCounters;
+                    int minus = contersCreature.minusOneCounters;
 
                     if (plus == 0 && minus == 0)
                     {
