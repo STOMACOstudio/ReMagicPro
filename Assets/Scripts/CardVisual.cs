@@ -56,6 +56,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text keywordText;
     public TMP_Text cardTypeText;
 
+    // UI elements showing +1/+1 or -1/-1 counters
+    public GameObject counterContainer;
+    public TMP_Text counterText;
+    public Image counterImage;
+
     private readonly Vector2 battlefieldStatsPosition = new Vector2(0, -5);
     private readonly Vector2 defaultStatsPosition = new Vector2(28, -53);
     private Vector3 originalPosition;
@@ -303,6 +308,40 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             var data = CardDatabase.GetCardData(linkedCard.cardName);
             SetCardBorder(data);
             UpdateLandIcon();
+
+            // Display +1/+1 or -1/-1 counters if present
+            if (counterContainer != null)
+            {
+                if (linkedCard is CreatureCard creature)
+                {
+                    int plus = creature.plusOneCounters;
+                    int minus = creature.minusOneCounters;
+
+                    if (plus == 0 && minus == 0)
+                    {
+                        counterContainer.SetActive(false);
+                    }
+                    else
+                    {
+                        counterContainer.SetActive(true);
+                        bool showPlus = plus >= minus;
+
+                        if (counterText != null)
+                            counterText.text = showPlus ? plus.ToString() : minus.ToString();
+
+                        if (counterImage != null)
+                        {
+                            counterImage.color = showPlus
+                                ? new Color(0.6f, 0.9f, 0.6f, 1f)
+                                : new Color(0.8f, 0.6f, 0.9f, 1f);
+                        }
+                    }
+                }
+                else
+                {
+                    counterContainer.SetActive(false);
+                }
+            }
 
             if (cardRarity != null)
             {
