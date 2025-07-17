@@ -1050,18 +1050,22 @@ public class TurnSystem : MonoBehaviour
                         // Assign blockers to attackers prioritizing survival/trades
                         foreach (var attacker in attackers)
                         {
-                            var blocker = ChooseBestBlocker(attacker, availableBlockers, projectedLife, remainingDamage);
-                            if (blocker != null)
+                            var chosenBlockers = ChooseBestBlockers(attacker, availableBlockers, projectedLife, remainingDamage);
+
+                            if (chosenBlockers != null && chosenBlockers.Count > 0)
                             {
                                 if (!GameManager.Instance.blockingAssignments.ContainsKey(attacker))
                                     GameManager.Instance.blockingAssignments[attacker] = new List<CreatureCard>();
-                                GameManager.Instance.blockingAssignments[attacker].Add(blocker);
-                                blocker.blockingThisAttacker = attacker;
-                                attacker.blockedByThisBlocker.Add(blocker);
 
-                                Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                foreach (var blocker in chosenBlockers)
+                                {
+                                    GameManager.Instance.blockingAssignments[attacker].Add(blocker);
+                                    blocker.blockingThisAttacker = attacker;
+                                    attacker.blockedByThisBlocker.Add(blocker);
+                                    availableBlockers.Remove(blocker);
+                                    Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                }
 
-                                availableBlockers.Remove(blocker);
                                 remainingDamage -= attacker.power;
                             }
                             else
@@ -1274,6 +1278,46 @@ public class TurnSystem : MonoBehaviour
                 // Block anything to avoid lethal damage
                 if (remainingDamage >= remainingLife)
                     return possible.OrderByDescending(b => b.toughness).First();
+
+                return null;
+            }
+
+        private List<CreatureCard> ChooseBestBlockers(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
+            {
+                // Try single blocker first using existing logic
+                var single = ChooseBestBlocker(attacker, candidates, remainingLife, remainingDamage);
+                if (single != null)
+                    return new List<CreatureCard> { single };
+
+                var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer))
+                                         .OrderBy(b => b.power + b.baseToughness)
+                                         .ToList();
+                if (possible.Count == 0) return null;
+
+                List<CreatureCard> chosen = new List<CreatureCard>();
+                int neededPower = attacker.toughness;
+
+                foreach (var b in possible)
+                {
+                    chosen.Add(b);
+
+                    if (b.keywordAbilities.Contains(KeywordAbility.Deathtouch))
+                    {
+                        neededPower = 0;
+                        break;
+                    }
+
+                    neededPower -= b.power;
+                    if (neededPower <= 0)
+                        break;
+                }
+
+                if (neededPower <= 0)
+                    return chosen;
+
+                // Can't kill attacker. Chump block if facing lethal damage
+                if (remainingDamage >= remainingLife)
+                    return new List<CreatureCard> { possible.OrderByDescending(x => x.toughness).First() };
 
                 return null;
             }
