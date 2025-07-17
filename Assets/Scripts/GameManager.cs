@@ -1307,7 +1307,14 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
             var visual = FindCardVisual(creature);
             if (visual != null)
+            {
                 visual.UpdateVisual();
+                if (CardHoverPreview.Instance != null &&
+                    CardHoverPreview.Instance.CurrentCard == creature)
+                {
+                    CardHoverPreview.Instance.ShowCard(creature);
+                }
+            }
             UpdateUI();
         }
         else
