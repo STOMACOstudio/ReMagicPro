@@ -1124,33 +1124,23 @@ public class TurnSystem : MonoBehaviour
                     {
                         if (card is CreatureCard creature)
                         {
-                            if (creature.activatedAbilities != null &&
-                                creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
+                            if (creature.temporaryKeywordAbilities.Count > 0)
                             {
-                                if (creature.keywordAbilities.Contains(creature.abilityToGain))
+                                foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
                                 {
-                                    creature.keywordAbilities.Remove(creature.abilityToGain);
-                                    Debug.Log($"{creature.cardName} loses {creature.abilityToGain} at end of turn.");
+                                    while (creature.keywordAbilities.Contains(temp))
+                                    {
+                                        creature.keywordAbilities.Remove(temp);
+                                        Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                    }
                                 }
+
+                                creature.temporaryKeywordAbilities.Clear();
+
+                                var visual = GameManager.Instance.FindCardVisual(card);
+                                if (visual != null)
+                                    visual.UpdateVisual();
                             }
-
-                             if (creature.temporaryKeywordAbilities.Count > 0)
-                             {
-                                 foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
-                                 {
-                                     if (creature.keywordAbilities.Contains(temp))
-                                     {
-                                         creature.keywordAbilities.Remove(temp);
-                                         Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
-                                     }
-                                 }
-
-                                 creature.temporaryKeywordAbilities.Clear();
-
-                                 var visual = GameManager.Instance.FindCardVisual(card);
-                                 if (visual != null)
-                                     visual.UpdateVisual();
-                             }
 
                             if (creature.tempPowerBonus != 0 || creature.tempToughnessBonus != 0)
                             {

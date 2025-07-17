@@ -8,6 +8,9 @@ public class CardHoverPreview : MonoBehaviour
     [SerializeField] private Transform previewSlot;
 
     private GameObject currentPreview;
+    private Card currentCard;
+
+    public Card CurrentCard => currentCard;
 
     void Awake()
         {
@@ -17,6 +20,7 @@ public class CardHoverPreview : MonoBehaviour
     public void ShowCard(Card card)
         {
             HidePreview();
+            currentCard = card;
 
             currentPreview = Instantiate(cardVisualPrefab, previewSlot);
             currentPreview.transform.localScale = Vector3.one * 3f;
@@ -44,5 +48,6 @@ public class CardHoverPreview : MonoBehaviour
             {
                 Destroy(currentPreview);
             }
+            currentCard = null;
         }
 }
