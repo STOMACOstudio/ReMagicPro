@@ -1050,18 +1050,22 @@ public class TurnSystem : MonoBehaviour
                         // Assign blockers to attackers prioritizing survival/trades
                         foreach (var attacker in attackers)
                         {
-                            var blocker = ChooseBestBlocker(attacker, availableBlockers, projectedLife, remainingDamage);
-                            if (blocker != null)
+                            var chosenBlockers = ChooseBestBlockers(attacker, availableBlockers, projectedLife, remainingDamage);
+
+                            if (chosenBlockers != null && chosenBlockers.Count > 0)
                             {
                                 if (!GameManager.Instance.blockingAssignments.ContainsKey(attacker))
                                     GameManager.Instance.blockingAssignments[attacker] = new List<CreatureCard>();
-                                GameManager.Instance.blockingAssignments[attacker].Add(blocker);
-                                blocker.blockingThisAttacker = attacker;
-                                attacker.blockedByThisBlocker.Add(blocker);
 
-                                Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                foreach (var blocker in chosenBlockers)
+                                {
+                                    GameManager.Instance.blockingAssignments[attacker].Add(blocker);
+                                    blocker.blockingThisAttacker = attacker;
+                                    attacker.blockedByThisBlocker.Add(blocker);
+                                    availableBlockers.Remove(blocker);
+                                    Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                }
 
-                                availableBlockers.Remove(blocker);
                                 remainingDamage -= attacker.power;
                             }
                             else
@@ -1276,6 +1280,132 @@ public class TurnSystem : MonoBehaviour
                     return possible.OrderByDescending(b => b.toughness).First();
 
                 return null;
+            }
+
+        private List<CreatureCard> ChooseBestBlockers(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
+            {
+                var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer)).ToList();
+                if (possible.Count == 0)
+                    return null;
+
+                // Prefer a single blocker that kills and survives
+                var singleKill = possible
+                    .Where(b => b.power >= attacker.toughness && b.toughness > attacker.power)
+                    .OrderBy(b => b.power + b.baseToughness)
+                    .FirstOrDefault();
+                if (singleKill != null)
+                    return new List<CreatureCard> { singleKill };
+
+                // Look for multi-blocking groups that kill attacker without losing blockers
+                var combos = GenerateBlockerCombinations(possible, 3);
+                List<CreatureCard> bestNoLoss = null;
+                int bestNoLossValue = int.MaxValue;
+                foreach (var combo in combos)
+                {
+                    var (kills, casualties, valueLost) = EvaluateBlockerCombo(attacker, combo);
+                    if (kills && casualties == 0)
+                    {
+                        int val = combo.Sum(b => b.power + b.baseToughness);
+                        if (val < bestNoLossValue)
+                        {
+                            bestNoLossValue = val;
+                            bestNoLoss = combo;
+                        }
+                    }
+                }
+                if (bestNoLoss != null)
+                    return bestNoLoss;
+
+                // Fall back to single blocker heuristics (may be safe block or trade)
+                var single = ChooseBestBlocker(attacker, possible, remainingLife, remainingDamage);
+                if (single != null && single.power >= attacker.toughness)
+                    return new List<CreatureCard> { single };
+                if (single != null && single.toughness > attacker.power)
+                    return new List<CreatureCard> { single };
+
+                // Try to kill with multiple blockers even if some may die
+                List<CreatureCard> bestTrade = null;
+                int bestTradeValue = int.MaxValue;
+                int attackerValue = attacker.power + attacker.baseToughness;
+                foreach (var combo in combos)
+                {
+                    var (kills, casualties, valueLost) = EvaluateBlockerCombo(attacker, combo);
+                    if (!kills)
+                        continue;
+
+                    if (valueLost <= attackerValue || remainingDamage >= remainingLife)
+                    {
+                        if (valueLost < bestTradeValue)
+                        {
+                            bestTradeValue = valueLost;
+                            bestTrade = combo;
+                        }
+                    }
+                }
+                if (bestTrade != null)
+                    return bestTrade;
+
+                // Chump block to avoid lethal damage
+                if (remainingDamage >= remainingLife)
+                    return new List<CreatureCard> { possible.OrderByDescending(b => b.toughness).First() };
+
+                return null;
+            }
+
+        private (bool killsAttacker, int casualties, int valueLost) EvaluateBlockerCombo(CreatureCard attacker, List<CreatureCard> blockers)
+            {
+                int totalPower = blockers.Sum(b => b.power);
+                bool blockersHaveDeathtouch = blockers.Any(b => b.keywordAbilities.Contains(KeywordAbility.Deathtouch));
+                bool attackerHasDeathtouch = attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch);
+
+                bool killsAttacker = totalPower >= attacker.toughness || blockersHaveDeathtouch;
+
+                int remainingDamage = attacker.power;
+                int casualties = 0;
+                int valueLost = 0;
+                foreach (var b in blockers.OrderBy(x => x.toughness))
+                {
+                    if (remainingDamage <= 0)
+                        break;
+
+                    int damage = Mathf.Min(remainingDamage, b.toughness);
+                    if (attackerHasDeathtouch && remainingDamage > 0)
+                        damage = b.toughness;
+                    if (damage >= b.toughness)
+                    {
+                        casualties++;
+                        valueLost += b.power + b.baseToughness;
+                    }
+                    remainingDamage -= damage;
+                }
+
+                return (killsAttacker, casualties, valueLost);
+            }
+
+        private IEnumerable<List<CreatureCard>> GenerateBlockerCombinations(List<CreatureCard> cards, int maxSize)
+            {
+                List<List<CreatureCard>> results = new List<List<CreatureCard>>();
+
+                void Recurse(int start, int size, List<CreatureCard> current)
+                {
+                    if (current.Count == size)
+                    {
+                        results.Add(new List<CreatureCard>(current));
+                        return;
+                    }
+                    for (int i = start; i < cards.Count; i++)
+                    {
+                        current.Add(cards[i]);
+                        Recurse(i + 1, size, current);
+                        current.RemoveAt(current.Count - 1);
+                    }
+                }
+
+                int limit = Mathf.Min(maxSize, cards.Count);
+                for (int s = 2; s <= limit; s++)
+                    Recurse(0, s, new List<CreatureCard>());
+
+                return results;
             }
 
         private bool ShouldAIAttackCreature(CreatureCard creature, Player ai, Player human, bool goForLethal, bool lowLifeNeedsDefense)
