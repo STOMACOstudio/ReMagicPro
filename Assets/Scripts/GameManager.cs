@@ -1271,6 +1271,11 @@ public class GameManager : MonoBehaviour
     public void PayToGainAbility(CreatureCard creature)
     {
         if (creature.isTapped) return;
+        if (creature.temporaryKeywordAbilities.Contains(creature.abilityToGain))
+        {
+            Debug.Log($"{creature.cardName} already gained {creature.abilityToGain} this turn.");
+            return;
+        }
 
         Player owner = GetOwnerOfCard(creature);
         int remaining = creature.manaToPayToActivate;
@@ -1295,8 +1300,14 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            creature.keywordAbilities.Add(creature.abilityToGain);
+            if (!creature.keywordAbilities.Contains(creature.abilityToGain))
+                creature.keywordAbilities.Add(creature.abilityToGain);
+            if (!creature.temporaryKeywordAbilities.Contains(creature.abilityToGain))
+                creature.temporaryKeywordAbilities.Add(creature.abilityToGain);
             Debug.Log($"{creature.cardName} gains {creature.abilityToGain} until end of turn.");
+            var visual = FindCardVisual(creature);
+            if (visual != null)
+                visual.UpdateVisual();
             UpdateUI();
         }
         else
