@@ -1279,9 +1279,13 @@ public class TurnSystem : MonoBehaviour
             }
 
         private bool ShouldAIAttackCreature(CreatureCard creature, Player ai, Player human, bool goForLethal, bool lowLifeNeedsDefense)
-            {
-                if (goForLethal)
-                    return true;
+        {
+            // Avoid attacking with creatures that cannot deal damage
+            if (creature.power <= 0)
+                return false;
+
+            if (goForLethal)
+                return true;
 
                 if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
                     return false;
