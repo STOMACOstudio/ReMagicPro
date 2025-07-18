@@ -405,63 +405,30 @@ public class TurnSystem : MonoBehaviour
                                             if (card.xValue > 0)
                                                 ai.ColoredMana.SpendGeneric(card.xValue);
                                         }
-                                       ai.Hand.Remove(card);
-                                       ai.Battlefield.Add(card);
-                                       card.OnEnterPlay(ai);
-                                       GameManager.Instance.NotifyCreatureEntered(card, ai);
-                                       if (card.color.Contains("Artifact"))
-                                           GameManager.Instance.NotifyArtifactEntered(card, ai);
+                                        ai.Hand.Remove(card);
 
-                                        if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                                        {
-                                            card.isTapped = true;
-                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
-                                        }
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        CardData cData = CardDatabase.GetCardData(card.cardName);
+                                        visual.Setup(card, GameManager.Instance, cData);
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+                                        creature.owner = ai;
 
-                                        if (creature.abilities != null)
-                                        {
-                                            foreach (var ability in creature.abilities)
-                                            {
-                                                if (ability.timing == TriggerTiming.OnEnter && ability.requiresTarget)
-                                                {
-                                                    Player opponent = GameManager.Instance.GetOpponentOf(ai);
+                                        visual.transform.localPosition = Vector3.zero;
+                                        visual.transform.SetParent(GameManager.Instance.stackZone, false);
+                                        visual.isInStack = true;
 
-                                                    Card target = opponent.Battlefield
-                                                        .Where(c =>
-                                                            (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard creatureT &&
-                                                                !(ability.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
-                                                            (ability.requiredTargetType == SorceryCard.TargetType.Artifact && c is ArtifactCard) ||
-                                                            (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && c is EnchantmentCard) ||
-                                                            (ability.requiredTargetType == SorceryCard.TargetType.Land && c is LandCard))
-                                                        .OrderByDescending(c => CardDatabase.GetCardData(c.cardName)?.manaCost ?? 0)
-                                                        .FirstOrDefault();
+                                        GameManager.Instance.UpdateUI();
+                                        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-                                                    if (target != null)
-                                                    {
-                                                        ability.effect?.Invoke(ai, target);
-                                                        Debug.Log($"[AI ETB] {creature.cardName} destroys {target.cardName}");
-                                                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
-                                                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
-                                                        GameManager.Instance.UpdateUI();
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        GameManager.Instance.isStackBusy = true;
+                                        TurnSystem.Instance.waitingToResumeAI = true;
+                                        TurnSystem.Instance.lastPhaseBeforeStack = currentPhase;
 
-                                       GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiBattlefieldArea);
-                                       CardVisual visual = obj.GetComponent<CardVisual>();
-                                       visual.Setup(card, GameManager.Instance);
-                                       visual.isInBattlefield = true;
-                                       GameManager.Instance.activeCardVisuals.Add(visual);
+                                        GameManager.Instance.StartCoroutine(GameManager.Instance.ResolveCreatureAfterDelay(creature, visual, ai));
 
-                                        creature.hasSummoningSickness = !creature.keywordAbilities.Contains(KeywordAbility.Haste);
-
-                                        Debug.Log($"AI played creature: {card.cardName}");
                                         playedCard = true;
-
-                                        waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(1f));
-                                        return;
+                                        break;
                                     }
                                 }
                                 else if (card is SorceryCard sorcery)
