@@ -274,6 +274,7 @@ public class GameManager : MonoBehaviour
                     cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
                 {
+                    isStackBusy = true; // block other actions while creature is on stack
                     player.ColoredMana.Pay(cost);
                     if (card.hasXCost)
                     {
@@ -284,28 +285,16 @@ public class GameManager : MonoBehaviour
                     card.owner = player;
                     if (player == humanPlayer) UpdateUI();
                     player.Hand.Remove(card);
-                    player.Battlefield.Add(card);
 
-                    card.OnEnterPlay(player);
-                    NotifyCreatureEntered(card, player);
-                    if (card.color.Contains("Artifact"))
-                        NotifyArtifactEntered(card, player);
+                    // Move visual to the stack zone
+                    visual.transform.SetParent(stackZone, false);
+                    visual.isInStack = true;
+                    visual.transform.localPosition = Vector3.zero;
+                    visual.transform.localRotation = Quaternion.identity;
+                    visual.transform.localScale = Vector3.one;
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-                    if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
-                        creature.hasSummoningSickness = false;
-                    else
-                        creature.hasSummoningSickness = true;
-
-                    if (card.entersTapped || IsAllPermanentsEnterTappedActive())
-                    {
-                        card.isTapped = true;
-                        Debug.Log($"{card.cardName} enters tapped (due to static effect).");
-                    }
-
-                    visual.transform.SetParent(player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea, false);
-                    visual.isInBattlefield = true;
-                    visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
+                    StartCoroutine(ResolveCreatureAfterDelay(creature, visual, player));
                 }
                 else
                 {
@@ -907,7 +896,7 @@ public class GameManager : MonoBehaviour
         {
             return activeCardVisuals.Find(cv => cv.linkedCard == card);
         }
-    
+
     public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
         {
             yield return new WaitForSeconds(2f);
@@ -948,6 +937,78 @@ public class GameManager : MonoBehaviour
                 activeCardVisuals.Remove(visual);
                 Destroy(visual.gameObject);
             }
+
+            UpdateUI();
+            isStackBusy = false;
+            CheckForGameEnd();
+
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+
+    public IEnumerator ResolveCreatureAfterDelay(CreatureCard creature, CardVisual visual, Player caster)
+        {
+            yield return new WaitForSeconds(2f);
+
+            caster.Battlefield.Add(creature);
+
+            if (creature.keywordAbilities.Contains(KeywordAbility.Haste))
+                creature.hasSummoningSickness = false;
+            else
+                creature.hasSummoningSickness = true;
+
+            if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                creature.isTapped = true;
+                Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+            }
+
+            Transform battlefield = caster == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+            visual.transform.SetParent(battlefield, false);
+            visual.isInStack = false;
+            visual.isInBattlefield = true;
+            visual.UpdateVisual();
+
+            creature.OnEnterPlay(caster);
+
+            if (caster == aiPlayer && creature.abilities != null)
+            {
+                foreach (var ability in creature.abilities)
+                {
+                    if (ability.timing == TriggerTiming.OnEnter && ability.requiresTarget)
+                    {
+                        Player opponent = GetOpponentOf(caster);
+                        Card target = opponent.Battlefield
+                            .Where(c =>
+                                (ability.requiredTargetType == SorceryCard.TargetType.Creature && c is CreatureCard creatureT &&
+                                    !(ability.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
+                                (ability.requiredTargetType == SorceryCard.TargetType.Artifact && c is ArtifactCard) ||
+                                (ability.requiredTargetType == SorceryCard.TargetType.Enchantment && c is EnchantmentCard) ||
+                                (ability.requiredTargetType == SorceryCard.TargetType.Land && c is LandCard))
+                            .OrderByDescending(c => CardDatabase.GetCardData(c.cardName)?.manaCost ?? 0)
+                            .FirstOrDefault();
+
+                        if (target != null)
+                        {
+                            ability.effect?.Invoke(caster, target);
+                            Debug.Log($"[AI ETB] {creature.cardName} affects {target.cardName}");
+                            CheckDeaths(humanPlayer);
+                            CheckDeaths(aiPlayer);
+                            UpdateUI();
+                        }
+                    }
+                }
+            }
+
+            NotifyCreatureEntered(creature, caster);
+            if (creature.color.Contains("Artifact"))
+                NotifyArtifactEntered(creature, caster);
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
 
             UpdateUI();
             isStackBusy = false;
