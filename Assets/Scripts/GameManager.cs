@@ -971,6 +971,8 @@ public class GameManager : MonoBehaviour
             visual.transform.SetParent(battlefield, false);
             visual.isInStack = false;
             visual.isInBattlefield = true;
+            if (!activeCardVisuals.Contains(visual))
+                activeCardVisuals.Add(visual);
             visual.UpdateVisual();
 
             creature.OnEnterPlay(caster);

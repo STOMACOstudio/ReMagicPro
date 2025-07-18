@@ -411,6 +411,8 @@ public class TurnSystem : MonoBehaviour
                                         CardVisual visual = obj.GetComponent<CardVisual>();
                                         CardData cData = CardDatabase.GetCardData(card.cardName);
                                         visual.Setup(card, GameManager.Instance, cData);
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+                                        creature.owner = ai;
 
                                         visual.transform.localPosition = Vector3.zero;
                                         visual.transform.SetParent(GameManager.Instance.stackZone, false);
