@@ -7798,7 +7798,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   graveyardPanel: {fileID: 2111000003}
-  content: {fileID: 2111000006}
+  content: {fileID: 2111000013}
   cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
 --- !u!1 &2111000003
 GameObject:
