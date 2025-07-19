@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class DeckGenerator : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class DeckGenerator : MonoBehaviour
 
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject cardVisualPrefab;
+    public TextMeshProUGUI rerollText;
+    private int rerollsRemaining = 3;
 
     void Start()
         {
@@ -19,6 +22,7 @@ public class DeckGenerator : MonoBehaviour
             Debug.Log("DECK GENERATED");
             DeckHolder.SelectedDeck = GeneratedDeck;
             ShowCardsInDeckBuilder();
+            UpdateRerollText();
             Debug.Log("CARDS SHOWN");
         }
 
@@ -185,6 +189,45 @@ public class DeckGenerator : MonoBehaviour
                 CardData sourceData = CardDatabase.GetCardData(card.cardName);
                 visual.Setup(card, null, sourceData);
             }
+        }
+
+    private void UpdateRerollText()
+        {
+            if (rerollText == null)
+                return;
+
+            if (rerollsRemaining > 0)
+                rerollText.text = $"You can reroll a card {rerollsRemaining} times";
+            else
+                rerollText.text = "Out of rerolls";
+        }
+
+    public void RerollCard(int index)
+        {
+            if (rerollsRemaining <= 0 || index < 0 || index >= GeneratedDeck.Count)
+                return;
+
+            CardData original = GeneratedDeck[index];
+            string rarity = original.rarity;
+            List<string> colors = original.color;
+
+            // pool of cards matching rarity and sharing at least one color
+            var pool = CardDatabase.GetAllCards()
+                .Where(c => c.rarity == rarity &&
+                            c.cardType != CardType.Land &&
+                            (c.color.Intersect(colors).Any() || c.color.Contains("Artifact")))
+                .ToList();
+
+            if (pool.Count == 0)
+                pool = CardDatabase.GetAllCards().Where(c => c.rarity == rarity).ToList();
+
+            if (pool.Count == 0)
+                return;
+
+            GeneratedDeck[index] = pool[rng.Next(pool.Count)];
+            rerollsRemaining--;
+            ShowCardsInDeckBuilder();
+            UpdateRerollText();
         }
 
 }
