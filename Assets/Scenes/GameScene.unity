@@ -4392,7 +4392,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -233}
+  m_AnchoredPosition: {x: 0, y: -233}
   m_SizeDelta: {x: -1518.68, y: -877.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1283668488
@@ -5487,6 +5487,7 @@ MonoBehaviour:
   manaVFXPrefab: {fileID: 7637625177235633979, guid: dfeb56768dfde6e4981e84763526127c, type: 3}
   bloodSplatPrefab: {fileID: 846862962743996107, guid: 3cbda76e80903b346b0b2d17e249ed3f, type: 3}
   deathPlaceholderPrefab: {fileID: 570516853043311398, guid: b5e135cc2aaca5b479fbed6e7ef3ab0d, type: 3}
+  artifactDeathPrefab: {fileID: 2673000107087737284, guid: 910dbe44b49814a48b0127f5728c7f97, type: 3}
   playerLifeContainer: {fileID: 335802182}
   enemyLifeContainer: {fileID: 219930519}
   floatingDamagePrefab: {fileID: 6263719099324857846, guid: dbcb8822c50f8d6418d4bbed97b45924, type: 3}
