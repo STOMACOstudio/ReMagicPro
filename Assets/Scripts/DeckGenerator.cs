@@ -212,17 +212,22 @@ public class DeckGenerator : MonoBehaviour
 
             CardData original = GeneratedDeck[index];
             string rarity = original.rarity;
-            List<string> colors = original.color;
 
-            // pool of cards matching rarity and sharing at least one color
+            string[] chosenColors = PlayerPrefs.GetString("PlayerColor", "Red")
+                                            .Split(',')
+                                            .Select(c => c.Trim())
+                                            .ToArray();
+            var chosenColorSet = new HashSet<string>(chosenColors);
+
+            // pool of cards matching rarity and allowed colors
             var pool = CardDatabase.GetAllCards()
                 .Where(c => c.rarity == rarity &&
                             c.cardType != CardType.Land &&
-                            (c.color.Intersect(colors).Any() || c.color.Contains("Artifact")))
+                            ((c.color.All(chosenColorSet.Contains) && c.color.Count > 0) ||
+                             c.cardType == CardType.Artifact ||
+                             c.color.Contains("Artifact")))
+                .Where(c => c.cardName != original.cardName)
                 .ToList();
-
-            if (pool.Count == 0)
-                pool = CardDatabase.GetAllCards().Where(c => c.rarity == rarity).ToList();
 
             if (pool.Count == 0)
                 return;
