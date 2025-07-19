@@ -9,6 +9,8 @@ public class TurnSystem : MonoBehaviour
 {
     public static TurnSystem Instance { get; private set; }
 
+    public bool autoStart = false;
+
     public enum TurnPhase
     {
         StartTurn,
@@ -71,6 +73,12 @@ public class TurnSystem : MonoBehaviour
             if (turnBanner != null)
                 turnBanner.SetActive(false);
 
+            if (autoStart)
+                StartGame();
+        }
+
+    public void StartGame()
+        {
             PlayerType startingPlayer = Random.value < 0.5f ? PlayerType.Human : PlayerType.AI;
             BeginTurn(startingPlayer);
         }
