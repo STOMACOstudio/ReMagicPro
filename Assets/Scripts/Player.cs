@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Player
@@ -105,13 +106,26 @@ public class Player
             {
                 int remaining = amount;
 
-                // Spend in fixed order
-                if (remaining > 0) { int used = Mathf.Min(White, remaining); White -= used; remaining -= used; }
-                if (remaining > 0) { int used = Mathf.Min(Blue, remaining); Blue -= used; remaining -= used; }
-                if (remaining > 0) { int used = Mathf.Min(Black, remaining); Black -= used; remaining -= used; }
-                if (remaining > 0) { int used = Mathf.Min(Red, remaining); Red -= used; remaining -= used; }
-                if (remaining > 0) { int used = Mathf.Min(Green, remaining); Green -= used; remaining -= used; }
-                if (remaining > 0) { int used = Mathf.Min(Colorless, remaining); Colorless -= used; remaining -= used; }
+                int[] pools = { White, Blue, Black, Red, Green, Colorless };
+                Action<int>[] setters =
+                {
+                    v => White = v,
+                    v => Blue = v,
+                    v => Black = v,
+                    v => Red = v,
+                    v => Green = v,
+                    v => Colorless = v
+                };
+
+                for (int i = 0; i < pools.Length && remaining > 0; i++)
+                {
+                    int used = Mathf.Min(pools[i], remaining);
+                    pools[i] -= used;
+                    remaining -= used;
+                }
+
+                for (int i = 0; i < pools.Length; i++)
+                    setters[i](pools[i]);
 
                 if (remaining > 0)
                 {
