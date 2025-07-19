@@ -687,6 +687,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+            {
+                DeckGenerator dg = FindObjectOfType<DeckGenerator>();
+                if (dg != null)
+                    dg.RerollCard(transform.GetSiblingIndex());
+                return;
+            }
             if (isInStack)
                 return;
             // Optional ETB targeting (e.g. Monk: "You may destroy target artifact")
