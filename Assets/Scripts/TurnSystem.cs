@@ -98,6 +98,7 @@ public class TurnSystem : MonoBehaviour
                 bool allowNext = currentPlayer == PlayerType.Human &&
                                 waitingForPlayerInput &&
                                 !GameManager.Instance.isStackBusy &&
+                                !GameManager.Instance.isGraveyardOpen &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
                                 currentPhase != TurnPhase.ConfirmBlockers &&
                                 currentPhase != TurnPhase.ChooseAttackers;
@@ -117,6 +118,7 @@ public class TurnSystem : MonoBehaviour
                 if (currentPlayer == PlayerType.Human &&
                     waitingForPlayerInput &&
                     !GameManager.Instance.isStackBusy &&
+                    !GameManager.Instance.isGraveyardOpen &&
                     currentPhase != TurnPhase.ConfirmAttackers &&
                     currentPhase != TurnPhase.ConfirmBlockers &&
                     currentPhase != TurnPhase.ChooseAttackers)
@@ -129,6 +131,9 @@ public class TurnSystem : MonoBehaviour
     public void NextPhaseButton()
         {
             if (GameManager.Instance.gameOver)
+                return;
+
+            if (GameManager.Instance.isGraveyardOpen)
                 return;
 
             if (currentPlayer == PlayerType.Human && waitingForPlayerInput)

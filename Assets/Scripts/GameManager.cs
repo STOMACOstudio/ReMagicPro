@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     public bool isStackBusy = false;
     public bool gameOver = false;
     public int pendingGraveyardAnimations = 0;
+    public bool isGraveyardOpen = false;
 
     public SorceryCard targetingSorcery;
     public AuraCard targetingAura;
