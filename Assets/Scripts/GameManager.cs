@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour
         // }
     }
 
-    void ShuffleDeck(Player player)
+    public void ShuffleDeck(Player player)
     {
         for (int i = 0; i < player.Deck.Count; i++)
         {
