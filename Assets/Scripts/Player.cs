@@ -196,7 +196,7 @@ public class Player
                     return;
                 }
 
-                int index = Random.Range(0, Hand.Count);
+                int index = UnityEngine.Random.Range(0, Hand.Count);
                 Card discarded = Hand[index];
 
                 Debug.Log($"{discarded.cardName} was randomly discarded.");
