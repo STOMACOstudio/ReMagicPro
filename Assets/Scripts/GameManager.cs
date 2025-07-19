@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     public GameObject manaVFXPrefab;
     public GameObject bloodSplatPrefab;
     public GameObject deathPlaceholderPrefab;
+    public Sprite artifactDeathSprite;
     public GameObject playerLifeContainer;
     public GameObject enemyLifeContainer;
     public GameObject floatingDamagePrefab;
@@ -645,6 +646,12 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
                     return;
                 }
+            }
+
+            if (card is ArtifactCard && diedFromBattlefield && visual != null)
+            {
+                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual, artifactDeathSprite));
+                return;
             }
 
             // Fallback: create graveyard visual normally
@@ -2652,15 +2659,21 @@ public class GameManager : MonoBehaviour
                 UpdateUI();
             }
 
-        private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual)
-            {
-                if (visual != null)
-                    visual.EnableTargetingHighlight(false); // ensure highlight removed
+        private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual, Sprite overrideSprite = null)
+        {
+            if (visual != null)
+                visual.EnableTargetingHighlight(false); // ensure highlight removed
 
                 pendingGraveyardAnimations++;
 
                 // 1. Create a placeholder object in the same layout slot
-                GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
+            GameObject placeholder = Instantiate(deathPlaceholderPrefab, visual.transform.parent);
+            if (overrideSprite != null)
+            {
+                var img = placeholder.GetComponentInChildren<Image>();
+                if (img != null)
+                    img.sprite = overrideSprite;
+            }
                 placeholder.transform.SetSiblingIndex(visual.transform.GetSiblingIndex());
                 placeholder.transform.localScale = visual.transform.localScale;
                 placeholder.transform.localPosition = visual.transform.localPosition + placeholder.transform.localPosition;
