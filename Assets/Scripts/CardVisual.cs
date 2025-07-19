@@ -1468,7 +1468,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (swordIcon != null) swordIcon.SetActive(false);
             if (shieldIcon != null) shieldIcon.SetActive(false);
 
-            transform.localScale = Vector3.one * 0.5f;
+            transform.localScale = Vector3.one * 0.8f;
             transform.rotation = Quaternion.identity;
 
             costBackground.SetActive(false);
@@ -1502,7 +1502,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             // Reset rotation & scale
             transform.rotation = Quaternion.identity;
-            transform.localScale = Vector3.one * 0.5f;
+            transform.localScale = Vector3.one * 0.8f;
         }
 
     public void UpdateGraveyardVisual()
@@ -1540,7 +1540,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 cardTypeText.enabled = !isInBattlefield;
             }
 
-            transform.localScale = Vector3.one * 0.5f;
+            transform.localScale = Vector3.one * 0.8f;
             transform.rotation = Quaternion.identity;
 
             // Reset stats position (in case it was moved on battlefield)
