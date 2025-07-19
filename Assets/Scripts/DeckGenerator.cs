@@ -13,11 +13,14 @@ public class DeckGenerator : MonoBehaviour
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject cardVisualPrefab;
     public TextMeshProUGUI rerollText;
+    [SerializeField] private AudioClip rerollSound;
+    private AudioSource audioSource;
     private int rerollsRemaining = 3;
 
     void Start()
         {
             Debug.Log("START DeckGenerator");
+            audioSource = gameObject.AddComponent<AudioSource>();
             Generate();
             Debug.Log("DECK GENERATED");
             DeckHolder.SelectedDeck = GeneratedDeck;
@@ -226,6 +229,8 @@ public class DeckGenerator : MonoBehaviour
 
             GeneratedDeck[index] = pool[rng.Next(pool.Count)];
             rerollsRemaining--;
+            if (rerollSound != null && audioSource != null)
+                audioSource.PlayOneShot(rerollSound);
             ShowCardsInDeckBuilder();
             UpdateRerollText();
         }
