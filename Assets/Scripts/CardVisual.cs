@@ -284,6 +284,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     lineRenderer.enabled = false;
                 }
             }
+            else if (isPointerOver && isInBattlefield && linkedCard is EquipmentCard equip && equip.equippedTo != null)
+            {
+                var targetVisual = gameManager.FindCardVisual(equip.equippedTo);
+                if (targetVisual != null)
+                {
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                    lineRenderer.SetPosition(1, new Vector3(targetVisual.transform.position.x, targetVisual.transform.position.y, 0));
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+            }
             else
             {
                 lineRenderer.enabled = false;
@@ -742,6 +756,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 else
                 {
                     Debug.Log("Clicked non-creature during artifact targeting — cancelling.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
+
+            if (GameManager.Instance.targetingEquipment != null)
+            {
+                if (linkedCard is CreatureCard equippedCreature &&
+                    GameManager.Instance.GetOwnerOfCard(equippedCreature) == GameManager.Instance.targetingPlayer)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Invalid target for equipment.");
                     GameManager.Instance.CancelTargeting();
                 }
 
@@ -1226,17 +1256,38 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         int totalAvailable = player.ColoredMana.Total();
                         int cost = artifact.manaToPayToActivate;
 
-                        if (totalAvailable >= cost)
-                        {
-                            GameManager.Instance.BeginTargetingWithArtifactBuff(artifact, player, this);
-                        }
-                        else
-                        {
-                            Debug.Log("Not enough mana to activate buff artifact.");
-                        }
-
-                        return;
+                    if (totalAvailable >= cost)
+                    {
+                        GameManager.Instance.BeginTargetingWithArtifactBuff(artifact, player, this);
                     }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate buff artifact.");
+                    }
+
+                    return;
+                }
+
+                // EQUIP artifact during Main Phase
+                if (linkedCard is EquipmentCard equipment &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.Equip) &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                {
+                    Player player = GameManager.Instance.humanPlayer;
+                    int cost = equipment.EquipCost;
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        GameManager.Instance.BeginEquipmentTargetSelection(equipment, player, this);
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to equip.");
+                    }
+
+                    return;
+                }
 
             // SACRIFICE-TO-DRAW-CARDS during Main Phase
                 if (linkedCard.activatedAbilities != null &&

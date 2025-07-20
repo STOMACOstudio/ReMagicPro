@@ -77,7 +77,17 @@ public static class CardFactory
                 newCard = sorcery;
                 break;
             case CardType.Artifact:
-                ArtifactCard artifact = new ArtifactCard();
+                ArtifactCard artifact;
+                if (data.subtypes != null && data.subtypes.Contains("Equipment"))
+                {
+                    EquipmentCard equip = new EquipmentCard();
+                    artifact = equip;
+                }
+                else
+                {
+                    artifact = new ArtifactCard();
+                }
+
                 artifact.entersTapped = data.entersTapped;
                 artifact.plagueAmount = data.plagueAmount;
                 artifact.manaToGain = data.manaToGain;

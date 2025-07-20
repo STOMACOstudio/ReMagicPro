@@ -2835,6 +2835,38 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/tablet_of_creation")
                     });
 
+                Add(new CardData // Morning Star
+                    {
+                        cardName = "Morning Star",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 2,
+                        toughnessBuff = 0,
+                        manaToPayToActivate = 1,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +2/+0.",
+                        artwork = Resources.Load<Sprite>("Art/morning_star")
+                    });
+
+                Add(new CardData // Battle Shield
+                    {
+                        cardName = "Battle Shield",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 0,
+                        toughnessBuff = 2,
+                        manaToPayToActivate = 1,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +0/+2.",
+                        artwork = Resources.Load<Sprite>("Art/battle_shield")
+                    });
+
                 // Avatar cycle gaining +1/+1 counters
                 Add(new CardData //Progress Incarnate
                     {
