@@ -665,6 +665,39 @@ public static class CardDatabase
                         }
                     }
                     });
+                Add(new CardData //Master potionist
+                    {
+                    cardName = "Master Potionist",
+                    rarity = "Rare",
+                    manaCost = 4,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Wizard" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.PotionSpellsCostOneLess
+                    },
+                    artwork = Resources.Load<Sprite>("Art/master_potionist"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnArtifactEnter,
+                            description = "if it's a Potion, draw a card.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                Card entering = GameManager.Instance.lastEnteredArtifact;
+                                if (entering != null && entering.cardName.Contains("Potion") &&
+                                    GameManager.Instance.GetOwnerOfCard(entering) == owner)
+                                {
+                                    GameManager.Instance.DrawCard(owner);
+                                }
+                            }
+                        }
+                    }
+                    });
             //BLACK
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",

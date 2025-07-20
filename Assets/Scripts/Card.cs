@@ -135,6 +135,7 @@ public class Card
                         keyword == KeywordAbility.CanOnlyBlockFlying ||
                         keyword == KeywordAbility.CantBlockWithoutForest ||
                         keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
+                        keyword == KeywordAbility.PotionSpellsCostOneLess ||
                         keyword.ToString().StartsWith("ProtectionFrom"))
                         continue;
 
@@ -296,6 +297,8 @@ public class Card
                     lines.Add("Creature spells you cast cost 1 less.");
                 if (keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess))
                     lines.Add("Beast creature spells you cast cost 1 less.");
+                if (keywordAbilities.Contains(KeywordAbility.PotionSpellsCostOneLess))
+                    lines.Add("Potion spells you cast cost 1 less to cast.");
                 if (keywordAbilities.Contains(KeywordAbility.OpponentSpellsCostOneMore))
                     lines.Add("Spells cast by your opponent cost 1 more.");
             }
