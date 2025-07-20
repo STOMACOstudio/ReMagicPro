@@ -764,8 +764,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             if (GameManager.Instance.targetingEquipment != null)
             {
-                if (linkedCard is CreatureCard creature &&
-                    GameManager.Instance.GetOwnerOfCard(creature) == GameManager.Instance.targetingPlayer)
+                if (linkedCard is CreatureCard equippedCreature &&
+                    GameManager.Instance.GetOwnerOfCard(equippedCreature) == GameManager.Instance.targetingPlayer)
                 {
                     GameManager.Instance.CompleteTargetSelection(this);
                 }
