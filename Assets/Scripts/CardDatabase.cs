@@ -649,7 +649,7 @@ public static class CardDatabase
                     color = new List<string> { "Blue" },
                     cardType = CardType.Creature,
                     power = 1,
-                    toughness = 2,
+                    toughness = 1,
                     subtypes = new List<string> { "Human", "Wizard" },
                     artwork = Resources.Load<Sprite>("Art/apprentice_potionist"),
                     abilities = new List<CardAbility>
