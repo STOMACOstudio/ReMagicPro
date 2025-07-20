@@ -1152,7 +1152,7 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void ReturnRandomPotionFromGraveyard(Player player)
+    public void ReturnRandomPotionFromGraveyardToBattlefield(Player player)
     {
         var potions = player.Graveyard
             .Where(card => card.subtypes.Contains("Potion"))
@@ -1162,20 +1162,46 @@ public class GameManager : MonoBehaviour
 
         Card chosen = potions[Random.Range(0, potions.Count)];
         player.Graveyard.Remove(chosen);
-        player.Hand.Add(chosen);
+        player.Battlefield.Add(chosen);
 
-        if (player == humanPlayer)
+        if (chosen is CreatureCard creature)
         {
-            GameObject obj = Instantiate(cardPrefab, playerHandArea);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(chosen.cardName);
-            visual.Setup(chosen, this, data);
-            activeCardVisuals.Add(visual);
+            creature.hasSummoningSickness = true;
+            if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                creature.isTapped = true;
+                Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+            }
         }
-        else if (enemyHandText != null)
+        else if (chosen is ArtifactCard artifact)
         {
-            enemyHandText.text = "Hand: " + player.Hand.Count;
+            if (artifact.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                artifact.isTapped = true;
+                Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+            }
         }
+
+        GameObject obj = Instantiate(cardPrefab,
+            player == humanPlayer ?
+                (chosen is ArtifactCard ? playerArtifactArea : playerBattlefieldArea) :
+                (chosen is ArtifactCard ? aiArtifactArea : aiBattlefieldArea));
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData data = CardDatabase.GetCardData(chosen.cardName);
+        visual.Setup(chosen, this, data);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        chosen.OnEnterPlay(player);
+        if (chosen is CreatureCard)
+            NotifyCreatureEntered(chosen, player);
+        if (chosen is LandCard)
+            NotifyLandEntered(chosen, player);
+        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
+            NotifyArtifactEntered(chosen, player);
+        if (chosen is EnchantmentCard)
+            NotifyEnchantmentEntered(chosen, player);
 
         RefreshGraveyardVisuals(player);
         UpdateUI();
