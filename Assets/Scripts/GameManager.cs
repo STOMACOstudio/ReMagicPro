@@ -366,6 +366,7 @@ public class GameManager : MonoBehaviour
                     cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
                 {
+                    isStackBusy = true;
                     player.ColoredMana.Pay(cost);
                     if (card.hasXCost)
                     {
@@ -377,26 +378,16 @@ public class GameManager : MonoBehaviour
                     if (player == humanPlayer) UpdateUI();
 
                     player.Hand.Remove(card);
-                    player.Battlefield.Add(card);
-                    card.OnEnterPlay(player);
-                    NotifyArtifactEntered(card, player);
 
-                    if (artifact.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                    {
-                        artifact.isTapped = true;
-                        Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
-                    }
+                    // Move visual to stack
+                    visual.transform.SetParent(stackZone, false);
+                    visual.isInStack = true;
+                    visual.transform.localPosition = Vector3.zero;
+                    visual.transform.localRotation = Quaternion.identity;
+                    visual.transform.localScale = Vector3.one;
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-                    // Move to battlefield area visually
-                    Transform visualParent = player == humanPlayer
-                        ? (card is ArtifactCard ? playerArtifactArea : playerBattlefieldArea)
-                        : (card is ArtifactCard ? aiArtifactArea : aiBattlefieldArea);
-
-                    visual.transform.SetParent(visualParent, false);
-
-                    visual.isInBattlefield = true;
-                    visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+                    StartCoroutine(ResolveArtifactAfterDelay(artifact, visual, player));
                 }
                 else
                 {
@@ -421,6 +412,7 @@ public class GameManager : MonoBehaviour
                 }
                 if (player.ColoredMana.CanPay(cost))
                 {
+                    isStackBusy = true;
                     player.ColoredMana.Pay(cost);
                     if (card.hasXCost)
                     {
@@ -432,23 +424,16 @@ public class GameManager : MonoBehaviour
                     if (player == humanPlayer) UpdateUI();
 
                     player.Hand.Remove(card);
-                    player.Battlefield.Add(card);
-                    card.OnEnterPlay(player);
-                    NotifyEnchantmentEntered(card, player);
 
-                    if (enchantment.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                    {
-                        enchantment.isTapped = true;
-                        Debug.Log($"{enchantment.cardName} enters tapped (due to static effect).");
-                    }
+                    // Move visual to stack
+                    visual.transform.SetParent(stackZone, false);
+                    visual.isInStack = true;
+                    visual.transform.localPosition = Vector3.zero;
+                    visual.transform.localRotation = Quaternion.identity;
+                    visual.transform.localScale = Vector3.one;
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-                    Transform visualParent = player == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
-
-                    visual.transform.SetParent(visualParent, false);
-
-                    visual.isInBattlefield = true;
-                    visual.UpdateVisual();
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+                    StartCoroutine(ResolveEnchantmentAfterDelay(enchantment, visual, player));
                 }
                 else
                 {
@@ -1035,6 +1020,132 @@ public class GameManager : MonoBehaviour
                 NotifyArtifactEntered(creature, caster);
 
             SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
+
+            UpdateUI();
+            isStackBusy = false;
+            CheckForGameEnd();
+
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+
+    public IEnumerator ResolveArtifactAfterDelay(ArtifactCard artifact, CardVisual visual, Player caster)
+        {
+            yield return new WaitForSeconds(2f);
+
+            caster.Battlefield.Add(artifact);
+
+            if (artifact.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                artifact.isTapped = true;
+                Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+            }
+
+            Transform area = caster == humanPlayer ? playerArtifactArea : aiArtifactArea;
+            visual.transform.SetParent(area, false);
+            visual.isInStack = false;
+            visual.isInBattlefield = true;
+            if (!activeCardVisuals.Contains(visual))
+                activeCardVisuals.Add(visual);
+            visual.UpdateVisual();
+
+            artifact.OnEnterPlay(caster);
+            NotifyArtifactEntered(artifact, caster);
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+
+            UpdateUI();
+            isStackBusy = false;
+            CheckForGameEnd();
+
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+
+    public IEnumerator ResolveEnchantmentAfterDelay(EnchantmentCard enchantment, CardVisual visual, Player caster)
+        {
+            yield return new WaitForSeconds(2f);
+
+            caster.Battlefield.Add(enchantment);
+
+            if (enchantment.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                enchantment.isTapped = true;
+                Debug.Log($"{enchantment.cardName} enters tapped (due to static effect).");
+            }
+
+            Transform area = caster == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+            visual.transform.SetParent(area, false);
+            visual.isInStack = false;
+            visual.isInBattlefield = true;
+            if (!activeCardVisuals.Contains(visual))
+                activeCardVisuals.Add(visual);
+            visual.UpdateVisual();
+
+            enchantment.OnEnterPlay(caster);
+            NotifyEnchantmentEntered(enchantment, caster);
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+
+            UpdateUI();
+            isStackBusy = false;
+            CheckForGameEnd();
+
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+
+    public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster)
+        {
+            yield return new WaitForSeconds(2f);
+
+            caster.Battlefield.Add(aura);
+            aura.OnEnterPlay(caster);
+            NotifyEnchantmentEntered(aura, caster);
+
+            if (!caster.Battlefield.Contains(aura))
+            {
+                // Aura may have destroyed itself via its effect
+                UpdateUI();
+                isStackBusy = false;
+                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+                {
+                    TurnSystem.Instance.waitingToResumeAI = false;
+                    TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+                }
+                yield break;
+            }
+
+            if (aura.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                aura.isTapped = true;
+                Debug.Log($"{aura.cardName} enters tapped (due to static effect).");
+            }
+
+            Transform area = caster == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+            if (visual != null)
+            {
+                visual.transform.SetParent(area, false);
+                visual.isInStack = false;
+                visual.isInBattlefield = true;
+                if (!activeCardVisuals.Contains(visual))
+                    activeCardVisuals.Add(visual);
+                visual.UpdateVisual();
+            }
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             UpdateUI();
             isStackBusy = false;
@@ -2125,50 +2236,31 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
+            isStackBusy = true;
             targetingPlayer.ColoredMana.Pay(cost);
             targetingPlayer.Hand.Remove(targetingAura);
 
             targetingAura.owner = targetingPlayer;
             targetingAura.attachedTo = targetCard;
-
-            targetingPlayer.Battlefield.Add(targetingAura);
-            targetingAura.OnEnterPlay(targetingPlayer);
-            NotifyEnchantmentEntered(targetingAura, targetingPlayer);
-
-            // The enchanted creature might have died from the aura's effect.
-            if (!targetingPlayer.Battlefield.Contains(targetingAura))
-            {
-                targetingAura = null;
-                targetingPlayer = null;
-                targetingVisual = null;
-                isTargetingMode = false;
-                UpdateUI();
-                return;
-            }
-
-            if (targetingAura.entersTapped || IsAllPermanentsEnterTappedActive())
-            {
-                targetingAura.isTapped = true;
-                Debug.Log($"{targetingAura.cardName} enters tapped (due to static effect).");
-            }
-
-            Transform vp = targetingPlayer == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
-            if (targetingVisual != null)
-            {
-                targetingVisual.transform.SetParent(vp, false);
-                targetingVisual.isInBattlefield = true;
-                targetingVisual.UpdateVisual();
-            }
+            UpdateUI();
 
             if (targetingVisual != null)
+            {
+                targetingVisual.transform.SetParent(stackZone, false);
+                targetingVisual.isInStack = true;
+                targetingVisual.transform.localPosition = Vector3.zero;
+                targetingVisual.transform.localRotation = Quaternion.identity;
+                targetingVisual.transform.localScale = Vector3.one;
                 targetingVisual.EnableTargetingHighlight(false);
-            SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
+            }
+            SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+            StartCoroutine(ResolveAuraAfterDelay(targetingAura, targetingVisual, targetingPlayer));
 
             targetingAura = null;
             targetingPlayer = null;
             targetingVisual = null;
             isTargetingMode = false;
-            UpdateUI();
             return;
         }
         // Creature ETB targeting
