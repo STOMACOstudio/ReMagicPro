@@ -359,6 +359,9 @@ public class GameManager : MonoBehaviour
                         cost["Colorless"] = 0;
                     cost["Colorless"] += tax;
                 }
+                int reduction = card.cardName.Contains("Potion") ? GetPotionCostReduction(player) : 0;
+                if (reduction > 0 && cost.ContainsKey("Colorless"))
+                    cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
                 {
                     player.ColoredMana.Pay(cost);
@@ -1727,6 +1730,12 @@ public class GameManager : MonoBehaviour
             card.keywordAbilities.Contains(KeywordAbility.BeastCreatureSpellsCostOneLess));
     }
 
+    public int GetPotionCostReduction(Player player)
+    {
+        return player.Battlefield.Count(card => card.keywordAbilities != null &&
+            card.keywordAbilities.Contains(KeywordAbility.PotionSpellsCostOneLess));
+    }
+
     public int GetOpponentSpellTax(Player player)
     {
         Player opponent = GetOpponentOf(player);
@@ -2849,6 +2858,7 @@ public class GameManager : MonoBehaviour
 
         public void NotifyArtifactEntered(Card artifact, Player controller)
         {
+            lastEnteredArtifact = artifact;
             foreach (var player in new[] { humanPlayer, aiPlayer })
             {
                 foreach (var card in player.Battlefield.ToList())
@@ -2872,6 +2882,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+            lastEnteredArtifact = null;
         }
 
         public void NotifyEnchantmentEntered(Card enchantment, Player controller)
@@ -3003,6 +3014,8 @@ public class GameManager : MonoBehaviour
         public Card lastDeadCreature = null;
 
         public Card lastEnteredCreature = null;
+
+        public Card lastEnteredArtifact = null;
 
         public void NotifyCardDrawn(Player player, int amount)
         {
