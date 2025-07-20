@@ -2432,6 +2432,11 @@ public class GameManager : MonoBehaviour
         targetingPlayer = caster;
         targetingVisual = visual;
         isTargetingMode = true;
+
+        // Highlight the aura being cast so the player has feedback similar to
+        // sorceries while choosing a target
+        if (visual != null)
+            visual.EnableTargetingHighlight(true);
     }
 
     public void BeginEquipmentTargetSelection(EquipmentCard equipment, Player player, CardVisual visual)
