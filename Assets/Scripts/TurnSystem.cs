@@ -624,7 +624,9 @@ public class TurnSystem : MonoBehaviour
                                             cost["Colorless"] = 0;
                                         cost["Colorless"] += tax;
                                     }
-                                    int reduction = card.cardName.Contains("Potion") ? GameManager.Instance.GetPotionCostReduction(ai) : 0;
+                                    CardData artData = CardDatabase.GetCardData(card.cardName);
+                                    int reduction = (artData != null && artData.subtypes.Contains("Potion"))
+                                        ? GameManager.Instance.GetPotionCostReduction(ai) : 0;
                                     if (reduction > 0 && cost.ContainsKey("Colorless"))
                                         cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                                     if (EnsureManaForCost(ai, cost))

@@ -359,7 +359,9 @@ public class GameManager : MonoBehaviour
                         cost["Colorless"] = 0;
                     cost["Colorless"] += tax;
                 }
-                int reduction = card.cardName.Contains("Potion") ? GetPotionCostReduction(player) : 0;
+                CardData artData = CardDatabase.GetCardData(card.cardName);
+                int reduction = (artData != null && artData.subtypes.Contains("Potion"))
+                    ? GetPotionCostReduction(player) : 0;
                 if (reduction > 0 && cost.ContainsKey("Colorless"))
                     cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
                 if (player.ColoredMana.CanPay(cost))
@@ -1153,7 +1155,7 @@ public class GameManager : MonoBehaviour
     public void ReturnRandomPotionFromGraveyard(Player player)
     {
         var potions = player.Graveyard
-            .Where(card => card.cardName.Contains("Potion"))
+            .Where(card => card.subtypes.Contains("Potion"))
             .ToList();
         if (potions.Count == 0)
             return;
@@ -1182,7 +1184,7 @@ public class GameManager : MonoBehaviour
     public void SearchLibraryForRandomPotion(Player player)
     {
         var potions = player.Deck
-            .Where(card => card.cardName.Contains("Potion"))
+            .Where(card => card.subtypes.Contains("Potion"))
             .ToList();
         if (potions.Count == 0)
         {
@@ -1214,7 +1216,7 @@ public class GameManager : MonoBehaviour
     public void SearchLibraryForRandomPotionToBattlefield(Player player)
     {
         var potions = player.Deck
-            .Where(card => card.cardName.Contains("Potion"))
+            .Where(card => card.subtypes.Contains("Potion"))
             .ToList();
         if (potions.Count == 0)
         {
