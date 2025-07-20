@@ -2275,9 +2275,6 @@ public class GameManager : MonoBehaviour
         targetingPlayer = caster;
         targetingVisual = visual;
         isTargetingMode = true;
-
-        if (visual != null)
-            visual.EnableTargetingHighlight(true);
     }
 
     public void BeginEquipmentTargetSelection(EquipmentCard equipment, Player player, CardVisual visual)
@@ -2289,9 +2286,6 @@ public class GameManager : MonoBehaviour
         targetingPlayer = player;
         targetingVisual = visual;
         isTargetingMode = true;
-
-        if (visual != null)
-            visual.EnableTargetingHighlight(true);
     }
 
     public IEnumerator ResolveArtifactDamageAfterDelay(CardVisual targetVisual, Card targetCard)

@@ -761,6 +761,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 return;
             }
+
+            if (GameManager.Instance.targetingEquipment != null)
+            {
+                if (linkedCard is CreatureCard creature &&
+                    GameManager.Instance.GetOwnerOfCard(creature) == GameManager.Instance.targetingPlayer)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Invalid target for equipment.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
             if (GameManager.Instance.targetingAura != null)
             {
                 if (linkedCard is CreatureCard linkedCreature)
