@@ -685,7 +685,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnArtifactEnter,
-                            description = "if it's a Potion you control, draw a card.",
+                            description = "if it's a Potion, draw a card.",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 Card entering = GameManager.Instance.lastEnteredArtifact;
