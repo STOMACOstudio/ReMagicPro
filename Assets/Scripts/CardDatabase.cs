@@ -1148,17 +1148,17 @@ public static class CardDatabase
                         cardType = CardType.Creature,
                         power = 2,
                         toughness = 2,
-                        subtypes = new List<string> { "Human", "Wizard" },
+                        subtypes = new List<string> { "Human", "Wizard", "Rogue" },
                         artwork = Resources.Load<Sprite>("Art/alchemist_renegade"),
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnEnter,
-                                description = "return a random Potion card from your graveyard to your hand.",
+                                description = "return a random Potion card from your graveyard to the battlefield.",
                                 effect = (Player owner, Card unused) =>
                                 {
-                                    GameManager.Instance.ReturnRandomPotionFromGraveyard(owner);
+                                    GameManager.Instance.ReturnRandomPotionFromGraveyardToBattlefield(owner);
                                 }
                             }
                         }
