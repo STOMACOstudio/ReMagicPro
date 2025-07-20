@@ -641,6 +641,30 @@ public static class CardDatabase
                         }
                     }
                     });
+                Add(new CardData //Apprentice potionist
+                    {
+                    cardName = "Apprentice Potionist",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Wizard" },
+                    artwork = Resources.Load<Sprite>("Art/apprentice_potionist"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "search your library for a random Potion card, reveal it, put it into your hand, then shuffle your library.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.SearchLibraryForRandomPotion(owner);
+                            }
+                        }
+                    }
+                    });
             //BLACK
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
