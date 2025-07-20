@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
     public GameObject floatingDamagePrefab;
 
     public ArtifactCard targetingArtifact;
+    public EquipmentCard targetingEquipment;
 
     public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
 
@@ -604,6 +605,17 @@ public class GameManager : MonoBehaviour
 
                         foreach (var aura in attached)
                             SendToGraveyard(aura, player);
+
+                        var equips = player.Battlefield
+                            .OfType<EquipmentCard>()
+                            .Where(e => e.equippedTo == leftCreature)
+                            .ToList();
+
+                        foreach (var eq in equips)
+                        {
+                            eq.Unequip();
+                            FindCardVisual(eq)?.UpdateVisual();
+                        }
                     }
                 }
             }
@@ -1883,6 +1895,46 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             return;
         }
+        // Equipment equip ability
+        if (targetingEquipment != null &&
+            targetingEquipment.activatedAbilities.Contains(ActivatedAbility.Equip))
+        {
+            if (chosen is CreatureCard targetCreature &&
+                GetOwnerOfCard(targetCreature) == targetingPlayer &&
+                targetingPlayer.Battlefield.Contains(targetCreature))
+            {
+                Player controller = targetingPlayer;
+                int remaining = targetingEquipment.EquipCost;
+
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.White, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Blue, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Black, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Red, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Green, remaining);
+
+                if (remaining > 0)
+                {
+                    Debug.LogWarning("Not enough mana to equip artifact.");
+                    CancelTargeting();
+                    return;
+                }
+
+                targetingEquipment.Equip(targetCreature);
+
+                UpdateUI();
+            }
+            else
+            {
+                Debug.Log("Invalid target for equipment.");
+            }
+
+            targetingEquipment = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            return;
+        }
         // Aura casting
         if (targetingAura != null)
         {
@@ -2077,6 +2129,7 @@ public class GameManager : MonoBehaviour
                 cv.EnableTargetingHighlight(false); // turn off all
 
             targetingArtifact = null;
+            targetingEquipment = null;
             targetingSorcery = null;
             targetingAura = null;
             targetingPlayer = null;
@@ -2218,7 +2271,22 @@ public class GameManager : MonoBehaviour
         targetingAura = aura;
         targetingSorcery = null;
         targetingArtifact = null;
+        targetingEquipment = null;
         targetingPlayer = caster;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        if (visual != null)
+            visual.EnableTargetingHighlight(true);
+    }
+
+    public void BeginEquipmentTargetSelection(EquipmentCard equipment, Player player, CardVisual visual)
+    {
+        targetingEquipment = equipment;
+        targetingArtifact = null;
+        targetingSorcery = null;
+        targetingAura = null;
+        targetingPlayer = player;
         targetingVisual = visual;
         isTargetingMode = true;
 

@@ -237,6 +237,9 @@ public class Card
                             case ActivatedAbility.BuffTargetCreature:
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
                                 break;
+                            case ActivatedAbility.Equip:
+                                lines.Add($"Equip {manaToPayToActivate}");
+                                break;
                         }
                     }
                 }
