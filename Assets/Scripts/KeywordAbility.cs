@@ -46,6 +46,7 @@ public enum ActivatedAbility
     PayToGainAbility,
     DealDamageToCreature,
     BuffTargetCreature,
+    TapToPlayRandomPotion,
     PayToBuffSelf,
     Equip,
 }
