@@ -689,7 +689,7 @@ public static class CardDatabase
                             effect = (Player owner, Card selfCard) =>
                             {
                                 Card entering = GameManager.Instance.lastEnteredArtifact;
-                                if (entering != null && entering.cardName.Contains("Potion") &&
+                                if (entering != null && entering.subtypes.Contains("Potion") &&
                                     GameManager.Instance.GetOwnerOfCard(entering) == owner)
                                 {
                                     GameManager.Instance.DrawCard(owner);
@@ -2720,6 +2720,7 @@ public static class CardDatabase
                     manaCost = 1,
                     color = new List<string>(),
                     cardType = CardType.Artifact,
+                    subtypes = new List<string> { "Potion" },
                     entersTapped = true,
                     manaToPayToActivate = 2,
                     damageToCreature = 2,
@@ -2736,6 +2737,7 @@ public static class CardDatabase
                     manaCost = 1,
                     color = new List<string>(),
                     cardType = CardType.Artifact,
+                    subtypes = new List<string> { "Potion" },
                     entersTapped = true,
                     cardsToDraw = 2,
                     manaToPayToActivate = 5,
@@ -2752,6 +2754,7 @@ public static class CardDatabase
                     manaCost = 1,
                     color = new List<string>(),
                     cardType = CardType.Artifact,
+                    subtypes = new List<string> { "Potion" },
                     entersTapped = true,
                     lifeToGain = 3,
                     manaToPayToActivate = 2,
@@ -2768,6 +2771,7 @@ public static class CardDatabase
                           manaCost = 1,
                           color = new List<string>(),
                           cardType = CardType.Artifact,
+                          subtypes = new List<string> { "Potion" },
                           entersTapped = true,
                           manaToGain = 3,
                           manaToPayToActivate = 2,
@@ -2784,6 +2788,7 @@ public static class CardDatabase
                           manaCost = 1,
                           color = new List<string>(),
                           cardType = CardType.Artifact,
+                          subtypes = new List<string> { "Potion" },
                           entersTapped = true,
                           powerBuff = 2,
                           toughnessBuff = 2,
