@@ -1043,6 +1043,30 @@ public static class CardDatabase
                     flavorText = "It lives to feed: and the more it feeds, the more it remembers the taste of flesh.",
                     artwork = Resources.Load<Sprite>("Art/giant_rat")
                     });
+                Add(new CardData //Dump People
+                    {
+                    cardName = "Dump People",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Rogue" },
+                    artwork = Resources.Load<Sprite>("Art/dump_people"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "return a random noncreature artifact card from your graveyard to your hand.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.ReturnRandomNonCreatureArtifactFromGraveyard(owner);
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Bog mosquito
                     {
                     cardName = "Bog Mosquito",

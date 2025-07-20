@@ -1152,6 +1152,35 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnRandomNonCreatureArtifactFromGraveyard(Player player)
+    {
+        var artifacts = player.Graveyard
+            .Where(card => card is ArtifactCard && !(card is CreatureCard))
+            .ToList();
+        if (artifacts.Count == 0)
+            return;
+
+        Card chosen = artifacts[Random.Range(0, artifacts.Count)];
+        player.Graveyard.Remove(chosen);
+        player.Hand.Add(chosen);
+
+        if (player == humanPlayer)
+        {
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(chosen.cardName);
+            visual.Setup(chosen, this, data);
+            activeCardVisuals.Add(visual);
+        }
+        else if (enemyHandText != null)
+        {
+            enemyHandText.text = "Hand: " + player.Hand.Count;
+        }
+
+        RefreshGraveyardVisuals(player);
+        UpdateUI();
+    }
+
     public void ReturnRandomPotionFromGraveyardToBattlefield(Player player)
     {
         var potions = player.Graveyard
