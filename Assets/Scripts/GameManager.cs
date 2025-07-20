@@ -1211,6 +1211,65 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void SearchLibraryForRandomPotionToBattlefield(Player player)
+    {
+        var potions = player.Deck
+            .Where(card => card.cardName.Contains("Potion"))
+            .ToList();
+        if (potions.Count == 0)
+        {
+            ShuffleDeck(player);
+            UpdateUI();
+            return;
+        }
+
+        Card chosen = potions[Random.Range(0, potions.Count)];
+        player.Deck.Remove(chosen);
+        player.Battlefield.Add(chosen);
+
+        if (chosen is CreatureCard creature)
+        {
+            creature.hasSummoningSickness = true;
+            if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                creature.isTapped = true;
+                Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+            }
+        }
+        else if (chosen is ArtifactCard artifact)
+        {
+            if (artifact.entersTapped || IsAllPermanentsEnterTappedActive())
+            {
+                artifact.isTapped = true;
+                Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+            }
+        }
+
+        GameObject obj = Instantiate(cardPrefab,
+            player == humanPlayer ?
+                (chosen is ArtifactCard ? playerArtifactArea : playerBattlefieldArea) :
+                (chosen is ArtifactCard ? aiArtifactArea : aiBattlefieldArea));
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData data = CardDatabase.GetCardData(chosen.cardName);
+        visual.Setup(chosen, this, data);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        chosen.OnEnterPlay(player);
+        if (chosen is CreatureCard)
+            NotifyCreatureEntered(chosen, player);
+        if (chosen is LandCard)
+            NotifyLandEntered(chosen, player);
+        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
+            NotifyArtifactEntered(chosen, player);
+        if (chosen is EnchantmentCard)
+            NotifyEnchantmentEntered(chosen, player);
+
+        ShuffleDeck(player);
+        UpdateUI();
+    }
+
     public void ReturnRandomInstantOrSorceryFromGraveyard(Player player)
     {
         var spells = player.Graveyard

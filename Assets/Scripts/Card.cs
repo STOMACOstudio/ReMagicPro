@@ -238,6 +238,9 @@ public class Card
                             case ActivatedAbility.BuffTargetCreature:
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
                                 break;
+                            case ActivatedAbility.TapToPlayRandomPotion:
+                                lines.Add($"{manaToPayToActivate}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
+                                break;
                             case ActivatedAbility.Equip:
                                 lines.Add($"Equip {manaToPayToActivate}");
                                 break;

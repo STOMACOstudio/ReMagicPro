@@ -894,6 +894,18 @@ public class TurnSystem : MonoBehaviour
                                         GameManager.Instance.UpdateUI();
                                     }
                                 }
+                                else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlayRandomPotion))
+                                {
+                                    var abilityCost = new Dictionary<string, int> { {"Colorless", artifact.manaToPayToActivate} };
+                                    if (EnsureManaForCost(ai, abilityCost))
+                                    {
+                                        ai.ColoredMana.Pay(abilityCost);
+                                        artifact.isTapped = true;
+                                        GameManager.Instance.SearchLibraryForRandomPotionToBattlefield(ai);
+                                        GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
                             }
                         }
 

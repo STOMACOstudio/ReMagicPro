@@ -2864,6 +2864,21 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/blood_grail")
                     });
 
+                Add(new CardData //Potionist grimoire
+                    {
+                        cardName = "Potionist Grimoire",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        manaToPayToActivate = 1,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapToPlayRandomPotion
+                        },
+                        artwork = Resources.Load<Sprite>("Art/potionist_grimoire")
+                    });
+
                 Add(new CardData //Anti-Magic Grid
                     {
                         cardName = "Anti-Magic Grid",
