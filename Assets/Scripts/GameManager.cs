@@ -49,6 +49,14 @@ public class GameManager : MonoBehaviour
     public GameObject enemyLifeContainer;
     public GameObject floatingDamagePrefab;
 
+    // Tracks cumulative life changes during a combat step
+    private TMP_Text playerLifeDeltaText;
+    private TMP_Text enemyLifeDeltaText;
+    private int playerLifeDelta = 0;
+    private int enemyLifeDelta = 0;
+    private Coroutine playerDeltaRoutine;
+    private Coroutine enemyDeltaRoutine;
+
     public ArtifactCard targetingArtifact;
     public EquipmentCard targetingEquipment;
 
@@ -2679,9 +2687,136 @@ public class GameManager : MonoBehaviour
                     targetingVisual = null;
                 }
             }
+
+        private void UpdateLifeDelta(GameObject target, int change)
+            {
+                bool isPlayer = target == playerLifeContainer;
+                bool isEnemy = target == enemyLifeContainer;
+                if (!isPlayer && !isEnemy)
+                    return;
+
+                TMP_Text txt = isPlayer ? playerLifeDeltaText : enemyLifeDeltaText;
+                int total = isPlayer ? playerLifeDelta : enemyLifeDelta;
+                total += change;
+
+                if (txt == null)
+                {
+                    if (floatingDamagePrefab == null)
+                    {
+                        Debug.LogError("Missing floatingDamagePrefab!");
+                        return;
+                    }
+
+                    GameObject obj = Instantiate(floatingDamagePrefab);
+                    obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+                    RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+                    RectTransform targetRect = target.GetComponent<RectTransform>();
+                    RectTransform rt = obj.GetComponent<RectTransform>();
+
+                    Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
+                    rt.anchoredPosition = localPoint;
+
+                    rt.localScale = Vector3.one;
+                    rt.sizeDelta = new Vector2(100, 40);
+
+                    txt = obj.GetComponent<TMP_Text>();
+
+                    if (isPlayer)
+                        playerLifeDeltaText = txt;
+                    else
+                        enemyLifeDeltaText = txt;
+                }
+
+                txt.fontSize = 48;
+                txt.enableAutoSizing = false;
+                txt.text = (total > 0 ? "+" : "") + total;
+                txt.color = total > 0 ? Color.green : Color.red;
+
+                if (isPlayer)
+                {
+                    playerLifeDelta = total;
+                    if (playerDeltaRoutine != null)
+                        StopCoroutine(playerDeltaRoutine);
+                    playerDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                }
+                else
+                {
+                    enemyLifeDelta = total;
+                    if (enemyDeltaRoutine != null)
+                        StopCoroutine(enemyDeltaRoutine);
+                    enemyDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                }
+            }
+
+        public void ResetLifeDeltas()
+            {
+                if (playerLifeDeltaText != null)
+                {
+                    Destroy(playerLifeDeltaText.gameObject);
+                    playerLifeDeltaText = null;
+                }
+                if (enemyLifeDeltaText != null)
+                {
+                    Destroy(enemyLifeDeltaText.gameObject);
+                    enemyLifeDeltaText = null;
+                }
+                playerLifeDelta = 0;
+                enemyLifeDelta = 0;
+            }
+
+        public void FinalizeLifeDeltas()
+            {
+                if (playerLifeDeltaText != null)
+                    StartCoroutine(FadeAndFloatText(playerLifeDeltaText.gameObject, true));
+                if (enemyLifeDeltaText != null)
+                    StartCoroutine(FadeAndFloatText(enemyLifeDeltaText.gameObject, false));
+
+                playerLifeDeltaText = null;
+                enemyLifeDeltaText = null;
+                if (playerDeltaRoutine != null)
+                {
+                    StopCoroutine(playerDeltaRoutine);
+                    playerDeltaRoutine = null;
+                }
+                if (enemyDeltaRoutine != null)
+                {
+                    StopCoroutine(enemyDeltaRoutine);
+                    enemyDeltaRoutine = null;
+                }
+                playerLifeDelta = 0;
+                enemyLifeDelta = 0;
+            }
+
+        private IEnumerator DelayFinalize(GameObject target)
+            {
+                yield return new WaitForSeconds(1.5f);
+                if (target == playerLifeContainer && playerLifeDeltaText != null)
+                {
+                    StartCoroutine(FadeAndFloatText(playerLifeDeltaText.gameObject, true));
+                    playerLifeDeltaText = null;
+                    playerLifeDelta = 0;
+                    playerDeltaRoutine = null;
+                }
+                else if (target == enemyLifeContainer && enemyLifeDeltaText != null)
+                {
+                    StartCoroutine(FadeAndFloatText(enemyLifeDeltaText.gameObject, false));
+                    enemyLifeDeltaText = null;
+                    enemyLifeDelta = 0;
+                    enemyDeltaRoutine = null;
+                }
+            }
         
         public void ShowFloatingDamage(int amount, GameObject target)
             {
+                if (target == playerLifeContainer || target == enemyLifeContainer)
+                {
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
+                    UpdateLifeDelta(target, -amount);
+                    return;
+                }
+
                 if (floatingDamagePrefab == null)
                 {
                     Debug.LogError("Missing floatingDamagePrefab!");
@@ -2716,6 +2851,13 @@ public class GameManager : MonoBehaviour
     public void ShowFloatingHeal(int amount, GameObject target)
         {
             Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
+
+                if (target == playerLifeContainer || target == enemyLifeContainer)
+                {
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+                    UpdateLifeDelta(target, amount);
+                    return;
+                }
 
                 if (floatingDamagePrefab == null)
                 {
@@ -2911,6 +3053,7 @@ public class GameManager : MonoBehaviour
 
         public IEnumerator ResolveCombatWithAnimations()
             {
+                ResetLifeDeltas();
                 foreach (var attacker in new List<CreatureCard>(currentAttackers))
                 {
                     CardVisual attackerVisual = FindCardVisual(attacker);
@@ -2984,6 +3127,7 @@ public class GameManager : MonoBehaviour
                 currentAttackers.Clear();
                 selectedBlockerForBlocking = null;
                 UpdateUI();
+                FinalizeLifeDeltas();
             }
 
         private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual, GameObject overridePrefab = null)
