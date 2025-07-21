@@ -135,7 +135,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card artifact) =>
                             {
-                                GameManager.Instance.TryGainLife(owner, 1);
+                                GameManager.Instance.TryGainLife(owner, 1, false);
                             }
                         }
                     }
@@ -192,7 +192,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                GameManager.Instance.TryGainLife(owner, 1);
+                                GameManager.Instance.TryGainLife(owner, 1, false);
                                 //Debug.Log("Waterbearer enters: gain 1 life.");
                             }
                         },
@@ -202,7 +202,7 @@ public static class CardDatabase
                             description = "gain 1 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                GameManager.Instance.TryGainLife(owner, 1);
+                                GameManager.Instance.TryGainLife(owner, 1, false);
                                 //Debug.Log("Waterbearer dies: gain 1 life.");
                             }
                         }
@@ -231,7 +231,7 @@ public static class CardDatabase
                             description = "Gain 4 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                GameManager.Instance.TryGainLife(owner, 4);
+                                GameManager.Instance.TryGainLife(owner, 4, false);
                             }
                         },
                     }
@@ -324,7 +324,7 @@ public static class CardDatabase
                             description = "gain 5 life.",
                             effect = (Player owner, Card unused) =>
                             {
-                                GameManager.Instance.TryGainLife(owner, 5);
+                                GameManager.Instance.TryGainLife(owner, 5, false);
                                 Debug.Log("Gain 5 life at upkeep.");
                             }
                         }

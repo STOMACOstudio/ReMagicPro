@@ -1993,7 +1993,7 @@ public class GameManager : MonoBehaviour
             card.keywordAbilities.Contains(KeywordAbility.OpponentSpellsCostOneMore));
     }
 
-    public void TryGainLife(Player player, int amount)
+    public void TryGainLife(Player player, int amount, bool showVFX = true)
     {
         if (amount <= 0 || IsLifeGainPrevented())
             return;
@@ -2003,10 +2003,13 @@ public class GameManager : MonoBehaviour
 
         NotifyLifeGain(player, amount);
 
-        if (player == humanPlayer)
-            ShowFloatingHeal(amount, playerLifeContainer);
-        else
-            ShowFloatingHeal(amount, enemyLifeContainer);
+        if (showVFX)
+        {
+            if (player == humanPlayer)
+                ShowFloatingHeal(amount, playerLifeContainer);
+            else
+                ShowFloatingHeal(amount, enemyLifeContainer);
+        }
     }
 
 
