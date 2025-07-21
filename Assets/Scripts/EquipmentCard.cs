@@ -21,6 +21,7 @@ public class EquipmentCard : ArtifactCard
             if (keywordBuff != KeywordAbility.None)
                 equippedTo.AddAuraKeyword(keywordBuff);
             GameManager.Instance.FindCardVisual(equippedTo)?.UpdateVisual();
+            SoundManager.Instance?.PlaySound(SoundManager.Instance.equipArtifact);
         }
     }
 
