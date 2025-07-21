@@ -77,6 +77,10 @@ public class GameManager : MonoBehaviour
     public bool gameOver = false;
     public int pendingGraveyardAnimations = 0;
 
+    // Tracks cards already moved to the graveyard this turn to
+    // prevent duplicate death triggers if CheckDeaths runs again.
+    private HashSet<Card> processedDeaths = new HashSet<Card>();
+
     public SorceryCard targetingSorcery;
     public AuraCard targetingAura;
     public Player targetingPlayer;
@@ -522,6 +526,11 @@ public class GameManager : MonoBehaviour
 
     public void SendToGraveyard(Card card, Player owner, bool fromStack = false)
         {
+            if (processedDeaths.Contains(card))
+                return;
+
+            processedDeaths.Add(card);
+
             bool diedFromBattlefield = owner.Battlefield.Contains(card);
             bool discardedFromHand = owner.Hand.Contains(card);
 
@@ -843,7 +852,8 @@ public class GameManager : MonoBehaviour
         {
             if (card is CreatureCard c && c.toughness <= 0)
             {
-                toGrave.Add(c);
+                if (!processedDeaths.Contains(c))
+                    toGrave.Add(c);
             }
         }
 
@@ -851,6 +861,11 @@ public class GameManager : MonoBehaviour
         {
             SendToGraveyard(card, player);
         }
+    }
+
+    public void ResetDeathTracking()
+    {
+        processedDeaths.Clear();
     }
 
     public void ResetPermanents(Player player)
