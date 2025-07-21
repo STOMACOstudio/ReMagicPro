@@ -2891,10 +2891,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                CheckDeaths(humanPlayer);
-                CheckDeaths(aiPlayer);
-                UpdateUI();
-
                 return (playerDamage, aiDamage);
             }
 
