@@ -205,6 +205,8 @@ public class TurnSystem : MonoBehaviour
             currentPhase = TurnPhase.StartTurn;
             Debug.Log($"\n=== {player} TURN START ===");
 
+            GameManager.Instance.ResetDeathTracking();
+
             if (!firstTurn && turnBanner != null)
             {
                 if (turnBanner.activeSelf)
