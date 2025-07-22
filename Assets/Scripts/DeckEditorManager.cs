@@ -18,6 +18,26 @@ public class DeckEditorManager : MonoBehaviour
         if (DeckHolder.SelectedDeck != null)
             deck = new List<CardData>(DeckHolder.SelectedDeck);
         ShowDeck();
+
+        LoadRemovedList();
+    }
+
+    private void LoadRemovedList()
+    {
+        foreach (Transform child in removedListContainer)
+            Destroy(child.gameObject);
+
+        collection = new List<CardData>(PlayerCollection.OwnedCards);
+
+        foreach (var data in collection)
+        {
+            GameObject entry = Instantiate(textPrefab, removedListContainer);
+            TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
+            if (text != null)
+                text.text = data.cardName;
+        }
+
+        UpdateRemovedButtons();
     }
 
     private void ShowDeck()
