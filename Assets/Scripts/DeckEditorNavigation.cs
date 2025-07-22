@@ -5,10 +5,9 @@ public class DeckEditorNavigation : MonoBehaviour
 {
     void Start()
     {
-        if (SceneManager.GetActiveScene().name == "DeckEditorScene")
-        {
-            DeckViewer.ShowDeck();
-        }
+        // Deck display is handled by DeckEditorManager.
+        // Calling DeckViewer.ShowDeck here would rebuild the deck
+        // without click handlers, so we omit that call.
     }
     public void GoToDeckEditor()
     {
