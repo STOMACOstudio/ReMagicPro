@@ -83,8 +83,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             CardHoverPreview.Instance.ShowCard(linkedCard);
 
-            if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+            string scene = SceneManager.GetActiveScene().name;
+            if (scene == "DeckBuilderScene" || scene == "DeckEditorScene")
+            {
+                if (highlightBorder != null)
+                    highlightBorder.SetActive(true);
                 return;
+            }
 
             if (!isInBattlefield && !isInGraveyard) // assume this means it's in hand
             {
@@ -107,8 +112,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             CardHoverPreview.Instance.HidePreview();
 
-            if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
+            string scene = SceneManager.GetActiveScene().name;
+            if (scene == "DeckBuilderScene" || scene == "DeckEditorScene")
+            {
+                if (highlightBorder != null)
+                    highlightBorder.SetActive(false);
                 return;
+            }
 
             if (!isInBattlefield && !isInGraveyard) // in hand
             {
