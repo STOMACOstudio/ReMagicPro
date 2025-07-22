@@ -1210,7 +1210,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
 
-                        GameManager.Instance.ShowFloatingHeal(artifact.lifeToGain, GameManager.Instance.playerLifeContainer);
                         Debug.Log($"{linkedCard.cardName} activated: Gain {artifact.lifeToGain} life.");
                     }
                     else
