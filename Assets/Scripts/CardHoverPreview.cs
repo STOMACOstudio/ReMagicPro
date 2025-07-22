@@ -7,6 +7,8 @@ public class CardHoverPreview : MonoBehaviour
     [SerializeField] private GameObject cardVisualPrefab;
     [SerializeField] private Transform previewSlot;
 
+    public GameObject CardVisualPrefab => cardVisualPrefab;
+
     private GameObject currentPreview;
     private Card currentCard;
 
