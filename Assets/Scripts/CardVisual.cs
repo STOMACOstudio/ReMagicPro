@@ -724,6 +724,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     dg.RerollCard(transform.GetSiblingIndex());
                 return;
             }
+            if (SceneManager.GetActiveScene().name == "DeckEditorScene")
+            {
+                var mgr = FindObjectOfType<DeckEditorManager>();
+                if (mgr != null) mgr.OnCardClicked(this);
+                return;
+            }
             if (isInStack)
                 return;
             // Optional ETB targeting (e.g. Monk: "You may destroy target artifact")
