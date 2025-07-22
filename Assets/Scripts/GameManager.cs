@@ -191,6 +191,7 @@ public class GameManager : MonoBehaviour
             if (player == aiPlayer)
             {
                 Debug.Log("AI tried to draw from an empty deck — player wins by mill.");
+                PlayerCollection.AddRandomCard();
                 gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
@@ -3534,6 +3535,7 @@ public class GameManager : MonoBehaviour
             if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
+                PlayerCollection.AddRandomCard();
                 gameOver = true;
                 FindObjectOfType<WinScreenUI>().ShowWinScreen();
             }
