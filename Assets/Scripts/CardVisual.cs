@@ -73,6 +73,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     void Start()
         {
+            if (SceneManager.GetActiveScene().name == "DeckEditorScene")
+                return;
             GetComponent<Button>().onClick.AddListener(OnClick);
         }
 
