@@ -2262,7 +2262,7 @@ public static class CardDatabase
                     {
                     cardName = "Battle Mage",
                     rarity = "Uncommon",
-                    manaCost = 3,
+                    manaCost = 4,
                     color = new List<string> { "Blue", "Red" },
                     cardType = CardType.Creature,
                     power = 2,
