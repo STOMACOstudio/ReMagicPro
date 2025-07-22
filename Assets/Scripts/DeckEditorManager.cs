@@ -60,6 +60,7 @@ public class DeckEditorManager : MonoBehaviour
         CardData data = deck[index];
         deck.RemoveAt(index);
         collection.Add(data);
+        PlayerCollection.OwnedCards.Add(data);
         Destroy(visual.gameObject);
 
         GameObject entry = Instantiate(textPrefab, removedListContainer);
@@ -77,6 +78,7 @@ public class DeckEditorManager : MonoBehaviour
 
         CardData data = collection[index];
         collection.RemoveAt(index);
+        PlayerCollection.OwnedCards.Remove(data);
         Destroy(removedListContainer.GetChild(index).gameObject);
 
         GameObject prefab = cardPrefab;
@@ -108,7 +110,6 @@ public class DeckEditorManager : MonoBehaviour
     public void ConfirmDeck()
     {
         DeckHolder.SelectedDeck = new List<CardData>(deck);
-        PlayerCollection.OwnedCards.AddRange(collection);
         collection.Clear();
     }
 }
