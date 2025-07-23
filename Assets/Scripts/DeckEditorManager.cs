@@ -158,8 +158,11 @@ public class DeckEditorManager : MonoBehaviour
 
     public void OnCollectionEntryClicked(CardData data, GameObject entry)
     {
-        if (!collection.Remove(data))
-            return;
+        // Try to remove the card from the local collection list. In some edge
+        // cases the reference might not exist (for example after changing
+        // filters), but we still want to allow adding the card back to the deck
+        // even if the removal fails.
+        collection.Remove(data);
 
         PlayerCollection.OwnedCards.Remove(data);
         Destroy(entry);
