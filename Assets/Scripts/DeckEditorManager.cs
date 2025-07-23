@@ -140,35 +140,29 @@ public class DeckEditorManager : MonoBehaviour
         CardData sourceData = CardDatabase.GetCardData(card.cardName);
         visual.Setup(card, null, sourceData);
 
-        Button btn = go.GetComponent<Button>();
-        btn.onClick.RemoveAllListeners();
-        btn.onClick.AddListener(() => OnCardClicked(visual));
+        var handler = go.AddComponent<DeckEditorCardButton>();
+        handler.Initialize(data, this);
     }
 
-    public void OnCardClicked(CardVisual visual)
+    public void OnCardClicked(CardData data, GameObject visual)
     {
-        int index = visual.transform.GetSiblingIndex();
-        if (index < 0 || index >= deck.Count)
+        if (!deck.Remove(data))
             return;
 
-        CardData data = deck[index];
-        deck.RemoveAt(index);
         collection.Add(data);
         PlayerCollection.OwnedCards.Add(data);
-        Destroy(visual.gameObject);
+        Destroy(visual);
 
         RefreshCollectionDisplay();
     }
 
-    public void OnTextClicked(int index)
+    public void OnCollectionEntryClicked(CardData data, GameObject entry)
     {
-        if (index < 0 || index >= collection.Count)
+        if (!collection.Remove(data))
             return;
 
-        CardData data = collection[index];
-        collection.RemoveAt(index);
         PlayerCollection.OwnedCards.Remove(data);
-        Destroy(removedListContainer.GetChild(index).gameObject);
+        Destroy(entry);
 
         GameObject prefab = cardPrefab;
         if (prefab == null)
@@ -187,12 +181,9 @@ public class DeckEditorManager : MonoBehaviour
     {
         for (int i = 0; i < removedListContainer.childCount; i++)
         {
-            int idx = i;
-            Button btn = removedListContainer.GetChild(i).GetComponent<Button>();
-            if (btn == null)
-                continue;
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() => OnTextClicked(idx));
+            var entry = removedListContainer.GetChild(i);
+            var handler = entry.gameObject.AddComponent<DeckEditorCollectionButton>();
+            handler.Initialize(collection[i], this);
         }
     }
 
