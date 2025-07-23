@@ -9,6 +9,13 @@ public class DeckEditorManager : MonoBehaviour
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private Transform removedListContainer;
     [SerializeField] private GameObject textPrefab;
+    [Header("Color Filter Buttons")]
+    [SerializeField] private Button whiteFilterButton;
+    [SerializeField] private Button blueFilterButton;
+    [SerializeField] private Button blackFilterButton;
+    [SerializeField] private Button redFilterButton;
+    [SerializeField] private Button greenFilterButton;
+    [SerializeField] private Button colorlessFilterButton;
 
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
@@ -23,6 +30,13 @@ public class DeckEditorManager : MonoBehaviour
         ShowDeck();
 
         LoadRemovedList();
+
+        SetupFilterButton(whiteFilterButton, "White");
+        SetupFilterButton(blueFilterButton, "Blue");
+        SetupFilterButton(blackFilterButton, "Black");
+        SetupFilterButton(redFilterButton, "Red");
+        SetupFilterButton(greenFilterButton, "Green");
+        SetupFilterButton(colorlessFilterButton, "Colorless");
     }
 
     private void LoadRemovedList()
@@ -90,6 +104,14 @@ public class DeckEditorManager : MonoBehaviour
             activeFilters.Add(color);
 
         RefreshCollectionDisplay();
+    }
+
+    private void SetupFilterButton(Button button, string color)
+    {
+        if (button == null)
+            return;
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => ToggleColorFilter(color));
     }
 
     private void ShowDeck()
