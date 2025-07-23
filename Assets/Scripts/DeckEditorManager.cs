@@ -13,6 +13,9 @@ public class DeckEditorManager : MonoBehaviour
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
 
+    // Currently selected color filters. "Colorless" represents the colorless/artifact button
+    private HashSet<string> activeFilters = new HashSet<string>();
+
     void Start()
     {
         if (DeckHolder.SelectedDeck != null)
@@ -27,7 +30,46 @@ public class DeckEditorManager : MonoBehaviour
         foreach (Transform child in removedListContainer)
             Destroy(child.gameObject);
 
-        collection = new List<CardData>(PlayerCollection.OwnedCards);
+        RefreshCollectionDisplay();
+    }
+
+    private bool CardMatchesFilters(CardData data)
+    {
+        if (activeFilters.Count == 0)
+            return true;
+
+        if (data == null)
+            return false;
+
+        List<string> colors = data.color ?? new List<string>();
+
+        foreach (string filter in activeFilters)
+        {
+            if (filter == "Colorless")
+            {
+                bool isColorless = colors.Count == 0 || colors.Contains("Artifact");
+                if (!isColorless)
+                    return false;
+            }
+            else if (!colors.Contains(filter))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void RefreshCollectionDisplay()
+    {
+        foreach (Transform child in removedListContainer)
+            Destroy(child.gameObject);
+
+        IEnumerable<CardData> filtered = PlayerCollection.OwnedCards;
+        if (activeFilters.Count > 0)
+            filtered = PlayerCollection.OwnedCards.FindAll(CardMatchesFilters);
+
+        collection = new List<CardData>(filtered);
 
         foreach (var data in collection)
         {
@@ -38,6 +80,16 @@ public class DeckEditorManager : MonoBehaviour
         }
 
         UpdateRemovedButtons();
+    }
+
+    public void ToggleColorFilter(string color)
+    {
+        if (activeFilters.Contains(color))
+            activeFilters.Remove(color);
+        else
+            activeFilters.Add(color);
+
+        RefreshCollectionDisplay();
     }
 
     private void ShowDeck()
@@ -83,12 +135,7 @@ public class DeckEditorManager : MonoBehaviour
         PlayerCollection.OwnedCards.Add(data);
         Destroy(visual.gameObject);
 
-        GameObject entry = Instantiate(textPrefab, removedListContainer);
-        TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.text = data.cardName;
-
-        UpdateRemovedButtons();
+        RefreshCollectionDisplay();
     }
 
     public void OnTextClicked(int index)
@@ -111,7 +158,7 @@ public class DeckEditorManager : MonoBehaviour
 
         deck.Add(data);
         SpawnCardVisual(prefab, data);
-        UpdateRemovedButtons();
+        RefreshCollectionDisplay();
     }
 
     private void UpdateRemovedButtons()
