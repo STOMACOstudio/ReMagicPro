@@ -16,6 +16,10 @@ public class DeckEditorManager : MonoBehaviour
     [SerializeField] private Button redFilterButton;
     [SerializeField] private Button greenFilterButton;
     [SerializeField] private Button colorlessFilterButton;
+    [Header("Type Filter Buttons")]
+    [SerializeField] private Button creatureFilterButton;
+    [SerializeField] private Button sorceryFilterButton;
+    [SerializeField] private Button enchantmentFilterButton;
     [Header("Filter Colors")]
     [SerializeField] private Color activeFilterColor = Color.yellow;
 
@@ -44,6 +48,9 @@ public class DeckEditorManager : MonoBehaviour
         SetupFilterButton(redFilterButton, "Red");
         SetupFilterButton(greenFilterButton, "Green");
         SetupFilterButton(colorlessFilterButton, "Colorless");
+        SetupFilterButton(creatureFilterButton, "Creature");
+        SetupFilterButton(sorceryFilterButton, "Sorcery");
+        SetupFilterButton(enchantmentFilterButton, "Enchantment");
 
         UpdateFilterButtonVisuals();
     }
@@ -84,6 +91,11 @@ public class DeckEditorManager : MonoBehaviour
             {
                 bool isColorless = colors.Count == 0 || colors.Contains("Artifact");
                 if (!isColorless)
+                    return false;
+            }
+            else if (filter == "Creature" || filter == "Sorcery" || filter == "Enchantment")
+            {
+                if (data.cardType.ToString() != filter)
                     return false;
             }
             else if (!colors.Contains(filter))
