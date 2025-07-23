@@ -1965,6 +1965,9 @@ MonoBehaviour:
   redFilterButton: {fileID: 97875354}
   greenFilterButton: {fileID: 998280535}
   colorlessFilterButton: {fileID: 844139071}
+  creatureFilterButton: {fileID: 392328752}
+  sorceryFilterButton: {fileID: 1576628673}
+  enchantmentFilterButton: {fileID: 839100855}
   activeFilterColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!224 &880648791
 RectTransform:
