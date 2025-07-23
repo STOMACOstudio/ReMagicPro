@@ -16,9 +16,16 @@ public class DeckEditorManager : MonoBehaviour
     [SerializeField] private Button redFilterButton;
     [SerializeField] private Button greenFilterButton;
     [SerializeField] private Button colorlessFilterButton;
+    [Header("Filter Colors")]
+    [SerializeField] private Color activeFilterColor = Color.yellow;
 
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
+
+    // Map color names to their associated filter buttons for easy updates
+    private readonly Dictionary<string, Button> filterButtons = new Dictionary<string, Button>();
+    // Original button colors so we can revert when a filter is deactivated
+    private readonly Dictionary<string, Color> originalButtonColors = new Dictionary<string, Color>();
 
     // Currently selected color filters. "Colorless" represents the colorless/artifact button
     private HashSet<string> activeFilters = new HashSet<string>();
@@ -37,6 +44,8 @@ public class DeckEditorManager : MonoBehaviour
         SetupFilterButton(redFilterButton, "Red");
         SetupFilterButton(greenFilterButton, "Green");
         SetupFilterButton(colorlessFilterButton, "Colorless");
+
+        UpdateFilterButtonVisuals();
     }
 
     private void ClearContainer(Transform container)
@@ -114,6 +123,8 @@ public class DeckEditorManager : MonoBehaviour
         else
             activeFilters.Add(color);
 
+        UpdateFilterButtonVisuals();
+
         RefreshCollectionDisplay();
     }
 
@@ -123,6 +134,30 @@ public class DeckEditorManager : MonoBehaviour
             return;
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => ToggleColorFilter(color));
+
+        filterButtons[color] = button;
+        if (button.image != null)
+            originalButtonColors[color] = button.image.color;
+    }
+
+    // Update button visuals to reflect which filters are currently active
+    private void UpdateFilterButtonVisuals()
+    {
+        foreach (var kvp in filterButtons)
+        {
+            var btn = kvp.Value;
+            if (btn == null)
+                continue;
+
+            Image img = btn.image;
+            if (img == null)
+                continue;
+
+            if (activeFilters.Contains(kvp.Key))
+                img.color = activeFilterColor;
+            else if (originalButtonColors.TryGetValue(kvp.Key, out var orig))
+                img.color = orig;
+        }
     }
 
     private void ShowDeck()
