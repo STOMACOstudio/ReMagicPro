@@ -39,10 +39,22 @@ public class DeckEditorManager : MonoBehaviour
         SetupFilterButton(colorlessFilterButton, "Colorless");
     }
 
+    private void ClearContainer(Transform container)
+    {
+        // Destroy is delayed until the end of the frame, so detach the object
+        // first to ensure the child list is immediately empty. This avoids
+        // stale children interfering with newly instantiated entries.
+        for (int i = container.childCount - 1; i >= 0; i--)
+        {
+            Transform child = container.GetChild(i);
+            child.SetParent(null);
+            Destroy(child.gameObject);
+        }
+    }
+
     private void LoadRemovedList()
     {
-        foreach (Transform child in removedListContainer)
-            Destroy(child.gameObject);
+        ClearContainer(removedListContainer);
 
         RefreshCollectionDisplay();
     }
@@ -76,8 +88,7 @@ public class DeckEditorManager : MonoBehaviour
 
     private void RefreshCollectionDisplay()
     {
-        foreach (Transform child in removedListContainer)
-            Destroy(child.gameObject);
+        ClearContainer(removedListContainer);
 
         IEnumerable<CardData> filtered = PlayerCollection.OwnedCards;
         if (activeFilters.Count > 0)
