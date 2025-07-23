@@ -727,7 +727,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (SceneManager.GetActiveScene().name == "DeckEditorScene")
             {
                 var mgr = FindObjectOfType<DeckEditorManager>();
-                if (mgr != null) mgr.OnCardClicked(this);
+                if (mgr != null)
+                {
+                    CardData data = CardDatabase.GetCardData(linkedCard.cardName);
+                    mgr.OnCardClicked(data, gameObject);
+                }
                 return;
             }
             if (isInStack)
