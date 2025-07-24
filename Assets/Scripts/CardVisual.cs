@@ -717,6 +717,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
+            if (GameManager.Instance != null && GameManager.Instance.graveyardViewActive)
+                return;
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
             {
                 DeckGenerator dg = FindObjectOfType<DeckGenerator>();
