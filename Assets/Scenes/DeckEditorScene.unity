@@ -1969,6 +1969,9 @@ MonoBehaviour:
   sorceryFilterButton: {fileID: 1576628673}
   enchantmentFilterButton: {fileID: 839100855}
   activeFilterColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  deckCardNumberText: {fileID: 1097288404}
+  deckValidColor: {r: 0, g: 0, b: 0, a: 1}
+  deckInvalidColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!224 &880648791
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2352,8 +2355,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 629, y: -942}
-  m_SizeDelta: {x: 319.5029, y: 39.5651}
+  m_AnchoredPosition: {x: 1190.3, y: -59}
+  m_SizeDelta: {x: 160.6353, y: 79.227}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1097288404
 MonoBehaviour:
@@ -2375,7 +2378,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Deck 0/40
+  m_text: 40/40
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
   m_sharedMaterial: {fileID: -3967272074033129492, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
@@ -2402,8 +2405,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

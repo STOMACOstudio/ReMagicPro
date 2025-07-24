@@ -16,7 +16,11 @@ public class DeckEditorNavigation : MonoBehaviour
 
     public void ConfirmDeck()
     {
-        FindObjectOfType<DeckEditorManager>()?.ConfirmDeck();
-        SceneManager.LoadScene("MapScene");
+        var manager = FindObjectOfType<DeckEditorManager>();
+        if (manager != null && manager.IsDeckComplete)
+        {
+            manager.ConfirmDeck();
+            SceneManager.LoadScene("MapScene");
+        }
     }
 }
