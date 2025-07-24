@@ -1585,7 +1585,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             isInBattlefield = false;
             isInGraveyard = true;
-            isInGraveyardViewer = false;
             isInStack = false;
 
             if (lineRenderer != null)
@@ -1608,7 +1607,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             isInBattlefield = false;
             isInGraveyard = true;
-            isInGraveyardViewer = false;
             isInStack = false;
 
             // Re-enable UI components in case they were disabled on battlefield
@@ -1636,7 +1634,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // General setup
             isInBattlefield = false;
             isInGraveyard = true;
-            isInGraveyardViewer = false;
             isInStack = false;
 
             CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
