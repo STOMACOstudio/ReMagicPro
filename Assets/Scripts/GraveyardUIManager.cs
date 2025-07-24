@@ -37,6 +37,7 @@ public class GraveyardUIManager : MonoBehaviour
             visual.Setup(card, GameManager.Instance);
             visual.transform.localPosition = Vector3.zero;
             visual.isInGraveyard = true;
+            visual.isInGraveyardViewer = true;
             visual.UpdateGraveyardVisual();
             // Enlarge cards in the viewer for better readability
             visual.transform.localScale = Vector3.one * 0.8f;
