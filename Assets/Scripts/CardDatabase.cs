@@ -3324,6 +3324,19 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets +1/+1 and has lifelink.",
                     });
 
+                Add(new CardData // Tame
+                    {
+                        cardName = "Tame",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        keywordBuff = KeywordAbility.Defender,
+                        artwork = Resources.Load<Sprite>("Art/tame"),
+                        rulesText = "Enchanted creature has defender.",
+                    });
+
                 Add(new CardData // Cut off Hands
                     {
                         cardName = "Cut off Hands",
