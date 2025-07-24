@@ -23,6 +23,11 @@ public class DeckEditorManager : MonoBehaviour
     [Header("Filter Colors")]
     [SerializeField] private Color activeFilterColor = Color.yellow;
 
+    [Header("Deck Count Display")]
+    [SerializeField] private TMP_Text deckCardNumberText;
+    [SerializeField] private Color deckValidColor = Color.black;
+    [SerializeField] private Color deckInvalidColor = Color.red;
+
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
 
@@ -53,6 +58,8 @@ public class DeckEditorManager : MonoBehaviour
         SetupFilterButton(enchantmentFilterButton, "Enchantment");
 
         UpdateFilterButtonVisuals();
+
+        UpdateDeckCardNumber();
     }
 
     private void ClearContainer(Transform container)
@@ -212,6 +219,7 @@ public class DeckEditorManager : MonoBehaviour
         Destroy(visual);
 
         RefreshCollectionDisplay();
+        UpdateDeckCardNumber();
     }
 
     public void OnCollectionEntryClicked(CardData data, GameObject entry)
@@ -236,6 +244,7 @@ public class DeckEditorManager : MonoBehaviour
         deck.Add(data);
         SpawnCardVisual(prefab, data);
         RefreshCollectionDisplay();
+        UpdateDeckCardNumber();
     }
 
     private void UpdateRemovedButtons()
@@ -247,6 +256,17 @@ public class DeckEditorManager : MonoBehaviour
             handler.Initialize(collection[i], this);
         }
     }
+
+    private void UpdateDeckCardNumber()
+    {
+        if (deckCardNumberText == null)
+            return;
+
+        deckCardNumberText.text = $"{deck.Count}/40";
+        deckCardNumberText.color = deck.Count < 40 ? deckInvalidColor : deckValidColor;
+    }
+
+    public bool IsDeckComplete => deck.Count >= 40;
 
     public void ConfirmDeck()
     {
