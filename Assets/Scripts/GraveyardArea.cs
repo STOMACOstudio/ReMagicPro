@@ -7,12 +7,12 @@ public class GraveyardArea : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GraveyardUIManager.Instance != null && !GameManager.Instance.graveyardViewActive)
-        {
-            var cards = isPlayerGraveyard ?
-                GameManager.Instance.humanPlayer.Graveyard :
-                GameManager.Instance.aiPlayer.Graveyard;
-            GraveyardUIManager.Instance.Open(cards);
-        }
+        if (GameManager.Instance == null || GameManager.Instance.graveyardViewActive)
+            return;
+
+        if (isPlayerGraveyard)
+            GameManager.Instance.ShowPlayerGraveyard();
+        else
+            GameManager.Instance.ShowOpponentGraveyard();
     }
 }

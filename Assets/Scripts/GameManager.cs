@@ -1855,6 +1855,12 @@ public class GameManager : MonoBehaviour
                 graveyardUIManager.Open(humanPlayer.Graveyard);
         }
 
+    public void ShowOpponentGraveyard()
+        {
+            if (graveyardUIManager != null)
+                graveyardUIManager.Open(aiPlayer.Graveyard);
+        }
+
     public void ClosePlayerGraveyard()
         {
             if (graveyardUIManager != null)
