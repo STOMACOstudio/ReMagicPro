@@ -3395,6 +3395,19 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/sleep"),
                         rulesText = "Enchanted creature cannot untap.",
                     });
+
+                Add(new CardData // Stardust
+                    {
+                        cardName = "Stardust",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        keywordBuff = KeywordAbility.Flying,
+                        artwork = Resources.Load<Sprite>("Art/astral_plane"),
+                        rulesText = "Enchanted creature has flying.",
+                    });
             }
 
     private static void Add(CardData data)
