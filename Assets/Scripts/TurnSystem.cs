@@ -98,7 +98,6 @@ public class TurnSystem : MonoBehaviour
                 bool allowNext = currentPlayer == PlayerType.Human &&
                                 waitingForPlayerInput &&
                                 !GameManager.Instance.isStackBusy &&
-                                !GameManager.Instance.graveyardViewActive &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
                                 currentPhase != TurnPhase.ConfirmBlockers &&
                                 currentPhase != TurnPhase.ChooseAttackers;
@@ -118,7 +117,6 @@ public class TurnSystem : MonoBehaviour
                 if (currentPlayer == PlayerType.Human &&
                     waitingForPlayerInput &&
                     !GameManager.Instance.isStackBusy &&
-                    !GameManager.Instance.graveyardViewActive &&
                     currentPhase != TurnPhase.ConfirmAttackers &&
                     currentPhase != TurnPhase.ConfirmBlockers &&
                     currentPhase != TurnPhase.ChooseAttackers)
@@ -131,9 +129,6 @@ public class TurnSystem : MonoBehaviour
     public void NextPhaseButton()
         {
             if (GameManager.Instance.gameOver)
-                return;
-
-            if (GameManager.Instance.graveyardViewActive)
                 return;
 
             if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
@@ -159,9 +154,6 @@ public class TurnSystem : MonoBehaviour
 
     public void ConfirmAttackers()
         {
-            if (GameManager.Instance.graveyardViewActive)
-                return;
-
             if (waitingForPlayerInput)
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
@@ -186,9 +178,6 @@ public class TurnSystem : MonoBehaviour
 
     public void ConfirmBlockers()
         {
-            if (GameManager.Instance.graveyardViewActive)
-                return;
-
             if (waitingForPlayerInput)
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
@@ -1640,9 +1629,6 @@ public class TurnSystem : MonoBehaviour
         
         public void SelectAllEligibleAttackers()
             {
-                if (GameManager.Instance.graveyardViewActive)
-                    return;
-
                 GameManager.Instance.selectedAttackers.Clear();
                 bool anyDeclared = false;
 
@@ -1678,9 +1664,6 @@ public class TurnSystem : MonoBehaviour
 
         public void ClearAllSelectedAttackers()
             {
-                if (GameManager.Instance.graveyardViewActive)
-                    return;
-
                 foreach (var creature in GameManager.Instance.selectedAttackers)
                 {
                     creature.isTapped = false;

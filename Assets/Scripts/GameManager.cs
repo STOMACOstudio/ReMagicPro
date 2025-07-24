@@ -84,8 +84,6 @@ public class GameManager : MonoBehaviour
     public bool isStackBusy = false;
     public bool gameOver = false;
     public int pendingGraveyardAnimations = 0;
-    public bool graveyardViewActive = false;
-    public GraveyardUIManager graveyardUIManager;
 
     // Tracks cards already moved to the graveyard this turn to
     // prevent duplicate death triggers if CheckDeaths runs again.
@@ -1847,24 +1845,6 @@ public class GameManager : MonoBehaviour
 
                 activeCardVisuals.Add(graveyardVisual);
             }
-        }
-
-    public void ShowPlayerGraveyard()
-        {
-            if (graveyardUIManager != null)
-                graveyardUIManager.Open(humanPlayer.Graveyard);
-        }
-
-    public void ShowOpponentGraveyard()
-        {
-            if (graveyardUIManager != null)
-                graveyardUIManager.Open(aiPlayer.Graveyard);
-        }
-
-    public void ClosePlayerGraveyard()
-        {
-            if (graveyardUIManager != null)
-                graveyardUIManager.Close();
         }
 
     public void WinBattle()

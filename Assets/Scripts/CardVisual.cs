@@ -67,7 +67,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
-    public bool isInGraveyardViewer = false; // true when shown in the Graveyard UI
     public bool isInStack = false; // when true, card is on the stack
 
     private bool isPointerOver = false;
@@ -81,7 +80,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if ((isInGraveyard && !isInGraveyardViewer) || isInStack || linkedCard == null || linkedCard.artwork == null)
+            if (isInGraveyard || isInStack || linkedCard == null || linkedCard.artwork == null)
                 return;
 
             CardHoverPreview.Instance.ShowCard(linkedCard);
@@ -99,7 +98,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 originalPosition = transform.localPosition;
                 transform.localPosition += Vector3.up * 30f;
             }
-            else if (!isInGraveyardViewer)
+            else
             {
                 transform.localScale = Vector3.one * 1.1f;
             }
@@ -110,7 +109,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if ((isInGraveyard && !isInGraveyardViewer) || isInStack)
+            if (isInGraveyard || isInStack)
                 return;
 
             CardHoverPreview.Instance.HidePreview();
@@ -127,7 +126,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 transform.localPosition = originalPosition;
             }
-            else if (!isInGraveyardViewer)
+            else
             {
                 transform.localScale = Vector3.one;
             }
@@ -718,8 +717,6 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
         {
-            if (GameManager.Instance != null && GameManager.Instance.graveyardViewActive)
-                return;
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
             {
                 DeckGenerator dg = FindObjectOfType<DeckGenerator>();
