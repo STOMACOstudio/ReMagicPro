@@ -1909,7 +1909,6 @@ public static class CardDatabase
                     subtypes = new List<string> { "Golem" },
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
-                    flavorText = "A lost relic of a forgotten time: a weapon from another war, waiting to be activated.",
                     artwork = Resources.Load<Sprite>("Art/origin_golem")
                     });
                 Add(new CardData //Omega golemoid
@@ -2306,8 +2305,8 @@ public static class CardDatabase
                     });
         // Sorceries
             //WHITE
-                Add(new CardData { //Shattering light
-                    cardName = "Shattering Light",
+                Add(new CardData { //Exorcism
+                    cardName = "Exorcism",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2316,7 +2315,7 @@ public static class CardDatabase
                     destroyTargetIfTypeMatches = true,
                     requiredTargetType = SorceryCard.TargetType.Creature,
                     requiredTargetColor ="Black",
-                    artwork = Resources.Load<Sprite>("Art/shattering_light")
+                    artwork = Resources.Load<Sprite>("Art/exorcism")
                     });
                 Add(new CardData { //for glory
                     cardName = "For Glory",
@@ -2392,8 +2391,8 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/astral_plane"),
                     });
             //BLACK
-                Add(new CardData { //Devouring shadows
-                    cardName = "Devouring Shadow",
+                Add(new CardData { //Blasphemy
+                    cardName = "Blasphemy",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2402,7 +2401,7 @@ public static class CardDatabase
                     destroyTargetIfTypeMatches = true,
                     requiredTargetType = SorceryCard.TargetType.Creature,
                     requiredTargetColor = "White",
-                    artwork = Resources.Load<Sprite>("Art/devouring_shadows")
+                    artwork = Resources.Load<Sprite>("Art/blasphemy")
                     });
                 Add(new CardData //stain of rot
                     {
@@ -3405,7 +3404,7 @@ public static class CardDatabase
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         keywordBuff = KeywordAbility.Flying,
-                        artwork = Resources.Load<Sprite>("Art/astral_plane"),
+                        artwork = Resources.Load<Sprite>("Art/stardust"),
                         rulesText = "Enchanted creature has flying.",
                     });
             }
