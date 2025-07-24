@@ -6102,6 +6102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1072476c3d404063a330f225ad6cfe95, type: 3}
   m_Name:
   m_EditorClassIdentifier:
+  isPlayerGraveyard: 1
 --- !u!1 &1586552182
 GameObject:
   m_ObjectHideFlags: 0
@@ -6114,6 +6115,7 @@ GameObject:
   - component: {fileID: 1586552184}
   - component: {fileID: 1586552186}
   - component: {fileID: 1586552185}
+  - component: {fileID: 2200000012}
   m_Layer: 0
   m_Name: EnemyGraveyardArea
   m_TagString: Untagged
@@ -6194,6 +6196,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1586552182}
   m_CullTransparentMesh: 1
+--- !u!114 &2200000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586552182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1072476c3d404063a330f225ad6cfe95, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  isPlayerGraveyard: 0
 --- !u!1 &1602134002
 GameObject:
   m_ObjectHideFlags: 0

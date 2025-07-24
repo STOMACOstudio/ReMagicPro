@@ -3,11 +3,16 @@ using UnityEngine.EventSystems;
 
 public class GraveyardArea : MonoBehaviour, IPointerClickHandler
 {
+    [SerializeField] private bool isPlayerGraveyard = true;
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (GraveyardUIManager.Instance != null && !GameManager.Instance.graveyardViewActive)
         {
-            GraveyardUIManager.Instance.Open(GameManager.Instance.humanPlayer.Graveyard);
+            var cards = isPlayerGraveyard ?
+                GameManager.Instance.humanPlayer.Graveyard :
+                GameManager.Instance.aiPlayer.Graveyard;
+            GraveyardUIManager.Instance.Open(cards);
         }
     }
 }
