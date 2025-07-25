@@ -2661,39 +2661,50 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -464, y: 41}
+  m_AnchoredPosition: {x: -270, y: -50}
   m_SizeDelta: {x: 243.4, y: 324.53}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &704664320
-MonoBehaviour:
+--- !u!23 &704664320
+MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 704664318}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!222 &704664321
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3249,6 +3260,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1515505900}
     m_Modifications:
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 8716804017303281405, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
+    - target: {fileID: 1404356338198960024, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765078, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_Name
       value: CoinsManagerPrefab
@@ -3319,11 +3354,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765079, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 394.3
+      value: 221.3
       objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765079, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -94
       objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765079, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4077,6 +4112,10 @@ MonoBehaviour:
   winIconImage: {fileID: 541880024}
   winSprite: {fileID: 21300000, guid: d1ae4116d14b21c49be3c912c20219aa, type: 3}
   loseSprite: {fileID: 21300000, guid: 6d1a8b253c4b3a345bc2a742c399474d, type: 3}
+  wonCardImage: {fileID: 0}
+  coinsWonText: {fileID: 1359028761}
+  wonCardContainer: {fileID: 704664319}
+  cardVisualPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
 --- !u!1 &1138812840
 GameObject:
   m_ObjectHideFlags: 0
@@ -4753,7 +4792,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -233.00003}
+  m_AnchoredPosition: {x: 0, y: -233}
   m_SizeDelta: {x: -1518.68, y: -877.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1283668488
@@ -4919,7 +4958,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 467, y: 75}
+  m_AnchoredPosition: {x: 294, y: -19}
   m_SizeDelta: {x: 2.52, y: 0.39}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1359028761
@@ -4944,15 +4983,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: +coins
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
-  m_sharedMaterial: {fileID: -3967272074033129492, guid: f23c2ebc30003a845aca4fe516f4b7a1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
+  m_sharedMaterial: {fileID: 8716804017303281405, guid: eebb2f036be18dd45839a09a4351081e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278255363
+  m_fontColor: {r: 0.011712074, g: 1, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5397,7 +5436,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 634.91003, y: 14.019989}
+  m_AnchoredPosition: {x: 634.91003, y: 14.02002}
   m_SizeDelta: {x: 188.42, y: 57.56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1459190847
@@ -5833,7 +5872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7058824}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7352,7 +7391,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 634.91, y: -421.2}
+  m_AnchoredPosition: {x: 634.91003, y: -421.2}
   m_SizeDelta: {x: 128.29, y: 38.11}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1802982903

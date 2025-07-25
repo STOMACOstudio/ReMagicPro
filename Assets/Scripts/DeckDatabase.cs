@@ -37,7 +37,7 @@ public static class DeckDatabase
             AddCards(ai, "Angry Farmer", 3);
             AddCards(ai, "Waterbearer", 3);
             AddCards(ai, "For Glory", 2);
-            AddCards(ai, "Candlelight", 3);
+            AddCards(ai, "Sacred Horn Nectar", 3);
             AddCards(ai, "Virgins Procession", 3);
             AddCards(ai, "Skyhunter Unicorn", 2);
             AddCards(ai, "Crystallium", 3);
@@ -57,7 +57,7 @@ public static class DeckDatabase
             AddCards(ai, "Skyhunter Unicorn", 2);
             AddCards(ai, "Solid Prayer", 2);
             AddCards(ai, "Beasthunter", 2);
-            AddCards(ai, "Candlelight", 2);
+            AddCards(ai, "Sacred Horn Nectar", 2);
             AddCards(ai, "Bonfire", 2);
         }
 

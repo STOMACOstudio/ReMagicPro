@@ -8,13 +8,15 @@ public static class PlayerCollection
     /// <summary>
     /// Adds a random card from the CardDatabase to the player's collection.
     /// </summary>
-    public static void AddRandomCard()
+    public static CardData AddRandomCard()
     {
         var allCards = new List<CardData>(CardDatabase.GetAllCards());
         if (allCards.Count == 0)
-            return;
+            return null;
 
         int index = Random.Range(0, allCards.Count);
-        OwnedCards.Add(allCards[index]);
+        var card = allCards[index];
+        OwnedCards.Add(card);
+        return card;
     }
 }
