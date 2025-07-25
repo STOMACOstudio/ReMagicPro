@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class WinScreenUI : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class WinScreenUI : MonoBehaviour
     public Image winIconImage; // Optional: assign to dynamically change sprite
     public Sprite winSprite;
     public Sprite loseSprite;
+    public Image wonCardImage; // Displays the randomly won card
+    public TMP_Text coinsWonText; // Displays coins earned
 
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
@@ -22,21 +25,33 @@ public class WinScreenUI : MonoBehaviour
         canvasGroup = winPanel.GetComponent<CanvasGroup>();
         gameManager = FindObjectOfType<GameManager>();
 
+        if (wonCardImage != null)
+            wonCardImage.sprite = null;
+
+        if (coinsWonText != null)
+            coinsWonText.text = string.Empty;
+
         winImageButton.onClick.AddListener(OnWinLoseClick);
     }
 
-    public void ShowWinScreen()
+    public void ShowWinScreen(CardData wonCard, int coinsAward = 25)
     {
         isWin = true;
         if (winIconImage != null && winSprite != null)
             winIconImage.sprite = winSprite;
+
+        if (wonCardImage != null && wonCard != null)
+            wonCardImage.sprite = wonCard.artwork;
+
+        if (coinsWonText != null)
+            coinsWonText.text = "+" + coinsAward.ToString();
 
         if (GameManager.Instance != null)
             GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
 
-        CoinsManager.AddCoins(25);
+        CoinsManager.AddCoins(coinsAward);
 
         StartCoroutine(FadeIn());
     }
@@ -46,6 +61,12 @@ public class WinScreenUI : MonoBehaviour
         isWin = false;
         if (winIconImage != null && loseSprite != null)
             winIconImage.sprite = loseSprite;
+
+        if (wonCardImage != null)
+            wonCardImage.sprite = null;
+
+        if (coinsWonText != null)
+            coinsWonText.text = string.Empty;
 
         if (GameManager.Instance != null)
             GameManager.Instance.gameOver = true;
