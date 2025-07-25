@@ -2341,14 +2341,14 @@ public static class CardDatabase
                     numberOfTokensMin = 1,
                     numberOfTokensMax = 6,
                     });
-                Add(new CardData { //Candlelight
-                    cardName = "Candlelight",
+                Add(new CardData { //Sacred Horn Nectar
+                    cardName = "Sacred Horn Nectar",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
                     color = new List<string> { "White" },
                     lifeToGain = 4,
-                    artwork = Resources.Load<Sprite>("Art/Candlelight"),
+                    artwork = Resources.Load<Sprite>("Art/sacred_horn_nectar"),
                     abilities = new List<CardAbility>(),
                     });
                 Add(new CardData { //Solid prayer
