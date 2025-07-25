@@ -97,7 +97,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 121}
   m_MaxSize: {x: 4000, y: 4021}
   vertical: 0
-  controlID: 81
+  controlID: 91
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_MinSize: {x: 679, y: 492}
   m_MaxSize: {x: 14002, y: 14042}
   vertical: 0
-  controlID: 105
+  controlID: 87
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -479,22 +479,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Prefab
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Prefab
   m_LastFoldersGridSize: -1
   m_LastProjectPath: U:\Game Design\ReMagic_project\ReMagicProject\ReMagicPro
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 964b0000
-    m_LastClickedID: 19350
-    m_ExpandedIDs: 000000008a4b000000ca9a3b
+    scrollPos: {x: 0, y: 7}
+    m_SelectedIDs: d8490000
+    m_LastClickedID: 18904
+    m_ExpandedIDs: 00000000d0490000da49000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -522,7 +522,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000008a4b0000
+    m_ExpandedIDs: 00000000d0490000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -642,10 +642,10 @@ MonoBehaviour:
   m_ViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: a64b0000
+      scrollPos: {x: 0, y: 169}
+      m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 5e21feff9a24feff5226feff2017ffff7817ffffbe17ffff7cfaffff3cfbffffda6a0000c2740000ca740000
+      m_ExpandedIDs: aeeeffff3eefffff1af0ffff40f0ffff8cf1ffffa6f2ffff28f3ffff86f3ffffc2f3ffff38f8ffff76faffff40fbffff4e4a0000965000005c54000006550000165a0000746000005c63000006640000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -705,9 +705,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 855.4211, y: 913.0086, z: 194.06693}
+    m_Target: {x: -2.4456015, y: -0.54454464, z: 158.65788}
     speed: 2
-    m_Value: {x: 855.4211, y: 913.0086, z: 194.06693}
+    m_Value: {x: -2.4456015, y: -0.54454464, z: 158.65788}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -758,9 +758,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 363.9858
+    m_Target: 3.8297966
     speed: 2
-    m_Value: 363.9858
+    m_Value: 3.8297966
   m_Ortho:
     m_Target: 1
     speed: 2
