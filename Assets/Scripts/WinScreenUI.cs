@@ -47,8 +47,6 @@ public class WinScreenUI : MonoBehaviour
             spawnedCardVisual = null;
         }
 
-        }
-
         if (wonCardContainer != null)
         {
             foreach (Transform child in wonCardContainer)
