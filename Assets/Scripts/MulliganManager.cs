@@ -18,13 +18,20 @@ public class MulliganManager : MonoBehaviour
             mulliganPanel.SetActive(true);
 
         if (mulliganButton != null)
+        {
             mulliganButton.onClick.AddListener(OnMulligan);
+            if (CoinsManager.Coins < 10)
+                mulliganButton.interactable = false;
+        }
         if (keepButton != null)
             keepButton.onClick.AddListener(OnKeep);
     }
 
     private void OnMulligan()
     {
+        if (!CoinsManager.SpendCoins(10))
+            return;
+
         var player = GameManager.Instance.humanPlayer;
         foreach (var card in player.Hand.ToList())
         {
