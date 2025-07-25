@@ -1534,8 +1534,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Land usage
                 if (isInBattlefield && linkedCard is LandCard land)
                 {
-                    GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
-                    UpdateVisual();
+                    if (GameManager.Instance.GetOwnerOfCard(land) == GameManager.Instance.humanPlayer)
+                    {
+                        GameManager.Instance.TapLandForMana(land, GameManager.Instance.humanPlayer);
+                        UpdateVisual();
+                    }
                     return;
                 }
 
