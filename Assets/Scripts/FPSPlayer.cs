@@ -18,6 +18,19 @@ public class FPSPlayer : MonoBehaviour
         Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true; // prevent physics from rotating the player
+
+        if (cameraTransform == null)
+        {
+            Camera cam = GetComponentInChildren<Camera>();
+            if (cam != null)
+            {
+                cameraTransform = cam.transform;
+            }
+            else
+            {
+                Debug.LogWarning("FPSPlayer cameraTransform is not assigned and no child camera found.");
+            }
+        }
     }
 
     void Update()
@@ -28,14 +41,17 @@ public class FPSPlayer : MonoBehaviour
         movementInput = (transform.right * x + transform.forward * z).normalized * moveSpeed;
 
         // Mouse Look
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         transform.Rotate(Vector3.up * mouseX);
 
         verticalLookRotation -= mouseY;
         verticalLookRotation = Mathf.Clamp(verticalLookRotation, -90f, 90f);
-        cameraTransform.localEulerAngles = Vector3.right * verticalLookRotation;
+        if (cameraTransform != null)
+        {
+            cameraTransform.localEulerAngles = Vector3.right * verticalLookRotation;
+        }
     }
 
     void FixedUpdate()
