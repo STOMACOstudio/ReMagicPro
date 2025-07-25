@@ -4,6 +4,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+// For spawning card visuals
+using System.Collections.Generic;
+
 public class WinScreenUI : MonoBehaviour
 {
     public GameObject winPanel; // Assign in Inspector
@@ -11,8 +14,12 @@ public class WinScreenUI : MonoBehaviour
     public Image winIconImage; // Optional: assign to dynamically change sprite
     public Sprite winSprite;
     public Sprite loseSprite;
-    public Image wonCardImage; // Displays the randomly won card
+    public Image wonCardImage; // Legacy image slot (unused)
     public TMP_Text coinsWonText; // Displays coins earned
+    public Transform wonCardContainer; // Where to spawn the won card prefab
+    public GameObject cardVisualPrefab; // Card visual prefab
+
+    private GameObject spawnedCardVisual;
 
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
@@ -28,6 +35,26 @@ public class WinScreenUI : MonoBehaviour
         if (wonCardImage != null)
             wonCardImage.sprite = null;
 
+        if (spawnedCardVisual != null)
+        {
+            Destroy(spawnedCardVisual);
+            spawnedCardVisual = null;
+        }
+
+        if (spawnedCardVisual != null)
+        {
+            Destroy(spawnedCardVisual);
+            spawnedCardVisual = null;
+        }
+
+        }
+
+        if (wonCardContainer != null)
+        {
+            foreach (Transform child in wonCardContainer)
+                Destroy(child.gameObject);
+        }
+
         if (coinsWonText != null)
             coinsWonText.text = string.Empty;
 
@@ -40,8 +67,20 @@ public class WinScreenUI : MonoBehaviour
         if (winIconImage != null && winSprite != null)
             winIconImage.sprite = winSprite;
 
-        if (wonCardImage != null && wonCard != null)
-            wonCardImage.sprite = wonCard.artwork;
+        if (wonCardContainer != null && cardVisualPrefab != null && wonCard != null)
+        {
+            if (spawnedCardVisual != null)
+                Destroy(spawnedCardVisual);
+
+            spawnedCardVisual = Instantiate(cardVisualPrefab, wonCardContainer);
+            Card cardObj = CardFactory.Create(wonCard.cardName);
+            var visual = spawnedCardVisual.GetComponent<CardVisual>();
+            visual.Setup(cardObj, null, wonCard);
+            spawnedCardVisual.transform.localScale = Vector3.one * 2f;
+
+            if (wonCardImage != null)
+                wonCardImage.sprite = null;
+        }
 
         if (coinsWonText != null)
             coinsWonText.text = "+" + coinsAward.ToString();
@@ -64,6 +103,11 @@ public class WinScreenUI : MonoBehaviour
 
         if (wonCardImage != null)
             wonCardImage.sprite = null;
+        if (spawnedCardVisual != null)
+        {
+            Destroy(spawnedCardVisual);
+            spawnedCardVisual = null;
+        }
 
         if (coinsWonText != null)
             coinsWonText.text = string.Empty;
