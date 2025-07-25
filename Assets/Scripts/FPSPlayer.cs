@@ -7,6 +7,9 @@ public class FPSPlayer : MonoBehaviour
     public float moveSpeed = 5f;
     public float mouseSensitivity = 2f;
     public Transform cameraTransform;
+    public float interactDistance = 3f;
+
+    private Camera cam;
 
     private Rigidbody rb;
     private float verticalLookRotation = 0f;
@@ -21,7 +24,7 @@ public class FPSPlayer : MonoBehaviour
 
         if (cameraTransform == null)
         {
-            Camera cam = GetComponentInChildren<Camera>();
+            cam = GetComponentInChildren<Camera>();
             if (cam != null)
             {
                 cameraTransform = cam.transform;
@@ -30,6 +33,15 @@ public class FPSPlayer : MonoBehaviour
             {
                 Debug.LogWarning("FPSPlayer cameraTransform is not assigned and no child camera found.");
             }
+        }
+        else
+        {
+            cam = cameraTransform.GetComponent<Camera>();
+        }
+
+        if (cam == null && cameraTransform != null)
+        {
+            cam = cameraTransform.GetComponentInChildren<Camera>();
         }
     }
 
@@ -51,6 +63,24 @@ public class FPSPlayer : MonoBehaviour
         if (cameraTransform != null)
         {
             cameraTransform.localEulerAngles = Vector3.right * verticalLookRotation;
+        }
+
+        HandleInteraction();
+    }
+
+    void HandleInteraction()
+    {
+        if (Input.GetMouseButtonDown(0) && cam != null)
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+            {
+                Interactable interactable = hit.collider.GetComponent<Interactable>();
+                if (interactable != null)
+                {
+                    interactable.Interact();
+                }
+            }
         }
     }
 
