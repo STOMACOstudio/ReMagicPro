@@ -33,8 +33,8 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     public AudioClip clickSound;
     public AudioClip unclickSound;
 
-    private static List<ColorButtonBehavior> selectedColors = new List<ColorButtonBehavior>();
-    private const int MaxSelectedColors = 2;
+    // Only one color can be selected at a time
+    private static ColorButtonBehavior selectedColor = null;
     private static Image backgroundPanelStatic;
     private static Color targetBGColor;
     private static Color startingBGColor;
@@ -42,7 +42,7 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public static void ResetSelections()
     {
-        selectedColors.Clear();
+        selectedColor = null;
         backgroundPanelStatic = null;
     }
 
@@ -106,9 +106,10 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerClick(PointerEventData eventData)
         {
-            if (selectedColors.Contains(this))
+            // Deselect if this button is already selected
+            if (selectedColor == this)
             {
-                selectedColors.Remove(this);
+                selectedColor = null;
                 isSelected = false;
                 SetAlpha(selectionGlow, 0f);
                 hoverAlphaTarget = 0f;
@@ -116,21 +117,23 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
                 if (audioSource != null && unclickSound != null)
                     audioSource.PlayOneShot(unclickSound);
 
-                if (selectedColors.Count == 0 && startButton != null)
+                if (startButton != null)
                     startButton.SetActive(false);
 
                 UpdateColorInfoDisplay();
-                SaveSelectedColors();
+                SaveSelectedColor();
                 return;
             }
 
-            if (selectedColors.Count >= MaxSelectedColors)
+            // If another color is selected, clear it
+            if (selectedColor != null)
             {
-                // Optional: give feedback that you can't select more than two
-                return;
+                selectedColor.isSelected = false;
+                selectedColor.SetAlpha(selectedColor.selectionGlow, 0f);
+                selectedColor.hoverAlphaTarget = 0f;
             }
 
-            selectedColors.Add(this);
+            selectedColor = this;
             isSelected = true;
 
             targetBGColor = backgroundColor;
@@ -145,7 +148,7 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
                 startButton.SetActive(true);
 
             UpdateColorInfoDisplay();
-            SaveSelectedColors();
+            SaveSelectedColor();
         }
 
     private void SetAlpha(Image img, float a)
@@ -165,16 +168,21 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
             }
         }
     
-    private void SaveSelectedColors()
+    private void SaveSelectedColor()
         {
-            var colors = selectedColors.ConvertAll(b => b.colorName);
-            string joined = string.Join(",", colors);
-            PlayerPrefs.SetString("PlayerColor", joined);
+            if (selectedColor == null)
+            {
+                PlayerPrefs.DeleteKey("PlayerColor");
+            }
+            else
+            {
+                PlayerPrefs.SetString("PlayerColor", selectedColor.colorName);
+            }
         }
     
     private void UpdateColorInfoDisplay()
         {
-            if (selectedColors.Count == 0)
+            if (selectedColor == null)
             {
                 colorNameTextTMP.text = "";
                 descriptionTextTMP.text = "";
@@ -183,17 +191,9 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
                 return;
             }
 
-            // Build combined name and description
-            string nameText = "";
-            string descText = "";
-            foreach (var color in selectedColors)
-            {
-                nameText += $"<color=#{ColorUtility.ToHtmlStringRGB(color.displayColor)}>{color.colorLabel}</color>\n";
-                descText += $"{color.description}\n";
-            }
-
-            colorNameTextTMP.text = nameText.Trim();
-            descriptionTextTMP.text = descText.Trim();
+            // Display the selected color's name and description
+            colorNameTextTMP.text = $"<color=#{ColorUtility.ToHtmlStringRGB(selectedColor.displayColor)}>{selectedColor.colorLabel}</color>";
+            descriptionTextTMP.text = selectedColor.description;
             colorNameGroup.alpha = 1f;
             descriptionGroup.alpha = 1f;
         }

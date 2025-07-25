@@ -34,10 +34,10 @@ public class DeckGenerator : MonoBehaviour
         {
             rng = new System.Random();
             string colorPref = PlayerPrefs.GetString("PlayerColor", "Red");
-            string[] chosenColors = colorPref.Split(',').Select(c => c.Trim()).ToArray();
+            if (string.IsNullOrEmpty(colorPref))
+                colorPref = "Red";
 
-            // Fallback to single Red if empty
-            if (chosenColors.Length == 0) chosenColors = new[] { "Red" };
+            string[] chosenColors = new[] { colorPref };
 
             GeneratedDeck = new List<CardData>();
 
@@ -114,12 +114,11 @@ public class DeckGenerator : MonoBehaviour
 
     private void AddCardsByRarity(string color, string rarity, int count)
         {
-            string[] chosenColors = PlayerPrefs.GetString("PlayerColor", "Red")
-                                        .Split(',')
-                                        .Select(c => c.Trim())
-                                        .ToArray();
+            string chosenColor = PlayerPrefs.GetString("PlayerColor", "Red");
+            if (string.IsNullOrEmpty(chosenColor))
+                chosenColor = "Red";
 
-            var chosenColorSet = new HashSet<string>(chosenColors);
+            var chosenColorSet = new HashSet<string> { chosenColor };
 
             var pool = CardDatabase.GetAllCards()
                 .Where(card =>
@@ -213,11 +212,10 @@ public class DeckGenerator : MonoBehaviour
             CardData original = GeneratedDeck[index];
             string rarity = original.rarity;
 
-            string[] chosenColors = PlayerPrefs.GetString("PlayerColor", "Red")
-                                            .Split(',')
-                                            .Select(c => c.Trim())
-                                            .ToArray();
-            var chosenColorSet = new HashSet<string>(chosenColors);
+            string chosenColor = PlayerPrefs.GetString("PlayerColor", "Red");
+            if (string.IsNullOrEmpty(chosenColor))
+                chosenColor = "Red";
+            var chosenColorSet = new HashSet<string> { chosenColor };
 
             // pool of cards matching rarity and allowed colors
             var pool = CardDatabase.GetAllCards()
