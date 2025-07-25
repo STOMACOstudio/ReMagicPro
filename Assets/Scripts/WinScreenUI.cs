@@ -36,6 +36,8 @@ public class WinScreenUI : MonoBehaviour
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
 
+        CoinsManager.AddCoins(25);
+
         StartCoroutine(FadeIn());
     }
 
