@@ -14,7 +14,7 @@ public class LandCard : Card
 
     public void TapForMana(Player player)
     {
-        if (!isTapped)
+        if (!isTapped && GameManager.Instance.GetOwnerOfCard(this) == player)
         {
             GameManager.Instance.TapLandForMana(this, player);
         }
