@@ -51,7 +51,11 @@ public class LibraryHint : MonoBehaviour
     {
         if (hintCanvas != null && cam != null)
         {
-            hintCanvas.transform.forward = cam.transform.forward;
+            Vector3 direction = cam.transform.position - hintCanvas.transform.position;
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                hintCanvas.transform.rotation = Quaternion.LookRotation(direction);
+            }
         }
     }
 
