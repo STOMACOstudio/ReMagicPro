@@ -22,6 +22,8 @@ public class SorceryCard : Card
     public int maxManaCostForReturn = 0;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
+    public int cardsToDrawMin = 0;
+    public int cardsToDrawMax = 0;
     public Card chosenTarget = null;
     public int damageToTarget = 0;
     public bool destroyTargetIfTypeMatches = false;
@@ -142,12 +144,21 @@ public class SorceryCard : Card
                 GameManager.Instance.CheckForGameEnd();
                 didSomething = true;
             }
-            if (cardsToDraw > 0)
-                {
-                    GameManager.Instance.DrawCards(caster, cardsToDraw);
-                    Debug.Log($"{caster} draws {cardsToDraw} card(s).");
-                    didSomething = true;
-                }
+            if (cardsToDrawMax > 0)
+            {
+                int amount = (cardsToDrawMin == cardsToDrawMax)
+                    ? cardsToDrawMin
+                    : Random.Range(cardsToDrawMin, cardsToDrawMax + 1);
+                GameManager.Instance.DrawCards(caster, amount);
+                Debug.Log($"{caster} draws {amount} card(s).");
+                didSomething = true;
+            }
+            else if (cardsToDraw > 0)
+            {
+                GameManager.Instance.DrawCards(caster, cardsToDraw);
+                Debug.Log($"{caster} draws {cardsToDraw} card(s).");
+                didSomething = true;
+            }
             if (cardsToDiscardorDraw > 0)
                 {
                     Player opponent = GameManager.Instance.GetOpponentOf(caster);

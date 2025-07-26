@@ -50,6 +50,8 @@ public class CardData
     public ArtifactEffect artifactEffect = ArtifactEffect.None;
     public int plagueAmount;
     public int cardsToDraw;
+    public int cardsToDrawMin = 0;
+    public int cardsToDrawMax = 0;
     public int manaToPayToActivate;
 
     //For sorceries
