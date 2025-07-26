@@ -61,7 +61,7 @@ public class LibraryHint : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (IsPlayer(other))
         {
             StartFade(1f);
         }
@@ -69,10 +69,15 @@ public class LibraryHint : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (IsPlayer(other))
         {
             StartFade(0f);
         }
+    }
+
+    bool IsPlayer(Collider col)
+    {
+        return col.CompareTag("Player") || col.GetComponent<FPSPlayer>() != null;
     }
 
     void StartFade(float target)
