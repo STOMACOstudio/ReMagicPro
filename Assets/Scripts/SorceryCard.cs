@@ -341,148 +341,152 @@ public class SorceryCard : Card
         }
 
         public virtual void ResolveEffect(Player caster, Card target)
+        {
+            int dmg = 0; // Declare outside so it's visible throughout the method
+
+            if (target != null)
             {
-                if (target != null)
+                dmg = damageToTargetMax > 0
+                    ? (damageToTargetMin == damageToTargetMax
+                        ? damageToTargetMin
+                        : Random.Range(damageToTargetMin, damageToTargetMax + 1))
+                    : damageToTarget;
+
+                if (dmg > 0 && target is CreatureCard creature)
                 {
-
-                    int dmg = damageToTargetMax > 0
-                        ? (damageToTargetMin == damageToTargetMax
-                            ? damageToTargetMin
-                            : Random.Range(damageToTargetMin, damageToTargetMax + 1))
-                        : damageToTarget;
-
-                    if (dmg > 0 && target is CreatureCard creature)
+                    KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(PrimaryColor);
+                    if (creature.keywordAbilities.Contains(protection))
                     {
-                        KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(PrimaryColor);
-                        if (creature.keywordAbilities.Contains(protection))
-                        {
-                            Debug.Log($"{creature.cardName} is protected from {color}, takes no damage.");
-                        }
-                        else
-                        {
-                            creature.toughness -= dmg;
-                            GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
-                            GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
-                        }
-
-                        GameManager.Instance.UpdateUI();
-                        ResolveEffect(caster); // Add this line
-                        return;
+                        Debug.Log($"{creature.cardName} is protected from {color}, takes no damage.");
+                    }
+                    else
+                    {
+                        creature.toughness -= dmg;
+                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                     }
 
-                    if (destroyAllWithSameName && target is CreatureCard)
-                    {
-                        string name = target.cardName;
-                        List<(Card card, Player owner)> toDestroy = new List<(Card, Player)>();
-                        foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
-                        {
-                            foreach (var card in player.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList())
-                            {
-                                toDestroy.Add((card, player));
-                            }
-                        }
-                        foreach (var (card, owner) in toDestroy)
-                        {
-                            GameManager.Instance.SendToGraveyard(card, owner);
-                        }
+                    GameManager.Instance.UpdateUI();
+                    ResolveEffect(caster);
+                    return;
+                }
 
-                        Debug.Log($"{cardName} destroyed {toDestroy.Count} copies of {name}.");
+                if (destroyAllWithSameName && target is CreatureCard)
+                {
+                    string name = target.cardName;
+                    List<(Card card, Player owner)> toDestroy = new List<(Card, Player)>();
+                    foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                    {
+                        foreach (var card in player.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList())
+                        {
+                            toDestroy.Add((card, player));
+                        }
+                    }
+                    foreach (var (card, owner) in toDestroy)
+                    {
+                        GameManager.Instance.SendToGraveyard(card, owner);
+                    }
+
+                    Debug.Log($"{cardName} destroyed {toDestroy.Count} copies of {name}.");
+
+                    ResolveEffect(caster);
+                    return;
+                }
+
+                if (destroyTargetIfTypeMatches)
+                {
+                    bool typeMatches =
+                        (requiredTargetType == TargetType.Creature && target is CreatureCard targetCreature &&
+                            !(excludeArtifactCreatures && targetCreature.color.Contains("Artifact"))) ||
+                        (requiredTargetType == TargetType.Land && target is LandCard) ||
+                        (requiredTargetType == TargetType.Artifact && target is ArtifactCard) ||
+                        (requiredTargetType == TargetType.Enchantment && target is EnchantmentCard);
+
+                    bool colorMatches = true;
+
+                    if (!string.IsNullOrEmpty(requiredTargetColor))
+                    {
+                        CardData data = CardDatabase.GetCardData(target.cardName);
+                        colorMatches = data != null && data.color.Contains(requiredTargetColor);
+                    }
+
+                    if (typeMatches && colorMatches)
+                    {
+                        GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
+                        Debug.Log($"{cardName} destroyed {target.cardName}.");
 
                         ResolveEffect(caster);
                         return;
                     }
-
-                    if (destroyTargetIfTypeMatches)
+                    else
                     {
-                        bool typeMatches =
-                            (requiredTargetType == TargetType.Creature && target is CreatureCard targetCreature &&
-                                !(excludeArtifactCreatures && targetCreature.color.Contains("Artifact"))) ||
-                            (requiredTargetType == TargetType.Land && target is LandCard) ||
-                            (requiredTargetType == TargetType.Artifact && target is ArtifactCard) ||
-                            (requiredTargetType == TargetType.Enchantment && target is EnchantmentCard);
-
-                        bool colorMatches = true;
-
-                        if (!string.IsNullOrEmpty(requiredTargetColor))
-                        {
-                            CardData data = CardDatabase.GetCardData(target.cardName);
-                            colorMatches = data != null && data.color.Contains(requiredTargetColor);
-                        }
-
-                        if (typeMatches && colorMatches)
-                        {
-                            GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
-                            Debug.Log($"{cardName} destroyed {target.cardName}.");
-
-                            ResolveEffect(caster); // Add this line
-                            return;
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"{cardName} failed to destroy {target.cardName}: type match = {typeMatches}, color match = {colorMatches}");
-                        }
+                        Debug.LogWarning($"{cardName} failed to destroy {target.cardName}: type match = {typeMatches}, color match = {colorMatches}");
                     }
                 }
-
-                if (keywordToGrant != KeywordAbility.None && target is CreatureCard keywordCreature)
-                {
-                    if (!keywordCreature.keywordAbilities.Contains(keywordToGrant))
-                        keywordCreature.keywordAbilities.Add(keywordToGrant);
-
-                    if (!keywordCreature.temporaryKeywordAbilities.Contains(keywordToGrant))
-                        keywordCreature.temporaryKeywordAbilities.Add(keywordToGrant);
-
-                    if (keywordToGrant == KeywordAbility.Haste)
-                        keywordCreature.hasSummoningSickness = false;
-
-                    var visual = GameManager.Instance.FindCardVisual(keywordCreature);
-                    if (visual != null)
-                        visual.UpdateVisual();
-
-                    Debug.Log($"{keywordCreature.cardName} gains {keywordToGrant} until end of turn.");
-                }
-                if ((buffPower != 0 || buffToughness != 0) && target is CreatureCard buffCreature)
-                {
-                    buffCreature.AddTemporaryBuff(buffPower, buffToughness);
-                    var visual = GameManager.Instance.FindCardVisual(buffCreature);
-                    if (visual != null)
-                        visual.UpdateVisual();
-
-                    Debug.Log($"{buffCreature.cardName} gets +{buffPower}/+{buffToughness} until end of turn.");
-                }
-                if (addXPlusOneCounters && target is CreatureCard plusTarget && xValue > 0)
-                {
-                    for (int i = 0; i < xValue; i++)
-                        plusTarget.AddPlusOneCounter();
-
-                    var visual = GameManager.Instance.FindCardVisual(plusTarget);
-                    if (visual != null)
-                        visual.UpdateVisual();
-
-                    Debug.Log($"{plusTarget.cardName} receives {xValue} +1/+1 counters.");
-                }
-                if (addXMinusOneCounters && target is CreatureCard minusTarget && xValue > 0)
-                {
-                    for (int i = 0; i < xValue; i++)
-                        minusTarget.AddMinusOneCounter();
-
-                    var visual = GameManager.Instance.FindCardVisual(minusTarget);
-                    if (visual != null)
-                        visual.UpdateVisual();
-
-                    GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
-                    GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
-
-                    Debug.Log($"{minusTarget.cardName} receives {xValue} -1/-1 counters.");
-                }
-                else if (!destroyTargetIfTypeMatches && dmg <= 0 && keywordToGrant == KeywordAbility.None)
-                {
-                    Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
-                }
-
-                GameManager.Instance.UpdateUI();
-                ResolveEffect(caster);
             }
+
+            if (keywordToGrant != KeywordAbility.None && target is CreatureCard keywordCreature)
+            {
+                if (!keywordCreature.keywordAbilities.Contains(keywordToGrant))
+                    keywordCreature.keywordAbilities.Add(keywordToGrant);
+
+                if (!keywordCreature.temporaryKeywordAbilities.Contains(keywordToGrant))
+                    keywordCreature.temporaryKeywordAbilities.Add(keywordToGrant);
+
+                if (keywordToGrant == KeywordAbility.Haste)
+                    keywordCreature.hasSummoningSickness = false;
+
+                var visual = GameManager.Instance.FindCardVisual(keywordCreature);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                Debug.Log($"{keywordCreature.cardName} gains {keywordToGrant} until end of turn.");
+            }
+
+            if ((buffPower != 0 || buffToughness != 0) && target is CreatureCard buffCreature)
+            {
+                buffCreature.AddTemporaryBuff(buffPower, buffToughness);
+                var visual = GameManager.Instance.FindCardVisual(buffCreature);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                Debug.Log($"{buffCreature.cardName} gets +{buffPower}/+{buffToughness} until end of turn.");
+            }
+
+            if (addXPlusOneCounters && target is CreatureCard plusTarget && xValue > 0)
+            {
+                for (int i = 0; i < xValue; i++)
+                    plusTarget.AddPlusOneCounter();
+
+                var visual = GameManager.Instance.FindCardVisual(plusTarget);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                Debug.Log($"{plusTarget.cardName} receives {xValue} +1/+1 counters.");
+            }
+
+            if (addXMinusOneCounters && target is CreatureCard minusTarget && xValue > 0)
+            {
+                for (int i = 0; i < xValue; i++)
+                    minusTarget.AddMinusOneCounter();
+
+                var visual = GameManager.Instance.FindCardVisual(minusTarget);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+
+                Debug.Log($"{minusTarget.cardName} receives {xValue} -1/-1 counters.");
+            }
+            else if (!destroyTargetIfTypeMatches && dmg <= 0 && keywordToGrant == KeywordAbility.None)
+            {
+                Debug.LogWarning($"{cardName} resolved on {target?.cardName ?? "null"}, but did nothing.");
+            }
+
+            GameManager.Instance.UpdateUI();
+            ResolveEffect(caster);
+        }
 
 
         

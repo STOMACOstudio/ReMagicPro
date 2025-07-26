@@ -2407,15 +2407,15 @@ public static class CardDatabase
                     swapGraveyardAndLibrary = true,
                     artwork = Resources.Load<Sprite>("Art/astral_plane"),
                     });
-                Add(new CardData { //Rolling Insight
-                    cardName = "Rolling Insight",
+                Add(new CardData { //Rolling thoughts
+                    cardName = "Rolling Thoughts",
                     rarity = "Uncommon",
                     cardType = CardType.Sorcery,
                     manaCost = 6,
                     color = new List<string> { "Blue" },
                     cardsToDrawMin = 1,
                     cardsToDrawMax = 6,
-                    artwork = Resources.Load<Sprite>("Art/rolling_insight"),
+                    artwork = Resources.Load<Sprite>("Art/rolling_thoughts"),
                     });
             //BLACK
                 Add(new CardData { //Blasphemy
