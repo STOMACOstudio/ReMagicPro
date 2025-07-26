@@ -552,11 +552,11 @@ public class TurnSystem : MonoBehaviour
                                             }
                                         }
 
-                                        bool canTarget = sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && sorcery.damageToTarget > 0;
+                                        bool canTarget = sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && (sorcery.damageToTarget > 0 || sorcery.damageToTargetMax > 0);
 
                                         if (canTarget)
                                         {
-                                            int damage = sorcery.damageToTarget;
+                                            int damage = sorcery.damageToTargetMax > 0 ? sorcery.damageToTargetMax : sorcery.damageToTarget;
                                             Player opponent = GameManager.Instance.humanPlayer;
 
                                             // Get enemy creatures

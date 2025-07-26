@@ -1887,7 +1887,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             if (sorcery.eachPlayerGainLifeEqualToLands)
                 rules += $"Each player gains life equal to the number of lands they control.\n";
-            if (sorcery.damageToTarget > 0 &&
+            if ((sorcery.damageToTarget > 0 || sorcery.damageToTargetMax > 0) &&
                 (sorcery.requiredTargetType == SorceryCard.TargetType.Creature ||
                 sorcery.requiredTargetType == SorceryCard.TargetType.Player ||
                 sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer))
@@ -1899,8 +1899,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SorceryCard.TargetType.CreatureOrPlayer => "any target",
                     _ => "target"
                 };
-
-                rules += $"Deal {sorcery.damageToTarget} damage to {targetTypeStr}.\n";
+                if (sorcery.damageToTargetMax > 0)
+                {
+                    int min = sorcery.damageToTargetMin;
+                    int max = sorcery.damageToTargetMax;
+                    if (min == max)
+                        rules += $"Deal {min} damage to {targetTypeStr}.\n";
+                    else
+                        rules += $"Deal {min}-{max} damage to {targetTypeStr}.\n";
+                }
+                else
+                {
+                    rules += $"Deal {sorcery.damageToTarget} damage to {targetTypeStr}.\n";
+                }
             }
             if (sorcery.typeOfPermanentToDestroyAll != SorceryCard.PermanentTypeToDestroy.None)
             {
