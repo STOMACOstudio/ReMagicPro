@@ -8,8 +8,8 @@ public class StartJourney : MonoBehaviour
 
     public void BeginJourney()
     {
-        string chosenColor = PlayerPrefs.GetString("PlayerColor", "");
-        if (!string.IsNullOrEmpty(chosenColor))
+        string chosenColors = PlayerPrefs.GetString("PlayerColors", "");
+        if (!string.IsNullOrEmpty(chosenColors))
         {
             StartCoroutine(ShowLoadingAndLoad());
         }
