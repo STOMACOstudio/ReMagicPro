@@ -33,8 +33,8 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     public AudioClip clickSound;
     public AudioClip unclickSound;
 
-    // Only one color can be selected at a time
-    private static ColorButtonBehavior selectedColor = null;
+    // Up to two colors can be selected at a time
+    private static List<ColorButtonBehavior> selectedColors = new List<ColorButtonBehavior>();
     private static Image backgroundPanelStatic;
     private static Color targetBGColor;
     private static Color startingBGColor;
@@ -42,8 +42,9 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public static void ResetSelections()
     {
-        selectedColor = null;
+        selectedColors.Clear();
         backgroundPanelStatic = null;
+        PlayerPrefs.DeleteKey("PlayerColors");
     }
 
     public GameObject startButton;
@@ -106,49 +107,44 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerClick(PointerEventData eventData)
         {
-            // Deselect if this button is already selected
-            if (selectedColor == this)
+            if (selectedColors.Contains(this))
             {
-                selectedColor = null;
+                selectedColors.Remove(this);
                 isSelected = false;
                 SetAlpha(selectionGlow, 0f);
                 hoverAlphaTarget = 0f;
 
                 if (audioSource != null && unclickSound != null)
                     audioSource.PlayOneShot(unclickSound);
-
-                if (startButton != null)
-                    startButton.SetActive(false);
-
-                UpdateColorInfoDisplay();
-                SaveSelectedColor();
-                return;
             }
-
-            // If another color is selected, clear it
-            if (selectedColor != null)
+            else
             {
-                selectedColor.isSelected = false;
-                selectedColor.SetAlpha(selectedColor.selectionGlow, 0f);
-                selectedColor.hoverAlphaTarget = 0f;
+                if (selectedColors.Count >= 2)
+                {
+                    var first = selectedColors[0];
+                    first.isSelected = false;
+                    first.SetAlpha(first.selectionGlow, 0f);
+                    first.hoverAlphaTarget = 0f;
+                    selectedColors.RemoveAt(0);
+                }
+
+                selectedColors.Add(this);
+                isSelected = true;
+
+                targetBGColor = backgroundColor;
+                hoverAlphaTarget = 1f;
+                SetAlpha(hoverGlow, 1f);
+                SetAlpha(selectionGlow, 1f);
+
+                if (audioSource != null && clickSound != null)
+                    audioSource.PlayOneShot(clickSound);
             }
-
-            selectedColor = this;
-            isSelected = true;
-
-            targetBGColor = backgroundColor;
-            hoverAlphaTarget = 1f;
-            SetAlpha(hoverGlow, 1f);
-            SetAlpha(selectionGlow, 1f);
-
-            if (audioSource != null && clickSound != null)
-                audioSource.PlayOneShot(clickSound);
 
             if (startButton != null)
-                startButton.SetActive(true);
+                startButton.SetActive(selectedColors.Count >= 2);
 
             UpdateColorInfoDisplay();
-            SaveSelectedColor();
+            SaveSelectedColors();
         }
 
     private void SetAlpha(Image img, float a)
@@ -168,21 +164,22 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
             }
         }
     
-    private void SaveSelectedColor()
+    private void SaveSelectedColors()
         {
-            if (selectedColor == null)
+            if (selectedColors.Count == 0)
             {
-                PlayerPrefs.DeleteKey("PlayerColor");
+                PlayerPrefs.DeleteKey("PlayerColors");
             }
             else
             {
-                PlayerPrefs.SetString("PlayerColor", selectedColor.colorName);
+                var names = string.Join(",", selectedColors.ConvertAll(c => c.colorName));
+                PlayerPrefs.SetString("PlayerColors", names);
             }
         }
     
     private void UpdateColorInfoDisplay()
         {
-            if (selectedColor == null)
+            if (selectedColors.Count == 0)
             {
                 colorNameTextTMP.text = "";
                 descriptionTextTMP.text = "";
@@ -191,9 +188,10 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
                 return;
             }
 
-            // Display the selected color's name and description
-            colorNameTextTMP.text = $"<color=#{ColorUtility.ToHtmlStringRGB(selectedColor.displayColor)}>{selectedColor.colorLabel}</color>";
-            descriptionTextTMP.text = selectedColor.description;
+            ColorButtonBehavior primary = selectedColors[selectedColors.Count - 1];
+            string labels = string.Join(" & ", selectedColors.ConvertAll(c => c.colorLabel));
+            colorNameTextTMP.text = $"<color=#{ColorUtility.ToHtmlStringRGB(primary.displayColor)}>{labels}</color>";
+            descriptionTextTMP.text = primary.description;
             colorNameGroup.alpha = 1f;
             descriptionGroup.alpha = 1f;
         }

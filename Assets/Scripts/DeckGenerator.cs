@@ -33,11 +33,11 @@ public class DeckGenerator : MonoBehaviour
     public void Generate()
         {
             rng = new System.Random();
-            string colorPref = PlayerPrefs.GetString("PlayerColor", "Red");
+            string colorPref = PlayerPrefs.GetString("PlayerColors", "Red");
             if (string.IsNullOrEmpty(colorPref))
                 colorPref = "Red";
 
-            string[] chosenColors = new[] { colorPref };
+            string[] chosenColors = colorPref.Split(',');
 
             GeneratedDeck = new List<CardData>();
 
@@ -114,11 +114,11 @@ public class DeckGenerator : MonoBehaviour
 
     private void AddCardsByRarity(string color, string rarity, int count)
         {
-            string chosenColor = PlayerPrefs.GetString("PlayerColor", "Red");
-            if (string.IsNullOrEmpty(chosenColor))
-                chosenColor = "Red";
+            string chosenColorsPref = PlayerPrefs.GetString("PlayerColors", "Red");
+            if (string.IsNullOrEmpty(chosenColorsPref))
+                chosenColorsPref = "Red";
 
-            var chosenColorSet = new HashSet<string> { chosenColor };
+            var chosenColorSet = new HashSet<string>(chosenColorsPref.Split(','));
 
             var pool = CardDatabase.GetAllCards()
                 .Where(card =>
@@ -212,10 +212,10 @@ public class DeckGenerator : MonoBehaviour
             CardData original = GeneratedDeck[index];
             string rarity = original.rarity;
 
-            string chosenColor = PlayerPrefs.GetString("PlayerColor", "Red");
-            if (string.IsNullOrEmpty(chosenColor))
-                chosenColor = "Red";
-            var chosenColorSet = new HashSet<string> { chosenColor };
+            string chosenColorsPref = PlayerPrefs.GetString("PlayerColors", "Red");
+            if (string.IsNullOrEmpty(chosenColorsPref))
+                chosenColorsPref = "Red";
+            var chosenColorSet = new HashSet<string>(chosenColorsPref.Split(','));
 
             // pool of cards matching rarity and allowed colors
             var pool = CardDatabase.GetAllCards()
