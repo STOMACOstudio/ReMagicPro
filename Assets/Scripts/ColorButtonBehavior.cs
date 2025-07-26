@@ -191,7 +191,17 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
             ColorButtonBehavior primary = selectedColors[selectedColors.Count - 1];
             string labels = string.Join(" & ", selectedColors.ConvertAll(c => c.colorLabel));
             colorNameTextTMP.text = $"<color=#{ColorUtility.ToHtmlStringRGB(primary.displayColor)}>{labels}</color>";
-            descriptionTextTMP.text = primary.description;
+
+            if (selectedColors.Count == 1)
+            {
+                descriptionTextTMP.text = primary.description;
+            }
+            else
+            {
+                var descriptions = string.Join("\n", selectedColors.ConvertAll(c => c.description));
+                descriptionTextTMP.text = descriptions;
+            }
+
             colorNameGroup.alpha = 1f;
             descriptionGroup.alpha = 1f;
         }
