@@ -3196,8 +3196,9 @@ public class GameManager : MonoBehaviour
                     activeCardVisuals.Add(graveyardVisual);
                 }
 
-                // 6. Move to graveyard data list
-                owner.Graveyard.Add(card);
+                // 6. Move to graveyard data list (skip for tokens)
+                if (!card.isToken)
+                    owner.Graveyard.Add(card);
                 UpdateUI();
                 pendingGraveyardAnimations--;
             }
@@ -3243,8 +3244,9 @@ public class GameManager : MonoBehaviour
                     GameManager.Instance.activeCardVisuals.Add(graveyardVisual);
                 }
 
-                // 6. Move to graveyard data list
-                owner.Graveyard.Add(card);
+                // 6. Move to graveyard data list (skip for tokens)
+                if (!card.isToken)
+                    owner.Graveyard.Add(card);
                 UpdateUI();
             }
 
