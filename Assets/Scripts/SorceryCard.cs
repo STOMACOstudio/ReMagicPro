@@ -26,6 +26,8 @@ public class SorceryCard : Card
     public int cardsToDrawMax = 0;
     public Card chosenTarget = null;
     public int damageToTarget = 0;
+    public int damageToTargetMin = 0;
+    public int damageToTargetMax = 0;
     public bool destroyTargetIfTypeMatches = false;
     public bool destroyAllWithSameName = false;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
@@ -343,7 +345,13 @@ public class SorceryCard : Card
                 if (target != null)
                 {
 
-                    if (damageToTarget > 0 && target is CreatureCard creature)
+                    int dmg = damageToTargetMax > 0
+                        ? (damageToTargetMin == damageToTargetMax
+                            ? damageToTargetMin
+                            : Random.Range(damageToTargetMin, damageToTargetMax + 1))
+                        : damageToTarget;
+
+                    if (dmg > 0 && target is CreatureCard creature)
                     {
                         KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(PrimaryColor);
                         if (creature.keywordAbilities.Contains(protection))
@@ -352,7 +360,7 @@ public class SorceryCard : Card
                         }
                         else
                         {
-                            creature.toughness -= damageToTarget;
+                            creature.toughness -= dmg;
                             GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                             GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                         }
@@ -467,7 +475,7 @@ public class SorceryCard : Card
 
                     Debug.Log($"{minusTarget.cardName} receives {xValue} -1/-1 counters.");
                 }
-                else if (!destroyTargetIfTypeMatches && damageToTarget <= 0 && keywordToGrant == KeywordAbility.None)
+                else if (!destroyTargetIfTypeMatches && dmg <= 0 && keywordToGrant == KeywordAbility.None)
                 {
                     Debug.LogWarning($"{cardName} resolved on {target.cardName}, but did nothing.");
                 }
@@ -482,17 +490,23 @@ public class SorceryCard : Card
         {
             if (requiredTargetType == TargetType.Player || requiredTargetType == TargetType.CreatureOrPlayer)
             {
-                if (damageToTarget > 0)
+                int dmg = damageToTargetMax > 0
+                    ? (damageToTargetMin == damageToTargetMax
+                        ? damageToTargetMin
+                        : Random.Range(damageToTargetMin, damageToTargetMax + 1))
+                    : damageToTarget;
+
+                if (dmg > 0)
                 {
-                    targetPlayer.Life -= damageToTarget;
-                    Debug.Log($"{cardName} deals {damageToTarget} damage to {targetPlayer}.");
+                    targetPlayer.Life -= dmg;
+                    Debug.Log($"{cardName} deals {dmg} damage to {targetPlayer}.");
 
                     GameObject targetUI = (targetPlayer == GameManager.Instance.humanPlayer)
                         ? GameManager.Instance.playerLifeContainer
                         : GameManager.Instance.enemyLifeContainer;
 
                     GameManager.Instance.CheckForGameEnd();
-                    GameManager.Instance.ShowFloatingDamage(damageToTarget, targetUI);
+                    GameManager.Instance.ShowFloatingDamage(dmg, targetUI);
                 }
             }
 

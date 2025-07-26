@@ -2637,6 +2637,19 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/fire_spirals"),
                         damageToEachCreatureAndPlayer = 2
                     });
+                Add(new CardData //Rolling Thunder
+                    {
+                        cardName = "Rolling Thunder",
+                        rarity = "Uncommon",
+                        cardType = CardType.Sorcery,
+                        manaCost = 4,
+                        color = new List<string> { "Red" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                        damageToTargetMin = 1,
+                        damageToTargetMax = 6,
+                        artwork = Resources.Load<Sprite>("Art/rolling_thunder"),
+                    });
             // GREEN
                 Add(new CardData //whip of thorns
                         {
