@@ -1837,7 +1837,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Opponent loses {sorcery.lifeToLoseForOpponent} life.\n";
             if (sorcery.lifeLossForBothPlayers > 0)
                 rules += $"Each player loses {sorcery.lifeLossForBothPlayers} life.\n";
-            if (sorcery.cardsToDraw > 0)
+            if (sorcery.cardsToDrawMax > 0)
+            {
+                int min = sorcery.cardsToDrawMin;
+                int max = sorcery.cardsToDrawMax;
+                if (min == max)
+                    rules += $"Draw {min} card(s).\n";
+                else
+                    rules += $"Draw {min}-{max} cards.\n";
+            }
+            else if (sorcery.cardsToDraw > 0)
                 rules += $"Draw {sorcery.cardsToDraw} card(s).\n";
             if (!string.IsNullOrEmpty(sorcery.tokenToCreate) && sorcery.numberOfTokensMax > 0)
             {
