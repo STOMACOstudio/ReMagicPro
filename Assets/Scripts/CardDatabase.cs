@@ -2303,6 +2303,23 @@ public static class CardDatabase
                         }
                     }
                     });
+                Add(new CardData //Cloud Leviathan
+                    {
+                    cardName = "Cloud Leviathan",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "White", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 6,
+                    subtypes = new List<string> { "Leviathan" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/cloud_leviathan")
+                    });
         // Sorceries
             //WHITE
                 Add(new CardData { //Exorcism
