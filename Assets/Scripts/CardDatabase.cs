@@ -2303,9 +2303,9 @@ public static class CardDatabase
                         }
                     }
                     });
-                Add(new CardData //Cloud Leviathan
+                Add(new CardData //Cloudmane Leviathan
                     {
-                    cardName = "Cloud Leviathan",
+                    cardName = "Cloudmane Leviathan",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "White", "Blue" },
@@ -2318,7 +2318,7 @@ public static class CardDatabase
                         KeywordAbility.Defender,
                         KeywordAbility.Flying
                     },
-                    artwork = Resources.Load<Sprite>("Art/cloud_leviathan")
+                    artwork = Resources.Load<Sprite>("Art/cloudmane_leviathan")
                     });
         // Sorceries
             //WHITE
