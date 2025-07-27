@@ -65,6 +65,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private readonly Vector2 defaultStatsPosition = new Vector2(28, -53);
     private Vector3 originalPosition;
 
+    // When true, hovering the card will not move it or show a preview
+    public bool disableHoverEffects = false;
     public bool isInBattlefield = false;
     public bool isInGraveyard = false;
     public bool isInGraveyardViewer = false; // true when shown in the Graveyard UI
@@ -81,6 +83,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (disableHoverEffects)
+                return;
+
             if ((isInGraveyard && !isInGraveyardViewer) || isInStack || linkedCard == null || linkedCard.artwork == null)
                 return;
 
@@ -110,6 +115,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (disableHoverEffects)
+                return;
+
             if ((isInGraveyard && !isInGraveyardViewer) || isInStack)
                 return;
 
