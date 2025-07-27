@@ -6,6 +6,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     [SerializeField] private Canvas canvas; // Canvas used for dragging
 
     private RectTransform rectTransform;
+    private CanvasGroup canvasGroup;
     private Vector3 startPosition;
     private Transform startParent;
     private bool dragging;
@@ -17,6 +18,9 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         rectTransform = GetComponent<RectTransform>();
         if (canvas == null)
             canvas = GetComponentInParent<Canvas>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
         startParent = rectTransform.parent;
         startPosition = rectTransform.localPosition;
         deckEditorManager = FindObjectOfType<DeckEditorManager>();
@@ -26,6 +30,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     {
         dragging = true;
         rectTransform.SetParent(canvas.transform, true);
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -36,7 +42,23 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     public void OnEndDrag(PointerEventData eventData)
     {
         dragging = false;
-        var target = eventData.pointerEnter == null ? null : eventData.pointerEnter.GetComponentInParent<CardVisual>();
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = true;
+        CardVisual target = null;
+        if (eventData.pointerEnter != null)
+            target = eventData.pointerEnter.GetComponentInParent<CardVisual>();
+
+        if (target == null)
+        {
+            var results = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+            foreach (var res in results)
+            {
+                target = res.gameObject.GetComponentInParent<CardVisual>();
+                if (target != null)
+                    break;
+            }
+        }
         if (target != null)
         {
             currentFavourite = target;
