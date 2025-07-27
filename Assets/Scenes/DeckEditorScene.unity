@@ -387,6 +387,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 140987473}
+  - component: {fileID: 140987474}
   m_Layer: 5
   m_Name: FavouriteCardManager
   m_TagString: Untagged
@@ -414,6 +415,23 @@ RectTransform:
   m_AnchoredPosition: {x: -188, y: 438}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &140987474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140987472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 981b577d15104d0989afad4eddc0840c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  audioSource: {fileID: 0}
+  selectSound: {fileID: 8300000, guid: ede220aad908ce24a91b0b7d8c92d1b6, type: 3}
+  attachSound: {fileID: 8300000, guid: b6f301669cdab44438a2166de4a7c2b6, type: 3}
+  removeSound: {fileID: 8300000, guid: 09063670e46448844b0b9ec633bed0ec, type: 3}
 --- !u!1 &142109076
 GameObject:
   m_ObjectHideFlags: 0
