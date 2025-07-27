@@ -141,7 +141,7 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
             }
 
             if (startButton != null)
-                startButton.SetActive(selectedColors.Count >= 2);
+                startButton.SetActive(selectedColors.Count >= 1);
 
             UpdateColorInfoDisplay();
             SaveSelectedColors();
