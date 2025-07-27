@@ -6,6 +6,12 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
 {
     [SerializeField] private Canvas canvas; // Canvas used for dragging
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip selectSound;
+    [SerializeField] private AudioClip attachSound;
+    [SerializeField] private AudioClip removeSound;
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector3 startPosition;
@@ -26,6 +32,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
         startParent = rectTransform.parent;
         startPosition = rectTransform.localPosition;
         deckEditorManager = FindObjectOfType<DeckEditorManager>();
@@ -34,6 +42,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     public void OnBeginDrag(PointerEventData eventData)
     {
         dragging = true;
+        if (audioSource != null && selectSound != null)
+            audioSource.PlayOneShot(selectSound);
         rectTransform.SetParent(canvas.transform, true);
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = false;
@@ -78,6 +88,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             rectTransform.localPosition = Vector3.zero;
             if (deckEditorManager != null)
                 deckEditorManager.SetFavouriteCard(data);
+            if (audioSource != null && attachSound != null)
+                audioSource.PlayOneShot(attachSound);
         }
         else
         {
@@ -98,5 +110,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         if (currentFavourite != null && deckEditorManager != null)
             deckEditorManager.ClearFavourite();
         currentFavourite = null;
+        if (audioSource != null && removeSound != null)
+            audioSource.PlayOneShot(removeSound);
     }
 }
