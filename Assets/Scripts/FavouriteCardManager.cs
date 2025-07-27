@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
@@ -12,6 +13,10 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     private bool dragging;
     private CardVisual currentFavourite;
     private DeckEditorManager deckEditorManager;
+    private static readonly HashSet<string> BasicLandNames = new HashSet<string>
+    {
+        "Plains", "Island", "Swamp", "Mountain", "Forest"
+    };
 
     void Awake()
     {
@@ -59,16 +64,20 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
                     break;
             }
         }
+        CardData data = null;
+        if (target != null)
+            data = CardDatabase.GetCardData(target.linkedCard.cardName);
+
+        if (data != null && data.cardType == CardType.Land && BasicLandNames.Contains(data.cardName))
+            target = null;
+
         if (target != null)
         {
             currentFavourite = target;
             rectTransform.SetParent(target.transform, true);
             rectTransform.localPosition = Vector3.zero;
             if (deckEditorManager != null)
-            {
-                CardData data = CardDatabase.GetCardData(target.linkedCard.cardName);
                 deckEditorManager.SetFavouriteCard(data);
-            }
         }
         else
         {
