@@ -74,6 +74,7 @@ public class WinScreenUI : MonoBehaviour
             Card cardObj = CardFactory.Create(wonCard.cardName);
             var visual = spawnedCardVisual.GetComponent<CardVisual>();
             visual.Setup(cardObj, null, wonCard);
+            visual.disableHoverEffects = true;
             spawnedCardVisual.transform.localScale = Vector3.one * 2f;
 
             if (wonCardImage != null)
