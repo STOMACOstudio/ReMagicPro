@@ -544,6 +544,7 @@ public class GameManager : MonoBehaviour
 
             bool diedFromBattlefield = owner.Battlefield.Contains(card);
             bool discardedFromHand = owner.Hand.Contains(card);
+            Player graveyardOwner = card.owner ?? owner;
 
             if (fromStack)
             {
@@ -558,7 +559,6 @@ public class GameManager : MonoBehaviour
 
                 if (!card.isToken)
                 {
-                Player graveyardOwner = card.owner ?? owner;
                 GameObject visualGO = Instantiate(cardPrefab,
                     graveyardOwner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
                 CardVisual stackGraveyardVisual = visualGO.GetComponent<CardVisual>();
@@ -678,7 +678,6 @@ public class GameManager : MonoBehaviour
             }
 
             // Fallback: create graveyard visual normally
-            Player graveyardOwner = card.owner ?? owner;
             CardVisual graveyardVisual = FindCardVisual(card);
             if (graveyardVisual == null)
             {
