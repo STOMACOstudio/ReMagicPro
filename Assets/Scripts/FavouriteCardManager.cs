@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
-public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Canvas canvas; // Canvas used for dragging
 
@@ -12,12 +12,18 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     [SerializeField] private AudioClip attachSound;
     [SerializeField] private AudioClip removeSound;
 
+    [Header("Hover Animation")]
+    [SerializeField] private float bounceScale = 1.2f;
+    [SerializeField] private float bounceDuration = 0.1f;
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector3 startPosition;
+    private Vector3 startScale;
     private Transform startParent;
     private bool dragging;
     private CardVisual currentFavourite;
+    private Coroutine hoverRoutine;
     private DeckEditorManager deckEditorManager;
     private static readonly HashSet<string> BasicLandNames = new HashSet<string>
     {
@@ -36,6 +42,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             audioSource = gameObject.AddComponent<AudioSource>();
         startParent = rectTransform.parent;
         startPosition = rectTransform.localPosition;
+        startScale = rectTransform.localScale;
         deckEditorManager = FindObjectOfType<DeckEditorManager>();
     }
 
@@ -101,6 +108,54 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     {
         if (!dragging && currentFavourite != null)
             ReturnToStart();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (hoverRoutine != null)
+            StopCoroutine(hoverRoutine);
+        hoverRoutine = StartCoroutine(BounceAnimation());
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (hoverRoutine != null)
+        {
+            StopCoroutine(hoverRoutine);
+            hoverRoutine = null;
+        }
+        rectTransform.localScale = startScale;
+    }
+
+    private System.Collections.IEnumerator BounceAnimation()
+    {
+        Vector3 big = startScale * bounceScale;
+        Vector3 small = startScale * 0.9f;
+        float t = 0f;
+        while (t < bounceDuration)
+        {
+            rectTransform.localScale = Vector3.Lerp(startScale, big, t / bounceDuration);
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        rectTransform.localScale = big;
+        t = 0f;
+        while (t < bounceDuration)
+        {
+            rectTransform.localScale = Vector3.Lerp(big, small, t / bounceDuration);
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        rectTransform.localScale = small;
+        t = 0f;
+        while (t < bounceDuration)
+        {
+            rectTransform.localScale = Vector3.Lerp(small, startScale, t / bounceDuration);
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        rectTransform.localScale = startScale;
+        hoverRoutine = null;
     }
 
     private void ReturnToStart()
