@@ -124,6 +124,8 @@ public class Card
             if (aura.targetMustBeControlledCreature)
                 enchantText += " you control";
             lines.Add(enchantText);
+            if (aura.gainControlOfCreature)
+                lines.Add("You control enchanted creature.");
         }
 
             // Keyword abilities — only for creatures

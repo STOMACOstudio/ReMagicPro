@@ -136,6 +136,8 @@ public static class CardFactory
                             : data.requiredTargetType;
                 if (enchantment is AuraCard aura2)
                     aura2.targetMustBeControlledCreature = data.targetMustBeControlledCreature;
+                if (enchantment is AuraCard aura3)
+                    aura3.gainControlOfCreature = data.gainControlOfCreature;
                 newCard = enchantment;
                 break;
 
