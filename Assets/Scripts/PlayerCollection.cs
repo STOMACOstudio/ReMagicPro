@@ -14,8 +14,21 @@ public static class PlayerCollection
         if (allCards.Count == 0)
             return null;
 
-        int index = Random.Range(0, allCards.Count);
-        var card = allCards[index];
+        // Filter out token cards and basic lands from the pool of potential rewards
+        var filtered = allCards.FindAll(card =>
+            !card.isToken &&
+            !(card.cardType == CardType.Land &&
+              (card.cardName == "Plains" ||
+               card.cardName == "Island" ||
+               card.cardName == "Swamp" ||
+               card.cardName == "Mountain" ||
+               card.cardName == "Forest")));
+
+        if (filtered.Count == 0)
+            return null;
+
+        int index = Random.Range(0, filtered.Count);
+        var card = filtered[index];
         OwnedCards.Add(card);
         return card;
     }
