@@ -3335,9 +3335,9 @@ public static class CardDatabase
                         }
                     });
 
-                Add(new CardData // Shield of Faith
+                Add(new CardData // Faith protection
                     {
-                        cardName = "Shield of Faith",
+                        cardName = "Faith Protection",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "White" },
@@ -3345,7 +3345,7 @@ public static class CardDatabase
                         subtypes = new List<string> { "Aura" },
                         powerBuff = 0,
                         toughnessBuff = 4,
-                        artwork = Resources.Load<Sprite>("Art/shield_of_faith"),
+                        artwork = Resources.Load<Sprite>("Art/faith_protection"),
                         rulesText = "Enchanted creature gets +0/+4.",
                     });
 
@@ -3470,8 +3470,8 @@ public static class CardDatabase
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         gainControlOfCreature = true,
-                        artwork = Resources.Load<Sprite>("Art/stardust"),
-                        rulesText = "You control enchanted creature.",
+                        artwork = Resources.Load<Sprite>("Art/fascinate"),
+                        //rulesText = "You control enchanted creature.",
                     });
             }
 
