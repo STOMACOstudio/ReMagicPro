@@ -3460,6 +3460,19 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/stardust"),
                         rulesText = "Enchanted creature has flying.",
                     });
+
+                Add(new CardData // Fascinate
+                    {
+                        cardName = "Fascinate",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        gainControlOfCreature = true,
+                        artwork = Resources.Load<Sprite>("Art/stardust"),
+                        rulesText = "You control enchanted creature.",
+                    });
             }
 
     private static void Add(CardData data)

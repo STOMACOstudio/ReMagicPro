@@ -7,6 +7,7 @@ public class AuraCard : EnchantmentCard
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.Creature;
     public Card attachedTo;
     public bool targetMustBeControlledCreature = false;
+    public bool gainControlOfCreature = false;
 
     public override void OnEnterPlay(Player owner)
     {
@@ -17,6 +18,13 @@ public class AuraCard : EnchantmentCard
             if (keywordBuff != KeywordAbility.None)
                 creature.AddAuraKeyword(keywordBuff);
             GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+
+            if (gainControlOfCreature)
+            {
+                Player controller = GameManager.Instance.GetControllerOfCard(creature);
+                if (controller != owner)
+                    GameManager.Instance.ChangeController(creature, owner);
+            }
 
             // If toughness falls to zero or less, creature (and this aura)
             // should immediately die.
@@ -33,6 +41,11 @@ public class AuraCard : EnchantmentCard
             if (keywordBuff != KeywordAbility.None)
                 creature.RemoveAuraKeyword(keywordBuff);
             GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+
+            if (gainControlOfCreature && GameManager.Instance.GetControllerOfCard(creature) == owner)
+            {
+                GameManager.Instance.ChangeController(creature, creature.owner);
+            }
         }
         attachedTo = null;
         base.OnLeavePlay(owner);

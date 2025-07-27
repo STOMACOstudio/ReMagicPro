@@ -558,24 +558,25 @@ public class GameManager : MonoBehaviour
 
                 if (!card.isToken)
                 {
-                    GameObject visualGO = Instantiate(cardPrefab,
-                        owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
-                    CardVisual stackGraveyardVisual = visualGO.GetComponent<CardVisual>();
-                    stackGraveyardVisual.Setup(card, this);
-                    stackGraveyardVisual.transform.localPosition = Vector3.zero;
-                    stackGraveyardVisual.UpdateGraveyardVisual();
-                    // Ensure logo and count remain on top
-                    // Last card in should appear on top, so send to end of hierarchy
-                    stackGraveyardVisual.transform.SetAsLastSibling();
-                    EnsureGraveyardCounterOnTop(owner);
+                Player graveyardOwner = card.owner ?? owner;
+                GameObject visualGO = Instantiate(cardPrefab,
+                    graveyardOwner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                CardVisual stackGraveyardVisual = visualGO.GetComponent<CardVisual>();
+                stackGraveyardVisual.Setup(card, this);
+                stackGraveyardVisual.transform.localPosition = Vector3.zero;
+                stackGraveyardVisual.UpdateGraveyardVisual();
+                // Ensure logo and count remain on top
+                // Last card in should appear on top, so send to end of hierarchy
+                stackGraveyardVisual.transform.SetAsLastSibling();
+                EnsureGraveyardCounterOnTop(graveyardOwner);
 
-                    activeCardVisuals.Add(stackGraveyardVisual);
-                }
-
-                owner.Graveyard.Add(card);
-                UpdateUI();
-                return;
+                activeCardVisuals.Add(stackGraveyardVisual);
             }
+
+            graveyardOwner.Graveyard.Add(card);
+            UpdateUI();
+            return;
+        }
 
 
             owner.Battlefield.Remove(card);
@@ -677,25 +678,26 @@ public class GameManager : MonoBehaviour
             }
 
             // Fallback: create graveyard visual normally
+            Player graveyardOwner = card.owner ?? owner;
             CardVisual graveyardVisual = FindCardVisual(card);
             if (graveyardVisual == null)
             {
                 GameObject visualGO = Instantiate(cardPrefab,
-                    owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+                    graveyardOwner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
                 graveyardVisual = visualGO.GetComponent<CardVisual>();
                 graveyardVisual.Setup(card, this);
                 activeCardVisuals.Add(graveyardVisual);
             }
 
-            graveyardVisual.transform.SetParent(owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
+            graveyardVisual.transform.SetParent(graveyardOwner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
             graveyardVisual.transform.localPosition = Vector3.zero;
             graveyardVisual.UpdateGraveyardVisual();
             // Ensure graveyard UI elements stay above the cards
             // Newest card should appear on top
             graveyardVisual.transform.SetAsLastSibling();
-            EnsureGraveyardCounterOnTop(owner);
+            EnsureGraveyardCounterOnTop(graveyardOwner);
 
-            owner.Graveyard.Add(card);
+            graveyardOwner.Graveyard.Add(card);
             UpdateUI();
         }
 
@@ -1192,6 +1194,8 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Tried to summon a null token.");
             return;
         }
+
+        tokenCard.owner = owner;
 
         if (tokenCard is CreatureCard creature)
         {
@@ -1754,6 +1758,44 @@ public class GameManager : MonoBehaviour
 
         Debug.LogWarning($"[GetOwnerOfCard] Couldn't find owner of {card.cardName}");
         return null;
+    }
+
+    public Player GetControllerOfCard(Card card)
+    {
+        if (humanPlayer.Battlefield.Contains(card))
+            return humanPlayer;
+        if (aiPlayer.Battlefield.Contains(card))
+            return aiPlayer;
+        return null;
+    }
+
+    public void ChangeController(Card card, Player newController)
+    {
+        Player current = GetControllerOfCard(card);
+        if (current == newController || newController == null || current == null)
+            return;
+
+        current.Battlefield.Remove(card);
+        newController.Battlefield.Add(card);
+
+        CardVisual visual = FindCardVisual(card);
+        if (visual != null)
+        {
+            Transform area;
+            if (card is LandCard)
+                area = newController == humanPlayer ? playerLandArea : aiLandArea;
+            else if (card is ArtifactCard)
+                area = newController == humanPlayer ? playerArtifactArea : aiArtifactArea;
+            else if (card is EnchantmentCard)
+                area = newController == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+            else
+                area = newController == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+
+            visual.transform.SetParent(area, false);
+            visual.UpdateVisual();
+        }
+
+        UpdateUI();
     }
 
     public void UpdateUI()
