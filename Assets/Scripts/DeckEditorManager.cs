@@ -31,6 +31,9 @@ public class DeckEditorManager : MonoBehaviour
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
 
+    // Card that has been marked as favourite in the editor
+    public CardData FavouriteCard { get; private set; }
+
     // Map color names to their associated filter buttons for easy updates
     private readonly Dictionary<string, Button> filterButtons = new Dictionary<string, Button>();
     // Original button colors so we can revert when a filter is deactivated
@@ -264,6 +267,16 @@ public class DeckEditorManager : MonoBehaviour
 
         deckCardNumberText.text = $"{deck.Count}/40";
         deckCardNumberText.color = deck.Count < 40 ? deckInvalidColor : deckValidColor;
+    }
+
+    public void SetFavouriteCard(CardData data)
+    {
+        FavouriteCard = data;
+    }
+
+    public void ClearFavourite()
+    {
+        FavouriteCard = null;
     }
 
     public bool IsDeckComplete => deck.Count >= 40;
