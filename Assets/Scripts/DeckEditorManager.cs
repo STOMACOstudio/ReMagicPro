@@ -223,6 +223,14 @@ public class DeckEditorManager : MonoBehaviour
         if (!deck.Remove(data))
             return;
 
+        // If the removed card was favourited, reset the favourite star
+        if (FavouriteCard != null && FavouriteCard.cardName == data.cardName)
+        {
+            FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+            if (star != null)
+                star.ReturnToStart();
+        }
+
         collection.Add(data);
         PlayerCollection.OwnedCards.Add(data);
         Destroy(visual);
