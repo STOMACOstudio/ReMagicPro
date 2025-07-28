@@ -158,7 +158,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         hoverRoutine = null;
     }
 
-    private void ReturnToStart()
+    // Reset the favourite star back to its start position
+    public void ReturnToStart()
     {
         rectTransform.SetParent(startParent, true);
         rectTransform.localPosition = startPosition;
