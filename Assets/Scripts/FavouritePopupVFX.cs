@@ -39,7 +39,7 @@ public class FavouritePopupVFX : MonoBehaviour
         transform.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
 
         if (canvasGroup != null)
-            canvasGroup.alpha = 1f - t;
+            //canvasGroup.alpha = 1f - t;
 
         if (timer >= duration)
         {
