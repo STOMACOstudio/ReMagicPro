@@ -1643,7 +1643,12 @@ public class TurnSystem : MonoBehaviour
                 if (GameManager.Instance.graveyardViewActive)
                     return;
 
-                GameManager.Instance.selectedAttackers.Clear();
+                // Clear any previously selected attackers so the function is idempotent
+                // This prevents creatures from staying tapped without being
+                // registered as attackers if the button is pressed multiple
+                // times in the same combat step
+                ClearAllSelectedAttackers();
+
                 bool anyDeclared = false;
 
                 foreach (var card in GameManager.Instance.humanPlayer.Battlefield)
