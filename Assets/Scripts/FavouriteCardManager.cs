@@ -168,4 +168,21 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         if (audioSource != null && removeSound != null)
             audioSource.PlayOneShot(removeSound);
     }
+
+    // Programmatically attach the favourite star to a card visual
+    public void AttachToCard(CardVisual target)
+    {
+        if (target == null)
+            return;
+
+        rectTransform.SetParent(target.transform, true);
+        rectTransform.localPosition = Vector3.zero;
+        currentFavourite = target;
+
+        if (deckEditorManager != null)
+        {
+            CardData data = CardDatabase.GetCardData(target.linkedCard.cardName);
+            deckEditorManager.SetFavouriteCard(data);
+        }
+    }
 }

@@ -75,6 +75,9 @@ public class GameManager : MonoBehaviour
     public Image colorlessManaIcon;
     public TMP_Text colorlessManaText;
 
+    // Name of the player's favourite card selected in the deck editor
+    private string favouriteCardName;
+
     public List<CardVisual> activeCardVisuals = new List<CardVisual>();
     public List<CreatureCard> selectedAttackers = new List<CreatureCard>();
     public List<CreatureCard> currentAttackers = new List<CreatureCard>();
@@ -115,6 +118,9 @@ public class GameManager : MonoBehaviour
     {
         humanPlayer = new Player();
         aiPlayer = new Player();
+
+        // Load favourite card from deck editor if one was set
+        favouriteCardName = DeckHolder.FavouriteCardName;
 
         Debug.Log("Loading deck for zone ID: " + BattleData.CurrentZoneId);
 
@@ -270,6 +276,8 @@ public class GameManager : MonoBehaviour
                 visual.isInBattlefield = true;
                 visual.UpdateVisual();
                 SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+                AwardFavouriteCardCoins(card, player);
 
             }
 
@@ -967,6 +975,7 @@ public class GameManager : MonoBehaviour
             }
 
             SendToGraveyard(sorcery, caster, fromStack: true);
+            AwardFavouriteCardCoins(sorcery, caster);
 
             if (caster == aiPlayer && visual != null)
             {
@@ -1046,6 +1055,8 @@ public class GameManager : MonoBehaviour
             if (creature.color.Contains("Artifact"))
                 NotifyArtifactEntered(creature, caster);
 
+            AwardFavouriteCardCoins(creature, caster);
+
             SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
 
             UpdateUI();
@@ -1082,6 +1093,8 @@ public class GameManager : MonoBehaviour
 
             artifact.OnEnterPlay(caster);
             NotifyArtifactEntered(artifact, caster);
+
+            AwardFavouriteCardCoins(artifact, caster);
 
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
@@ -1120,6 +1133,8 @@ public class GameManager : MonoBehaviour
             enchantment.OnEnterPlay(caster);
             NotifyEnchantmentEntered(enchantment, caster);
 
+            AwardFavouriteCardCoins(enchantment, caster);
+
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             UpdateUI();
@@ -1138,9 +1153,11 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(2f);
 
-            caster.Battlefield.Add(aura);
-            aura.OnEnterPlay(caster);
-            NotifyEnchantmentEntered(aura, caster);
+        caster.Battlefield.Add(aura);
+        aura.OnEnterPlay(caster);
+        NotifyEnchantmentEntered(aura, caster);
+
+        AwardFavouriteCardCoins(aura, caster);
 
             if (!caster.Battlefield.Contains(aura))
             {
@@ -3591,6 +3608,14 @@ public class GameManager : MonoBehaviour
         public void GainLife(Player player, int amount)
         {
             TryGainLife(player, amount);
+        }
+
+        private void AwardFavouriteCardCoins(Card card, Player caster)
+        {
+            if (caster == humanPlayer && !string.IsNullOrEmpty(favouriteCardName) && card.cardName == favouriteCardName)
+            {
+                CoinsManager.AddCoins(5);
+            }
         }
 
         public void CheckForGameEnd()
