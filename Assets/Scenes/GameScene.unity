@@ -6162,6 +6162,7 @@ MonoBehaviour:
   playerLifeContainer: {fileID: 335802182}
   enemyLifeContainer: {fileID: 219930519}
   floatingDamagePrefab: {fileID: 6263719099324857846, guid: dbcb8822c50f8d6418d4bbed97b45924, type: 3}
+  favouritePopupPrefab: {fileID: 8843468045292096794, guid: 2a04a38c796e1d746aae986d01f35727, type: 3}
   blueIcon: {fileID: 21300000, guid: cf5da0752d7da9f4db791fed64ba1347, type: 3}
   whiteIcon: {fileID: 21300000, guid: e51d0f0e20f24834f893872fd6719259, type: 3}
   blackIcon: {fileID: 21300000, guid: 45c943c1120a5e74dbfdc1bf4d6a0e44, type: 3}

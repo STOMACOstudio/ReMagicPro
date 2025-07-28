@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
     public GameObject playerLifeContainer;
     public GameObject enemyLifeContainer;
     public GameObject floatingDamagePrefab;
+    public GameObject favouritePopupPrefab;
 
     // Tracks cumulative life changes during a combat step
     private TMP_Text playerLifeDeltaText;
@@ -2930,7 +2931,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
             }
         
-    public void ShowFloatingHeal(int amount, GameObject target)
+        public void ShowFloatingHeal(int amount, GameObject target)
         {
             Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
 
@@ -2971,6 +2972,25 @@ public class GameManager : MonoBehaviour
 
                 StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
             }
+
+        private void ShowFavouritePopup()
+        {
+            if (favouritePopupPrefab == null || playerLifeContainer == null)
+                return;
+
+            GameObject obj = Instantiate(favouritePopupPrefab);
+            obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
+
+            RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+            RectTransform targetRect = playerLifeContainer.GetComponent<RectTransform>();
+            RectTransform rt = obj.GetComponent<RectTransform>();
+
+            Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
+            rt.anchoredPosition = localPoint;
+
+            obj.AddComponent<FavouritePopupVFX>();
+        }
         
         private IEnumerator FadeAndFloatText(GameObject obj, bool floatUp)
             {
@@ -3615,6 +3635,7 @@ public class GameManager : MonoBehaviour
             if (caster == humanPlayer && !string.IsNullOrEmpty(favouriteCardName) && card.cardName == favouriteCardName)
             {
                 CoinsManager.AddCoins(5);
+                ShowFavouritePopup();
             }
         }
 
