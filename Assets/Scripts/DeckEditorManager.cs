@@ -48,6 +48,12 @@ public class DeckEditorManager : MonoBehaviour
             deck = new List<CardData>(DeckHolder.SelectedDeck);
         ShowDeck();
 
+        if (!string.IsNullOrEmpty(DeckHolder.FavouriteCardName))
+        {
+            FavouriteCard = CardDatabase.GetCardData(DeckHolder.FavouriteCardName);
+            AttachFavouriteStar();
+        }
+
         LoadRemovedList();
 
         SetupFilterButton(whiteFilterButton, "White");
@@ -286,5 +292,22 @@ public class DeckEditorManager : MonoBehaviour
         DeckHolder.SelectedDeck = new List<CardData>(deck);
         DeckHolder.FavouriteCardName = FavouriteCard != null ? FavouriteCard.cardName : null;
         collection.Clear();
+    }
+
+    private void AttachFavouriteStar()
+    {
+        FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+        if (star == null || FavouriteCard == null)
+            return;
+
+        foreach (Transform child in cardContainer)
+        {
+            CardVisual visual = child.GetComponent<CardVisual>();
+            if (visual != null && visual.linkedCard != null && visual.linkedCard.cardName == FavouriteCard.cardName)
+            {
+                star.AttachToCard(visual);
+                break;
+            }
+        }
     }
 }
