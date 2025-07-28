@@ -46,8 +46,19 @@ public class LibraryPicManager : MonoBehaviour
         if (stored == lastKey) return;
         lastKey = stored;
         Sprite art = GetSpriteForColors(stored);
-        if (art != null && targetImage != null)
-            targetImage.sprite = art;
+        if (targetImage != null)
+        {
+            if (art != null)
+            {
+                targetImage.enabled = true;
+                targetImage.sprite = art;
+            }
+            else
+            {
+                targetImage.sprite = null;
+                targetImage.enabled = false;
+            }
+        }
     }
 
     private Sprite GetSpriteForColors(string colors)
