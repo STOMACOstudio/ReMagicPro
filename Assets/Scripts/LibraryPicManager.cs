@@ -26,7 +26,10 @@ public class LibraryPicManager : MonoBehaviour
     public Sprite blackGreenArt;
     public Sprite redGreenArt;
 
-    private string lastKey = "";
+    // Tracks the last color key used to determine when the sprite needs updating.
+    // Start with null so the first UpdateArt call always processes and hides the
+    // image if no colors are stored.
+    private string lastKey;
 
     void Start()
     {
