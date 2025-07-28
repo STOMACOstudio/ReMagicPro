@@ -33,7 +33,7 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     public AudioClip clickSound;
     public AudioClip unclickSound;
 
-    // Only one color can be selected at a time
+    // Up to two colors can be selected at a time
     private static List<ColorButtonBehavior> selectedColors = new List<ColorButtonBehavior>();
     private static Image backgroundPanelStatic;
     private static Color targetBGColor;
@@ -119,7 +119,7 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
             }
             else
             {
-                if (selectedColors.Count >= 1)
+                if (selectedColors.Count >= 2)
                 {
                     var first = selectedColors[0];
                     first.isSelected = false;
