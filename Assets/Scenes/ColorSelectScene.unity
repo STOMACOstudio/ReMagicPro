@@ -2738,7 +2738,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 252d99e1406d72e40b33b3f87afd92a8, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2766,8 +2766,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0e6e69cf7d646afb8c2acb2b60b008d, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   targetImage: {fileID: 1622839561}
   whiteArt: {fileID: 0}
   blueArt: {fileID: 0}
@@ -3634,6 +3634,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2052903938}
+  - component: {fileID: 2052903939}
   m_Layer: 5
   m_Name: LibraryPic
   m_TagString: Untagged
@@ -3661,6 +3662,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 131}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2052903939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052903937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e6e69cf7d646afb8c2acb2b60b008d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetImage: {fileID: 1622839561}
+  whiteArt: {fileID: 21300000, guid: 144edbf94109a234fa8f12c0824ccb43, type: 3}
+  blueArt: {fileID: 21300000, guid: abb0cc25d77cf8142bc56859c314a348, type: 3}
+  blackArt: {fileID: 21300000, guid: 5ffec9bf420553845bf5a2f247a34cd4, type: 3}
+  redArt: {fileID: 21300000, guid: a392f720456ac954c85f1aa97cf6b2d7, type: 3}
+  greenArt: {fileID: 21300000, guid: ff4172a024ac1b04e951ae482be1faff, type: 3}
+  whiteBlueArt: {fileID: 21300000, guid: c3b12e05fe1dc8d4a98bce6ad5497cdb, type: 3}
+  whiteBlackArt: {fileID: 21300000, guid: 17417ae9e5424b44285391ec5a1c959a, type: 3}
+  whiteRedArt: {fileID: 21300000, guid: 598d41c0070a83b4ea009e88c828e29e, type: 3}
+  whiteGreenArt: {fileID: 21300000, guid: 64c6318d8c775314c8691fdc71cf3163, type: 3}
+  blueBlackArt: {fileID: 21300000, guid: 252d99e1406d72e40b33b3f87afd92a8, type: 3}
+  blueRedArt: {fileID: 21300000, guid: a79d6cb140aa601498428eae07ed975c, type: 3}
+  blueGreenArt: {fileID: 21300000, guid: 95bf4870767f0734b8437a4b85b5500a, type: 3}
+  blackRedArt: {fileID: 21300000, guid: 6308b11d259423d41a816a94df7d470c, type: 3}
+  blackGreenArt: {fileID: 21300000, guid: 34e6b2e7e6651054ca4468acc8bf27a9, type: 3}
+  redGreenArt: {fileID: 21300000, guid: 45b00a658b254da4f8408ec98cc18703, type: 3}
 --- !u!1 &2059936780
 GameObject:
   m_ObjectHideFlags: 0
