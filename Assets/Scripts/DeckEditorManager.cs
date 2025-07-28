@@ -284,6 +284,7 @@ public class DeckEditorManager : MonoBehaviour
     public void ConfirmDeck()
     {
         DeckHolder.SelectedDeck = new List<CardData>(deck);
+        DeckHolder.FavouriteCardName = FavouriteCard != null ? FavouriteCard.cardName : null;
         collection.Clear();
     }
 }
