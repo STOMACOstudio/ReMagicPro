@@ -2990,7 +2990,6 @@ public class GameManager : MonoBehaviour
             rt.anchoredPosition = localPoint;
 
             obj.AddComponent<FavouritePopupVFX>();
-            SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
         }
         
         private IEnumerator FadeAndFloatText(GameObject obj, bool floatUp)

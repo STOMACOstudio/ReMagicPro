@@ -7,6 +7,10 @@ public class FavouritePopupVFX : MonoBehaviour
     public float rotationSpeed = 90f;
     public float moveUpDistance = 0.5f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip popupSound;
+
     private float timer;
     private Vector3 startPos;
     private Vector3 targetPos;
@@ -18,6 +22,11 @@ public class FavouritePopupVFX : MonoBehaviour
         targetPos = startPos + Vector3.up * moveUpDistance;
         transform.localScale = Vector3.zero;
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        if (popupSound != null)
+            audioSource.PlayOneShot(popupSound);
     }
 
     void Update()
