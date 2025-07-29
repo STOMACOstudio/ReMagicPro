@@ -905,7 +905,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 409692485}
-  - component: {fileID: 409692484}
   m_Layer: 5
   m_Name: MerchantManager
   m_TagString: Untagged
@@ -913,35 +912,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &409692484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 409692483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ba19968eeebcc3458f79ede3133941d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardContainer: {fileID: 1155356754}
-  cardPrefab: {fileID: 6256048876094482095, guid: e9bbda0583cc9a0458561c749ab77f32, type: 3}
-  removedListContainer: {fileID: 0}
-  textPrefab: {fileID: 5602283223174346514, guid: a8787cdebbf5423b8df8ee0c8e1999b2, type: 3}
-  whiteFilterButton: {fileID: 0}
-  blueFilterButton: {fileID: 0}
-  blackFilterButton: {fileID: 0}
-  redFilterButton: {fileID: 0}
-  greenFilterButton: {fileID: 0}
-  colorlessFilterButton: {fileID: 0}
-  creatureFilterButton: {fileID: 0}
-  sorceryFilterButton: {fileID: 0}
-  enchantmentFilterButton: {fileID: 0}
-  activeFilterColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  deckCardNumberText: {fileID: 0}
-  deckValidColor: {r: 0, g: 0, b: 0, a: 1}
-  deckInvalidColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!224 &409692485
 RectTransform:
   m_ObjectHideFlags: 0
@@ -974,6 +944,7 @@ GameObject:
   - component: {fileID: 935319836}
   - component: {fileID: 935319835}
   - component: {fileID: 935319834}
+  - component: {fileID: 935319838}
   m_Layer: 5
   m_Name: ExitGameButton
   m_TagString: Untagged
@@ -1059,7 +1030,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 935319836}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 935319838}
+        m_TargetAssemblyTypeName: MerchantNavigation, Assembly-CSharp
+        m_MethodName: ExitMerchant
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &935319836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,6 +1081,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 935319831}
   m_CullTransparentMesh: 1
+--- !u!114 &935319838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935319831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501658bb13b240039d09c52b35cf5b36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &948340608
 GameObject:
   m_ObjectHideFlags: 0
