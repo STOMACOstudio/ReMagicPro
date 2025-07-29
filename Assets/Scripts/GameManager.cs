@@ -2483,6 +2483,12 @@ public class GameManager : MonoBehaviour
             foreach (var cv in activeCardVisuals)
                 cv.EnableTargetingHighlight(false); // turn off all
 
+            if (targetingArtifact != null)
+            {
+                targetingArtifact.isTapped = false; // untap if ability was aborted
+                FindCardVisual(targetingArtifact)?.UpdateVisual();
+            }
+
             targetingArtifact = null;
             targetingEquipment = null;
             targetingSorcery = null;
@@ -2606,6 +2612,9 @@ public class GameManager : MonoBehaviour
         targetingVisual = visual;
         isTargetingMode = true;
 
+        artifact.isTapped = true; // show the potion tapped while selecting target
+        FindCardVisual(artifact)?.UpdateVisual();
+
         Debug.Log("Targeting creature to deal damage with artifact.");
     }
 
@@ -2617,6 +2626,9 @@ public class GameManager : MonoBehaviour
         targetingPlayer = player;
         targetingVisual = visual;
         isTargetingMode = true;
+
+        artifact.isTapped = true; // show the potion tapped while selecting target
+        FindCardVisual(artifact)?.UpdateVisual();
 
         Debug.Log("Targeting creature to buff with artifact.");
     }
