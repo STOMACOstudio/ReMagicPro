@@ -351,7 +351,7 @@ RectTransform:
   - {fileID: 2107792471}
   - {fileID: 1359165871}
   m_Father: {fileID: 1277234278}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -690,7 +690,7 @@ RectTransform:
   - {fileID: 1427892857}
   - {fileID: 1609000236}
   m_Father: {fileID: 1277234278}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1024,7 +1024,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 30
+  m_Spacing: 20
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -1222,7 +1222,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 74.06329
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1562,7 +1562,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 74.06329
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1808,9 +1808,9 @@ RectTransform:
   - {fileID: 878306628}
   - {fileID: 802610084}
   - {fileID: 300637032}
+  - {fileID: 2052903938}
   - {fileID: 727284477}
   - {fileID: 175663867}
-  - {fileID: 2052903938}
   - {fileID: 1771602165}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -2246,7 +2246,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 74.06329
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -2974,7 +2974,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 74.06329
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -3550,7 +3550,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 72.38641
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -3655,7 +3655,7 @@ RectTransform:
   m_Children:
   - {fileID: 1622839560}
   m_Father: {fileID: 1277234278}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
