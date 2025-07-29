@@ -8,6 +8,11 @@ public class CoinsManager : MonoBehaviour
 
     [SerializeField] private TMP_Text coinsText;
 
+    private void Awake()
+    {
+        Coins = PlayerPrefs.GetInt("Coins", Coins);
+    }
+
     private void OnEnable()
     {
         OnCoinsChanged += UpdateDisplay;
@@ -22,6 +27,8 @@ public class CoinsManager : MonoBehaviour
     public static void AddCoins(int amount)
     {
         Coins += amount;
+        PlayerPrefs.SetInt("Coins", Coins);
+        PlayerPrefs.Save();
         OnCoinsChanged?.Invoke();
     }
 
@@ -30,6 +37,8 @@ public class CoinsManager : MonoBehaviour
         if (Coins < amount)
             return false;
         Coins -= amount;
+        PlayerPrefs.SetInt("Coins", Coins);
+        PlayerPrefs.Save();
         OnCoinsChanged?.Invoke();
         return true;
     }
