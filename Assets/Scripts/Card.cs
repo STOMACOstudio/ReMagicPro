@@ -67,7 +67,10 @@ public class Card
 
                 if (ability.requiresTarget)
                 {
-                    GameManager.Instance.BeginOptionalTargetSelectionAfterEntry(this, owner, ability);
+                    // Only initiate optional targeting for the human player's cards.
+                    // AI-controlled cards handle their ETB targeting automatically.
+                    if (owner == GameManager.Instance.humanPlayer)
+                        GameManager.Instance.BeginOptionalTargetSelectionAfterEntry(this, owner, ability);
                 }
                 else
                 {
