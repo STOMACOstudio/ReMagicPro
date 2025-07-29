@@ -303,7 +303,7 @@ public class SorceryCard : Card
                                 continue;
                             }
 
-                            creature.toughness -= damageToEachCreatureAndPlayer;
+                            creature.TakeDamage(damageToEachCreatureAndPlayer);
                         }
                     }
 
@@ -358,7 +358,7 @@ public class SorceryCard : Card
                     }
                     else
                     {
-                        creature.toughness -= dmg;
+                        creature.TakeDamage(dmg);
                         GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                         GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                     }

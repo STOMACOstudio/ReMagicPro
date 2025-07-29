@@ -2291,7 +2291,7 @@ public static class CardDatabase
                                 }
                                 else if (target is CreatureCard creature)
                                 {
-                                    creature.toughness -= 2;
+                                    creature.TakeDamage(2);
                                     var vis = GameManager.Instance.FindCardVisual(creature);
                                     if (vis != null)
                                         GameManager.Instance.ShowFloatingDamage(2, vis.gameObject);

@@ -19,7 +19,29 @@ public class CreatureCard : Card
     public void RecalculateStats()
     {
         power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus + auraPowerBonus;
-        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus - damageTaken;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        if (amount <= 0) return;
+        damageTaken += amount;
+        RecalculateStats();
+    }
+
+    public void ResetDamage()
+    {
+        if (damageTaken != 0)
+        {
+            damageTaken = 0;
+            RecalculateStats();
+        }
+    }
+
+    public void Kill()
+    {
+        damageTaken = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus;
+        RecalculateStats();
     }
 
     public void AddPlusOneCounter()
@@ -119,6 +141,7 @@ public class CreatureCard : Card
         plusOneCounters = 0;
         minusOneCounters = 0;
         ResetTemporaryBuff();
+        ResetDamage();
         RecalculateStats();
     }
 }
