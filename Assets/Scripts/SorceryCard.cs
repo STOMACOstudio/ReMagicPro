@@ -200,9 +200,6 @@ public class SorceryCard : Card
                     GameManager.Instance.TryGainLife(human, humanLands);
                     GameManager.Instance.TryGainLife(ai, aiLands);
 
-                    GameManager.Instance.ShowFloatingHeal(humanLands, GameManager.Instance.playerLifeContainer);
-                    GameManager.Instance.ShowFloatingHeal(aiLands, GameManager.Instance.enemyLifeContainer);
-
                     Debug.Log($"Each player gains life equal to their own lands. Human: +{humanLands}, AI: +{aiLands}");
                     didSomething = true;
                 }
