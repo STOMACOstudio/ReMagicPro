@@ -734,9 +734,9 @@ public class GameManager : MonoBehaviour
                     if (!blockerProtected)
                     {
                         damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
-                        blocker.toughness -= damageToBlocker;
+                        blocker.TakeDamage(damageToBlocker);
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
-                            blocker.toughness = 0;
+                            blocker.Kill();
                         remainingDamage -= damageToBlocker;
                     }
 
@@ -745,7 +745,7 @@ public class GameManager : MonoBehaviour
                     {
                         totalDamageFromBlockers += damageFromBlocker;
                         if (blocker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageFromBlocker > 0)
-                            attacker.toughness = 0;
+                            attacker.Kill();
                     }
 
                     if (damageToBlocker > 0 || damageFromBlocker > 0)
@@ -768,7 +768,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                attacker.toughness -= totalDamageFromBlockers;
+                attacker.TakeDamage(totalDamageFromBlockers);
 
                 if (attacker.keywordAbilities.Contains(KeywordAbility.Trample) && remainingDamage > 0)
                 {
@@ -932,7 +932,7 @@ public class GameManager : MonoBehaviour
         {
             if (card is CreatureCard creature)
             {
-                creature.RecalculateStats();
+                creature.ResetDamage();
             }
         }
     }
@@ -2192,13 +2192,13 @@ public class GameManager : MonoBehaviour
                         return;
                     }
 
-                targetCreature.toughness -= targetingArtifact.damageToCreature;
+                targetCreature.TakeDamage(targetingArtifact.damageToCreature);
                 Card asCard = targetingArtifact;
                 if (asCard is CreatureCard srcCreature &&
                     srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
                     targetingArtifact.damageToCreature > 0)
                 {
-                    targetCreature.toughness = 0;
+                    targetCreature.Kill();
                 }
                 Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
 
@@ -2656,13 +2656,13 @@ public class GameManager : MonoBehaviour
                 GetOwnerOfCard(creature)?.Battlefield.Contains(creature) == true &&
                 targetingArtifact != null)
             {
-                creature.toughness -= targetingArtifact.damageToCreature;
+                creature.TakeDamage(targetingArtifact.damageToCreature);
                 Card asCard = targetingArtifact;
                 if (asCard is CreatureCard srcCreature &&
                     srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
                     targetingArtifact.damageToCreature > 0)
                 {
-                    creature.toughness = 0;
+                    creature.Kill();
                 }
                 Debug.Log($"{targetingArtifact.cardName} dealt {targetingArtifact.damageToCreature} damage to {creature.cardName}");
                 targetingArtifact.isTapped = true;
@@ -3070,9 +3070,9 @@ public class GameManager : MonoBehaviour
                         if (!blockerProtected)
                         {
                             damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
-                            blocker.toughness -= damageToBlocker;
+                            blocker.TakeDamage(damageToBlocker);
                             if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
-                                blocker.toughness = 0;
+                                blocker.Kill();
                             remainingDamage -= damageToBlocker;
                         }
 
@@ -3081,7 +3081,7 @@ public class GameManager : MonoBehaviour
                         {
                             totalDamageFromBlockers += damageFromBlocker;
                             if (blocker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageFromBlocker > 0)
-                                attacker.toughness = 0;
+                                attacker.Kill();
                         }
 
                         if (damageToBlocker > 0 || damageFromBlocker > 0)
@@ -3100,7 +3100,7 @@ public class GameManager : MonoBehaviour
                         }
                     }
 
-                    attacker.toughness -= totalDamageFromBlockers;
+                    attacker.TakeDamage(totalDamageFromBlockers);
 
                     if (attacker.keywordAbilities.Contains(KeywordAbility.Trample) && remainingDamage > 0)
                     {
