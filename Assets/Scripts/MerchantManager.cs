@@ -85,7 +85,7 @@ public class MerchantManager : MonoBehaviour
 
         Card card = CardFactory.Create(slot.cardData.cardName);
         GameObject go = Instantiate(cardPrefab, buttonTransform);
-        go.transform.localScale = Vector3.one * 10f;
+        go.transform.localScale = Vector3.one * 3f;
         var visual = go.GetComponent<CardVisual>();
         visual.Setup(card, null, slot.cardData);
         visual.disableHoverEffects = true;
