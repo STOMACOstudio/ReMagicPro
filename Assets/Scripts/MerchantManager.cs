@@ -9,11 +9,16 @@ public class MerchantManager : MonoBehaviour
     [System.Serializable]
     public class MerchantSlot
     {
+        // Assign the Transform that contains the Button for this slot.
+        // It can be either the Button itself or a parent whose first child
+        // has the Button component.
         public Transform slotRoot;
         public TMP_Text priceText;
+
         [HideInInspector] public CardData cardData;
         [HideInInspector] public int price;
         [HideInInspector] public Button button;
+        [HideInInspector] public CanvasGroup group;
     }
 
     public MerchantSlot basicLandSlot;
@@ -79,6 +84,10 @@ public class MerchantManager : MonoBehaviour
         visual.disableHoverEffects = true;
 
         slot.button = buttonTransform.GetComponent<Button>();
+        slot.group = buttonTransform.GetComponent<CanvasGroup>();
+        if (slot.group == null)
+            slot.group = buttonTransform.gameObject.AddComponent<CanvasGroup>();
+
         if (slot.button != null)
         {
             slot.button.onClick.RemoveAllListeners();
@@ -114,5 +123,14 @@ public class MerchantManager : MonoBehaviour
         PlayerCollection.OwnedCards.Add(slot.cardData);
         if (purchaseSound != null && SoundManager.Instance != null)
             SoundManager.Instance.PlaySound(purchaseSound);
+
+        if (slot.button != null)
+            slot.button.interactable = false;
+        if (slot.group != null)
+        {
+            slot.group.alpha = 0.5f;
+            slot.group.blocksRaycasts = false;
+            slot.group.interactable = false;
+        }
     }
 }
