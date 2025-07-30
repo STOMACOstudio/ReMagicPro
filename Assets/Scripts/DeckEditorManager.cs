@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class DeckEditorManager : MonoBehaviour
 {
@@ -198,7 +201,11 @@ public class DeckEditorManager : MonoBehaviour
         {
             prefab = CardHoverPreview.Instance != null
                 ? CardHoverPreview.Instance.CardVisualPrefab
+#if UNITY_EDITOR
+                : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+#else
                 : Resources.Load<GameObject>("Prefab/CardPrefab");
+#endif
         }
 
         foreach (var data in deck)
@@ -255,7 +262,11 @@ public class DeckEditorManager : MonoBehaviour
         {
             prefab = CardHoverPreview.Instance != null
                 ? CardHoverPreview.Instance.CardVisualPrefab
+#if UNITY_EDITOR
+                : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+#else
                 : Resources.Load<GameObject>("Prefab/CardPrefab");
+#endif
         }
 
         deck.Add(data);
