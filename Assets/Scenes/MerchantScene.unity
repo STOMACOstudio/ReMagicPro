@@ -719,6 +719,7 @@ MonoBehaviour:
   drawCard: {fileID: 0}
   turnChange: {fileID: 0}
   equipArtifact: {fileID: 0}
+  buyCard: {fileID: 0}
 --- !u!4 &346841057
 Transform:
   m_ObjectHideFlags: 0
@@ -746,7 +747,7 @@ GameObject:
   - component: {fileID: 365840659}
   - component: {fileID: 365840658}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonUncommon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1046,7 +1047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8758939357049938579, guid: 91b744735d312c24f9e3e6a6f0ed80df, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8758939357049938579, guid: 91b744735d312c24f9e3e6a6f0ed80df, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1148,6 +1149,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 409692485}
+  - component: {fileID: 409692484}
   m_Layer: 5
   m_Name: MerchantManager
   m_TagString: Untagged
@@ -1155,6 +1157,49 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &409692484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409692483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b055b2d57edda42b4e53c79ecf9463, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicLandSlot:
+    slotRoot: {fileID: 1926186274}
+    priceText: {fileID: 645566203}
+    price: 0
+    button: {fileID: 0}
+    group: {fileID: 0}
+  commonSlot:
+    slotRoot: {fileID: 809046664}
+    priceText: {fileID: 1560626897}
+    price: 0
+    button: {fileID: 0}
+    group: {fileID: 0}
+  uncommonSlot:
+    slotRoot: {fileID: 365840657}
+    priceText: {fileID: 1672038754}
+    price: 0
+    button: {fileID: 0}
+    group: {fileID: 0}
+  rareSlot:
+    slotRoot: {fileID: 1015198735}
+    priceText: {fileID: 936261517}
+    price: 0
+    button: {fileID: 0}
+    group: {fileID: 0}
+  specialOfferSlot:
+    slotRoot: {fileID: 1231726736}
+    priceText: {fileID: 1167812213}
+    price: 0
+    button: {fileID: 0}
+    group: {fileID: 0}
+  purchaseSound: {fileID: 8300000, guid: f129a9de75dedeb44865a3d28df2bfeb, type: 3}
 --- !u!224 &409692485
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1471,7 +1516,7 @@ GameObject:
   - component: {fileID: 809046666}
   - component: {fileID: 809046665}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonCommon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2029,7 +2074,7 @@ GameObject:
   - component: {fileID: 1015198737}
   - component: {fileID: 1015198736}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonRare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2357,7 +2402,7 @@ GameObject:
   - component: {fileID: 1231726738}
   - component: {fileID: 1231726737}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonSpecial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2933,7 +2978,7 @@ GameObject:
   - component: {fileID: 1926186276}
   - component: {fileID: 1926186275}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonBasicLand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3099,7 +3144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765079, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1404356338299765079, guid: c3aad1751d7784c4492133afd0f351a8, type: 3}
       propertyPath: m_AnchorMax.x
