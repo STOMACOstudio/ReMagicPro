@@ -25,6 +25,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip drawCard;
     public AudioClip turnChange;
     public AudioClip equipArtifact;
+    public AudioClip buyCard;
 
     private AudioSource audioSource;
 
