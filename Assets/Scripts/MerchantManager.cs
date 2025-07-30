@@ -89,7 +89,7 @@ public class MerchantManager : MonoBehaviour
         // Place the card slightly higher in the merchant room so it is
         // easier to see. 65 units on the Y axis gives a better visual
         // alignment for the prefab in each slot.
-        go.transform.localPosition = new Vector3(0f, 65f, 0f);
+        go.transform.localPosition = new Vector3(0f, 0f, 0f);
         var visual = go.GetComponent<CardVisual>();
         visual.Setup(card, null, slot.cardData);
         visual.disableHoverEffects = true;
