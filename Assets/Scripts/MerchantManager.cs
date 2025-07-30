@@ -79,9 +79,6 @@ public class MerchantManager : MonoBehaviour
         if (slot.priceText != null)
             slot.priceText.text = price.ToString();
 
-        // Find the buy button within the slot root
-        slot.button = slot.slotRoot.GetComponentInChildren<Button>(true);
-
         // Create or reuse a child object to host the card visual
         Transform cardParent = slot.slotRoot.Find("CardContainer");
         if (cardParent == null)
@@ -90,6 +87,10 @@ public class MerchantManager : MonoBehaviour
             cp.transform.SetParent(slot.slotRoot, false);
             cardParent = cp.transform;
         }
+
+        // Find the buy button within the slot root, ignoring buttons that belong to the card prefab
+        slot.button = slot.slotRoot.GetComponentsInChildren<Button>(true)
+            .FirstOrDefault(b => !b.transform.IsChildOf(cardParent));
 
         foreach (Transform child in cardParent)
             Destroy(child.gameObject);
@@ -104,6 +105,15 @@ public class MerchantManager : MonoBehaviour
         var visual = go.GetComponent<CardVisual>();
         visual.Setup(card, null, slot.cardData);
         visual.disableHoverEffects = true;
+
+        // Disable interactions on the card so it doesn't block the buy button
+        Button cardButton = go.GetComponent<Button>();
+        if (cardButton != null)
+            cardButton.enabled = false;
+        CanvasGroup cg = cardParent.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = cardParent.gameObject.AddComponent<CanvasGroup>();
+        cg.blocksRaycasts = false;
 
         slot.group = slot.slotRoot.GetComponent<CanvasGroup>();
         if (slot.group == null)
