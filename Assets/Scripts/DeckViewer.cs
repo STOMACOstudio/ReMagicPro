@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class DeckViewer : MonoBehaviour
 {
@@ -34,7 +37,11 @@ public class DeckViewer : MonoBehaviour
             CardHoverPreview.Instance.CardVisualPrefab : null;
 
         if (prefab == null)
+#if UNITY_EDITOR
+            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+#else
             prefab = Resources.Load<GameObject>("Prefab/CardPrefab");
+#endif
 
         foreach (var data in DeckHolder.SelectedDeck)
         {

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GraveyardUIManager : MonoBehaviour
 {
@@ -27,7 +30,11 @@ public class GraveyardUIManager : MonoBehaviour
 
         GameObject prefab = CardHoverPreview.Instance != null
             ? CardHoverPreview.Instance.CardVisualPrefab
+#if UNITY_EDITOR
+            : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+#else
             : Resources.Load<GameObject>("Prefab/CardPrefab");
+#endif
 
         foreach (var card in cards)
         {
