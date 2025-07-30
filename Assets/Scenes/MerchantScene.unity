@@ -1171,31 +1171,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   basicLandSlot:
-    slotRoot: {fileID: 1926186274}
+    slotRoot: {fileID: 947634476}
     priceText: {fileID: 645566203}
     price: 0
     button: {fileID: 0}
     group: {fileID: 0}
   commonSlot:
-    slotRoot: {fileID: 809046664}
+    slotRoot: {fileID: 2040756866}
     priceText: {fileID: 1560626897}
     price: 0
     button: {fileID: 0}
     group: {fileID: 0}
   uncommonSlot:
-    slotRoot: {fileID: 365840657}
+    slotRoot: {fileID: 959361622}
     priceText: {fileID: 1672038754}
     price: 0
     button: {fileID: 0}
     group: {fileID: 0}
   rareSlot:
-    slotRoot: {fileID: 1015198735}
+    slotRoot: {fileID: 1719389739}
     priceText: {fileID: 936261517}
     price: 0
     button: {fileID: 0}
     group: {fileID: 0}
   specialOfferSlot:
-    slotRoot: {fileID: 1231726736}
+    slotRoot: {fileID: 383607435}
     priceText: {fileID: 1167812213}
     price: 0
     button: {fileID: 0}

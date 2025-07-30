@@ -12,9 +12,9 @@ public class MerchantManager : MonoBehaviour
     [System.Serializable]
     public class MerchantSlot
     {
-        // Assign the Transform that contains the Button for this slot.
-        // It can be either the Button itself or a parent whose first child
-        // has the Button component.
+        // Assign the Transform that contains all UI for this slot.
+        // The actual buy Button should be a child of this transform so it can
+        // be positioned independently from the card preview.
         public Transform slotRoot;
         public TMP_Text priceText;
 
@@ -79,12 +79,23 @@ public class MerchantManager : MonoBehaviour
         if (slot.priceText != null)
             slot.priceText.text = price.ToString();
 
-        Transform buttonTransform = slot.slotRoot.childCount > 0 ? slot.slotRoot.GetChild(0) : slot.slotRoot;
-        foreach (Transform child in buttonTransform)
+        // Find the buy button within the slot root
+        slot.button = slot.slotRoot.GetComponentInChildren<Button>(true);
+
+        // Create or reuse a child object to host the card visual
+        Transform cardParent = slot.slotRoot.Find("CardContainer");
+        if (cardParent == null)
+        {
+            GameObject cp = new GameObject("CardContainer");
+            cp.transform.SetParent(slot.slotRoot, false);
+            cardParent = cp.transform;
+        }
+
+        foreach (Transform child in cardParent)
             Destroy(child.gameObject);
 
         Card card = CardFactory.Create(slot.cardData.cardName);
-        GameObject go = Instantiate(cardPrefab, buttonTransform);
+        GameObject go = Instantiate(cardPrefab, cardParent);
         go.transform.localScale = Vector3.one * 3f;
         // Place the card slightly higher in the merchant room so it is
         // easier to see. 65 units on the Y axis gives a better visual
@@ -94,10 +105,9 @@ public class MerchantManager : MonoBehaviour
         visual.Setup(card, null, slot.cardData);
         visual.disableHoverEffects = true;
 
-        slot.button = buttonTransform.GetComponent<Button>();
-        slot.group = buttonTransform.GetComponent<CanvasGroup>();
+        slot.group = slot.slotRoot.GetComponent<CanvasGroup>();
         if (slot.group == null)
-            slot.group = buttonTransform.gameObject.AddComponent<CanvasGroup>();
+            slot.group = slot.slotRoot.gameObject.AddComponent<CanvasGroup>();
 
         if (slot.button != null)
         {
