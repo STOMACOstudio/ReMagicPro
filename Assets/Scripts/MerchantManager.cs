@@ -61,11 +61,11 @@ public class MerchantManager : MonoBehaviour
         rareSlot.cardData = GetRandomCardByRarity("Rare");
         SetupSlot(rareSlot, 20);
 
-        // special offer from one of the above with 20% discount
+        // special offer from one of the above with 50% discount
         var options = new List<MerchantSlot> { basicLandSlot, commonSlot, uncommonSlot, rareSlot };
         int index = Random.Range(0, options.Count);
         var chosen = options[index];
-        int discounted = Mathf.CeilToInt(chosen.price * 0.8f);
+        int discounted = Mathf.CeilToInt(chosen.price * 0.5f);
         specialOfferSlot.cardData = chosen.cardData;
         SetupSlot(specialOfferSlot, discounted);
     }
@@ -85,7 +85,7 @@ public class MerchantManager : MonoBehaviour
 
         Card card = CardFactory.Create(slot.cardData.cardName);
         GameObject go = Instantiate(cardPrefab, buttonTransform);
-        go.transform.localScale = Vector3.one;
+        go.transform.localScale = Vector3.one * 10f;
         var visual = go.GetComponent<CardVisual>();
         visual.Setup(card, null, slot.cardData);
         visual.disableHoverEffects = true;
