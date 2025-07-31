@@ -2379,6 +2379,7 @@ MonoBehaviour:
   drawCard: {fileID: 8300000, guid: fdc89dd0452c2f34183085bed1590d6c, type: 3}
   turnChange: {fileID: 8300000, guid: 145e09f516398b544a9e0753e1fe4ce3, type: 3}
   equipArtifact: {fileID: 8300000, guid: 6d73024761ea9ff45a9e511c15102e27, type: 3}
+  buyCard: {fileID: 8300000, guid: f129a9de75dedeb44865a3d28df2bfeb, type: 3}
 --- !u!4 &632374141
 Transform:
   m_ObjectHideFlags: 0
