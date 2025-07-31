@@ -22,6 +22,7 @@ public class MerchantManager : MonoBehaviour
         [HideInInspector] public int price;
         [HideInInspector] public Button button;
         [HideInInspector] public CanvasGroup group;
+        [HideInInspector] public bool sold;
     }
 
     public MerchantSlot basicLandSlot;
@@ -33,6 +34,30 @@ public class MerchantManager : MonoBehaviour
     public AudioClip purchaseSound;
 
     private GameObject cardPrefab;
+
+    private void SaveSoldState()
+    {
+        PlayerPrefs.SetInt("Merchant_BasicLandSold", basicLandSlot.sold ? 1 : 0);
+        PlayerPrefs.SetInt("Merchant_CommonSold", commonSlot.sold ? 1 : 0);
+        PlayerPrefs.SetInt("Merchant_UncommonSold", uncommonSlot.sold ? 1 : 0);
+        PlayerPrefs.SetInt("Merchant_RareSold", rareSlot.sold ? 1 : 0);
+        PlayerPrefs.SetInt("Merchant_OfferSold", specialOfferSlot.sold ? 1 : 0);
+    }
+
+    private void MarkSlotAsSold(MerchantSlot slot)
+    {
+        if (slot == null)
+            return;
+
+        if (slot.button != null)
+            slot.button.interactable = false;
+        if (slot.group != null)
+        {
+            slot.group.alpha = 0.5f;
+            slot.group.blocksRaycasts = false;
+            slot.group.interactable = false;
+        }
+    }
 
     void Start()
     {
@@ -61,15 +86,19 @@ public class MerchantManager : MonoBehaviour
     private void SetupSlots()
     {
         basicLandSlot.cardData = GetRandomBasicLand();
+        basicLandSlot.sold = false;
         SetupSlot(basicLandSlot, 2);
 
         commonSlot.cardData = GetRandomCardByRarity("Common");
+        commonSlot.sold = false;
         SetupSlot(commonSlot, 6);
 
         uncommonSlot.cardData = GetRandomCardByRarity("Uncommon");
+        uncommonSlot.sold = false;
         SetupSlot(uncommonSlot, 10);
 
         rareSlot.cardData = GetRandomCardByRarity("Rare");
+        rareSlot.sold = false;
         SetupSlot(rareSlot, 20);
 
         // special offer from one of the above with 50% discount
@@ -78,6 +107,7 @@ public class MerchantManager : MonoBehaviour
         var chosen = options[index];
         int discounted = Mathf.CeilToInt(chosen.price * 0.5f);
         specialOfferSlot.cardData = chosen.cardData;
+        specialOfferSlot.sold = false;
         SetupSlot(specialOfferSlot, discounted);
     }
 
@@ -176,6 +206,7 @@ public class MerchantManager : MonoBehaviour
         PlayerPrefs.SetInt("Merchant_UncommonPrice", uncommonSlot.price);
         PlayerPrefs.SetInt("Merchant_RarePrice", rareSlot.price);
         PlayerPrefs.SetInt("Merchant_OfferPrice", specialOfferSlot.price);
+        SaveSoldState();
         PlayerPrefs.Save();
     }
 
@@ -187,11 +218,23 @@ public class MerchantManager : MonoBehaviour
         rareSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Rare"));
         specialOfferSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Offer"));
 
+        basicLandSlot.sold = PlayerPrefs.GetInt("Merchant_BasicLandSold", 0) == 1;
+        commonSlot.sold = PlayerPrefs.GetInt("Merchant_CommonSold", 0) == 1;
+        uncommonSlot.sold = PlayerPrefs.GetInt("Merchant_UncommonSold", 0) == 1;
+        rareSlot.sold = PlayerPrefs.GetInt("Merchant_RareSold", 0) == 1;
+        specialOfferSlot.sold = PlayerPrefs.GetInt("Merchant_OfferSold", 0) == 1;
+
         SetupSlot(basicLandSlot, PlayerPrefs.GetInt("Merchant_BasicLandPrice", 2));
         SetupSlot(commonSlot, PlayerPrefs.GetInt("Merchant_CommonPrice", 6));
         SetupSlot(uncommonSlot, PlayerPrefs.GetInt("Merchant_UncommonPrice", 10));
         SetupSlot(rareSlot, PlayerPrefs.GetInt("Merchant_RarePrice", 20));
         SetupSlot(specialOfferSlot, PlayerPrefs.GetInt("Merchant_OfferPrice", 1));
+
+        if (basicLandSlot.sold) MarkSlotAsSold(basicLandSlot);
+        if (commonSlot.sold) MarkSlotAsSold(commonSlot);
+        if (uncommonSlot.sold) MarkSlotAsSold(uncommonSlot);
+        if (rareSlot.sold) MarkSlotAsSold(rareSlot);
+        if (specialOfferSlot.sold) MarkSlotAsSold(specialOfferSlot);
     }
 
     public void Purchase(MerchantSlot slot)
@@ -205,14 +248,9 @@ public class MerchantManager : MonoBehaviour
         PlayerCollection.OwnedCards.Add(slot.cardData);
         if (purchaseSound != null && SoundManager.Instance != null)
             SoundManager.Instance.PlaySound(purchaseSound);
-
-        if (slot.button != null)
-            slot.button.interactable = false;
-        if (slot.group != null)
-        {
-            slot.group.alpha = 0.5f;
-            slot.group.blocksRaycasts = false;
-            slot.group.interactable = false;
-        }
+        slot.sold = true;
+        MarkSlotAsSold(slot);
+        SaveSoldState();
+        PlayerPrefs.Save();
     }
 }
