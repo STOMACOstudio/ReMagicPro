@@ -77,7 +77,12 @@ public class MerchantManager : MonoBehaviour
 
         slot.price = price;
         if (slot.priceText != null)
+        {
             slot.priceText.text = price.ToString();
+            // Ensure the price label does not block raycasts so the buy button
+            // receives clicks across its entire area
+            slot.priceText.raycastTarget = false;
+        }
 
         // Create or reuse a child object to host the card visual
         Transform cardParent = slot.slotRoot.Find("CardContainer");
