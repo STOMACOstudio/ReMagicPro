@@ -36,6 +36,7 @@ public class MerchantManager : MonoBehaviour
 
     void Start()
     {
+        int refresh = PlayerPrefs.GetInt("RefreshMerchant", 1);
         cardPrefab = CardHoverPreview.Instance != null
             ? CardHoverPreview.Instance.CardVisualPrefab
 #if UNITY_EDITOR
@@ -44,7 +45,17 @@ public class MerchantManager : MonoBehaviour
             : Resources.Load<GameObject>("Prefab/CardPrefab");
 #endif
 
-        SetupSlots();
+        if (refresh == 1 || !HasSavedInventory())
+        {
+            SetupSlots();
+            SaveInventory();
+            PlayerPrefs.SetInt("RefreshMerchant", 0);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            LoadInventory();
+        }
     }
 
     private void SetupSlots()
@@ -146,6 +157,41 @@ public class MerchantManager : MonoBehaviour
         if (pool.Count == 0)
             return null;
         return pool[Random.Range(0, pool.Count)];
+    }
+
+    private bool HasSavedInventory()
+    {
+        return PlayerPrefs.HasKey("Merchant_BasicLand");
+    }
+
+    private void SaveInventory()
+    {
+        PlayerPrefs.SetString("Merchant_BasicLand", basicLandSlot.cardData.cardName);
+        PlayerPrefs.SetString("Merchant_Common", commonSlot.cardData.cardName);
+        PlayerPrefs.SetString("Merchant_Uncommon", uncommonSlot.cardData.cardName);
+        PlayerPrefs.SetString("Merchant_Rare", rareSlot.cardData.cardName);
+        PlayerPrefs.SetString("Merchant_Offer", specialOfferSlot.cardData.cardName);
+        PlayerPrefs.SetInt("Merchant_BasicLandPrice", basicLandSlot.price);
+        PlayerPrefs.SetInt("Merchant_CommonPrice", commonSlot.price);
+        PlayerPrefs.SetInt("Merchant_UncommonPrice", uncommonSlot.price);
+        PlayerPrefs.SetInt("Merchant_RarePrice", rareSlot.price);
+        PlayerPrefs.SetInt("Merchant_OfferPrice", specialOfferSlot.price);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadInventory()
+    {
+        basicLandSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_BasicLand"));
+        commonSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Common"));
+        uncommonSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Uncommon"));
+        rareSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Rare"));
+        specialOfferSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Offer"));
+
+        SetupSlot(basicLandSlot, PlayerPrefs.GetInt("Merchant_BasicLandPrice", 2));
+        SetupSlot(commonSlot, PlayerPrefs.GetInt("Merchant_CommonPrice", 6));
+        SetupSlot(uncommonSlot, PlayerPrefs.GetInt("Merchant_UncommonPrice", 10));
+        SetupSlot(rareSlot, PlayerPrefs.GetInt("Merchant_RarePrice", 20));
+        SetupSlot(specialOfferSlot, PlayerPrefs.GetInt("Merchant_OfferPrice", 1));
     }
 
     public void Purchase(MerchantSlot slot)

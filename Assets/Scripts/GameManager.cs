@@ -1939,6 +1939,10 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("No zone ID found when trying to WinBattle.");
         }
 
+        // Flag the merchant inventory to refresh on the next visit
+        PlayerPrefs.SetInt("RefreshMerchant", 1);
+        PlayerPrefs.Save();
+
         SceneManager.LoadScene("MapScene");
     }
 
