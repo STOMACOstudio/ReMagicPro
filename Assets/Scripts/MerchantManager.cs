@@ -181,8 +181,9 @@ public class MerchantManager : MonoBehaviour
 
     private CardData GetRandomCardByRarity(string rarity)
     {
+        string[] basicLands = { "Plains", "Island", "Swamp", "Mountain", "Forest" };
         var pool = CardDatabase.GetAllCards()
-            .Where(c => c.rarity == rarity && !c.isToken)
+            .Where(c => c.rarity == rarity && !c.isToken && !basicLands.Contains(c.cardName))
             .ToList();
         if (pool.Count == 0)
             return null;
