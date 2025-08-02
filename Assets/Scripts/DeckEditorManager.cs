@@ -208,11 +208,28 @@ public class DeckEditorManager : MonoBehaviour
 #endif
         }
 
+        var groupedBasics = new Dictionary<string, (CardData data, int count)>();
+
         foreach (var data in deck)
-            SpawnCardVisual(prefab, data);
+        {
+            if (CardData.IsBasicLand(data))
+            {
+                if (groupedBasics.TryGetValue(data.cardName, out var entry))
+                    groupedBasics[data.cardName] = (entry.data, entry.count + 1);
+                else
+                    groupedBasics[data.cardName] = (data, 1);
+            }
+            else
+            {
+                SpawnCardVisual(prefab, data, 1);
+            }
+        }
+
+        foreach (var kvp in groupedBasics.Values)
+            SpawnCardVisual(prefab, kvp.data, kvp.count);
     }
 
-    private void SpawnCardVisual(GameObject prefab, CardData data)
+    private void SpawnCardVisual(GameObject prefab, CardData data, int count)
     {
         Card card = CardFactory.Create(data.cardName);
         GameObject go = Instantiate(prefab, cardContainer);
@@ -222,25 +239,52 @@ public class DeckEditorManager : MonoBehaviour
         visual.Setup(card, null, sourceData);
 
         var handler = go.AddComponent<DeckEditorCardButton>();
-        handler.Initialize(data, this);
+        handler.Initialize(data, this, count);
     }
 
     public void OnCardClicked(CardData data, GameObject visual)
     {
+        var handler = visual.GetComponent<DeckEditorCardButton>();
+        if (handler != null)
+            OnCardClicked(handler);
+    }
+
+    public void OnCardClicked(DeckEditorCardButton button)
+    {
+        CardData data = button.Data;
+
         if (!deck.Remove(data))
             return;
 
-        // If the removed card was favourited, reset the favourite star
-        if (FavouriteCard != null && FavouriteCard.cardName == data.cardName)
-        {
-            FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
-            if (star != null)
-                star.ReturnToStart();
-        }
-
         collection.Add(data);
         PlayerCollection.OwnedCards.Add(data);
-        Destroy(visual);
+
+        bool isFavourite = FavouriteCard != null && FavouriteCard.cardName == data.cardName;
+
+        if (CardData.IsBasicLand(data))
+        {
+            button.Decrement();
+            if (button.Count <= 0)
+            {
+                if (isFavourite)
+                {
+                    FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+                    if (star != null)
+                        star.ReturnToStart();
+                }
+                Destroy(button.gameObject);
+            }
+        }
+        else
+        {
+            if (isFavourite)
+            {
+                FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+                if (star != null)
+                    star.ReturnToStart();
+            }
+            Destroy(button.gameObject);
+        }
 
         RefreshCollectionDisplay();
         UpdateDeckCardNumber();
@@ -270,7 +314,34 @@ public class DeckEditorManager : MonoBehaviour
         }
 
         deck.Add(data);
-        SpawnCardVisual(prefab, data);
+
+        if (CardData.IsBasicLand(data))
+        {
+            DeckEditorCardButton existing = null;
+            foreach (Transform child in cardContainer)
+            {
+                var handler = child.GetComponent<DeckEditorCardButton>();
+                if (handler != null && handler.Data.cardName == data.cardName)
+                {
+                    existing = handler;
+                    break;
+                }
+            }
+
+            if (existing != null)
+            {
+                existing.Increment();
+            }
+            else
+            {
+                SpawnCardVisual(prefab, data, 1);
+            }
+        }
+        else
+        {
+            SpawnCardVisual(prefab, data, 1);
+        }
+
         RefreshCollectionDisplay();
         UpdateDeckCardNumber();
     }
