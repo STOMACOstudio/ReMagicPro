@@ -31,7 +31,7 @@ public class GraveyardUIManager : MonoBehaviour
         GameObject prefab = CardHoverPreview.Instance != null
             ? CardHoverPreview.Instance.CardVisualPrefab
 #if UNITY_EDITOR
-            : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+            : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/CardPrefab.prefab");
 #else
             : Resources.Load<GameObject>("Prefab/CardPrefab");
 #endif
