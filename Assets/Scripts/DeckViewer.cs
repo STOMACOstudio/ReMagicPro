@@ -38,7 +38,7 @@ public class DeckViewer : MonoBehaviour
 
         if (prefab == null)
 #if UNITY_EDITOR
-            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefab/CardPrefab.prefab");
+            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/CardPrefab.prefab");
 #else
             prefab = Resources.Load<GameObject>("Prefab/CardPrefab");
 #endif
