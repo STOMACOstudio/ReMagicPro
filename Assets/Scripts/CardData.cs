@@ -94,4 +94,20 @@ public class CardData
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
 
     // Future: active effects like "on enter" or "on death"
-    public List<CardAbility> abilities = new List<CardAbility>();}
+    public List<CardAbility> abilities = new List<CardAbility>();
+
+    public static bool IsBasicLand(CardData card)
+    {
+        if (card == null)
+            return false;
+
+        if (card.cardType != CardType.Land)
+            return false;
+
+        return card.cardName == "Plains" ||
+               card.cardName == "Island" ||
+               card.cardName == "Swamp" ||
+               card.cardName == "Mountain" ||
+               card.cardName == "Forest";
+    }
+}

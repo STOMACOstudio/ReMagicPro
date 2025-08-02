@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -43,14 +44,37 @@ public class DeckViewer : MonoBehaviour
             prefab = Resources.Load<GameObject>("Prefab/CardPrefab");
 #endif
 
+        var groupedBasics = new Dictionary<string, (CardData data, int count)>();
+
         foreach (var data in DeckHolder.SelectedDeck)
         {
-            Card card = CardFactory.Create(data.cardName);
-            GameObject go = Instantiate(prefab, container);
-            go.transform.localScale = Vector3.one * 1.5f;
-            CardVisual visual = go.GetComponent<CardVisual>();
-            CardData sourceData = CardDatabase.GetCardData(card.cardName);
-            visual.Setup(card, null, sourceData);
+            if (CardData.IsBasicLand(data))
+            {
+                if (groupedBasics.TryGetValue(data.cardName, out var entry))
+                    groupedBasics[data.cardName] = (entry.data, entry.count + 1);
+                else
+                    groupedBasics[data.cardName] = (data, 1);
+            }
+            else
+            {
+                Spawn(prefab, container, data, 1);
+            }
         }
+
+        foreach (var kvp in groupedBasics.Values)
+            Spawn(prefab, container, kvp.data, kvp.count);
+    }
+
+    private static void Spawn(GameObject prefab, Transform container, CardData data, int count)
+    {
+        Card card = CardFactory.Create(data.cardName);
+        GameObject go = Object.Instantiate(prefab, container);
+        go.transform.localScale = Vector3.one * 1.5f;
+        CardVisual visual = go.GetComponent<CardVisual>();
+        CardData sourceData = CardDatabase.GetCardData(card.cardName);
+        visual.Setup(card, null, sourceData);
+
+        var handler = go.AddComponent<DeckEditorCardButton>();
+        handler.Initialize(data, null, count);
     }
 }
