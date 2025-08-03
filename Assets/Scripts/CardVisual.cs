@@ -74,6 +74,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private bool isPointerOver = false;
 
+    void Awake()
+    {
+        if (highlightBorder != null)
+        {
+            var img = highlightBorder.GetComponent<Image>();
+            if (img != null)
+                img.raycastTarget = false;
+        }
+    }
+
     void Start()
         {
             if (SceneManager.GetActiveScene().name == "DeckEditorScene")
