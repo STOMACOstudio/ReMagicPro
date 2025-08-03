@@ -1478,6 +1478,7 @@ public class TurnSystem : MonoBehaviour
         
         private IEnumerator WaitToShowCombatDamage()
             {
+                GameManager.Instance.DeferLifeDeltaFade(true);
                 yield return StartCoroutine(GameManager.Instance.ResolveCombatWithAnimations());
                 yield return new WaitUntil(() => GameManager.Instance.pendingGraveyardAnimations == 0);
 
@@ -1492,6 +1493,9 @@ public class TurnSystem : MonoBehaviour
 
                     visual.UpdateVisual();
                 }
+
+                GameManager.Instance.DeferLifeDeltaFade(false);
+                GameManager.Instance.FinalizeLifeDeltas();
 
                 AdvancePhase();
 
