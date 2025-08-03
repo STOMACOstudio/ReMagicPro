@@ -3657,17 +3657,24 @@ public class GameManager : MonoBehaviour
 
         public void CheckForGameEnd()
         {
+            if (gameOver)
+                return;
+
             if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
                 CardData reward = PlayerCollection.AddRandomCard();
                 gameOver = true;
+                if (TurnSystem.Instance != null)
+                    TurnSystem.Instance.StopAllCoroutines();
                 FindObjectOfType<WinScreenUI>().ShowWinScreen(reward);
             }
             else if (humanPlayer.Life <= 0)
             {
                 Debug.Log("Human player defeated — game lost.");
                 gameOver = true;
+                if (TurnSystem.Instance != null)
+                    TurnSystem.Instance.StopAllCoroutines();
                 FindObjectOfType<WinScreenUI>().ShowLoseScreen();
             }
         }
