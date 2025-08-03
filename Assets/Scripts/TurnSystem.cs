@@ -42,6 +42,7 @@ public class TurnSystem : MonoBehaviour
     public TMP_Text phaseText;
     public GameObject turnBanner;
     private bool firstTurn = true;
+    private bool skipDrawThisTurn = false;
 
     [Header("Buttons")]
     public Button nextPhaseButton;
@@ -80,6 +81,7 @@ public class TurnSystem : MonoBehaviour
     public void StartGame()
         {
             PlayerType startingPlayer = Random.value < 0.5f ? PlayerType.Human : PlayerType.AI;
+            skipDrawThisTurn = true;
             BeginTurn(startingPlayer);
         }
 
@@ -319,14 +321,22 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.Draw:
-                    Debug.Log("→ Drawing a card.");
-                    
-                    var drawPlayer = currentPlayer == PlayerType.Human
-                        ? GameManager.Instance.humanPlayer
-                        : GameManager.Instance.aiPlayer;
+                    if (skipDrawThisTurn)
+                    {
+                        Debug.Log("→ Skipping draw this turn.");
+                        skipDrawThisTurn = false;
+                    }
+                    else
+                    {
+                        Debug.Log("→ Drawing a card.");
 
-                    GameManager.Instance.DrawCard(drawPlayer);
-                    GameManager.Instance.UpdateUI();
+                        var drawPlayer = currentPlayer == PlayerType.Human
+                            ? GameManager.Instance.humanPlayer
+                            : GameManager.Instance.aiPlayer;
+
+                        GameManager.Instance.DrawCard(drawPlayer);
+                        GameManager.Instance.UpdateUI();
+                    }
 
                     AdvancePhase();
                     break;
