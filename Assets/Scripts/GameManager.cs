@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
     private int enemyLifeDelta = 0;
     private Coroutine playerDeltaRoutine;
     private Coroutine enemyDeltaRoutine;
+    // When true, life delta text will not automatically fade out.
+    private bool lifeDeltaFadeDeferred = false;
 
     public ArtifactCard targetingArtifact;
     public EquipmentCard targetingEquipment;
@@ -2787,6 +2789,24 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+        public void DeferLifeDeltaFade(bool defer)
+        {
+            lifeDeltaFadeDeferred = defer;
+            if (defer)
+            {
+                if (playerDeltaRoutine != null)
+                {
+                    StopCoroutine(playerDeltaRoutine);
+                    playerDeltaRoutine = null;
+                }
+                if (enemyDeltaRoutine != null)
+                {
+                    StopCoroutine(enemyDeltaRoutine);
+                    enemyDeltaRoutine = null;
+                }
+            }
+        }
+
         private void UpdateLifeDelta(GameObject target, int change)
             {
                 bool isPlayer = target == playerLifeContainer;
@@ -2836,16 +2856,22 @@ public class GameManager : MonoBehaviour
                 if (isPlayer)
                 {
                     playerLifeDelta = total;
-                    if (playerDeltaRoutine != null)
-                        StopCoroutine(playerDeltaRoutine);
-                    playerDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                    if (!lifeDeltaFadeDeferred)
+                    {
+                        if (playerDeltaRoutine != null)
+                            StopCoroutine(playerDeltaRoutine);
+                        playerDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                    }
                 }
                 else
                 {
                     enemyLifeDelta = total;
-                    if (enemyDeltaRoutine != null)
-                        StopCoroutine(enemyDeltaRoutine);
-                    enemyDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                    if (!lifeDeltaFadeDeferred)
+                    {
+                        if (enemyDeltaRoutine != null)
+                            StopCoroutine(enemyDeltaRoutine);
+                        enemyDeltaRoutine = StartCoroutine(DelayFinalize(target));
+                    }
                 }
             }
 
@@ -2867,6 +2893,7 @@ public class GameManager : MonoBehaviour
 
         public void FinalizeLifeDeltas()
             {
+                lifeDeltaFadeDeferred = false;
                 if (playerLifeDeltaText != null)
                     StartCoroutine(FadeAndFloatText(playerLifeDeltaText.gameObject, true));
                 if (enemyLifeDeltaText != null)
