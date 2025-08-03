@@ -1768,6 +1768,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
             }
+            else if (linkedCard is EnchantmentCard enchantment)
+            {
+                costText.text = Mathf.Max(enchantment.manaCost - linkedCard.color.Count, 0).ToString();
+                statsText.text = "";
+                keywordText.text = linkedCard.GetCardText();
+
+                costBackground.SetActive(true);
+                statsBackground.SetActive(false);
+            }
             else if (linkedCard is LandCard)
             {
                 costText.text = "";
