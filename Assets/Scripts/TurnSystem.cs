@@ -472,12 +472,15 @@ public class TurnSystem : MonoBehaviour
                                             cost["Colorless"] = 0;
                                         cost["Colorless"] += tax;
                                     }
-                                    if (EnsureManaForCost(ai, cost))
+
+                                    var potential = GetPotentialManaPool(ai);
+                                    if (!potential.CanPay(cost))
+                                        continue;
+
+                                    if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
+                                        sorcery.destroyTargetIfTypeMatches)
                                     {
-                                        if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
-                                            sorcery.destroyTargetIfTypeMatches)
-                                        {
-                                            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+                                        Player opponent = GameManager.Instance.GetOpponentOf(ai);
 
                                             // Pick enemy creature with the highest mana cost
                                             var target = opponent.Battlefield
@@ -604,7 +607,10 @@ public class TurnSystem : MonoBehaviour
                                             Debug.Log($"[AI] Skipping {sorcery.cardName} — no valid target.");
                                             continue; // Go to next card
                                         }
-                                        
+
+                                        if (!EnsureManaForCost(ai, cost))
+                                            continue;
+
                                         ai.ColoredMana.Pay(cost);
                                         if (sorcery.hasXCost)
                                         {
@@ -697,59 +703,64 @@ public class TurnSystem : MonoBehaviour
                                             cost["Colorless"] = 0;
                                         cost["Colorless"] += tax;
                                     }
-                                    if (EnsureManaForCost(ai, cost))
+
+                                    var potential = GetPotentialManaPool(ai);
+                                    if (!potential.CanPay(cost))
+                                        continue;
+
+                                    CreatureCard target;
+                                    if (auraCard.buffPower >= 0 && auraCard.buffToughness >= 0)
+                                        target = ai.Battlefield.OfType<CreatureCard>()
+                                            .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
+                                    else
+                                        target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>()
+                                            .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
+
+                                    if (target == null)
+                                        continue;
+
+                                    if (!EnsureManaForCost(ai, cost))
+                                        continue;
+
+                                    ai.ColoredMana.Pay(cost);
+                                    ai.Hand.Remove(card);
+                                    auraCard.attachedTo = target;
+                                    auraCard.owner = ai;
+                                   ai.Battlefield.Add(auraCard);
+                                   auraCard.OnEnterPlay(ai);
+                                   GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
+
+                                    // Aura or enchanted creature might die upon entry
+                                    if (!ai.Battlefield.Contains(auraCard))
                                     {
-                                        CreatureCard target;
-                                        if (auraCard.buffPower >= 0 && auraCard.buffToughness >= 0)
-                                            target = ai.Battlefield.OfType<CreatureCard>()
-                                                .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
-                                        else
-                                            target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>()
-                                                .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
-
-                                        if (target == null)
-                                            continue;
-
-                                        ai.ColoredMana.Pay(cost);
-                                        ai.Hand.Remove(card);
-                                        auraCard.attachedTo = target;
-                                        auraCard.owner = ai;
-                                       ai.Battlefield.Add(auraCard);
-                                       auraCard.OnEnterPlay(ai);
-                                       GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
-
-                                        // Aura or enchanted creature might die upon entry
-                                        if (!ai.Battlefield.Contains(auraCard))
-                                        {
-                                            waitingForAIAction = true;
-                                            StartCoroutine(WaitForAIAction(1f));
-                                            return;
-                                        }
-
-                                        bool auraSurvived = ai.Battlefield.Contains(auraCard);
-
-                                        if (auraSurvived)
-                                        {
-                                            if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                                            {
-                                                auraCard.isTapped = true;
-                                                Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
-                                            }
-
-                                            GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
-                                            CardVisual visual = obj.GetComponent<CardVisual>();
-                                            visual.Setup(auraCard, GameManager.Instance);
-                                            visual.isInBattlefield = true;
-                                            GameManager.Instance.activeCardVisuals.Add(visual);
-                                        }
-
-                                        Debug.Log($"AI played aura: {card.cardName}");
-                                        playedCard = true;
-
                                         waitingForAIAction = true;
                                         StartCoroutine(WaitForAIAction(1f));
                                         return;
                                     }
+
+                                    bool auraSurvived = ai.Battlefield.Contains(auraCard);
+
+                                    if (auraSurvived)
+                                    {
+                                        if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                                        {
+                                            auraCard.isTapped = true;
+                                            Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
+                                        }
+
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
+                                        CardVisual visual = obj.GetComponent<CardVisual>();
+                                        visual.Setup(auraCard, GameManager.Instance);
+                                        visual.isInBattlefield = true;
+                                        GameManager.Instance.activeCardVisuals.Add(visual);
+                                    }
+
+                                    Debug.Log($"AI played aura: {card.cardName}");
+                                    playedCard = true;
+
+                                    waitingForAIAction = true;
+                                    StartCoroutine(WaitForAIAction(1f));
+                                    return;
                                 }
                                 else if (card is EnchantmentCard enchantment)
                                 {
