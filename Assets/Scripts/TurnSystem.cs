@@ -641,8 +641,7 @@ public class TurnSystem : MonoBehaviour
 
                                         playedCard = true;
                                         break;
-                                    }   
-                                }
+                                    }
                                 else if (card is ArtifactCard artifact)
                                 {
                                     var cost = GameManager.Instance.GetManaCostBreakdown(artifact.manaCost, artifact.color);
