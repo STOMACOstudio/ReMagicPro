@@ -76,12 +76,34 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     void Awake()
     {
-        if (highlightBorder != null)
-        {
-            var img = highlightBorder.GetComponent<Image>();
-            if (img != null)
-                img.raycastTarget = false;
-        }
+        DisableRaycast(highlightBorder);
+        DisableRaycast(artImage);
+        DisableRaycast(cardRarity);
+        DisableRaycast(coloredManaIcon1);
+        DisableRaycast(coloredManaIcon2);
+        DisableRaycast(costBackground);
+        DisableRaycast(statsBackground);
+        DisableRaycast(swordIcon);
+        DisableRaycast(shieldIcon);
+        DisableRaycast(tapIcon);
+        DisableRaycast(genericCostBG);
+        DisableRaycast(landIcon);
+        DisableRaycast(counterImage);
+    }
+
+    private void DisableRaycast(Image img)
+    {
+        if (img != null)
+            img.raycastTarget = false;
+    }
+
+    private void DisableRaycast(GameObject obj)
+    {
+        if (obj == null)
+            return;
+        var img = obj.GetComponent<Image>();
+        if (img != null)
+            img.raycastTarget = false;
     }
 
     void Start()
