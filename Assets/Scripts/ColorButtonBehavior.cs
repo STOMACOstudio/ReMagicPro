@@ -55,6 +55,17 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
 
     void Start()
         {
+            Image img = GetComponent<Image>();
+            if (img != null)
+            {
+                img.alphaHitTestMinimumThreshold = 0.1f;
+            }
+
+            if (hoverGlow != null)
+                hoverGlow.raycastTarget = false;
+            if (selectionGlow != null)
+                selectionGlow.raycastTarget = false;
+
             SetAlpha(hoverGlow, 0f);
             SetAlpha(selectionGlow, 0f);
 
