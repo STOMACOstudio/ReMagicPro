@@ -36,6 +36,7 @@ public class DeckEditorCardButton : MonoBehaviour
         labelObj.transform.SetParent(transform, false);
         countLabel = labelObj.AddComponent<TextMeshProUGUI>();
         countLabel.alignment = TextAlignmentOptions.TopRight;
+        countLabel.raycastTarget = false;
         RectTransform rt = countLabel.rectTransform;
         rt.anchorMin = new Vector2(1, 1);
         rt.anchorMax = new Vector2(1, 1);

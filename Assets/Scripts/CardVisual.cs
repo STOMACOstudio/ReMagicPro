@@ -79,7 +79,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         DisableRaycast(highlightBorder);
 
         if (artImage == null)
-            artImage = GetComponentInChildren<Image>(true);
+        {
+            foreach (var img in GetComponentsInChildren<Image>(true))
+            {
+                string name = img.gameObject.name.ToLower();
+                if (name == "artimage" || name == "artwork" || name == "art")
+                {
+                    artImage = img;
+                    break;
+                }
+            }
+
+            if (artImage == null)
+                artImage = GetComponentInChildren<Image>(true);
+        }
         DisableRaycast(artImage);
 
         DisableRaycast(cardRarity);
