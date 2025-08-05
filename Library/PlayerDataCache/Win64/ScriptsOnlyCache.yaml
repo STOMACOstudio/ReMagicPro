@@ -36,6 +36,7 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
+    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
     - UnityEditor.Tilemaps.GridPaletteBrushes
@@ -387,7 +388,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5904}
     - Class: 114
-      Script: {instanceID: 26282}
+      Script: {instanceID: 26454}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -1551,4 +1552,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/GameScene.unity
   - Assets/Scenes/DeckEditorScene.unity
   - Assets/Scenes/MerchantScene.unity
-  playerPath: C:/Users/zbian/Desktop/ReMagicProject.exe
+  playerPath: D:/Game Design/Remagic Asset/Builds/ReMagic_v0.3/ReMagicProject.exe
