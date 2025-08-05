@@ -36,11 +36,13 @@ public class DeckEditorCardButton : MonoBehaviour
         labelObj.transform.SetParent(transform, false);
         countLabel = labelObj.AddComponent<TextMeshProUGUI>();
         countLabel.alignment = TextAlignmentOptions.TopRight;
+        countLabel.raycastTarget = false;
         RectTransform rt = countLabel.rectTransform;
         rt.anchorMin = new Vector2(1, 1);
         rt.anchorMax = new Vector2(1, 1);
         rt.pivot = new Vector2(1, 1);
         rt.anchoredPosition = new Vector2(-10, -10);
+        rt.sizeDelta = Vector2.zero;
     }
 
     public void Increment()

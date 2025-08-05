@@ -77,7 +77,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     void Awake()
     {
         DisableRaycast(highlightBorder);
+
+        if (artImage == null)
+            artImage = GetComponentsInChildren<Image>(true)
+                .FirstOrDefault(i => i.gameObject.name.ToLower().Contains("art"));
         DisableRaycast(artImage);
+
         DisableRaycast(cardRarity);
         DisableRaycast(coloredManaIcon1);
         DisableRaycast(coloredManaIcon2);
