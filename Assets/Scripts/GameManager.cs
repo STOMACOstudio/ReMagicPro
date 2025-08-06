@@ -3687,7 +3687,15 @@ public class GameManager : MonoBehaviour
             if (gameOver)
                 return;
 
-            if (aiPlayer.Life <= 0)
+            if (aiPlayer.Life <= 0 && humanPlayer.Life <= 0)
+            {
+                Debug.Log("Both players died — draw counts as a loss for the human player.");
+                gameOver = true;
+                if (TurnSystem.Instance != null)
+                    TurnSystem.Instance.StopAllCoroutines();
+                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+            }
+            else if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
                 CardData reward = PlayerCollection.AddRandomCard();
