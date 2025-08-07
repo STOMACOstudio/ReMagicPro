@@ -10,6 +10,7 @@ public enum KeywordAbility
     CanOnlyBlockFlying,
     Lifelink,
     Deathtouch,
+    Indestructible,
     CantBlockWithoutForest,
     Plainswalk,
     Islandwalk,
