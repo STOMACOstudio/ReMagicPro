@@ -1,12 +1,14 @@
-# General Unity folders and files
+# General Unity directories and files
 .utmp/
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/[Ll]ibrary/
 /[Ll]ogs/
+/[Oo]bj/
+/[Tt]emp/
 /[Uu]ser[Ss]ettings/
+
 *.log
 
+# Other directories and files
 ReMagicProject_Data/resources.assets.resS
