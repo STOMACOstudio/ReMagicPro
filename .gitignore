@@ -1,2 +1,14 @@
+# General Unity directories and files
+.utmp/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ibrary/
+/[Ll]ogs/
+/[Oo]bj/
+/[Tt]emp/
+/[Uu]ser[Ss]ettings/
+
+*.log
+
+# Other directories and files
 ReMagicProject_Data/resources.assets.resS
-Library/PlayerDataCache/Win64/Data/resources.assets.resS
