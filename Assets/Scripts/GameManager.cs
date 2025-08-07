@@ -1245,8 +1245,19 @@ public class GameManager : MonoBehaviour
 
         owner.Battlefield.Add(tokenCard);
 
+        // Choose the correct battlefield area based on card type
+        Transform area;
+        if (tokenCard is LandCard)
+            area = owner == humanPlayer ? playerLandArea : aiLandArea;
+        else if (tokenCard is ArtifactCard)
+            area = owner == humanPlayer ? playerArtifactArea : aiArtifactArea;
+        else if (tokenCard is EnchantmentCard)
+            area = owner == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
+        else
+            area = owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+
         // Create visual and link it
-        GameObject visualGO = Instantiate(cardPrefab, owner == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+        GameObject visualGO = Instantiate(cardPrefab, area);
         CardVisual visual = visualGO.GetComponent<CardVisual>();
 
         visual.Setup(tokenCard, this);
