@@ -2320,6 +2320,24 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/cloudmane_leviathan")
                     });
+                Add(new CardData //Lich Queen
+                    {
+                    cardName = "Lich Queen",
+                    rarity = "Rare",
+                    manaCost = 4,
+                    color = new List<string> { "Black", "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 4,
+                    subtypes = new List<string> { "Zombie" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Vigilance,
+                        KeywordAbility.Indestructible,
+                        KeywordAbility.Lifelink
+                    },
+                    artwork = Resources.Load<Sprite>("Art/lich_queen")
+                    });
         // Sorceries
             //WHITE
                 Add(new CardData { //Exorcism
