@@ -220,13 +220,14 @@ public static class DeckDatabase
             AddCards(ai, "Faith Incarnate", 2);
             AddCards(ai, "Lights Out", 2);
             AddCards(ai, "Possessed Innocent", 2);
-            AddCards(ai, "Pure Angel", 2);
+            AddCards(ai, "Pure Angel", 1);
             AddCards(ai, "The Worlds Evil", 1);
             AddCards(ai, "Massacre", 1);
             AddCards(ai, "Rotting Dragon", 1);
             AddCards(ai, "Afterlife Jinx Lantern", 1);
             AddCards(ai, "Giant Bat", 2);
             AddCards(ai, "Bog Mosquito", 2);
+            ai.StartingPermanents.Add(CardFactory.Create("Lich Queen"));
         }
 
     public static void BuildRuinsDeck(Player ai)
@@ -244,7 +245,7 @@ public static class DeckDatabase
             AddCards(ai, "Potion of Mana", 1);
             AddCards(ai, "Potion of Knowledge", 1);
             AddCards(ai, "Potion of Lava", 1);
-            AddCards(ai, "Pressure Sphere", 1);
+            //AddCards(ai, "Pressure Sphere", 1);
             AddCards(ai, "Trinkets Collector", 1);
             AddCards(ai, "Blast of Knowledge", 1);
             ai.StartingPermanents.Add(CardFactory.Create("Pressure Sphere"));
