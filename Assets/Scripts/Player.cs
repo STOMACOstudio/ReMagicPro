@@ -9,6 +9,7 @@ public class Player
     public List<Card> Hand = new List<Card>();
     public List<Card> Battlefield = new List<Card>();
     public List<Card> Graveyard = new List<Card>();
+    public List<Card> StartingPermanents = new List<Card>();
     public bool hasPlayedLandThisTurn = false;
     public ManaPool ColoredMana = new ManaPool();
     public int Life = 20;

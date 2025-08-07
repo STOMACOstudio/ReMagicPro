@@ -1275,21 +1275,23 @@ public class TurnSystem : MonoBehaviour
 
                 // Prefer blocker that kills attacker and survives
                 var killSurvive = possible
-                    .Where(b => b.power >= attacker.toughness && b.toughness > attacker.power)
+                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                                b.power >= attacker.toughness &&
+                                (b.toughness > attacker.power || b.keywordAbilities.Contains(KeywordAbility.Indestructible)))
                     .OrderBy(b => b.power)
                     .FirstOrDefault();
                 if (killSurvive != null) return killSurvive;
 
                 // Safe block that survives damage
                 var safe = possible
-                    .Where(b => b.toughness > attacker.power)
+                    .Where(b => b.keywordAbilities.Contains(KeywordAbility.Indestructible) || b.toughness > attacker.power)
                     .OrderBy(b => b.toughness)
                     .FirstOrDefault();
                 if (safe != null) return safe;
 
                 // Trade if it can kill attacker
                 var trade = possible
-                    .Where(b => b.power >= attacker.toughness)
+                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) && b.power >= attacker.toughness)
                     .OrderBy(b => b.power + b.baseToughness)
                     .FirstOrDefault();
                 if (trade != null)
@@ -1315,7 +1317,9 @@ public class TurnSystem : MonoBehaviour
 
                 // Prefer a single blocker that kills and survives
                 var singleKill = possible
-                    .Where(b => b.power >= attacker.toughness && b.toughness > attacker.power)
+                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                                b.power >= attacker.toughness &&
+                                (b.toughness > attacker.power || b.keywordAbilities.Contains(KeywordAbility.Indestructible)))
                     .OrderBy(b => b.power + b.baseToughness)
                     .FirstOrDefault();
                 if (singleKill != null)
@@ -1343,9 +1347,11 @@ public class TurnSystem : MonoBehaviour
 
                 // Fall back to single blocker heuristics (may be safe block or trade)
                 var single = ChooseBestBlocker(attacker, possible, remainingLife, remainingDamage);
-                if (single != null && single.power >= attacker.toughness)
+                if (single != null && single.power >= attacker.toughness &&
+                    !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible))
                     return new List<CreatureCard> { single };
-                if (single != null && single.toughness > attacker.power)
+                if (single != null && (single.toughness > attacker.power ||
+                                       single.keywordAbilities.Contains(KeywordAbility.Indestructible)))
                     return new List<CreatureCard> { single };
 
                 // Try to kill with multiple blockers even if some may die
@@ -1382,8 +1388,9 @@ public class TurnSystem : MonoBehaviour
                 int totalPower = blockers.Sum(b => b.power);
                 bool blockersHaveDeathtouch = blockers.Any(b => b.keywordAbilities.Contains(KeywordAbility.Deathtouch));
                 bool attackerHasDeathtouch = attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch);
+                bool attackerHasIndestructible = attacker.keywordAbilities.Contains(KeywordAbility.Indestructible);
 
-                bool killsAttacker = totalPower >= attacker.toughness || blockersHaveDeathtouch;
+                bool killsAttacker = !attackerHasIndestructible && (totalPower >= attacker.toughness || blockersHaveDeathtouch);
 
                 int remainingDamage = attacker.power;
                 int casualties = 0;
@@ -1396,7 +1403,9 @@ public class TurnSystem : MonoBehaviour
                     int damage = Mathf.Min(remainingDamage, b.toughness);
                     if (attackerHasDeathtouch && remainingDamage > 0)
                         damage = b.toughness;
-                    if (damage >= b.toughness)
+
+                    bool blockerDies = damage >= b.toughness && !b.keywordAbilities.Contains(KeywordAbility.Indestructible);
+                    if (blockerDies)
                     {
                         casualties++;
                         valueLost += b.power + b.baseToughness;
@@ -1458,13 +1467,16 @@ public class TurnSystem : MonoBehaviour
 
                 var best = possibleBlockers.First();
 
-                bool blockerKillsAndSurvives = best.power >= creature.toughness && best.toughness > creature.power;
+                bool blockerKillsAndSurvives = !creature.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                    best.power >= creature.toughness &&
+                    (best.toughness > creature.power || best.keywordAbilities.Contains(KeywordAbility.Indestructible));
                 if (blockerKillsAndSurvives && !goForLethal)
                     return false;
 
                 int creatureValue = creature.power + creature.baseToughness;
                 int blockerValue = best.power + best.baseToughness;
-                bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue;
+                bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue &&
+                               !best.keywordAbilities.Contains(KeywordAbility.Indestructible);
                 bool aggressive = ai.Life >= human.Life;
 
                 return tradeUp || goForLethal || (aggressive && creatureValue >= blockerValue);
