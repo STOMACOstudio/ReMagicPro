@@ -19,7 +19,8 @@ public class CreatureCard : Card
     public void RecalculateStats()
     {
         power = basePower + plusOneCounters - minusOneCounters + tempPowerBonus + auraPowerBonus;
-        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus - damageTaken;
+        int effectiveDamage = keywordAbilities.Contains(KeywordAbility.Indestructible) ? 0 : damageTaken;
+        toughness = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus - effectiveDamage;
     }
 
     public void TakeDamage(int amount)
@@ -40,8 +41,11 @@ public class CreatureCard : Card
 
     public void Kill()
     {
-        damageTaken = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus;
-        RecalculateStats();
+        if (!keywordAbilities.Contains(KeywordAbility.Indestructible))
+        {
+            damageTaken = baseToughness + plusOneCounters - minusOneCounters + tempToughnessBonus + auraToughnessBonus;
+            RecalculateStats();
+        }
     }
 
     public void AddPlusOneCounter()
