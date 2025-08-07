@@ -247,5 +247,6 @@ public static class DeckDatabase
             AddCards(ai, "Pressure Sphere", 1);
             AddCards(ai, "Trinkets Collector", 1);
             AddCards(ai, "Blast of Knowledge", 1);
+            ai.StartingPermanents.Add(CardFactory.Create("Pressure Sphere"));
         }
 }

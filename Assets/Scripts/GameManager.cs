@@ -140,12 +140,28 @@ public class GameManager : MonoBehaviour
             DeckDatabase.BuildStarterDeck(aiPlayer);
         }
 
+        PutStartingPermanentsOnBattlefield(humanPlayer);
+        PutStartingPermanentsOnBattlefield(aiPlayer);
+
         ShuffleDeck(humanPlayer);
         ShuffleDeck(aiPlayer);
 
         DrawCards(humanPlayer, 7);
         DrawCards(aiPlayer, 7);
         UpdateUI();
+    }
+
+    void PutStartingPermanentsOnBattlefield(Player player)
+    {
+        if (player.StartingPermanents == null || player.StartingPermanents.Count == 0)
+            return;
+
+        foreach (var card in player.StartingPermanents)
+        {
+            SummonToken(card, player);
+        }
+
+        player.StartingPermanents.Clear();
     }
 
     void Update()
