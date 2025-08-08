@@ -26,10 +26,7 @@ public class PlayerTargetVisual : MonoBehaviour, IPointerClickHandler
                   GameManager.Instance.optionalAbility.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer))
         {
             Player target = isHuman ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer;
-            GameManager.Instance.optionalTargetPlayer = target;
-            var ability = GameManager.Instance.optionalAbility;
-            ability.effect?.Invoke(GameManager.Instance.GetOwnerOfCard(GameManager.Instance.targetingCreatureOptional), null);
-            GameManager.Instance.CancelOptionalTargeting();
+            GameManager.Instance.ResolveOptionalPlayerTargeting(target);
         }
     }
 }

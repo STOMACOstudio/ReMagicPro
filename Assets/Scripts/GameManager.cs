@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<CreatureCard, List<CreatureCard>> blockingAssignments = new Dictionary<CreatureCard, List<CreatureCard>>();
 
     public bool isStackBusy = false;
+    public int pendingStackEffects = 0;
     public bool gameOver = false;
     public int pendingGraveyardAnimations = 0;
     public bool graveyardViewActive = false;
@@ -115,6 +116,11 @@ public class GameManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+    }
+
+    public bool IsStackActive()
+    {
+        return isStackBusy || pendingStackEffects > 0;
     }
 
     void Start()
@@ -256,7 +262,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayCard(Player player, CardVisual visual)
         {
-            if (isStackBusy)
+            if (IsStackActive())
             {
                 Debug.Log("A spell is already on the stack. Please wait.");
                 return;
@@ -1006,7 +1012,7 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
             CheckForGameEnd();
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1060,11 +1066,9 @@ public class GameManager : MonoBehaviour
 
                         if (target != null)
                         {
-                            ability.effect?.Invoke(caster, target);
-                            Debug.Log($"[AI ETB] {creature.cardName} affects {target.cardName}");
-                            CheckDeaths(humanPlayer);
-                            CheckDeaths(aiPlayer);
-                            UpdateUI();
+                            pendingStackEffects++;
+                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, caster, creature, target));
+                            Debug.Log($"[AI ETB] {creature.cardName} targets {target.cardName}");
                         }
                     }
                 }
@@ -1082,7 +1086,7 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
             CheckForGameEnd();
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1121,7 +1125,7 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
             CheckForGameEnd();
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1160,7 +1164,7 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
             CheckForGameEnd();
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1168,7 +1172,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster)
+        public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster)
         {
             yield return new WaitForSeconds(2f);
 
@@ -1183,7 +1187,7 @@ public class GameManager : MonoBehaviour
                 // Aura may have destroyed itself via its effect
                 UpdateUI();
                 isStackBusy = false;
-                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
                 {
                     TurnSystem.Instance.waitingToResumeAI = false;
                     TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
@@ -1214,7 +1218,50 @@ public class GameManager : MonoBehaviour
             isStackBusy = false;
             CheckForGameEnd();
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
+        }
+
+    public IEnumerator ResolveTriggeredAbilityOnStack(CardAbility ability, Player owner, Card source, Card target)
+        {
+            yield return new WaitUntil(() => !isStackBusy);
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+            isStackBusy = true;
+            TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+            GameObject stackObj = Instantiate(cardPrefab, stackZone);
+            CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+            stackVisual.Setup(source, this);
+            stackVisual.isInStack = true;
+            stackVisual.UpdateVisual();
+            stackVisual.transform.localPosition = Vector3.zero;
+            stackVisual.transform.localRotation = Quaternion.identity;
+            stackVisual.transform.localScale = Vector3.one;
+
+            yield return new WaitForSeconds(2f);
+
+            int oldLife = owner.Life;
+            ability.effect?.Invoke(owner, target);
+            int gained = owner.Life - oldLife;
+            if (gained > 0)
+            {
+                ShowFloatingHeal(gained, owner == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+            }
+
+            CheckDeaths(humanPlayer);
+            CheckDeaths(aiPlayer);
+            UpdateUI();
+            optionalTargetPlayer = null;
+
+            Destroy(stackObj);
+            isStackBusy = false;
+            CheckForGameEnd();
+
+            if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -2797,6 +2844,7 @@ public class GameManager : MonoBehaviour
                 targetingCreatureOptional = creature;
                 optionalAbility = ability;
                 optionalTargetPlayer = null;
+                pendingStackEffects++;
                 isTargetingMode = true;
                 targetingVisual = FindCardVisual(creature); // Optional, for visual link
 
@@ -2811,10 +2859,46 @@ public class GameManager : MonoBehaviour
                     targetingCreatureOptional = null;
                     optionalAbility = null;
                     optionalTargetPlayer = null;
+                    pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
                     isTargetingMode = false;
                     targetingVisual = null;
                 }
             }
+
+        public void ResolveOptionalTargeting(Card target)
+        {
+            if (targetingCreatureOptional == null || optionalAbility == null)
+                return;
+
+            var ability = optionalAbility;
+            var source = targetingCreatureOptional;
+            Player owner = GetOwnerOfCard(source);
+
+            targetingCreatureOptional = null;
+            optionalAbility = null;
+            isTargetingMode = false;
+            targetingVisual = null;
+
+            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, target));
+        }
+
+        public void ResolveOptionalPlayerTargeting(Player target)
+        {
+            if (targetingCreatureOptional == null || optionalAbility == null)
+                return;
+
+            optionalTargetPlayer = target;
+            var ability = optionalAbility;
+            var source = targetingCreatureOptional;
+            Player owner = GetOwnerOfCard(source);
+
+            targetingCreatureOptional = null;
+            optionalAbility = null;
+            isTargetingMode = false;
+            targetingVisual = null;
+
+            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, null));
+        }
 
         public void DeferLifeDeltaFade(bool defer)
         {

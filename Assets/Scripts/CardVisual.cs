@@ -819,15 +819,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 if (isValid && GameManager.Instance.GetOwnerOfCard(clicked)?.Battlefield.Contains(clicked) == true)
                 {
-                    ability.effect?.Invoke(GameManager.Instance.humanPlayer, clicked);
-                    Debug.Log($"{clicked.cardName} destroyed by optional ETB.");
+                    GameManager.Instance.ResolveOptionalTargeting(clicked);
                 }
                 else
                 {
                     Debug.Log("Clicked invalid target — optional ETB does nothing.");
+                    GameManager.Instance.CancelOptionalTargeting();
                 }
-
-                GameManager.Instance.CancelOptionalTargeting();
                 return;
             }
 
