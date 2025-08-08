@@ -90,7 +90,7 @@ public class TurnSystem : MonoBehaviour
             if (GameManager.Instance.gameOver)
                 return;
 
-            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !waitingForAIAction && !GameManager.Instance.isStackBusy)
+            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !waitingForAIAction && !GameManager.Instance.IsStackActive())
             {
                 RunCurrentPhase();
             }
@@ -99,7 +99,7 @@ public class TurnSystem : MonoBehaviour
             {
                 bool allowNext = currentPlayer == PlayerType.Human &&
                                 waitingForPlayerInput &&
-                                !GameManager.Instance.isStackBusy &&
+                                (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                                 !GameManager.Instance.graveyardViewActive &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
                                 currentPhase != TurnPhase.ConfirmBlockers &&
@@ -119,7 +119,7 @@ public class TurnSystem : MonoBehaviour
             {
                 if (currentPlayer == PlayerType.Human &&
                     waitingForPlayerInput &&
-                    !GameManager.Instance.isStackBusy &&
+                    (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                     !GameManager.Instance.graveyardViewActive &&
                     currentPhase != TurnPhase.ConfirmAttackers &&
                     currentPhase != TurnPhase.ConfirmBlockers &&
@@ -264,7 +264,7 @@ public class TurnSystem : MonoBehaviour
 
             Debug.Log($"[Phase] {currentPlayer} - {currentPhase}");
 
-            if (GameManager.Instance.isStackBusy)
+            if (GameManager.Instance.IsStackActive())
             {
                 Debug.Log("AI cast a sorcery — stack is busy. Will resume after.");
                 lastPhaseBeforeStack = currentPhase;
@@ -393,7 +393,7 @@ public class TurnSystem : MonoBehaviour
                         // Play as many cards as AI can afford
                         bool playedCard = true;
 
-                        while (playedCard && !GameManager.Instance.isStackBusy)
+                        while (playedCard && !GameManager.Instance.IsStackActive())
                         {
                             playedCard = false;
 
@@ -945,7 +945,7 @@ public class TurnSystem : MonoBehaviour
                         }
 
                         GameManager.Instance.UpdateUI(); // update UI after all actions
-                        if (GameManager.Instance.isStackBusy)
+                        if (GameManager.Instance.IsStackActive())
                         {
                             Debug.Log("AI cast a sorcery — waiting... will not advance phase until resolved.");
                             return; // just wait
@@ -1199,7 +1199,7 @@ public class TurnSystem : MonoBehaviour
 
         private IEnumerator WaitAndAdvancePhase()
             {
-                yield return new WaitUntil(() => !GameManager.Instance.isStackBusy);
+                yield return new WaitUntil(() => !GameManager.Instance.IsStackActive());
 
                 // Wait a frame to ensure any triggered UI changes or effects have finished
                 yield return null;
