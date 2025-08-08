@@ -163,6 +163,10 @@ public class Player
             Battlefield.Add(card);
             Debug.Log($"{card.cardName} is entering the battlefield.");
             card.OnEnterPlay(this);
+            if (card is CreatureCard creature)
+            {
+                GameManager.Instance.ShowCreatureEnterVFX(creature);
+            }
             if (card is LandCard)
             {
                 GameManager.Instance.NotifyLandEntered(card, this);

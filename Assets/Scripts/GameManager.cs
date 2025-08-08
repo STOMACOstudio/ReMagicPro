@@ -1668,6 +1668,33 @@ public class GameManager : MonoBehaviour
         CheckForGameEnd();
     }
 
+    public void ShowCreatureEnterVFX(CreatureCard creature)
+    {
+        CardVisual visual = FindCardVisual(creature);
+        if (visual == null)
+        {
+            Debug.LogWarning("No visual found for creature " + creature.cardName);
+            return;
+        }
+
+        Vector3 spawnPos = visual.artImage != null ? visual.artImage.transform.position : visual.transform.position;
+        spawnPos.z = 0f;
+
+        Sprite sprite = Resources.Load<Sprite>("VFX/onenter");
+        if (sprite == null)
+        {
+            Debug.LogWarning("Missing onenter sprite in Resources/VFX");
+            return;
+        }
+
+        GameObject vfx = new GameObject("CreatureEnterVFX");
+        var sr = vfx.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = 10;
+        vfx.transform.position = spawnPos;
+        Destroy(vfx, 1.5f);
+    }
+
     public void ShowBloodSplatVFX(Card card)
     {
         Debug.Log("ShowBloodSplatVFX triggered on: " + card.cardName);
@@ -3483,6 +3510,7 @@ public class GameManager : MonoBehaviour
             if (!(creature is CreatureCard))
                 return;
 
+            ShowCreatureEnterVFX((CreatureCard)creature);
             lastEnteredCreature = creature;
             foreach (var player in new[] { humanPlayer, aiPlayer })
             {
