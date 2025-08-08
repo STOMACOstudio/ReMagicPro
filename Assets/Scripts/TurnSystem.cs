@@ -102,7 +102,6 @@ public class TurnSystem : MonoBehaviour
                                 (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                                 !GameManager.Instance.graveyardViewActive &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
-                                currentPhase != TurnPhase.ConfirmBlockers &&
                                 currentPhase != TurnPhase.ChooseAttackers;
 
                 nextPhaseButton.interactable = allowNext;
@@ -122,7 +121,6 @@ public class TurnSystem : MonoBehaviour
                     (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                     !GameManager.Instance.graveyardViewActive &&
                     currentPhase != TurnPhase.ConfirmAttackers &&
-                    currentPhase != TurnPhase.ConfirmBlockers &&
                     currentPhase != TurnPhase.ChooseAttackers)
                 {
                     NextPhaseButton();
@@ -1111,22 +1109,12 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.ConfirmBlockers:
-                    if (currentPlayer == PlayerType.AI)
+                    if (!waitingForPlayerInput)
                     {
-                        if (waitingForPlayerInput)
-                        {
-                            Debug.Log("→ Player confirms blockers.");
+                        waitingForPlayerInput = true;
+                        if (currentPlayer == PlayerType.AI)
                             confirmBlockersButton.gameObject.SetActive(true);
-                        }
-                        else
-                        {
-                            AdvancePhase();
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("→ Skipping blocker confirmation (Player turn).");
-                        AdvancePhase();
+                        Debug.Log("→ Blockers declared. Awaiting confirmation.");
                     }
                     break;
 
