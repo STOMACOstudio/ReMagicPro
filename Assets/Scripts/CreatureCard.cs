@@ -135,6 +135,27 @@ public class CreatureCard : Card
         }
     }
 
+    public override void OnEnterPlay(Player owner)
+    {
+        foreach (var ability in abilities)
+        {
+            if (ability.timing != TriggerTiming.OnEnter)
+                continue;
+
+            if (ability.requiresTarget)
+            {
+                if (owner == GameManager.Instance.humanPlayer)
+                    GameManager.Instance.BeginOptionalTargetSelectionAfterEntry(this, owner, ability);
+                // AI-targeted ETBs handled separately in GameManager
+            }
+            else
+            {
+                GameManager.Instance.StartCoroutine(
+                    GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, owner, this, this));
+            }
+        }
+    }
+
     public override void OnLeavePlay(Player owner)
     {
         base.OnLeavePlay(owner);
