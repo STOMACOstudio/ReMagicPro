@@ -74,6 +74,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private bool isPointerOver = false;
     private bool lastBattlefieldState = false;
+    private List<Graphic> raycastGraphics = new List<Graphic>();
+    private readonly Dictionary<Graphic, bool> originalRaycastStates = new Dictionary<Graphic, bool>();
 
     void Awake()
     {
@@ -95,7 +97,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 artImage = GetComponentInChildren<Image>(true);
         }
 
-        UpdateRaycastTargets();
+        if (artImage != null)
+            artImage.alphaHitTestMinimumThreshold = 0.1f;
 
         DisableRaycast(cardRarity);
         DisableRaycast(coloredManaIcon1);
@@ -108,6 +111,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         DisableRaycast(genericCostBG);
         DisableRaycast(landIcon);
         DisableRaycast(counterImage);
+
+        raycastGraphics = GetComponentsInChildren<Graphic>(true).ToList();
+        foreach (var g in raycastGraphics)
+            originalRaycastStates[g] = g.raycastTarget;
+
+        UpdateRaycastTargets();
     }
 
     private void DisableRaycast(Image img)
@@ -403,10 +412,23 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void UpdateRaycastTargets()
     {
-        if (backgroundImage != null)
-            backgroundImage.raycastTarget = !isInBattlefield;
-        if (artImage != null)
-            artImage.raycastTarget = isInBattlefield;
+        foreach (var g in raycastGraphics)
+        {
+            if (g == null)
+                continue;
+
+            if (isInBattlefield)
+            {
+                g.raycastTarget = false;
+            }
+            else if (originalRaycastStates.TryGetValue(g, out var original))
+            {
+                g.raycastTarget = original;
+            }
+        }
+
+        if (isInBattlefield && artImage != null)
+            artImage.raycastTarget = true;
     }
 
     public void UpdateVisual()
