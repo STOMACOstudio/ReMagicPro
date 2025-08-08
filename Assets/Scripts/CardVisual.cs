@@ -73,6 +73,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool isInStack = false; // when true, card is on the stack
 
     private bool isPointerOver = false;
+    private bool lastBattlefieldState = false;
 
     void Awake()
     {
@@ -93,7 +94,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (artImage == null)
                 artImage = GetComponentInChildren<Image>(true);
         }
-        DisableRaycast(artImage);
+
+        UpdateRaycastTargets();
 
         DisableRaycast(cardRarity);
         DisableRaycast(coloredManaIcon1);
@@ -128,6 +130,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (SceneManager.GetActiveScene().name == "DeckEditorScene")
                 return;
             GetComponent<Button>().onClick.AddListener(OnClick);
+
+            UpdateRaycastTargets();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -380,6 +384,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void Update()
         {
+            if (lastBattlefieldState != isInBattlefield)
+            {
+                lastBattlefieldState = isInBattlefield;
+                UpdateRaycastTargets();
+            }
+
             if (lineRenderer == null || gameManager == null)
                 return;
 
@@ -390,6 +400,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 UpdateConnectionLine();
             }
         }
+
+    private void UpdateRaycastTargets()
+    {
+        if (backgroundImage != null)
+            backgroundImage.raycastTarget = !isInBattlefield;
+        if (artImage != null)
+            artImage.raycastTarget = isInBattlefield;
+    }
 
     public void UpdateVisual()
         {
