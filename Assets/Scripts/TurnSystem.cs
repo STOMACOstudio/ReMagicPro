@@ -1439,36 +1439,50 @@ public class TurnSystem : MonoBehaviour
             if (goForLethal)
                 return true;
 
-                if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
-                    return false;
+            var possibleBlockers = human.Battlefield
+                .OfType<CreatureCard>()
+                .Where(b => BlockerCanBlockAttacker(b, creature, human) &&
+                            !b.isTapped &&
+                            !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                .OrderByDescending(b => b.power + b.baseToughness)
+                .ToList();
 
-                var possibleBlockers = human.Battlefield
-                    .OfType<CreatureCard>()
-                    .Where(b => BlockerCanBlockAttacker(b, creature, human) &&
-                                !b.isTapped &&
-                                !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
-                    .OrderByDescending(b => b.power + b.baseToughness)
-                    .ToList();
-
+            // Creatures that cannot block should attack unless a blocker can kill them and survive
+            if (creature.keywordAbilities.Contains(KeywordAbility.CantBlock))
+            {
                 if (possibleBlockers.Count == 0)
                     return true;
 
-                var best = possibleBlockers.First();
+                var bestCantBlock = possibleBlockers.First();
+                bool blockerKillsAndSurvivesCantBlock = !creature.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                    bestCantBlock.power >= creature.toughness &&
+                    (bestCantBlock.toughness > creature.power || bestCantBlock.keywordAbilities.Contains(KeywordAbility.Indestructible));
 
-                bool blockerKillsAndSurvives = !creature.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
-                    best.power >= creature.toughness &&
-                    (best.toughness > creature.power || best.keywordAbilities.Contains(KeywordAbility.Indestructible));
-                if (blockerKillsAndSurvives && !goForLethal)
-                    return false;
-
-                int creatureValue = creature.power + creature.baseToughness;
-                int blockerValue = best.power + best.baseToughness;
-                bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue &&
-                               !best.keywordAbilities.Contains(KeywordAbility.Indestructible);
-                bool aggressive = ai.Life >= human.Life;
-
-                return tradeUp || goForLethal || (aggressive && creatureValue >= blockerValue);
+                return !blockerKillsAndSurvivesCantBlock;
             }
+
+            if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                return false;
+
+            if (possibleBlockers.Count == 0)
+                return true;
+
+            var best = possibleBlockers.First();
+
+            bool blockerKillsAndSurvives = !creature.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                best.power >= creature.toughness &&
+                (best.toughness > creature.power || best.keywordAbilities.Contains(KeywordAbility.Indestructible));
+            if (blockerKillsAndSurvives && !goForLethal)
+                return false;
+
+            int creatureValue = creature.power + creature.baseToughness;
+            int blockerValue = best.power + best.baseToughness;
+            bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue &&
+                           !best.keywordAbilities.Contains(KeywordAbility.Indestructible);
+            bool aggressive = ai.Life >= human.Life;
+
+            return tradeUp || goForLethal || (aggressive && creatureValue >= blockerValue);
+        }
         
         public void ContinueAIAfterStack()
             {
