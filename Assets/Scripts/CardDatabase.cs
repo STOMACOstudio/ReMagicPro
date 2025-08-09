@@ -2323,7 +2323,7 @@ public static class CardDatabase
                 Add(new CardData //Lich Queen
                     {
                     cardName = "Lich Queen",
-                    rarity = "Rare",
+                    rarity = "Mythic",
                     manaCost = 4,
                     color = new List<string> { "Black", "White" },
                     cardType = CardType.Creature,
