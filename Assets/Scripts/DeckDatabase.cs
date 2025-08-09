@@ -210,24 +210,24 @@ public static class DeckDatabase
         }
 
     public static void BuildBossDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Swamp", 8);
-            AddCards(ai, "Plains", 8);
-            AddCards(ai, "Waterbearer", 3);
-            AddCards(ai, "Ratbat", 3);
-            AddCards(ai, "Death Incarnate", 2);
-            AddCards(ai, "Faith Incarnate", 2);
-            AddCards(ai, "Lights Out", 2);
-            AddCards(ai, "Possessed Innocent", 2);
-            AddCards(ai, "Pure Angel", 1);
-            AddCards(ai, "The Worlds Evil", 1);
-            AddCards(ai, "Massacre", 1);
-            AddCards(ai, "Rotting Dragon", 1);
-            AddCards(ai, "Afterlife Jinx Lantern", 1);
-            AddCards(ai, "Giant Bat", 2);
-            AddCards(ai, "Bog Mosquito", 2);
-            ai.StartingPermanents.Add(CardFactory.Create("Lich Queen"));
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Swamp", 8);
+        AddCards(ai, "Plains", 8);
+        AddCards(ai, "Waterbearer", 4);
+        AddCards(ai, "Ratbat", 3);
+        AddCards(ai, "Death Incarnate", 2);
+        AddCards(ai, "Faith Incarnate", 2);
+        AddCards(ai, "Lights Out", 2);
+        AddCards(ai, "Possessed Innocent", 2);
+        AddCards(ai, "Pure Angel", 1);
+        AddCards(ai, "The Worlds Evil", 1);
+        AddCards(ai, "Massacre", 1);
+        AddCards(ai, "Afterlife Jinx Lantern", 1);
+        AddCards(ai, "Giant Bat", 2);
+        ai.StartingPermanents.Add(CardFactory.Create("Lich Queen"));
+        ai.StartingPermanents.Add(CardFactory.Create("Dump People"));
+        ai.StartingPermanents.Add(CardFactory.Create("Dump People"));
         }
 
     public static void BuildRuinsDeck(Player ai)
