@@ -1924,6 +1924,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     case "common": return Color.black;
                     case "uncommon": return Color.gray;
                     case "rare": return new Color(1f, 0.84f, 0f); // gold
+                    case "mythic": return new Color(0.5f, 0f, 0.5f); // purple
                     default: return Color.clear;
                 }
             }
