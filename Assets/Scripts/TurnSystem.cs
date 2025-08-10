@@ -290,32 +290,7 @@ public class TurnSystem : MonoBehaviour
                         ? GameManager.Instance.humanPlayer
                         : GameManager.Instance.aiPlayer;
 
-                    foreach (var card in player.Battlefield.ToList())
-                    {
-                        foreach (var ability in card.abilities)
-                        {
-                            if (ability.timing == TriggerTiming.OnUpkeep && ability.effect != null)
-                            {
-                                Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
-
-                                int oldLife = player.Life;
-                                ability.effect.Invoke(player, card);
-                                int gained = player.Life - oldLife;
-
-                                if (gained > 0)
-                                {
-                                    GameManager.Instance.ShowFloatingHeal(
-                                        gained,
-                                        player == GameManager.Instance.humanPlayer
-                                            ? GameManager.Instance.playerLifeContainer
-                                            : GameManager.Instance.enemyLifeContainer
-                                    );
-                                }
-                            }
-                        }
-                    }
-
-                    AdvancePhase();
+                    StartCoroutine(HandleUpkeepTriggers(player));
                     break;
 
                 case TurnPhase.Draw:
@@ -1183,6 +1158,24 @@ public class TurnSystem : MonoBehaviour
                     }
                     break;
             }
+        }
+
+        private IEnumerator HandleUpkeepTriggers(Player player)
+        {
+            foreach (var card in player.Battlefield.ToList())
+            {
+                foreach (var ability in card.abilities)
+                {
+                    if (ability.timing == TriggerTiming.OnUpkeep && ability.effect != null)
+                    {
+                        Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
+                        GameManager.Instance.pendingStackEffects++;
+                        yield return StartCoroutine(GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, player, card, card));
+                    }
+                }
+            }
+
+            AdvancePhase();
         }
 
         private IEnumerator WaitAndAdvancePhase()
