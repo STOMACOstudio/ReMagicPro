@@ -205,7 +205,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             isPointerOver = false;
 
             if (lineRenderer != null &&
-                !(linkedCard is CreatureCard creature && creature.blockingThisAttacker != null))
+                !(linkedCard is CreatureCard creature && creature.blockingThisAttacker != null) &&
+                !IsUnblockedAttacker())
             {
                 lineRenderer.enabled = false;
             }
@@ -332,6 +333,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return $"{ColorStat(creature.power, creature.basePower)}/{ColorStat(creature.toughness, creature.baseToughness)}";
         }
 
+    private bool IsAttacking()
+    {
+        return gameManager != null &&
+               linkedCard is CreatureCard creature &&
+               gameManager.currentAttackers.Contains(creature);
+    }
+
+    private bool IsUnblockedAttacker()
+    {
+        return IsAttacking() && ((CreatureCard)linkedCard).blockedByThisBlocker.Count == 0;
+    }
+
     private void UpdateConnectionLine()
         {
             if (lineRenderer == null)
@@ -343,7 +356,25 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
-            if (linkedCard is CreatureCard creature && creature.blockingThisAttacker != null)
+            if (IsAttacking())
+            {
+                var attackingCreature = (CreatureCard)linkedCard;
+                if (attackingCreature.blockedByThisBlocker.Count == 0)
+                {
+                    Transform target = gameManager.humanPlayer.Battlefield.Contains(attackingCreature)
+                        ? gameManager.enemyLifeContainer.transform
+                        : gameManager.playerLifeContainer.transform;
+
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y, 0));
+                    lineRenderer.SetPosition(1, new Vector3(target.position.x, target.position.y, 0));
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+            }
+            else if (linkedCard is CreatureCard creature && creature.blockingThisAttacker != null)
             {
                 var attackerVisual = gameManager.FindCardVisual(creature.blockingThisAttacker);
                 if (attackerVisual != null)
@@ -403,8 +434,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
 
             bool isBlocking = linkedCard is CreatureCard creature && creature.blockingThisAttacker != null;
+            bool isAttacking = IsAttacking();
 
-            if (isPointerOver || isBlocking)
+            if (isPointerOver || isBlocking || isAttacking)
             {
                 UpdateConnectionLine();
             }
