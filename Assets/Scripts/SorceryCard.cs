@@ -212,6 +212,9 @@ public class SorceryCard : Card
                         var targets = player.Battlefield
                             .Where(card =>
                             {
+                                if (card.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                                    return false;
+
                                 if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Land && card is LandCard)
                                     return true;
 
@@ -374,7 +377,9 @@ public class SorceryCard : Card
                     List<(Card card, Player owner)> toDestroy = new List<(Card, Player)>();
                     foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
                     {
-                        foreach (var card in player.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList())
+                        foreach (var card in player.Battlefield.OfType<CreatureCard>()
+                            .Where(c => c.cardName == name && !c.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                            .ToList())
                         {
                             toDestroy.Add((card, player));
                         }
@@ -409,8 +414,15 @@ public class SorceryCard : Card
 
                     if (typeMatches && colorMatches)
                     {
-                        GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
-                        Debug.Log($"{cardName} destroyed {target.cardName}.");
+                        if (target.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                        {
+                            Debug.Log($"{cardName} failed to destroy {target.cardName}: indestructible.");
+                        }
+                        else
+                        {
+                            GameManager.Instance.SendToGraveyard(target, GameManager.Instance.GetOwnerOfCard(target));
+                            Debug.Log($"{cardName} destroyed {target.cardName}.");
+                        }
 
                         ResolveEffect(caster);
                         return;

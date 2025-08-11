@@ -80,7 +80,8 @@ public static class CardDatabase
                                 effect = (Player owner, Card target) =>
                                 {
                                     Player controller = GameManager.Instance.GetOwnerOfCard(target);
-                                    GameManager.Instance.SendToGraveyard(target, controller);
+                                    if (!target.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                                        GameManager.Instance.SendToGraveyard(target, controller);
                                 }
                             }
                         }
@@ -720,7 +721,8 @@ public static class CardDatabase
                             excludeArtifactCreatures = true,
                             effect = (Player owner, Card target) =>
                             {
-                                if (target is CreatureCard creature && !creature.color.Contains("Artifact"))
+                                if (target is CreatureCard creature && !creature.color.Contains("Artifact")
+                                    && !target.keywordAbilities.Contains(KeywordAbility.Indestructible))
                                 {
                                     Player controller = GameManager.Instance.GetOwnerOfCard(target);
                                     GameManager.Instance.SendToGraveyard(target, controller);
@@ -1815,7 +1817,8 @@ public static class CardDatabase
                             effect = (Player owner, Card target) =>
                             {
                                 Player controller = GameManager.Instance.GetOwnerOfCard(target);
-                                GameManager.Instance.SendToGraveyard(target, controller);
+                                if (!target.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                                    GameManager.Instance.SendToGraveyard(target, controller);
                             }
                         }
                     }
