@@ -180,7 +180,7 @@ public static class CardDatabase
                     color = new List<string> { "White" },
                     cardType = CardType.Creature,
                     power = 1,
-                    toughness = 3,
+                    toughness = 2,
                     subtypes = new List<string> { "Human" },
                     keywordAbilities = new List<KeywordAbility> {},
                     artwork = Resources.Load<Sprite>("Art/waterbearer"),
@@ -2884,7 +2884,7 @@ public static class CardDatabase
                       {
                           cardName = "Stone of Plague",
                         rarity = "Uncommon",
-                        manaCost = 4,
+                        manaCost = 3,
                         color = new List<string>(),
                         cardType = CardType.Artifact,
                         plagueAmount = 1,
