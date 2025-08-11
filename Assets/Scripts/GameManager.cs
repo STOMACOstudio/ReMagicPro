@@ -749,15 +749,22 @@ public class GameManager : MonoBehaviour
                 int remainingDamage = attackerDamage;
                 int totalDamageFromBlockers = 0;
 
-                foreach (var blocker in blockers)
+                bool attackerHasTrample = attacker.keywordAbilities.Contains(KeywordAbility.Trample);
+                for (int i = 0; i < blockers.Count; i++)
                 {
+                    var blocker = blockers[i];
                     bool attackerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
                     bool blockerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                     int damageToBlocker = 0;
                     if (!blockerProtected)
                     {
-                        damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+                        bool isLastBlocker = i == blockers.Count - 1;
+                        if (!attackerHasTrample && isLastBlocker)
+                            damageToBlocker = remainingDamage;
+                        else
+                            damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+
                         blocker.TakeDamage(damageToBlocker);
                         if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
                             blocker.Kill();
@@ -3215,15 +3222,22 @@ public class GameManager : MonoBehaviour
                     int remainingDamage = attackerDamage;
                     int totalDamageFromBlockers = 0;
 
-                    foreach (var blocker in blockers)
+                    bool attackerHasTrample = attacker.keywordAbilities.Contains(KeywordAbility.Trample);
+                    for (int i = 0; i < blockers.Count; i++)
                     {
+                        var blocker = blockers[i];
                         bool attackerProtected = blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
                         bool blockerProtected = attacker.color.Any(c => blocker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c)));
 
                         int damageToBlocker = 0;
                         if (!blockerProtected)
                         {
-                            damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+                            bool isLastBlocker = i == blockers.Count - 1;
+                            if (!attackerHasTrample && isLastBlocker)
+                                damageToBlocker = remainingDamage;
+                            else
+                                damageToBlocker = Mathf.Min(remainingDamage, blocker.toughness);
+
                             blocker.TakeDamage(damageToBlocker);
                             if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch) && damageToBlocker > 0)
                                 blocker.Kill();

@@ -1376,12 +1376,19 @@ public class TurnSystem : MonoBehaviour
                 int remainingDamage = attacker.power;
                 int casualties = 0;
                 int valueLost = 0;
-                foreach (var b in blockers.OrderBy(x => x.toughness))
+                var orderedBlockers = blockers.OrderBy(x => x.toughness).ToList();
+                bool attackerHasTrample = attacker.keywordAbilities.Contains(KeywordAbility.Trample);
+                for (int i = 0; i < orderedBlockers.Count && remainingDamage > 0; i++)
                 {
-                    if (remainingDamage <= 0)
-                        break;
+                    var b = orderedBlockers[i];
 
-                    int damage = Mathf.Min(remainingDamage, b.toughness);
+                    int damage;
+                    bool isLastBlocker = i == orderedBlockers.Count - 1;
+                    if (!attackerHasTrample && isLastBlocker)
+                        damage = remainingDamage;
+                    else
+                        damage = Mathf.Min(remainingDamage, b.toughness);
+
                     if (attackerHasDeathtouch && remainingDamage > 0)
                         damage = b.toughness;
 
