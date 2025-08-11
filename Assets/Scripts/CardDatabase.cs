@@ -1652,7 +1652,7 @@ public static class CardDatabase
                 Add(new CardData //Crazy cat lady
                     {
                     cardName = "Crazy Cat Lady",
-                    rarity = "Common",
+                    rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Green" },
                     cardType = CardType.Creature,
