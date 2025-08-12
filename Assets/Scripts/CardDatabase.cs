@@ -2461,7 +2461,7 @@ public static class CardDatabase
                     manaCost = 2,
                     color = new List<string> { "White" },
                     revealUntilCreature = true,
-                    artwork = Resources.Load<Sprite>("Art/bell_call"),
+                    artwork = Resources.Load<Sprite>("Art/bells_call"),
                     abilities = new List<CardAbility>(),
                     });
             //BLUE
