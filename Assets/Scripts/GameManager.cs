@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     public GameObject enemyLifeContainer;
     public GameObject floatingDamagePrefab;
     public GameObject favouritePopupPrefab;
+    public GameObject triggerVFXPrefab;
 
     // Tracks cumulative life changes during a combat step
     private TMP_Text playerLifeDeltaText;
@@ -1268,6 +1269,15 @@ public class GameManager : MonoBehaviour
             stackVisual.transform.localRotation = Quaternion.identity;
             stackVisual.transform.localScale = Vector3.one;
 
+            GameObject triggerVFX = null;
+            if (triggerVFXPrefab != null)
+            {
+                triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+                RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+                if (rt != null)
+                    rt.anchoredPosition = Vector2.zero;
+            }
+
             yield return new WaitForSeconds(2f);
 
             int oldLife = owner.Life;
@@ -1283,6 +1293,8 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             optionalTargetPlayer = null;
 
+            if (triggerVFX != null)
+                Destroy(triggerVFX);
             Destroy(stackObj);
             isStackBusy = false;
             CheckForGameEnd();
