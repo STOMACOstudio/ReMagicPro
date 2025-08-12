@@ -864,6 +864,25 @@ public static class CardDatabase
                     flavorText = "Beware the night when the dead begin crawling out of their graves.",
                     artwork = Resources.Load<Sprite>("Art/limping_corpse")
                     });
+                Add(new CardData //Stubborn Skeleton
+                    {
+                    cardName = "Stubborn Skeleton",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    entersTapped = true,
+                    subtypes = new List<string> { "Skeleton" },
+                    manaToPayToActivate = 1,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.ReturnSelfFromGraveyard
+                    },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    artwork = Resources.Load<Sprite>("Art/stubborn_skeleton")
+                    });
                 Add(new CardData //Famished crow
                     {
                     cardName = "Famished Crow",

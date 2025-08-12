@@ -194,6 +194,9 @@ public class Card
                                 case ActivatedAbility.PayToBuffSelf:
                                     lines.Add($"{creature.manaToPayToActivate}: +1/+0 until end of turn.");
                                     break;
+                                case ActivatedAbility.ReturnSelfFromGraveyard:
+                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to the battlefield tapped.");
+                                    break;
                             }
                         }
                     }
