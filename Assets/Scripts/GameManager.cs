@@ -697,10 +697,10 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            if (card is CreatureCard deadCreature)
+            if (card is CreatureCard thisDeadCreature)
             {
-                deadCreature.hasSummoningSickness = false;
-                deadCreature.toughness = deadCreature.baseToughness;
+                thisDeadCreature.hasSummoningSickness = false;
+                thisDeadCreature.toughness = thisDeadCreature.baseToughness;
 
                 if (visual != null)
                 {
