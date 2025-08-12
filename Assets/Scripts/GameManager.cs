@@ -1721,6 +1721,29 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnCreatureFromGraveyardToHand(Player player, CreatureCard creature)
+    {
+        if (creature == null || !player.Graveyard.Contains(creature))
+            return;
+
+        player.Graveyard.Remove(creature);
+        player.Hand.Add(creature);
+
+        if (player == humanPlayer)
+        {
+            GameObject obj = Instantiate(cardPrefab, playerHandArea);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(creature.cardName);
+            visual.Setup(creature, this, data);
+            activeCardVisuals.Add(visual);
+        }
+
+        RefreshGraveyardVisuals(player);
+        if (graveyardViewActive && graveyardUIManager != null)
+            graveyardUIManager.Open(player.Graveyard);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)

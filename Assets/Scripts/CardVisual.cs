@@ -861,19 +861,33 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 if (isInGraveyardViewer && linkedCard is CreatureCard graveCreature &&
                     GameManager.Instance.humanPlayer.Graveyard.Contains(linkedCard) &&
-                    graveCreature.activatedAbilities != null &&
-                    graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyard))
+                    graveCreature.activatedAbilities != null)
                 {
                     Player player = GameManager.Instance.humanPlayer;
                     int cost = graveCreature.manaToPayToActivate;
-                    if (player.ColoredMana.Total() >= cost)
+                    if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyard))
                     {
-                        player.ColoredMana.SpendGeneric(cost);
-                        GameManager.Instance.ReturnCreatureFromGraveyardToBattlefield(player, graveCreature);
+                        if (player.ColoredMana.Total() >= cost)
+                        {
+                            player.ColoredMana.SpendGeneric(cost);
+                            GameManager.Instance.ReturnCreatureFromGraveyardToBattlefield(player, graveCreature);
+                        }
+                        else
+                        {
+                            Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                        }
                     }
-                    else
+                    else if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyardToHand))
                     {
-                        Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                        if (player.ColoredMana.Total() >= cost)
+                        {
+                            player.ColoredMana.SpendGeneric(cost);
+                            GameManager.Instance.ReturnCreatureFromGraveyardToHand(player, graveCreature);
+                        }
+                        else
+                        {
+                            Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                        }
                     }
                 }
                 return;

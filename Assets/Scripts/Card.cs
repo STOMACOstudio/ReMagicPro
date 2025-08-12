@@ -197,6 +197,9 @@ public class Card
                                 case ActivatedAbility.ReturnSelfFromGraveyard:
                                     lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to the battlefield tapped.");
                                     break;
+                                case ActivatedAbility.ReturnSelfFromGraveyardToHand:
+                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to your hand.");
+                                    break;
                             }
                         }
                     }
