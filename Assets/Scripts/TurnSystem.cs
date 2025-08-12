@@ -1110,40 +1110,46 @@ public class TurnSystem : MonoBehaviour
                     Player endingPlayer = currentPlayer == PlayerType.Human
                         ? GameManager.Instance.humanPlayer
                         : GameManager.Instance.aiPlayer;
+                    Player otherPlayer = endingPlayer == GameManager.Instance.humanPlayer
+                        ? GameManager.Instance.aiPlayer
+                        : GameManager.Instance.humanPlayer;
 
-                    // Remove temporary keyword abilities
-                    foreach (var card in endingPlayer.Battlefield)
+                    foreach (var player in new Player[] { endingPlayer, otherPlayer })
                     {
-                        if (card is CreatureCard creature)
+                        // Remove temporary keyword abilities and buffs
+                        foreach (var card in player.Battlefield)
                         {
-                            if (creature.temporaryKeywordAbilities.Count > 0)
+                            if (card is CreatureCard creature)
                             {
-                                foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
+                                if (creature.temporaryKeywordAbilities.Count > 0)
                                 {
-                                    while (creature.keywordAbilities.Contains(temp))
+                                    foreach (var temp in new List<KeywordAbility>(creature.temporaryKeywordAbilities))
                                     {
-                                        creature.keywordAbilities.Remove(temp);
-                                        Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                        while (creature.keywordAbilities.Contains(temp))
+                                        {
+                                            creature.keywordAbilities.Remove(temp);
+                                            Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                        }
                                     }
+
+                                    creature.temporaryKeywordAbilities.Clear();
+
+                                    var visual = GameManager.Instance.FindCardVisual(card);
+                                    if (visual != null)
+                                        visual.UpdateVisual();
                                 }
 
-                                creature.temporaryKeywordAbilities.Clear();
-
-                                var visual = GameManager.Instance.FindCardVisual(card);
-                                if (visual != null)
-                                    visual.UpdateVisual();
+                                if (creature.tempPowerBonus != 0 || creature.tempToughnessBonus != 0)
+                                {
+                                    creature.ResetTemporaryBuff();
+                                    var visual = GameManager.Instance.FindCardVisual(card);
+                                    if (visual != null)
+                                        visual.UpdateVisual();
+                                    Debug.Log($"{creature.cardName} loses temporary buff at end of turn.");
+                                }
                             }
-
-                            if (creature.tempPowerBonus != 0 || creature.tempToughnessBonus != 0)
-                            {
-                                creature.ResetTemporaryBuff();
-                                var visual = GameManager.Instance.FindCardVisual(card);
-                                if (visual != null)
-                                    visual.UpdateVisual();
-                                Debug.Log($"{creature.cardName} loses temporary buff at end of turn.");
-                            }
-                          }
-                      }
+                        }
+                    }
 
                     // Only after cleanup, begin next turn
                     if (endingPlayer.extraTurns > 0)
