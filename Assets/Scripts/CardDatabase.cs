@@ -881,7 +881,7 @@ public static class CardDatabase
                         ActivatedAbility.ReturnSelfFromGraveyard
                     },
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/flayed_deer")
+                    artwork = Resources.Load<Sprite>("Art/stubborn_skeleton")
                     });
                 Add(new CardData //Famished crow
                     {
