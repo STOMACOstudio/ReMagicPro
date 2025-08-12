@@ -93,27 +93,17 @@ public class Card
         }
 
     public virtual void OnLeavePlay(Player owner)
+    {
+        foreach (var ability in abilities)
         {
-            foreach (var ability in abilities)
-            {
-                if (ability.timing == TriggerTiming.OnDeath && ability.effect != null)
-                {
-                    int oldLife = owner.Life;
-                    ability.effect.Invoke(owner, this);
-                    int gained = owner.Life - oldLife;
+            if (ability.timing != TriggerTiming.OnDeath || ability.effect == null)
+                continue;
 
-                    if (gained > 0)
-                    {
-                        GameManager.Instance.ShowFloatingHeal(
-                            gained,
-                            owner == GameManager.Instance.humanPlayer
-                                ? GameManager.Instance.playerLifeContainer
-                                : GameManager.Instance.enemyLifeContainer
-                        );
-                    }
-                }
-            }
+            GameManager.Instance.pendingStackEffects++;
+            GameManager.Instance.StartCoroutine(
+                GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, owner, this, this));
         }
+    }
 
     public virtual string GetCardText()
         {
