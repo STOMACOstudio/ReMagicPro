@@ -1070,6 +1070,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            TurnSystem.TurnPhase phase = TurnSystem.Instance.currentPhase;
+            bool canActivateArtifact =
+                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (phase == TurnSystem.TurnPhase.Main1 ||
+                     phase == TurnSystem.TurnPhase.Main2 ||
+                     phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                     phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
+                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
+                    (phase == TurnSystem.TurnPhase.ChooseBlockers ||
+                     phase == TurnSystem.TurnPhase.ConfirmBlockers));
+
             if (linkedCard.activatedAbilities != null &&
             linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
             !linkedCard.isTapped &&
@@ -1280,12 +1291,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
-            // TAP-TO-PLAGUE ability during Main Phase
+            // TAP-TO-PLAGUE ability
             if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlague) &&
                 !linkedCard.isTapped &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                canActivateArtifact)
             {
                 linkedCard.isTapped = true;
 
@@ -1303,14 +1313,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
             
-            // TAP-AND-SACRIFICE-FOR-MANA or SACRIFICE-FOR-MANA during Main Phase
+            // TAP-AND-SACRIFICE-FOR-MANA or SACRIFICE-FOR-MANA
                 if (linkedCard.activatedAbilities != null &&
                     (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapAndSacrificeForMana) ||
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForMana)) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    canActivateArtifact)
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
                     Player player = GameManager.Instance.humanPlayer;
@@ -1368,13 +1377,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
             
-            // TAP-TO-GAIN-LIFE ability during Main Phase
+            // TAP-TO-GAIN-LIFE ability
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToGainLife) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    canActivateArtifact)
                 {
                     linkedCard.isTapped = true;
                     GameManager.Instance.TryGainLife(GameManager.Instance.humanPlayer, 1);
@@ -1382,13 +1390,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
-            // SACRIFICE-FOR-LIFE during Main Phase
+            // SACRIFICE-FOR-LIFE
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeForLife) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    canActivateArtifact)
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
                     Player player = GameManager.Instance.humanPlayer;
@@ -1420,8 +1427,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         linkedCard.activatedAbilities.Contains(ActivatedAbility.DealDamageToCreature) &&
                         !linkedCard.isTapped &&
                         GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                        (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                        canActivateArtifact)
                     {
                         // Check for mana
                         ArtifactCard artifact = linkedCard as ArtifactCard;
@@ -1446,8 +1452,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         linkedCard.activatedAbilities.Contains(ActivatedAbility.BuffTargetCreature) &&
                         !linkedCard.isTapped &&
                         GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                        TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                        (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                        canActivateArtifact)
                     {
                         ArtifactCard artifact = linkedCard as ArtifactCard;
                         Player player = GameManager.Instance.humanPlayer;
@@ -1487,13 +1492,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
-            // SACRIFICE-TO-DRAW-CARDS during Main Phase
+            // SACRIFICE-TO-DRAW-CARDS
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.SacrificeToDrawCards) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    canActivateArtifact)
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
 
@@ -1540,13 +1544,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
-            // TAP TO PLAY RANDOM POTION during Main Phase
+            // TAP TO PLAY RANDOM POTION
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlayRandomPotion) &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2))
+                    canActivateArtifact)
                 {
                     ArtifactCard artifact = linkedCard as ArtifactCard;
                     Player player = GameManager.Instance.humanPlayer;
