@@ -615,6 +615,25 @@ public class GameManager : MonoBehaviour
             owner.Battlefield.Remove(card);
             owner.Hand.Remove(card);
 
+            if (diedFromBattlefield && card is CreatureCard deadCreature)
+            {
+                currentAttackers.Remove(deadCreature);
+                selectedAttackers.Remove(deadCreature);
+                if (selectedBlockerForBlocking == deadCreature)
+                    selectedBlockerForBlocking = null;
+
+                foreach (var creature in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield).OfType<CreatureCard>())
+                {
+                    creature.blockedByThisBlocker.Remove(deadCreature);
+                    if (creature.blockingThisAttacker == deadCreature)
+                        creature.blockingThisAttacker = null;
+
+                    var vis = FindCardVisual(creature);
+                    if (vis != null)
+                        vis.UpdateVisual();
+                }
+            }
+
             if (discardedFromHand)
             {
                 NotifyOpponentDiscard(owner);
