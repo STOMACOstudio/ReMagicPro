@@ -6183,6 +6183,7 @@ MonoBehaviour:
   colorlessManaText: {fileID: 1681671970}
   activeCardVisuals: []
   isStackBusy: 0
+  pendingStackEffects: 0
   gameOver: 0
   pendingGraveyardAnimations: 0
   graveyardViewActive: 0
@@ -6479,8 +6480,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -876.87, y: -433.20004}
-  m_SizeDelta: {x: 60, y: 60}
+  m_AnchoredPosition: {x: -876.87, y: -462.75}
+  m_SizeDelta: {x: 60, y: 89.55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1564124845
 MonoBehaviour:
@@ -6572,8 +6573,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 885, y: 428.99994}
-  m_SizeDelta: {x: 60, y: 60}
+  m_AnchoredPosition: {x: 885, y: 457.65}
+  m_SizeDelta: {x: 60, y: 95.81}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1586552184
 MonoBehaviour:
@@ -8692,8 +8693,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 600, y: 400}
+  m_AnchoredPosition: {x: 0, y: -10}
+  m_SizeDelta: {x: 1234, y: 367}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2200000002
 MonoBehaviour:
@@ -8759,8 +8760,8 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 80, y: 120}
-  m_Spacing: {x: 45, y: 65}
+  m_CellSize: {x: 50, y: 50}
+  m_Spacing: {x: 25, y: 50}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!222 &2200000005
