@@ -50,4 +50,5 @@ public enum ActivatedAbility
     TapToPlayRandomPotion,
     PayToBuffSelf,
     Equip,
+    ReturnSelfFromGraveyard,
 }

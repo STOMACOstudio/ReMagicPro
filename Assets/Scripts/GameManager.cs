@@ -1687,6 +1687,40 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnCreatureFromGraveyardToBattlefield(Player player, CreatureCard creature)
+    {
+        if (creature == null || !player.Graveyard.Contains(creature))
+            return;
+
+        player.Graveyard.Remove(creature);
+        player.Battlefield.Add(creature);
+
+        creature.hasSummoningSickness = true;
+        if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+        {
+            creature.isTapped = true;
+            Debug.Log($"{creature.cardName} enters tapped from graveyard.");
+        }
+
+        GameObject obj = Instantiate(cardPrefab, player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData data = CardDatabase.GetCardData(creature.cardName);
+        visual.Setup(creature, this, data);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        creature.OnEnterPlay(player);
+        NotifyCreatureEntered(creature, player);
+        if ((creature is ArtifactCard) || creature.color.Contains("Artifact"))
+            NotifyArtifactEntered(creature, player);
+
+        RefreshGraveyardVisuals(player);
+        if (graveyardViewActive && graveyardUIManager != null)
+            graveyardUIManager.Open(player.Graveyard);
+        UpdateUI();
+    }
+
     public void TapCardForMana(CreatureCard creature)
     {
         if (!creature.isTapped)

@@ -848,7 +848,26 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void OnClick()
         {
             if (GameManager.Instance != null && GameManager.Instance.graveyardViewActive)
+            {
+                if (isInGraveyardViewer && linkedCard is CreatureCard graveCreature &&
+                    GameManager.Instance.humanPlayer.Graveyard.Contains(linkedCard) &&
+                    graveCreature.activatedAbilities != null &&
+                    graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyard))
+                {
+                    Player player = GameManager.Instance.humanPlayer;
+                    int cost = graveCreature.manaToPayToActivate;
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        player.ColoredMana.SpendGeneric(cost);
+                        GameManager.Instance.ReturnCreatureFromGraveyardToBattlefield(player, graveCreature);
+                    }
+                    else
+                    {
+                        Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                    }
+                }
                 return;
+            }
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
             {
                 DeckGenerator dg = FindObjectOfType<DeckGenerator>();
