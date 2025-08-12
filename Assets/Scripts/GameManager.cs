@@ -1568,6 +1568,77 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public IEnumerator RevealUntilCreature(Player player)
+    {
+        List<Card> revealedNonCreatures = new List<Card>();
+        List<CardVisual> visuals = new List<CardVisual>();
+        Card creatureCard = null;
+        CardVisual creatureVisual = null;
+
+        int index = 0;
+        float spacing = 150f;
+
+        while (player.Deck.Count > 0)
+        {
+            Card top = player.Deck[0];
+            player.Deck.RemoveAt(0);
+
+            GameObject obj = Instantiate(cardPrefab, stackZone);
+            obj.transform.localPosition = new Vector3(index * spacing, 0f, 0f);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(top.cardName);
+            visual.Setup(top, this, data);
+            visual.isInStack = true;
+            visuals.Add(visual);
+
+            if (top is CreatureCard)
+            {
+                creatureCard = top;
+                creatureVisual = visual;
+                break;
+            }
+            else
+            {
+                revealedNonCreatures.Add(top);
+            }
+
+            index++;
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (creatureCard != null)
+        {
+            player.Hand.Add(creatureCard);
+            if (player == humanPlayer)
+            {
+                creatureVisual.transform.SetParent(playerHandArea, false);
+                creatureVisual.isInStack = false;
+                activeCardVisuals.Add(creatureVisual);
+            }
+            else
+            {
+                Destroy(creatureVisual.gameObject);
+                if (enemyHandText != null)
+                    enemyHandText.text = "Hand: " + player.Hand.Count;
+            }
+        }
+
+        foreach (var card in revealedNonCreatures)
+            player.Deck.Add(card);
+
+        foreach (var visual in visuals)
+        {
+            if (!(visual.linkedCard is CreatureCard))
+                Destroy(visual.gameObject);
+        }
+
+        ShuffleDeck(player);
+        UpdateUI();
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+    }
+
     public void ReturnRandomInstantOrSorceryFromGraveyard(Player player)
     {
         var spells = player.Graveyard

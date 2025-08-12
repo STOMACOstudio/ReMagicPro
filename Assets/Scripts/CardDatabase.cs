@@ -2454,6 +2454,16 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/deny_the_afterlife"),
                         exileAllCreaturesFromGraveyards = true
                     });
+                Add(new CardData { //Bell Call
+                    cardName = "Bell Call",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = new List<string> { "White" },
+                    revealUntilCreature = true,
+                    artwork = Resources.Load<Sprite>("Art/bell_call"),
+                    abilities = new List<CardAbility>(),
+                    });
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",
