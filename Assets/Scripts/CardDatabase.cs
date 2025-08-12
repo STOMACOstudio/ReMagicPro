@@ -1263,6 +1263,11 @@ public static class CardDatabase
                         power = 8,
                         toughness = 8,
                         subtypes = new List<string> { "Demon" },
+                        manaToPayToActivate = 8,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.ReturnSelfFromGraveyard
+                        },
                         keywordAbilities = new List<KeywordAbility>
                         {
                             KeywordAbility.Flying,
