@@ -1114,10 +1114,10 @@ public class TurnSystem : MonoBehaviour
                         ? GameManager.Instance.aiPlayer
                         : GameManager.Instance.humanPlayer;
 
-                    foreach (var player in new Player[] { endingPlayer, otherPlayer })
+                    foreach (var thisplayer in new Player[] { endingPlayer, otherPlayer })
                     {
                         // Remove temporary keyword abilities and buffs
-                        foreach (var card in player.Battlefield)
+                        foreach (var card in thisplayer.Battlefield)
                         {
                             if (card is CreatureCard creature)
                             {
