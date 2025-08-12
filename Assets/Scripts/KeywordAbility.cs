@@ -51,4 +51,5 @@ public enum ActivatedAbility
     PayToBuffSelf,
     Equip,
     ReturnSelfFromGraveyard,
+    ReturnSelfFromGraveyardToHand,
 }

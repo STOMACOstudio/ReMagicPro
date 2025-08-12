@@ -883,6 +883,27 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/stubborn_skeleton")
                     });
+                Add(new CardData //Wall of Putrid Flesh
+                    {
+                    cardName = "Wall of Putrid Flesh",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 1,
+                    subtypes = new List<string> { "Zombie", "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender
+                    },
+                    manaToPayToActivate = 1,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.ReturnSelfFromGraveyardToHand
+                    },
+                    artwork = Resources.Load<Sprite>("Art/wall_of_putrid_flesh")
+                    });
                 Add(new CardData //Famished crow
                     {
                     cardName = "Famished Crow",
