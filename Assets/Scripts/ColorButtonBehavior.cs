@@ -56,9 +56,17 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     void Start()
         {
             Image img = GetComponent<Image>();
-            if (img != null)
+            if (img != null && img.sprite != null)
             {
-                img.alphaHitTestMinimumThreshold = 0.1f;
+                var tex = img.sprite.texture;
+                if (tex != null && tex.isReadable)
+                {
+                    img.alphaHitTestMinimumThreshold = 0.1f;
+                }
+                else
+                {
+                    Debug.LogWarning($"Texture for {img.name} is not readable; alpha hit testing disabled.");
+                }
             }
 
             if (hoverGlow != null)

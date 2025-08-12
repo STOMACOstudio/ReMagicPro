@@ -97,8 +97,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 artImage = GetComponentInChildren<Image>(true);
         }
 
-        if (artImage != null)
-            artImage.alphaHitTestMinimumThreshold = 0.1f;
+        if (artImage != null && artImage.sprite != null)
+        {
+            var tex = artImage.sprite.texture;
+            if (tex != null && tex.isReadable)
+            {
+                artImage.alphaHitTestMinimumThreshold = 0.1f;
+            }
+            else
+            {
+                Debug.LogWarning($"Texture for {artImage.name} is not readable; alpha hit testing disabled.");
+            }
+        }
 
         DisableRaycast(cardRarity);
         DisableRaycast(coloredManaIcon1);
