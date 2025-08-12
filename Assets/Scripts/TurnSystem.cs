@@ -854,21 +854,23 @@ public class TurnSystem : MonoBehaviour
 
                         foreach (var card in ai.Battlefield.ToList()) // .ToList() because we may remove during iteration
                         {
+                            if (GameManager.Instance.IsStackActive())
+                                break;
+
                             if (card is ArtifactCard artifact && !artifact.isTapped)
                             {
                                 if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
                                 {
                                     artifact.isTapped = true;
-                                    GameManager.Instance.TryGainLife(ai, 1);
+                                    GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToGainLife, ai);
                                     Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                    GameManager.Instance.UpdateUI();
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
                                 {
                                     artifact.isTapped = true;
-                                    GameManager.Instance.humanPlayer.Life -= artifact.plagueAmount;
-                                    GameManager.Instance.aiPlayer.Life -= artifact.plagueAmount;
-                                    GameManager.Instance.CheckForGameEnd();
+                                    GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToPlague, ai);
                                     GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                     GameManager.Instance.UpdateUI();
                                 }
@@ -878,10 +880,9 @@ public class TurnSystem : MonoBehaviour
                                     if (EnsureManaForCost(ai, abilityCost))
                                     {
                                         ai.ColoredMana.Pay(abilityCost);
-                                        GameManager.Instance.TryGainLife(ai, artifact.lifeToGain);
                                         artifact.isTapped = true;
                                         GameManager.Instance.SendToGraveyard(artifact, ai);
-                                        Debug.Log($"AI sacrifices {artifact.cardName} to gain {artifact.lifeToGain} life.");
+                                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.SacrificeForLife, ai);
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
                                     }
@@ -893,11 +894,8 @@ public class TurnSystem : MonoBehaviour
                                     {
                                         ai.ColoredMana.Pay(abilityCost);
                                         artifact.isTapped = true;
-
-                                        GameManager.Instance.DrawCards(ai, artifact.cardsToDraw);
-
                                         GameManager.Instance.SendToGraveyard(artifact, ai);
-                                        Debug.Log($"AI sacrifices {artifact.cardName} to draw {artifact.cardsToDraw} card(s).");
+                                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.SacrificeToDrawCards, ai);
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
                                     }
@@ -909,7 +907,7 @@ public class TurnSystem : MonoBehaviour
                                     {
                                         ai.ColoredMana.Pay(abilityCost);
                                         artifact.isTapped = true;
-                                        GameManager.Instance.SearchLibraryForRandomPotionToBattlefield(ai);
+                                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToPlayRandomPotion, ai);
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
                                     }

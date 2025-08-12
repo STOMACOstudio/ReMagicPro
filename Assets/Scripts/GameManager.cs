@@ -1307,6 +1307,105 @@ public class GameManager : MonoBehaviour
             }
         }
 
+    public void QueueArtifactActivatedAbility(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        pendingStackEffects++;
+        StartCoroutine(ResolveArtifactActivatedAbilityOnStack(artifact, ability, controller, target));
+    }
+
+    public IEnumerator ResolveArtifactActivatedAbilityOnStack(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        yield return new WaitUntil(() => !isStackBusy);
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        isStackBusy = true;
+        TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+        GameObject stackObj = Instantiate(cardPrefab, stackZone);
+        CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+        stackVisual.Setup(artifact, this);
+        stackVisual.isInStack = true;
+        stackVisual.UpdateVisual();
+        stackVisual.transform.localPosition = Vector3.zero;
+        stackVisual.transform.localRotation = Quaternion.identity;
+        stackVisual.transform.localScale = Vector3.one;
+
+        GameObject triggerVFX = null;
+        if (triggerVFXPrefab != null)
+        {
+            triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+            RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        switch (ability)
+        {
+            case ActivatedAbility.TapToGainLife:
+                TryGainLife(controller, 1);
+                break;
+            case ActivatedAbility.TapToPlague:
+                humanPlayer.Life -= artifact.plagueAmount;
+                aiPlayer.Life -= artifact.plagueAmount;
+                ShowFloatingDamage(artifact.plagueAmount, playerLifeContainer);
+                ShowFloatingDamage(artifact.plagueAmount, enemyLifeContainer);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                ShowBloodSplatVFX(artifact);
+                break;
+            case ActivatedAbility.SacrificeForLife:
+                TryGainLife(controller, artifact.lifeToGain);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+                break;
+            case ActivatedAbility.SacrificeToDrawCards:
+                DrawCards(controller, artifact.cardsToDraw);
+                break;
+            case ActivatedAbility.TapToPlayRandomPotion:
+                SearchLibraryForRandomPotionToBattlefield(controller);
+                break;
+            case ActivatedAbility.DealDamageToCreature:
+                if (target is CreatureCard targetCreature)
+                {
+                    targetCreature.TakeDamage(artifact.damageToCreature);
+                    Card asCard = artifact;
+                    if (asCard is CreatureCard srcCreature &&
+                        srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
+                        artifact.damageToCreature > 0)
+                    {
+                        targetCreature.Kill();
+                    }
+                }
+                break;
+            case ActivatedAbility.BuffTargetCreature:
+                if (target is CreatureCard buffTarget)
+                {
+                    buffTarget.AddTemporaryBuff(artifact.buffPower, artifact.buffToughness);
+                    CardVisual tVis = FindCardVisual(buffTarget);
+                    if (tVis != null)
+                        tVis.UpdateVisual();
+                }
+                break;
+        }
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+        UpdateUI();
+
+        if (triggerVFX != null)
+            Destroy(triggerVFX);
+        Destroy(stackObj);
+        isStackBusy = false;
+        CheckForGameEnd();
+
+        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        {
+            Debug.Log("Resuming AI phase after stack.");
+            TurnSystem.Instance.waitingToResumeAI = false;
+            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
+
     public void SummonToken(Card tokenCard, Player owner)
     {
         if (tokenCard == null)
@@ -2438,35 +2537,24 @@ public class GameManager : MonoBehaviour
                         return;
                     }
 
-                targetCreature.TakeDamage(targetingArtifact.damageToCreature);
-                Card asCard = targetingArtifact;
-                if (asCard is CreatureCard srcCreature &&
-                    srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
-                    targetingArtifact.damageToCreature > 0)
-                {
-                    targetCreature.Kill();
+                    ArtifactCard artifact = targetingArtifact;
+                    targetingArtifact.isTapped = true;
+                    SendToGraveyard(targetingArtifact, controller);
+                    QueueArtifactActivatedAbility(artifact, ActivatedAbility.DealDamageToCreature, controller, targetCreature);
+                    UpdateUI();
                 }
-                Debug.Log($"{targetingArtifact.cardName} deals {targetingArtifact.damageToCreature} to {targetCreature.cardName}");
+                else
+                {
+                    Debug.Log("Invalid target. Artifact effect canceled.");
+                    targetingArtifact.isTapped = false;
+                }
 
-                targetingArtifact.isTapped = true;
-                SendToGraveyard(targetingArtifact, controller);
-
-                UpdateUI();
-                CheckDeaths(humanPlayer);
-                CheckDeaths(aiPlayer);
+                targetingArtifact = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                return;
             }
-            else
-            {
-                Debug.Log("Invalid target. Artifact effect canceled.");
-                targetingArtifact.isTapped = false;
-            }
-
-            targetingArtifact = null;
-            targetingPlayer = null;
-            targetingVisual = null;
-            isTargetingMode = false;
-            return;
-        }
         // Artifact buff ability
         if (targetingArtifact != null &&
             targetingArtifact.activatedAbilities.Contains(ActivatedAbility.BuffTargetCreature))
@@ -2491,16 +2579,10 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
-                targetCreature.AddTemporaryBuff(targetingArtifact.buffPower, targetingArtifact.buffToughness);
-                Debug.Log($"{targetingArtifact.cardName} gives +{targetingArtifact.buffPower}/+{targetingArtifact.buffToughness} to {targetCreature.cardName} until end of turn");
-
-                var tVis = FindCardVisual(targetCreature);
-                if (tVis != null)
-                    tVis.UpdateVisual();
-
+                ArtifactCard artifact = targetingArtifact;
                 targetingArtifact.isTapped = true;
                 SendToGraveyard(targetingArtifact, controller);
-
+                QueueArtifactActivatedAbility(artifact, ActivatedAbility.BuffTargetCreature, controller, targetCreature);
                 UpdateUI();
             }
             else
