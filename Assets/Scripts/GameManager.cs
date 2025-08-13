@@ -3252,6 +3252,7 @@ public class GameManager : MonoBehaviour
             targetingVisual = null;
 
             QueueTriggeredAbility(ability, owner, source, target);
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         }
 
         public void ResolveOptionalPlayerTargeting(Player target)
@@ -3270,6 +3271,7 @@ public class GameManager : MonoBehaviour
             targetingVisual = null;
 
             QueueTriggeredAbility(ability, owner, source, null);
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         }
 
         public void QueueTriggeredAbility(CardAbility ability, Player owner, Card source, Card target = null, Card deadCreature = null)
