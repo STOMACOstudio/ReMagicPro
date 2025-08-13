@@ -1072,14 +1072,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             TurnSystem.TurnPhase phase = TurnSystem.Instance.currentPhase;
             bool canActivateArtifact =
-                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (phase == TurnSystem.TurnPhase.Main1 ||
-                     phase == TurnSystem.TurnPhase.Main2 ||
-                     phase == TurnSystem.TurnPhase.ConfirmAttackers ||
-                     phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
-                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
-                    (phase == TurnSystem.TurnPhase.ChooseBlockers ||
-                     phase == TurnSystem.TurnPhase.ConfirmBlockers));
+                (
+                    (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                        (phase == TurnSystem.TurnPhase.Main1 ||
+                         phase == TurnSystem.TurnPhase.Main2 ||
+                         phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                         phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
+                    (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
+                        (phase == TurnSystem.TurnPhase.ChooseBlockers ||
+                         phase == TurnSystem.TurnPhase.ConfirmBlockers))
+                ) && !GameManager.Instance.IsStackActive();
 
             if (linkedCard.activatedAbilities != null &&
             linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
@@ -1298,18 +1300,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 canActivateArtifact)
             {
                 linkedCard.isTapped = true;
-
-                GameManager.Instance.humanPlayer.Life -= linkedCard.plagueAmount;
-                GameManager.Instance.aiPlayer.Life -= linkedCard.plagueAmount;
-
-                GameManager.Instance.ShowFloatingDamage(linkedCard.plagueAmount, GameManager.Instance.playerLifeContainer);
-                GameManager.Instance.ShowFloatingDamage(linkedCard.plagueAmount, GameManager.Instance.enemyLifeContainer);
-
-                GameManager.Instance.UpdateUI();
-                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-                GameManager.Instance.ShowBloodSplatVFX(linkedCard);
+                GameManager.Instance.QueueArtifactActivatedAbility(linkedCard as ArtifactCard, ActivatedAbility.TapToPlague, GameManager.Instance.humanPlayer);
                 UpdateVisual();
-                GameManager.Instance.CheckForGameEnd();
+                GameManager.Instance.UpdateUI();
                 return;
             }
             
@@ -1385,8 +1378,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     canActivateArtifact)
                 {
                     linkedCard.isTapped = true;
-                    GameManager.Instance.TryGainLife(GameManager.Instance.humanPlayer, 1);
+                    GameManager.Instance.QueueArtifactActivatedAbility(linkedCard as ArtifactCard, ActivatedAbility.TapToGainLife, GameManager.Instance.humanPlayer);
                     UpdateVisual();
+                    GameManager.Instance.UpdateUI();
                     return;
                 }
 
@@ -1403,12 +1397,25 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (player.ColoredMana.Total() >= remaining)
                     {
-                        // ... [mana payment code]
-                        GameManager.Instance.TryGainLife(player, artifact.lifeToGain);
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.Log("Not enough mana for ability.");
+                            return;
+                        }
+
                         linkedCard.isTapped = true;
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
+                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.SacrificeForLife, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
 
@@ -1526,12 +1533,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.LogWarning("Draw ability: Not enough mana even though initial check passed.");
                             return;
                         }
-
-                        GameManager.Instance.DrawCards(player, artifact.cardsToDraw);
-
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
                         linkedCard.isTapped = true;
                         GameManager.Instance.SendToGraveyard(linkedCard, player);
+                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.SacrificeToDrawCards, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
                         Debug.Log($"{linkedCard.cardName} activated: Draw {artifact.cardsToDraw} cards.");
@@ -1574,9 +1578,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.Log("Not enough mana for ability.");
                             return;
                         }
-
                         linkedCard.isTapped = true;
-                        GameManager.Instance.SearchLibraryForRandomPotionToBattlefield(player);
+                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToPlayRandomPotion, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
                     }
