@@ -111,6 +111,27 @@ public class GameManager : MonoBehaviour
     public CardAbility optionalAbility;
     public Player optionalTargetPlayer;
 
+    private struct TriggeredAbilityContext
+    {
+        public CardAbility ability;
+        public Player owner;
+        public Card source;
+        public Card target;
+        public Card deadCreature;
+
+        public TriggeredAbilityContext(CardAbility ability, Player owner, Card source, Card target, Card deadCreature)
+        {
+            this.ability = ability;
+            this.owner = owner;
+            this.source = source;
+            this.target = target;
+            this.deadCreature = deadCreature;
+        }
+    }
+
+    private readonly Queue<TriggeredAbilityContext> triggerQueue = new Queue<TriggeredAbilityContext>();
+    private bool processingTriggerQueue = false;
+
     void Awake()
     {
         if (Instance == null)
@@ -1093,8 +1114,7 @@ public class GameManager : MonoBehaviour
 
                         if (target != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, caster, creature, target));
+                            QueueTriggeredAbility(ability, caster, creature, target);
                             Debug.Log($"[AI ETB] {creature.cardName} targets {target.cardName}");
                         }
                     }
@@ -1261,7 +1281,6 @@ public class GameManager : MonoBehaviour
         Card deadCreature = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
@@ -1309,6 +1328,7 @@ public class GameManager : MonoBehaviour
             Destroy(triggerVFX);
         Destroy(stackObj);
         isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         CheckForGameEnd();
 
         if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
@@ -1328,7 +1348,6 @@ public class GameManager : MonoBehaviour
     public IEnumerator ResolveArtifactActivatedAbilityOnStack(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
@@ -1408,6 +1427,99 @@ public class GameManager : MonoBehaviour
             Destroy(triggerVFX);
         Destroy(stackObj);
         isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        CheckForGameEnd();
+
+        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        {
+            Debug.Log("Resuming AI phase after stack.");
+            TurnSystem.Instance.waitingToResumeAI = false;
+            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
+
+    public void QueueCreatureActivatedAbility(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        pendingStackEffects++;
+        StartCoroutine(ResolveCreatureActivatedAbilityOnStack(creature, ability, controller, target));
+    }
+
+    public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        yield return new WaitUntil(() => !isStackBusy);
+        isStackBusy = true;
+        TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+        GameObject stackObj = Instantiate(cardPrefab, stackZone);
+        CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+        stackVisual.Setup(creature, this);
+        stackVisual.isInStack = true;
+        stackVisual.UpdateVisual();
+        stackVisual.transform.localPosition = Vector3.zero;
+        stackVisual.transform.localRotation = Quaternion.identity;
+        stackVisual.transform.localScale = Vector3.one;
+
+        GameObject triggerVFX = null;
+        if (triggerVFXPrefab != null)
+        {
+            triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+            RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        switch (ability)
+        {
+            case ActivatedAbility.PayToGainAbility:
+                PayToGainAbility(creature);
+                break;
+            case ActivatedAbility.PayToBuffSelf:
+                PayToBuffSelf(creature);
+                break;
+            case ActivatedAbility.TapToLoseLife:
+                Player opponent = GetOpponentOf(controller);
+                opponent.Life -= creature.tapLifeLossAmount;
+                if (controller == humanPlayer)
+                    ShowFloatingDamage(creature.tapLifeLossAmount, enemyLifeContainer);
+                else
+                    ShowFloatingDamage(creature.tapLifeLossAmount, playerLifeContainer);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                ShowBloodSplatVFX(creature);
+                break;
+            case ActivatedAbility.TapToCreateToken:
+                string tokenName = creature.tokenToCreate;
+                Card token = CardFactory.Create(tokenName);
+                if (token != null)
+                {
+                    if (tokenName == "Autonomous Miner")
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.miner);
+                    SummonToken(token, controller);
+                    Debug.Log($"{creature.cardName} created a {tokenName} token.");
+                }
+                else
+                {
+                    Debug.LogError($"Failed to create token: {tokenName}");
+                }
+                break;
+            case ActivatedAbility.ReturnSelfFromGraveyard:
+                ReturnCreatureFromGraveyardToBattlefield(controller, creature);
+                break;
+            case ActivatedAbility.ReturnSelfFromGraveyardToHand:
+                ReturnCreatureFromGraveyardToHand(controller, creature);
+                break;
+        }
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+        UpdateUI();
+
+        if (triggerVFX != null)
+            Destroy(triggerVFX);
+        Destroy(stackObj);
+        isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         CheckForGameEnd();
 
         if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
@@ -3139,7 +3251,8 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             targetingVisual = null;
 
-            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, target));
+            QueueTriggeredAbility(ability, owner, source, target);
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         }
 
         public void ResolveOptionalPlayerTargeting(Player target)
@@ -3157,7 +3270,27 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             targetingVisual = null;
 
-            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, null));
+            QueueTriggeredAbility(ability, owner, source, null);
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        }
+
+        public void QueueTriggeredAbility(CardAbility ability, Player owner, Card source, Card target = null, Card deadCreature = null)
+        {
+            triggerQueue.Enqueue(new TriggeredAbilityContext(ability, owner, source, target, deadCreature));
+            pendingStackEffects++;
+            if (!processingTriggerQueue)
+                StartCoroutine(ProcessTriggerQueue());
+        }
+
+        private IEnumerator ProcessTriggerQueue()
+        {
+            processingTriggerQueue = true;
+            while (triggerQueue.Count > 0)
+            {
+                var ctx = triggerQueue.Dequeue();
+                yield return StartCoroutine(ResolveTriggeredAbilityOnStack(ctx.ability, ctx.owner, ctx.source, ctx.target, ctx.deadCreature));
+            }
+            processingTriggerQueue = false;
         }
 
         public void DeferLifeDeltaFade(bool defer)
@@ -3998,8 +4131,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded && ability.effect != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
+                            QueueTriggeredAbility(ability, player, card, card, creature);
                         }
                     }
                 }
@@ -4019,8 +4151,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDies && ability.effect != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
+                            QueueTriggeredAbility(ability, player, card, card, creature);
                         }
                     }
                 }

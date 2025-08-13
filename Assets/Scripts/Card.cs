@@ -98,10 +98,7 @@ public class Card
         {
             if (ability.timing != TriggerTiming.OnDeath || ability.effect == null)
                 continue;
-
-            GameManager.Instance.pendingStackEffects++;
-            GameManager.Instance.StartCoroutine(
-                GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, owner, this, this));
+            GameManager.Instance.QueueTriggeredAbility(ability, owner, this, this);
         }
     }
 

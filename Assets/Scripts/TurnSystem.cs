@@ -790,7 +790,8 @@ public class TurnSystem : MonoBehaviour
                                 // TAP TO LOSE LIFE
                                 if (creature.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife))
                                 {
-                                    GameManager.Instance.TapToLoseLife(creature);
+                                    creature.isTapped = true;
+                                    GameManager.Instance.QueueCreatureActivatedAbility(creature, ActivatedAbility.TapToLoseLife, ai);
                                     GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                 }
 
@@ -805,18 +806,7 @@ public class TurnSystem : MonoBehaviour
 
                                         creature.isTapped = true;
 
-                                        string tokenName = creature.tokenToCreate;
-                                        Card token = CardFactory.Create(tokenName);
-                                        if (token != null)
-                                        {
-                                            GameManager.Instance.SummonToken(token, ai);
-                                            Debug.Log($"AI created a {tokenName} token.");
-                                        }
-                                        else
-                                        {
-                                            Debug.LogError($"AI failed to create token: {tokenName}");
-                                        }
-
+                                        GameManager.Instance.QueueCreatureActivatedAbility(creature, ActivatedAbility.TapToCreateToken, ai);
                                         GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                     }
                                     else
@@ -825,32 +815,32 @@ public class TurnSystem : MonoBehaviour
                                     }
                                 }
 
-                            if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
-                                !creature.keywordAbilities.Contains(creature.abilityToGain))
-                            {
-                                int cost = creature.manaToPayToActivate;
-                                string color = creature.PrimaryColor;
-                                var abilityCost = new Dictionary<string, int>();
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
+                                    !creature.keywordAbilities.Contains(creature.abilityToGain))
+                                {
+                                    int cost = creature.manaToPayToActivate;
+                                    string color = creature.PrimaryColor;
+                                    var abilityCost = new Dictionary<string, int>();
 
-                                if (!string.IsNullOrEmpty(color) && color != "Artifact")
-                                {
-                                    abilityCost[color] = 1;
-                                    if (cost > 1)
-                                        abilityCost["Colorless"] = cost - 1;
-                                }
-                                else
-                                {
-                                    abilityCost["Colorless"] = cost;
-                                }
+                                    if (!string.IsNullOrEmpty(color) && color != "Artifact")
+                                    {
+                                        abilityCost[color] = 1;
+                                        if (cost > 1)
+                                            abilityCost["Colorless"] = cost - 1;
+                                    }
+                                    else
+                                    {
+                                        abilityCost["Colorless"] = cost;
+                                    }
 
-                                if (EnsureManaForCost(ai, abilityCost))
-                                {
-                                    GameManager.Instance.PayToGainAbility(creature);
-                                    GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    if (EnsureManaForCost(ai, abilityCost))
+                                    {
+                                        GameManager.Instance.QueueCreatureActivatedAbility(creature, ActivatedAbility.PayToGainAbility, ai);
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    }
                                 }
                             }
                             }
-                        }
 
                         foreach (var card in ai.Battlefield.ToList()) // .ToList() because we may remove during iteration
                         {

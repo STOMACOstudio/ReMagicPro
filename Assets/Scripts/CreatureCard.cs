@@ -150,9 +150,7 @@ public class CreatureCard : Card
             }
             else
             {
-                GameManager.Instance.pendingStackEffects++;
-                GameManager.Instance.StartCoroutine(
-                    GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, owner, this, this));
+                GameManager.Instance.QueueTriggeredAbility(ability, owner, this, this);
             }
         }
     }
