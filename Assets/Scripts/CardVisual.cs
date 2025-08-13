@@ -870,7 +870,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         if (player.ColoredMana.Total() >= cost)
                         {
                             player.ColoredMana.SpendGeneric(cost);
-                            GameManager.Instance.ReturnCreatureFromGraveyardToBattlefield(player, graveCreature);
+                            GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyard, player);
                         }
                         else
                         {
@@ -882,7 +882,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         if (player.ColoredMana.Total() >= cost)
                         {
                             player.ColoredMana.SpendGeneric(cost);
-                            GameManager.Instance.ReturnCreatureFromGraveyardToHand(player, graveCreature);
+                            GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyardToHand, player);
                         }
                         else
                         {
@@ -1142,8 +1142,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     int remaining = cost - 1;
                     if (available >= 1 && player.ColoredMana.Total() - available >= remaining)
                     {
-                        GameManager.Instance.PayToGainAbility(abilityCreature);
-                        UpdateVisual();
+                        GameManager.Instance.QueueCreatureActivatedAbility(abilityCreature, ActivatedAbility.PayToGainAbility, player);
                     }
                     else
                     {
@@ -1154,8 +1153,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     if (player.ColoredMana.Total() >= cost)
                     {
-                        GameManager.Instance.PayToGainAbility(abilityCreature);
-                        UpdateVisual();
+                        GameManager.Instance.QueueCreatureActivatedAbility(abilityCreature, ActivatedAbility.PayToGainAbility, player);
                     }
                     else
                     {
@@ -1191,8 +1189,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (available >= cost)
                     {
-                        GameManager.Instance.PayToBuffSelf(pumpCreature);
-                        UpdateVisual();
+                        GameManager.Instance.QueueCreatureActivatedAbility(pumpCreature, ActivatedAbility.PayToBuffSelf, player);
                     }
                     else
                     {
@@ -1203,8 +1200,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     if (player.ColoredMana.Total() >= cost)
                     {
-                        GameManager.Instance.PayToBuffSelf(pumpCreature);
-                        UpdateVisual();
+                        GameManager.Instance.QueueCreatureActivatedAbility(pumpCreature, ActivatedAbility.PayToBuffSelf, player);
                     }
                     else
                     {
@@ -1251,23 +1247,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         }
 
                         linkedCard.isTapped = true;
-
-                        string tokenName = linkedCard.tokenToCreate;
-                        Card token = CardFactory.Create(tokenName);
-                        if (token != null)
-                        {
-                            if (tokenName == "Autonomous Miner")
-                            {
-                                SoundManager.Instance.PlaySound(SoundManager.Instance.miner);
-                            }
-                            GameManager.Instance.SummonToken(token, player);
-                            Debug.Log($"{linkedCard.cardName} created a {tokenName} token.");
-                        }
-                        else
-                        {
-                            Debug.LogError($"Failed to create token: {tokenName}");
-                        }
-
+                        GameManager.Instance.QueueCreatureActivatedAbility(tokenSpawner, ActivatedAbility.TapToCreateToken, player);
                         GameManager.Instance.UpdateUI();
                         UpdateVisual();
                     }
@@ -1288,8 +1268,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     !creatureForDrain.isTapped &&
                     (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
                 {
-                    GameManager.Instance.TapToLoseLife(creatureForDrain);
+                    creatureForDrain.isTapped = true;
+                    GameManager.Instance.QueueCreatureActivatedAbility(creatureForDrain, ActivatedAbility.TapToLoseLife, GameManager.Instance.humanPlayer);
                     UpdateVisual();
+                    GameManager.Instance.UpdateUI();
                     return;
                 }
 

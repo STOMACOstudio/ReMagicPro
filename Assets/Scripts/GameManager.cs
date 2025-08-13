@@ -1418,6 +1418,98 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void QueueCreatureActivatedAbility(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        pendingStackEffects++;
+        StartCoroutine(ResolveCreatureActivatedAbilityOnStack(creature, ability, controller, target));
+    }
+
+    public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    {
+        yield return new WaitUntil(() => !isStackBusy);
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        isStackBusy = true;
+        TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+        GameObject stackObj = Instantiate(cardPrefab, stackZone);
+        CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+        stackVisual.Setup(creature, this);
+        stackVisual.isInStack = true;
+        stackVisual.UpdateVisual();
+        stackVisual.transform.localPosition = Vector3.zero;
+        stackVisual.transform.localRotation = Quaternion.identity;
+        stackVisual.transform.localScale = Vector3.one;
+
+        GameObject triggerVFX = null;
+        if (triggerVFXPrefab != null)
+        {
+            triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+            RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        switch (ability)
+        {
+            case ActivatedAbility.PayToGainAbility:
+                PayToGainAbility(creature);
+                break;
+            case ActivatedAbility.PayToBuffSelf:
+                PayToBuffSelf(creature);
+                break;
+            case ActivatedAbility.TapToLoseLife:
+                Player opponent = GetOpponentOf(controller);
+                opponent.Life -= creature.tapLifeLossAmount;
+                if (controller == humanPlayer)
+                    ShowFloatingDamage(creature.tapLifeLossAmount, enemyLifeContainer);
+                else
+                    ShowFloatingDamage(creature.tapLifeLossAmount, playerLifeContainer);
+                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                ShowBloodSplatVFX(creature);
+                break;
+            case ActivatedAbility.TapToCreateToken:
+                string tokenName = creature.tokenToCreate;
+                Card token = CardFactory.Create(tokenName);
+                if (token != null)
+                {
+                    if (tokenName == "Autonomous Miner")
+                        SoundManager.Instance.PlaySound(SoundManager.Instance.miner);
+                    SummonToken(token, controller);
+                    Debug.Log($"{creature.cardName} created a {tokenName} token.");
+                }
+                else
+                {
+                    Debug.LogError($"Failed to create token: {tokenName}");
+                }
+                break;
+            case ActivatedAbility.ReturnSelfFromGraveyard:
+                ReturnCreatureFromGraveyardToBattlefield(controller, creature);
+                break;
+            case ActivatedAbility.ReturnSelfFromGraveyardToHand:
+                ReturnCreatureFromGraveyardToHand(controller, creature);
+                break;
+        }
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+        UpdateUI();
+
+        if (triggerVFX != null)
+            Destroy(triggerVFX);
+        Destroy(stackObj);
+        isStackBusy = false;
+        CheckForGameEnd();
+
+        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        {
+            Debug.Log("Resuming AI phase after stack.");
+            TurnSystem.Instance.waitingToResumeAI = false;
+            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
+
     public void SummonToken(Card tokenCard, Player owner)
     {
         if (tokenCard == null)
