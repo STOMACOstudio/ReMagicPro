@@ -1253,59 +1253,71 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public IEnumerator ResolveTriggeredAbilityOnStack(CardAbility ability, Player owner, Card source, Card target)
+    public IEnumerator ResolveTriggeredAbilityOnStack(
+        CardAbility ability,
+        Player owner,
+        Card source,
+        Card target,
+        Card deadCreature = null)
+    {
+        yield return new WaitUntil(() => !isStackBusy);
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        isStackBusy = true;
+        TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+        GameObject stackObj = Instantiate(cardPrefab, stackZone);
+        CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+        stackVisual.Setup(source, this);
+        stackVisual.isInStack = true;
+        stackVisual.UpdateVisual();
+        stackVisual.transform.localPosition = Vector3.zero;
+        stackVisual.transform.localRotation = Quaternion.identity;
+        stackVisual.transform.localScale = Vector3.one;
+
+        GameObject triggerVFX = null;
+        if (triggerVFXPrefab != null)
         {
-            yield return new WaitUntil(() => !isStackBusy);
-            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
-            isStackBusy = true;
-            TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
-
-            GameObject stackObj = Instantiate(cardPrefab, stackZone);
-            CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
-            stackVisual.Setup(source, this);
-            stackVisual.isInStack = true;
-            stackVisual.UpdateVisual();
-            stackVisual.transform.localPosition = Vector3.zero;
-            stackVisual.transform.localRotation = Quaternion.identity;
-            stackVisual.transform.localScale = Vector3.one;
-
-            GameObject triggerVFX = null;
-            if (triggerVFXPrefab != null)
-            {
-                triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
-                RectTransform rt = triggerVFX.GetComponent<RectTransform>();
-                if (rt != null)
-                    rt.anchoredPosition = Vector2.zero;
-            }
-
-            yield return new WaitForSeconds(2f);
-
-            int oldLife = owner.Life;
-            ability.effect?.Invoke(owner, target);
-            int gained = owner.Life - oldLife;
-            if (gained > 0)
-            {
-                ShowFloatingHeal(gained, owner == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-            }
-
-            CheckDeaths(humanPlayer);
-            CheckDeaths(aiPlayer);
-            UpdateUI();
-            optionalTargetPlayer = null;
-
-            if (triggerVFX != null)
-                Destroy(triggerVFX);
-            Destroy(stackObj);
-            isStackBusy = false;
-            CheckForGameEnd();
-
-            if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+            RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
         }
+
+        yield return new WaitForSeconds(2f);
+
+        Card previousDead = lastDeadCreature;
+        if (deadCreature != null)
+            lastDeadCreature = deadCreature;
+
+        int oldLife = owner.Life;
+        ability.effect?.Invoke(owner, target);
+        int gained = owner.Life - oldLife;
+        if (gained > 0)
+        {
+            ShowFloatingHeal(gained, owner == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+        }
+
+        if (deadCreature != null)
+            lastDeadCreature = previousDead;
+
+        CheckDeaths(humanPlayer);
+        CheckDeaths(aiPlayer);
+        UpdateUI();
+        optionalTargetPlayer = null;
+
+        if (triggerVFX != null)
+            Destroy(triggerVFX);
+        Destroy(stackObj);
+        isStackBusy = false;
+        CheckForGameEnd();
+
+        if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        {
+            Debug.Log("Resuming AI phase after stack.");
+            TurnSystem.Instance.waitingToResumeAI = false;
+            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
 
     public void QueueArtifactActivatedAbility(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
@@ -3986,7 +3998,8 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded && ability.effect != null)
                         {
-                            ability.effect.Invoke(player, card);
+                            pendingStackEffects++;
+                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
                         }
                     }
                 }
@@ -3998,8 +4011,6 @@ public class GameManager : MonoBehaviour
             if (!(creature is CreatureCard))
                 return;
 
-            lastDeadCreature = creature;
-
             foreach (var player in new[] { humanPlayer, aiPlayer })
             {
                 foreach (var card in player.Battlefield.ToList())
@@ -4008,13 +4019,12 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDies && ability.effect != null)
                         {
-                            ability.effect.Invoke(player, card);
+                            pendingStackEffects++;
+                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
                         }
                     }
                 }
             }
-
-            lastDeadCreature = null;
         }
 
         public void NotifyCombatDamageToPlayer(CreatureCard attacker, Player target)
