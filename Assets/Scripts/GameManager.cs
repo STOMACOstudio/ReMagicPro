@@ -1261,7 +1261,6 @@ public class GameManager : MonoBehaviour
         Card deadCreature = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
@@ -1309,6 +1308,7 @@ public class GameManager : MonoBehaviour
             Destroy(triggerVFX);
         Destroy(stackObj);
         isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         CheckForGameEnd();
 
         if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
@@ -1328,7 +1328,6 @@ public class GameManager : MonoBehaviour
     public IEnumerator ResolveArtifactActivatedAbilityOnStack(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
@@ -1408,6 +1407,7 @@ public class GameManager : MonoBehaviour
             Destroy(triggerVFX);
         Destroy(stackObj);
         isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         CheckForGameEnd();
 
         if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
@@ -1427,7 +1427,6 @@ public class GameManager : MonoBehaviour
     public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
@@ -1500,6 +1499,7 @@ public class GameManager : MonoBehaviour
             Destroy(triggerVFX);
         Destroy(stackObj);
         isStackBusy = false;
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
         CheckForGameEnd();
 
         if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
