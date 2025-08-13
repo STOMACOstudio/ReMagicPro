@@ -2021,10 +2021,10 @@ public class GameManager : MonoBehaviour
         player.Battlefield.Add(creature);
 
         creature.hasSummoningSickness = true;
-        if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
+        if (IsAllPermanentsEnterTappedActive())
         {
             creature.isTapped = true;
-            Debug.Log($"{creature.cardName} enters tapped from graveyard.");
+            Debug.Log($"{creature.cardName} enters tapped from graveyard due to global effect.");
         }
 
         GameObject obj = Instantiate(cardPrefab, player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea);

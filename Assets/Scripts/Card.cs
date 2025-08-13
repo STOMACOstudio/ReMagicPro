@@ -182,7 +182,7 @@ public class Card
                                     lines.Add($"{creature.manaToPayToActivate}: +1/+0 until end of turn.");
                                     break;
                                 case ActivatedAbility.ReturnSelfFromGraveyard:
-                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to the battlefield tapped.");
+                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to the battlefield.");
                                     break;
                                 case ActivatedAbility.ReturnSelfFromGraveyardToHand:
                                     lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to your hand.");
