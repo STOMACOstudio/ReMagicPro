@@ -111,6 +111,27 @@ public class GameManager : MonoBehaviour
     public CardAbility optionalAbility;
     public Player optionalTargetPlayer;
 
+    private struct TriggeredAbilityContext
+    {
+        public CardAbility ability;
+        public Player owner;
+        public Card source;
+        public Card target;
+        public Card deadCreature;
+
+        public TriggeredAbilityContext(CardAbility ability, Player owner, Card source, Card target, Card deadCreature)
+        {
+            this.ability = ability;
+            this.owner = owner;
+            this.source = source;
+            this.target = target;
+            this.deadCreature = deadCreature;
+        }
+    }
+
+    private readonly Queue<TriggeredAbilityContext> triggerQueue = new Queue<TriggeredAbilityContext>();
+    private bool processingTriggerQueue = false;
+
     void Awake()
     {
         if (Instance == null)
@@ -1093,8 +1114,7 @@ public class GameManager : MonoBehaviour
 
                         if (target != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, caster, creature, target));
+                            QueueTriggeredAbility(ability, caster, creature, target);
                             Debug.Log($"[AI ETB] {creature.cardName} targets {target.cardName}");
                         }
                     }
@@ -3231,7 +3251,7 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             targetingVisual = null;
 
-            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, target));
+            QueueTriggeredAbility(ability, owner, source, target);
         }
 
         public void ResolveOptionalPlayerTargeting(Player target)
@@ -3249,7 +3269,26 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             targetingVisual = null;
 
-            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, owner, source, null));
+            QueueTriggeredAbility(ability, owner, source, null);
+        }
+
+        public void QueueTriggeredAbility(CardAbility ability, Player owner, Card source, Card target = null, Card deadCreature = null)
+        {
+            triggerQueue.Enqueue(new TriggeredAbilityContext(ability, owner, source, target, deadCreature));
+            pendingStackEffects++;
+            if (!processingTriggerQueue)
+                StartCoroutine(ProcessTriggerQueue());
+        }
+
+        private IEnumerator ProcessTriggerQueue()
+        {
+            processingTriggerQueue = true;
+            while (triggerQueue.Count > 0)
+            {
+                var ctx = triggerQueue.Dequeue();
+                yield return StartCoroutine(ResolveTriggeredAbilityOnStack(ctx.ability, ctx.owner, ctx.source, ctx.target, ctx.deadCreature));
+            }
+            processingTriggerQueue = false;
         }
 
         public void DeferLifeDeltaFade(bool defer)
@@ -4090,8 +4129,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded && ability.effect != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
+                            QueueTriggeredAbility(ability, player, card, card, creature);
                         }
                     }
                 }
@@ -4111,8 +4149,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDies && ability.effect != null)
                         {
-                            pendingStackEffects++;
-                            StartCoroutine(ResolveTriggeredAbilityOnStack(ability, player, card, card, creature));
+                            QueueTriggeredAbility(ability, player, card, card, creature);
                         }
                     }
                 }
