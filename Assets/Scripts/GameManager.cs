@@ -781,8 +781,10 @@ public class GameManager : MonoBehaviour
 
         foreach (var attacker in currentAttackers)
         {
-            // Clamp negative power to zero when dealing damage
-            int attackerDamage = Mathf.Max(attacker.power, 0);
+            // Clamp negative power to zero when dealing damage and handle damage prevention
+            int attackerDamage = attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
+                ? 0
+                : Mathf.Max(attacker.power, 0);
             var blockers = attacker.blockedByThisBlocker;
 
             if (blockers != null && blockers.Count > 0)
@@ -812,7 +814,9 @@ public class GameManager : MonoBehaviour
                         remainingDamage -= damageToBlocker;
                     }
 
-                    int damageFromBlocker = attackerProtected ? 0 : Mathf.Max(blocker.power, 0);
+                    int damageFromBlocker = (attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
+                        ? 0
+                        : Mathf.Max(blocker.power, 0);
                     if (!attackerProtected)
                     {
                         totalDamageFromBlockers += damageFromBlocker;
@@ -3598,8 +3602,10 @@ public class GameManager : MonoBehaviour
                 int playerDamage = 0;
                 int aiDamage = 0;
 
-                // Clamp negative power to zero when dealing damage
-                int attackerDamage = Mathf.Max(attacker.power, 0);
+                // Clamp negative power to zero when dealing damage and respect damage prevention
+                int attackerDamage = attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
+                    ? 0
+                    : Mathf.Max(attacker.power, 0);
 
                 var blockers = attacker.blockedByThisBlocker;
 
@@ -3630,7 +3636,9 @@ public class GameManager : MonoBehaviour
                             remainingDamage -= damageToBlocker;
                         }
 
-                        int damageFromBlocker = attackerProtected ? 0 : Mathf.Max(blocker.power, 0);
+                        int damageFromBlocker = (attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
+                            ? 0
+                            : Mathf.Max(blocker.power, 0);
                         if (!attackerProtected)
                         {
                             totalDamageFromBlockers += damageFromBlocker;
