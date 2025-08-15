@@ -1712,9 +1712,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         return;
                     }
 
-                    var phase = TurnSystem.Instance.currentPhase;
-                    bool mainPhase = phase == TurnSystem.TurnPhase.Main1 || phase == TurnSystem.TurnPhase.Main2;
-                    bool instantPhase = phase == TurnSystem.TurnPhase.ConfirmAttackers || phase == TurnSystem.TurnPhase.ConfirmBlockers;
+                    var currentPhase = TurnSystem.Instance.currentPhase;
+                    bool mainPhase = currentPhase == TurnSystem.TurnPhase.Main1 || currentPhase == TurnSystem.TurnPhase.Main2;
+                    bool instantPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
 
                     if (!isInstant)
                     {
