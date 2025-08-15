@@ -1703,15 +1703,37 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Playing card from hand
                 if (!isInBattlefield)
                 {
-                    if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human ||
-                        (TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main1 &&
-                        TurnSystem.Instance.currentPhase != TurnSystem.TurnPhase.Main2))
+                    CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
+                    bool isInstant = cardData != null && cardData.cardType == CardType.Instant;
+
+                    if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human)
                     {
                         Debug.Log("You can only play cards during your own Main Phase.");
                         return;
                     }
 
-                    GameManager.Instance.CancelOptionalTargeting(); // ← cancel any other ETB clicks
+                    var currentPhase = TurnSystem.Instance.currentPhase;
+                    bool mainPhase = currentPhase == TurnSystem.TurnPhase.Main1 || currentPhase == TurnSystem.TurnPhase.Main2;
+                    bool instantPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
+
+                    if (!isInstant)
+                    {
+                        if (!mainPhase)
+                        {
+                            Debug.Log("You can only play cards during your own Main Phase.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (!(mainPhase || instantPhase) || GameManager.Instance.IsStackActive())
+                        {
+                            Debug.Log("Instants can only be cast during combat when the stack is empty.");
+                            return;
+                        }
+                    }
+
+                    GameManager.Instance.CancelOptionalTargeting(); // cancel any other ETB clicks
 
                     GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
                     UpdateVisual();

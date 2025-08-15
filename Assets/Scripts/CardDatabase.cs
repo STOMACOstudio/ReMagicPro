@@ -2391,7 +2391,7 @@ public static class CardDatabase
                 Add(new CardData { //Exorcism
                     cardName = "Exorcism",
                     rarity = "Common",
-                    cardType = CardType.Instant,
+                    cardType = CardType.Sorcery,
                     manaCost = 2,
                     color = new List<string> { "White" },
                     requiresTarget = true,
@@ -2539,7 +2539,7 @@ public static class CardDatabase
                     {
                         cardName = "Lights Out",
                         rarity = "Common",
-                        cardType = CardType.Sorcery,
+                        cardType = CardType.Instant,
                         manaCost = 4,
                         color = new List<string> { "Black" },
                         requiresTarget = true,
@@ -2653,7 +2653,7 @@ public static class CardDatabase
                         {
                             cardName = "Melt",
                             rarity = "Common",
-                            cardType = CardType.Sorcery,
+                            cardType = CardType.Instant,
                             manaCost = 1,
                             color = new List<string> { "Red" },
                             requiresTarget = true,
@@ -2678,7 +2678,7 @@ public static class CardDatabase
                     {
                         cardName = "Thunderstrike",
                         rarity = "Common",
-                        cardType = CardType.Sorcery,
+                        cardType = CardType.Instant,
                         manaCost = 6,
                         color = new List<string> { "Red" },
                         requiresTarget = true,
@@ -2788,7 +2788,7 @@ public static class CardDatabase
                 Add(new CardData { //Muscle Blast
                     cardName = "Muscle Blast",
                     rarity = "Uncommon",
-                    cardType = CardType.Sorcery,
+                    cardType = CardType.Instant,
                     manaCost = 6,
                     color = new List<string> { "Green" },
                     requiresTarget = true,
@@ -3356,7 +3356,7 @@ public static class CardDatabase
                         }
                     });
 
-                Add(new CardData //Rot Renewal
+                Add(new CardData //Shrine of rot
                     {
                         cardName = "Shrine of Rot",
                         rarity = "Uncommon",
@@ -3378,7 +3378,7 @@ public static class CardDatabase
                         }
                     });
 
-                Add(new CardData //Afterlife Jinx Lantern
+                Add(new CardData //Afterlife jinx lantern
                     {
                         cardName = "Afterlife Jinx Lantern",
                         rarity = "Rare",
