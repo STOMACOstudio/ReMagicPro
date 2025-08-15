@@ -114,7 +114,12 @@ public class DeckEditorManager : MonoBehaviour
             }
             else if (filter == "Creature" || filter == "Sorcery" || filter == "Enchantment")
             {
-                if (data.cardType.ToString() != filter)
+                if (filter == "Sorcery")
+                {
+                    if (data.cardType != CardType.Sorcery && data.cardType != CardType.Instant)
+                        return false;
+                }
+                else if (data.cardType.ToString() != filter)
                     return false;
             }
             else if (!colors.Contains(filter))

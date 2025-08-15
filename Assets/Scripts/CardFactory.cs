@@ -42,6 +42,7 @@ public static class CardFactory
                 newCard = creature;
                 break;
             case CardType.Sorcery:
+            case CardType.Instant:
                 SorceryCard sorcery = new SorceryCard();
                 sorcery.lifeToGain = data.lifeToGain;
                 sorcery.lifeToLoseForOpponent = data.lifeToLoseForOpponent;
