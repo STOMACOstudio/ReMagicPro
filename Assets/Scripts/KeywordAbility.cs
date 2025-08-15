@@ -31,6 +31,7 @@ public enum KeywordAbility
     PotionSpellsCostOneLess,
     OpponentSpellsCostOneMore,
     CantUntap,
+    CantDealCombatDamage,
 }
 
 public enum ActivatedAbility

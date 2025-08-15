@@ -2464,6 +2464,19 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/bells_call"),
                     abilities = new List<CardAbility>(),
                     });
+                Add(new CardData //Stay the Blade
+                    {
+                    cardName = "Stay the Blade",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 1,
+                    color = new List<string> { "White" },
+                    requiresTarget = true,
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    keywordToGrant = KeywordAbility.CantDealCombatDamage,
+                    rulesText = "Prevent all combat damage that target creature would deal this turn.",
+                    artwork = Resources.Load<Sprite>("Art/faith_protection"),
+                    });
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",

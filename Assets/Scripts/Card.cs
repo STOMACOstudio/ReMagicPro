@@ -126,6 +126,7 @@ public class Card
                     if (keyword == KeywordAbility.CantBlock ||
                         keyword == KeywordAbility.CanOnlyBlockFlying ||
                         keyword == KeywordAbility.CantBlockWithoutForest ||
+                        keyword == KeywordAbility.CantDealCombatDamage ||
                         keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
                         keyword == KeywordAbility.PotionSpellsCostOneLess ||
                         keyword.ToString().StartsWith("ProtectionFrom"))
@@ -144,6 +145,8 @@ public class Card
                     lines.Add("This creature enters the battlefield tapped.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.CantUntap))
                     lines.Add("This creature doesn't untap during its controller's untap step.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
+                    lines.Add("This creature can't deal combat damage.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromWhite))
                     lines.Add("Protection from White");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlue))
