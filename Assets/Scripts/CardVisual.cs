@@ -1706,19 +1706,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
                     bool isInstant = cardData != null && cardData.cardType == CardType.Instant;
 
-                    if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human)
-                    {
-                        Debug.Log("You can only play cards during your own Main Phase.");
-                        return;
-                    }
-
                     var currentPhase = TurnSystem.Instance.currentPhase;
                     bool mainPhase = currentPhase == TurnSystem.TurnPhase.Main1 || currentPhase == TurnSystem.TurnPhase.Main2;
-                    bool instantPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
+                    bool combatPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
 
                     if (!isInstant)
                     {
-                        if (!mainPhase)
+                        if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human || !mainPhase)
                         {
                             Debug.Log("You can only play cards during your own Main Phase.");
                             return;
@@ -1726,7 +1720,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                     else
                     {
-                        if (!(mainPhase || instantPhase) || GameManager.Instance.IsStackActive())
+                        if (!combatPhase || GameManager.Instance.IsStackActive())
                         {
                             Debug.Log("Instants can only be cast during combat when the stack is empty.");
                             return;
