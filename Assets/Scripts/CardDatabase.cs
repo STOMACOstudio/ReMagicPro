@@ -2391,7 +2391,7 @@ public static class CardDatabase
                 Add(new CardData { //Exorcism
                     cardName = "Exorcism",
                     rarity = "Common",
-                    cardType = CardType.Sorcery,
+                    cardType = CardType.Instant,
                     manaCost = 2,
                     color = new List<string> { "White" },
                     requiresTarget = true,
