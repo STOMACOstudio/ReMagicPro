@@ -1114,6 +1114,46 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            // Multiple-choice artifact activations
+            if (linkedCard is ArtifactCard choiceArtifact &&
+                choiceArtifact.activatedAbilities != null &&
+                choiceArtifact.activatedAbilities.Count > 1 &&
+                !linkedCard.isTapped &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                canActivateArtifact)
+            {
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = choiceArtifact.manaToPayToActivate;
+
+                if (player.ColoredMana.Total() >= cost)
+                {
+                    int remaining = cost;
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Colorless, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                    if (remaining > 0)
+                    {
+                        Debug.Log("Not enough mana to activate artifact.");
+                        return;
+                    }
+
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.BeginArtifactAbilityChoice(choiceArtifact);
+                    UpdateVisual();
+                    GameManager.Instance.UpdateUI();
+                }
+                else
+                {
+                    Debug.Log("Not enough mana to activate artifact.");
+                }
+
+                return;
+            }
+
             // PAY-TO-GAIN-ABILITY during Main Phase
                 if (linkedCard is CreatureCard abilityCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(abilityCreature) &&
@@ -1355,12 +1395,28 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // TAP-TO-GAIN-LIFE ability
                 if (linkedCard.activatedAbilities != null &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToGainLife) &&
+                    linkedCard.activatedAbilities.Count == 1 &&
                     !linkedCard.isTapped &&
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
                     canActivateArtifact)
                 {
                     linkedCard.isTapped = true;
                     GameManager.Instance.QueueArtifactActivatedAbility(linkedCard as ArtifactCard, ActivatedAbility.TapToGainLife, GameManager.Instance.humanPlayer);
+                    UpdateVisual();
+                    GameManager.Instance.UpdateUI();
+                    return;
+                }
+
+            // TAP-TO-DRAW-CARDS ability
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToDrawCards) &&
+                    linkedCard.activatedAbilities.Count == 1 &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    canActivateArtifact)
+                {
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.QueueArtifactActivatedAbility(linkedCard as ArtifactCard, ActivatedAbility.TapToDrawCards, GameManager.Instance.humanPlayer);
                     UpdateVisual();
                     GameManager.Instance.UpdateUI();
                     return;

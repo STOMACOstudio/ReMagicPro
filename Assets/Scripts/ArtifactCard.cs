@@ -19,7 +19,12 @@ public class ArtifactCard : Card
                     break;
 
                 case ActivatedAbility.TapToGainLife:
-                    GameManager.Instance.TryGainLife(owner, 1);
+                    int gain = lifeToGain > 0 ? lifeToGain : 1;
+                    GameManager.Instance.TryGainLife(owner, gain);
+                    break;
+
+                case ActivatedAbility.TapToDrawCards:
+                    GameManager.Instance.DrawCards(owner, cardsToDraw);
                     break;
 
                 case ActivatedAbility.TapAndSacrificeForMana:

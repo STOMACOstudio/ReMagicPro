@@ -111,6 +111,10 @@ public class GameManager : MonoBehaviour
     public CardAbility optionalAbility;
     public Player optionalTargetPlayer;
 
+    private GameObject abilityChoicePanel;
+    private ArtifactCard abilityChoiceArtifact;
+    private Player abilityChoicePlayer;
+
     private struct TriggeredAbilityContext
     {
         public CardAbility ability;
@@ -1378,7 +1382,11 @@ public class GameManager : MonoBehaviour
         switch (ability)
         {
             case ActivatedAbility.TapToGainLife:
-                TryGainLife(controller, 1);
+                int gain = artifact.lifeToGain > 0 ? artifact.lifeToGain : 1;
+                TryGainLife(controller, gain);
+                break;
+            case ActivatedAbility.TapToDrawCards:
+                DrawCards(controller, artifact.cardsToDraw);
                 break;
             case ActivatedAbility.TapToPlague:
                 humanPlayer.Life -= artifact.plagueAmount;
@@ -2960,6 +2968,86 @@ public class GameManager : MonoBehaviour
 
             UpdateUI();
         }
+
+    public void BeginArtifactAbilityChoice(ArtifactCard artifact)
+    {
+        abilityChoiceArtifact = artifact;
+        abilityChoicePlayer = GetOwnerOfCard(artifact);
+
+        GameObject canvasObj = GameObject.Find("Canvas");
+        if (canvasObj == null)
+            return;
+
+        abilityChoicePanel = new GameObject("AbilityChoicePanel", typeof(RectTransform), typeof(Image));
+        abilityChoicePanel.transform.SetParent(canvasObj.transform, false);
+        RectTransform rt = abilityChoicePanel.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+        Image img = abilityChoicePanel.GetComponent<Image>();
+        img.color = new Color(0, 0, 0, 0.5f);
+        img.raycastTarget = true;
+
+        VerticalLayoutGroup layout = abilityChoicePanel.AddComponent<VerticalLayoutGroup>();
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.spacing = 10f;
+
+        foreach (var ability in artifact.activatedAbilities)
+        {
+            GameObject btnObj = new GameObject("AbilityButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            btnObj.transform.SetParent(abilityChoicePanel.transform, false);
+            Image bImg = btnObj.GetComponent<Image>();
+            bImg.color = Color.white;
+            Button btn = btnObj.GetComponent<Button>();
+
+            GameObject textObj = new GameObject("Text", typeof(RectTransform), typeof(TMP_Text));
+            textObj.transform.SetParent(btnObj.transform, false);
+            RectTransform textRt = textObj.GetComponent<RectTransform>();
+            textRt.anchorMin = Vector2.zero;
+            textRt.anchorMax = Vector2.one;
+            textRt.offsetMin = Vector2.zero;
+            textRt.offsetMax = Vector2.zero;
+            TMP_Text txt = textObj.GetComponent<TMP_Text>();
+            txt.text = GetAbilityChoiceDescription(artifact, ability);
+            txt.alignment = TextAlignmentOptions.Center;
+            txt.color = Color.black;
+
+            ActivatedAbility captured = ability;
+            btn.onClick.AddListener(() => ResolveArtifactAbilityChoice(captured));
+        }
+    }
+
+    private string GetAbilityChoiceDescription(ArtifactCard artifact, ActivatedAbility ability)
+    {
+        switch (ability)
+        {
+            case ActivatedAbility.TapToGainLife:
+                int gain = artifact.lifeToGain > 0 ? artifact.lifeToGain : 1;
+                return $"Gain {gain} life";
+            case ActivatedAbility.TapToDrawCards:
+                return $"Draw {artifact.cardsToDraw} card{(artifact.cardsToDraw == 1 ? string.Empty : "s")}";
+            default:
+                return ability.ToString();
+        }
+    }
+
+    private void ResolveArtifactAbilityChoice(ActivatedAbility ability)
+    {
+        if (abilityChoicePanel != null)
+            Destroy(abilityChoicePanel);
+
+        ArtifactCard artifact = abilityChoiceArtifact;
+        Player controller = abilityChoicePlayer;
+        abilityChoicePanel = null;
+        abilityChoiceArtifact = null;
+        abilityChoicePlayer = null;
+
+        if (artifact != null && controller != null)
+            QueueArtifactActivatedAbility(artifact, ability, controller);
+
+        UpdateUI();
+    }
 
     public void CompletePlayerTargetSelection(Player targetPlayer)
         {

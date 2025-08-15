@@ -3114,6 +3114,25 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/battle_shield")
                     });
 
+                Add(new CardData // Baton of Power
+                    {
+                        cardName = "Baton of Power",
+                        rarity = "Rare",
+                        manaCost = 4,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        lifeToGain = 3,
+                        cardsToDraw = 1,
+                        manaToPayToActivate = 4,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapToGainLife,
+                            ActivatedAbility.TapToDrawCards
+                        },
+                        rulesText = "Tap, pay 4: Choose one - you gain 3 life or you draw a card.",
+                        artwork = Resources.Load<Sprite>("Art/baton_of_power")
+                    });
+
                 // Avatar cycle gaining +1/+1 counters
                 Add(new CardData //Progress Incarnate
                     {

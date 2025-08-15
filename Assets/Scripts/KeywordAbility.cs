@@ -42,6 +42,7 @@ public enum ActivatedAbility
     SacrificeForMana,
     SacrificeForLife,
     TapToGainLife,
+    TapToDrawCards,
     TapToPlague,
     SacrificeToDrawCards,
     TapToCreateToken,

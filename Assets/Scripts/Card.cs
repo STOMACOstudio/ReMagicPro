@@ -207,44 +207,51 @@ public class Card
 
                 if (activatedAbilities != null)
                 {
-                    foreach (var activated in activatedAbilities)
+                    if (activatedAbilities.Count == 1)
                     {
-                        switch (activated)
+                        foreach (var activated in activatedAbilities)
                         {
-                            case ActivatedAbility.TapForMana:
-                                lines.Add("Tap: Add 1 mana.");
-                                break;
-                            case ActivatedAbility.TapToGainLife:
-                                lines.Add("Tap: Gain 1 life.");
-                                //lines.Add($"Tap: Gain {plagueAmount} life.");
-                                break;
-                            case ActivatedAbility.TapAndSacrificeForMana:
-                                lines.Add("Tap, sacrifice: Add 1 mana.");
-                                break;
-                            case ActivatedAbility.TapToPlague:
-                                lines.Add($"Tap: Each player loses {plagueAmount} life.");
-                                break;
-                            case ActivatedAbility.SacrificeForMana:
-                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Add {manaToGain}.");
-                                break;
-                            case ActivatedAbility.SacrificeForLife:
-                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Gain {lifeToGain} life.");
-                                break;
-                            case ActivatedAbility.SacrificeToDrawCards:
-                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Draw {cardsToDraw} card(s).");
-                                break;
-                            case ActivatedAbility.DealDamageToCreature:
-                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Deal {damageToCreature} damage to target creature.");
+                            switch (activated)
+                            {
+                                case ActivatedAbility.TapForMana:
+                                    lines.Add("Tap: Add 1 mana.");
                                     break;
-                            case ActivatedAbility.BuffTargetCreature:
-                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
-                                break;
-                            case ActivatedAbility.TapToPlayRandomPotion:
-                                lines.Add($"{manaToPayToActivate}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
-                                break;
-                            case ActivatedAbility.Equip:
-                                lines.Add($"Equip {manaToPayToActivate}");
-                                break;
+                                case ActivatedAbility.TapToGainLife:
+                                    int gain = artifact.lifeToGain > 0 ? artifact.lifeToGain : 1;
+                                    lines.Add($"Tap: Gain {gain} life.");
+                                    //lines.Add($"Tap: Gain {plagueAmount} life.");
+                                    break;
+                                case ActivatedAbility.TapToDrawCards:
+                                    lines.Add($"Tap: Draw {artifact.cardsToDraw} card(s).");
+                                    break;
+                                case ActivatedAbility.TapAndSacrificeForMana:
+                                    lines.Add("Tap, sacrifice: Add 1 mana.");
+                                    break;
+                                case ActivatedAbility.TapToPlague:
+                                    lines.Add($"Tap: Each player loses {plagueAmount} life.");
+                                    break;
+                                case ActivatedAbility.SacrificeForMana:
+                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Add {manaToGain}.");
+                                    break;
+                                case ActivatedAbility.SacrificeForLife:
+                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Gain {lifeToGain} life.");
+                                    break;
+                                case ActivatedAbility.SacrificeToDrawCards:
+                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Draw {cardsToDraw} card(s).");
+                                    break;
+                                case ActivatedAbility.DealDamageToCreature:
+                                        lines.Add($"{manaToPayToActivate}TAP, sacrifice: Deal {damageToCreature} damage to target creature.");
+                                        break;
+                                case ActivatedAbility.BuffTargetCreature:
+                                    lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
+                                    break;
+                                case ActivatedAbility.TapToPlayRandomPotion:
+                                    lines.Add($"{manaToPayToActivate}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
+                                    break;
+                                case ActivatedAbility.Equip:
+                                    lines.Add($"Equip {manaToPayToActivate}");
+                                    break;
+                            }
                         }
                     }
                 }
