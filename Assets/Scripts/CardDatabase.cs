@@ -2005,6 +2005,24 @@ public static class CardDatabase
                     flavorText = "Whether physical or psychological, obstacles are what allow people to act and overcome their fears.",
                     artwork = Resources.Load<Sprite>("Art/obstacle")
                     });
+                Add(new CardData //Iron skyman
+                    {
+                    cardName = "Iron Skyman",
+                    rarity = "Common",
+                    manaCost = 5,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Golem" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                        KeywordAbility.Flying,
+                    },
+                    flavorText = "Intruder detected.",
+                    artwork = Resources.Load<Sprite>("Art/iron_skyman")
+                    });
                 Add(new CardData //Autonomous miner
                     {
                     cardName = "Autonomous Miner",
@@ -2464,9 +2482,9 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/bells_call"),
                     abilities = new List<CardAbility>(),
                     });
-                Add(new CardData //Stay the Blade
+                Add(new CardData //Blinding light
                     {
-                    cardName = "Stay the Blade",
+                    cardName = "Blinding Light",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 1,
@@ -2475,7 +2493,7 @@ public static class CardDatabase
                     requiredTargetType = SorceryCard.TargetType.Creature,
                     keywordToGrant = KeywordAbility.CantDealCombatDamage,
                     rulesText = "Prevent all combat damage that target creature would deal this turn.",
-                    artwork = Resources.Load<Sprite>("Art/faith_protection"),
+                    artwork = Resources.Load<Sprite>("Art/blinding_light"),
                     });
             //BLUE
                 Add(new CardData { //Blast of knowledge
