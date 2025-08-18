@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Card linkedCard; // which card it represents
     public GameManager gameManager; // which manager it talks to
@@ -76,6 +76,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private bool lastBattlefieldState = false;
     private List<Graphic> raycastGraphics = new List<Graphic>();
     private readonly Dictionary<Graphic, bool> originalRaycastStates = new Dictionary<Graphic, bool>();
+
+    // Drag and drop support for rearranging cards in hand
+    private Transform handParent;
+    private GameObject handPlaceholder;
+    private CanvasGroup dragCanvasGroup;
+    private Canvas rootCanvas;
+    private bool isDragging = false;
 
     void Awake()
     {
@@ -221,6 +228,93 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 lineRenderer.enabled = false;
             }
         }
+
+    private bool CanDrag()
+    {
+        return !isInBattlefield && !isInGraveyard && !isInStack && gameManager != null && gameManager.humanPlayer != null && gameManager.humanPlayer.Hand.Contains(linkedCard);
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (!CanDrag())
+            return;
+
+        isDragging = true;
+        disableHoverEffects = true;
+        handParent = transform.parent;
+
+        handPlaceholder = new GameObject("Placeholder");
+        var le = handPlaceholder.AddComponent<LayoutElement>();
+        var rect = GetComponent<RectTransform>();
+        le.preferredWidth = rect.rect.width;
+        le.preferredHeight = rect.rect.height;
+        handPlaceholder.transform.SetParent(handParent);
+        handPlaceholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
+
+        dragCanvasGroup = GetComponent<CanvasGroup>();
+        if (dragCanvasGroup == null)
+            dragCanvasGroup = gameObject.AddComponent<CanvasGroup>();
+        dragCanvasGroup.blocksRaycasts = false;
+
+        rootCanvas = GetComponentInParent<Canvas>();
+        if (rootCanvas != null)
+            transform.SetParent(rootCanvas.transform, true);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!isDragging)
+            return;
+
+        transform.position = eventData.position;
+
+        if (handParent == null || handPlaceholder == null)
+            return;
+
+        int newIndex = handParent.childCount;
+        for (int i = 0; i < handParent.childCount; i++)
+        {
+            Transform child = handParent.GetChild(i);
+            if (child == handPlaceholder.transform)
+                continue;
+            if (transform.position.x < child.position.x)
+            {
+                newIndex = i;
+                break;
+            }
+        }
+        handPlaceholder.transform.SetSiblingIndex(newIndex);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (!isDragging)
+            return;
+
+        isDragging = false;
+        disableHoverEffects = false;
+
+        int newIndex = handPlaceholder.transform.GetSiblingIndex();
+
+        transform.SetParent(handParent);
+        transform.SetSiblingIndex(newIndex);
+        transform.localPosition = Vector3.zero;
+
+        if (dragCanvasGroup != null)
+            dragCanvasGroup.blocksRaycasts = true;
+
+        Destroy(handPlaceholder);
+
+        if (gameManager != null && gameManager.humanPlayer != null)
+        {
+            var hand = gameManager.humanPlayer.Hand;
+            hand.Remove(linkedCard);
+            if (newIndex > hand.Count)
+                newIndex = hand.Count;
+            hand.Insert(newIndex, linkedCard);
+            gameManager.UpdateUI();
+        }
+    }
 
     private void UpdateLandIcon()
         {
