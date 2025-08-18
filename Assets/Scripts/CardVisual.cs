@@ -82,6 +82,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private GameObject handPlaceholder;
     private CanvasGroup dragCanvasGroup;
     private Canvas rootCanvas;
+    private Canvas dragCanvas;
+    private Vector3 dragOffset;
     private bool isDragging = false;
 
     void Awake()
@@ -256,9 +258,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             dragCanvasGroup = gameObject.AddComponent<CanvasGroup>();
         dragCanvasGroup.blocksRaycasts = false;
 
+        dragCanvas = GetComponent<Canvas>();
+        if (dragCanvas == null)
+            dragCanvas = gameObject.AddComponent<Canvas>();
+        dragCanvas.overrideSorting = true;
+        dragCanvas.sortingOrder = 1000;
+
         rootCanvas = GetComponentInParent<Canvas>();
         if (rootCanvas != null)
+        {
             transform.SetParent(rootCanvas.transform, true);
+            transform.SetAsLastSibling();
+        }
+
+        var rectTransform = GetComponent<RectTransform>();
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out var worldPoint))
+            dragOffset = rectTransform.position - worldPoint;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -266,18 +281,24 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (!isDragging)
             return;
 
-        transform.position = eventData.position;
+        var rectTransform = GetComponent<RectTransform>();
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out var worldPoint))
+            rectTransform.position = worldPoint + dragOffset;
 
         if (handParent == null || handPlaceholder == null)
             return;
 
         int newIndex = handParent.childCount;
+        var handRect = handParent as RectTransform;
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(handRect, eventData.position, eventData.pressEventCamera, out localPoint);
         for (int i = 0; i < handParent.childCount; i++)
         {
             Transform child = handParent.GetChild(i);
             if (child == handPlaceholder.transform)
                 continue;
-            if (transform.position.x < child.position.x)
+            RectTransform childRect = child as RectTransform;
+            if (localPoint.x < childRect.anchoredPosition.x)
             {
                 newIndex = i;
                 break;
@@ -302,8 +323,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         if (dragCanvasGroup != null)
             dragCanvasGroup.blocksRaycasts = true;
+        if (dragCanvas != null)
+        {
+            dragCanvas.overrideSorting = false;
+            dragCanvas.sortingOrder = 0;
+        }
 
         Destroy(handPlaceholder);
+
+        dragOffset = Vector3.zero;
 
         if (gameManager != null && gameManager.humanPlayer != null)
         {
