@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
     public GameObject floatingDamagePrefab;
     public GameObject favouritePopupPrefab;
     public GameObject triggerVFXPrefab;
+    public GameObject lightningVFXPrefab;
 
     // Tracks cumulative life changes during a combat step
     private TMP_Text playerLifeDeltaText;
@@ -310,10 +311,14 @@ public class GameManager : MonoBehaviour
                 player.Hand.Remove(card);
                 player.hasPlayedLandThisTurn = true;
 
-                if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+                if (card.entersTapped || IsAllPermanentsEnterTappedActive())
                 {
                     card.isTapped = true;
                     Debug.Log($"{card.cardName} enters tapped (static effect or base).");
+                    if (IsAllPermanentsEnterTappedActive())
+                    {
+                        ShowLightningStrikeVFX(card);
+                    }
                 }
 
                 card.OnEnterPlay(player);
@@ -1087,6 +1092,10 @@ public class GameManager : MonoBehaviour
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
 
             Transform battlefield = caster == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
@@ -1155,6 +1164,10 @@ public class GameManager : MonoBehaviour
             {
                 artifact.isTapped = true;
                 Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(artifact);
+                }
             }
 
             Transform area = caster == humanPlayer ? playerArtifactArea : aiArtifactArea;
@@ -1194,6 +1207,10 @@ public class GameManager : MonoBehaviour
             {
                 enchantment.isTapped = true;
                 Debug.Log($"{enchantment.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(enchantment);
+                }
             }
 
             Transform area = caster == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
@@ -1250,6 +1267,10 @@ public class GameManager : MonoBehaviour
             {
                 aura.isTapped = true;
                 Debug.Log($"{aura.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(aura);
+                }
             }
 
             Transform area = caster == humanPlayer ? playerEnchantmentArea : aiEnchantmentArea;
@@ -1548,10 +1569,14 @@ public class GameManager : MonoBehaviour
         {
             creature.hasSummoningSickness = true;
 
-            if (creature.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
+            if (creature.entersTapped || IsAllPermanentsEnterTappedActive())
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
         }
 
@@ -1699,6 +1724,10 @@ public class GameManager : MonoBehaviour
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
         }
         else if (chosen is ArtifactCard artifact)
@@ -1707,6 +1736,10 @@ public class GameManager : MonoBehaviour
             {
                 artifact.isTapped = true;
                 Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(artifact);
+                }
             }
         }
 
@@ -1790,6 +1823,10 @@ public class GameManager : MonoBehaviour
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
         }
         else if (chosen is ArtifactCard artifact)
@@ -1798,6 +1835,10 @@ public class GameManager : MonoBehaviour
             {
                 artifact.isTapped = true;
                 Debug.Log($"{artifact.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(artifact);
+                }
             }
         }
 
@@ -1946,6 +1987,10 @@ public class GameManager : MonoBehaviour
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
         }
 
@@ -1991,6 +2036,10 @@ public class GameManager : MonoBehaviour
             {
                 creature.isTapped = true;
                 Debug.Log($"{creature.cardName} enters tapped (due to static effect).");
+                if (IsAllPermanentsEnterTappedActive())
+                {
+                    ShowLightningStrikeVFX(creature);
+                }
             }
         }
 
@@ -2126,6 +2175,32 @@ public class GameManager : MonoBehaviour
         GameObject vfx = Instantiate(bloodSplatPrefab, spawnPos, Quaternion.identity);
         Destroy(vfx, 1.5f);
         Debug.Log("Spawned blood VFX at " + spawnPos);
+    }
+
+    public void ShowLightningStrikeVFX(Card card)
+    {
+        Debug.Log("ShowLightningStrikeVFX triggered on: " + card.cardName);
+
+        CardVisual visual = FindCardVisual(card);
+        if (visual == null)
+        {
+            Debug.LogWarning("No visual found for card " + card.cardName);
+            return;
+        }
+
+        Vector3 spawnPos = visual.transform.position;
+        spawnPos.z = 0f;
+        spawnPos += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), 0);
+
+        if (lightningVFXPrefab == null)
+        {
+            Debug.LogWarning("lightningVFXPrefab not assigned");
+            return;
+        }
+
+        GameObject vfx = Instantiate(lightningVFXPrefab, spawnPos, Quaternion.identity);
+        Destroy(vfx, 1.5f);
+        Debug.Log("Spawned lightning VFX at " + spawnPos);
     }
 
     public void PayToGainAbility(CreatureCard creature)
