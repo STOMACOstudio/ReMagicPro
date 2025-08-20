@@ -507,6 +507,22 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         }
                     }
                 }
+                else if (linkedCard is EnchantmentCard enchantment)
+                {
+                    int minus = enchantment.minusOneCounters;
+                    if (minus == 0)
+                    {
+                        counterContainer.SetActive(false);
+                    }
+                    else
+                    {
+                        counterContainer.SetActive(true);
+                        if (counterText != null)
+                            counterText.text = minus.ToString();
+                        if (counterImage != null)
+                            counterImage.color = new Color(0.8f, 0.6f, 0.9f, 1f);
+                    }
+                }
                 else
                 {
                     counterContainer.SetActive(false);
