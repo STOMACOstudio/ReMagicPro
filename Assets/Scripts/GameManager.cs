@@ -1312,6 +1312,9 @@ public class GameManager : MonoBehaviour
         if (deadCreature != null)
             lastDeadCreature = deadCreature;
 
+        Card previousSource = lastAbilitySource;
+        lastAbilitySource = source;
+
         int oldLife = owner.Life;
         ability.effect?.Invoke(owner, target);
         int gained = owner.Life - oldLife;
@@ -1322,6 +1325,8 @@ public class GameManager : MonoBehaviour
 
         if (deadCreature != null)
             lastDeadCreature = previousDead;
+
+        lastAbilitySource = previousSource;
 
         CheckDeaths(humanPlayer);
         CheckDeaths(aiPlayer);
@@ -4050,6 +4055,9 @@ public class GameManager : MonoBehaviour
         public Card lastEnteredCreature = null;
 
         public Card lastEnteredArtifact = null;
+
+        // Tracks the source card of the ability currently being resolved.
+        public Card lastAbilitySource = null;
 
         public void NotifyCardDrawn(Player player, int amount)
         {
