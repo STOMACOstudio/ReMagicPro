@@ -1725,10 +1725,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     var currentPhase = TurnSystem.Instance.currentPhase;
                     bool mainPhase = currentPhase == TurnSystem.TurnPhase.Main1 || currentPhase == TurnSystem.TurnPhase.Main2;
                     bool combatPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
+                    bool humansTurn = TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human;
 
                     if (!isInstant)
                     {
-                        if (TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human || !mainPhase)
+                        if (!humansTurn || !mainPhase)
                         {
                             Debug.Log("You can only play cards during your own Main Phase.");
                             return;
@@ -1736,9 +1737,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                     else
                     {
-                        if (!combatPhase || GameManager.Instance.IsStackActive())
+                        bool validTime = (humansTurn && (mainPhase || combatPhase)) || (!humansTurn && combatPhase);
+                        if (GameManager.Instance.IsStackActive() || !validTime)
                         {
-                            Debug.Log("Instants can only be cast during combat when the stack is empty.");
+                            Debug.Log("Instants can only be cast during your main phases or any combat when the stack is empty.");
                             return;
                         }
                     }
