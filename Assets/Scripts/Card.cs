@@ -43,6 +43,10 @@ public class Card
 
     public Player owner;
 
+    // Stores a card temporarily controlled by this card and its original owner.
+    public Card gainedControlCard;
+    public Player gainedControlCardOriginalOwner;
+
     public List<CardAbility> abilities = new List<CardAbility>();
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
     public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();

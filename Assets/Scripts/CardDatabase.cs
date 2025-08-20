@@ -1479,6 +1479,52 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/goblin_beastmaster")
                     });
+                Add(new CardData //Goblin Invader
+                    {
+                    cardName = "Goblin Invader",
+                    rarity = "Rare",
+                    manaCost = 5,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Goblin", "Shaman" },
+                    artwork = Resources.Load<Sprite>("Art/goblin_puncher"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "gain control of target land until this creature leaves.",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Land,
+                            effect = (Player owner, Card target) =>
+                            {
+                                if (target == null)
+                                    return;
+                                Card source = GameManager.Instance.lastAbilitySource;
+                                if (source == null)
+                                    return;
+                                source.gainedControlCard = target;
+                                source.gainedControlCardOriginalOwner = GameManager.Instance.GetOwnerOfCard(target);
+                                GameManager.Instance.ChangeController(target, owner);
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            effect = (Player owner, Card card) =>
+                            {
+                                if (card.gainedControlCard != null && card.gainedControlCardOriginalOwner != null)
+                                {
+                                    GameManager.Instance.ChangeController(card.gainedControlCard, card.gainedControlCardOriginalOwner);
+                                    card.gainedControlCard = null;
+                                    card.gainedControlCardOriginalOwner = null;
+                                }
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Thundermare
                     {
                     cardName = "Thundermare",
