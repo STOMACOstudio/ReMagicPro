@@ -3550,6 +3550,45 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets -2/-2",
                     });
 
+                Add(new CardData // Bog Pest
+                    {
+                        cardName = "Bog Pest",
+                        rarity = "Rare",
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = -1,
+                        toughnessBuff = -1,
+                        artwork = Resources.Load<Sprite>("Art/bog_pest"),
+                        rulesText = "Enchanted creature gets -1/-1 and gains \"At the beginning of your upkeep, put a copy of this enchantment on target random creature.\"",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnUpkeep,
+                                description = "put a copy of this enchantment on target random creature.",
+                                effect = (Player owner, Card source) =>
+                                {
+                                    var creatures = GameManager.Instance.humanPlayer.Battlefield
+                                        .OfType<CreatureCard>()
+                                        .Concat(GameManager.Instance.aiPlayer.Battlefield.OfType<CreatureCard>())
+                                        .ToList();
+                                    if (creatures.Count == 0)
+                                        return;
+                                    int index = Random.Range(0, creatures.Count);
+                                    CreatureCard target = creatures[index];
+                                    Card copy = CardFactory.Create(source.cardName);
+                                    if (copy is AuraCard auraCopy)
+                                    {
+                                        auraCopy.attachedTo = target;
+                                        GameManager.Instance.SummonToken(auraCopy, owner);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Devouring Fury
                     {
                         cardName = "Devouring Fury",
