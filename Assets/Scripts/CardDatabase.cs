@@ -1486,10 +1486,10 @@ public static class CardDatabase
                     manaCost = 5,
                     color = new List<string> { "Red" },
                     cardType = CardType.Creature,
-                    power = 4,
-                    toughness = 4,
+                    power = 2,
+                    toughness = 2,
                     subtypes = new List<string> { "Goblin", "Shaman" },
-                    artwork = Resources.Load<Sprite>("Art/goblin_puncher"),
+                    artwork = Resources.Load<Sprite>("Art/goblin_invader"),
                     abilities = new List<CardAbility>
                     {
                         new CardAbility
