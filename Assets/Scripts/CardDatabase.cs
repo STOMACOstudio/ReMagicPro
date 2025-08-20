@@ -3341,6 +3341,44 @@ public static class CardDatabase
                         }
                     });
 
+                Add(new CardData //Demonic Corrosion
+                    {
+                        cardName = "Demonic Corrosion",
+                        rarity = "Rare",
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/demonic_corrosion"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnUpkeep,
+                                description = "you lose a life and draw a card for each pain counter on this enchantment. Then put a pain counter on this enchantment.",
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is EnchantmentCard enchantment)
+                                    {
+                                        int pain = enchantment.minusOneCounters;
+                                        if (pain > 0)
+                                        {
+                                            owner.Life -= pain;
+                                            GameObject ui = owner == GameManager.Instance.humanPlayer ?
+                                                GameManager.Instance.playerLifeContainer :
+                                                GameManager.Instance.enemyLifeContainer;
+                                            GameManager.Instance.ShowFloatingDamage(pain, ui);
+                                            for (int i = 0; i < pain; i++)
+                                                GameManager.Instance.DrawCard(owner);
+                                            GameManager.Instance.CheckForGameEnd();
+                                        }
+                                        enchantment.AddMinusOneCounter();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData //Heavy Taxation
                     {
                         cardName = "Heavy Taxation",

@@ -4,5 +4,12 @@ using UnityEngine;
 
 public class EnchantmentCard : Card
 {
-    // Enchantments share base Card behaviour. Additional logic can be added later.
+    // Enchantments may track counters for various effects.
+    // "minusOneCounters" are used by some cards as generic counters.
+    public int minusOneCounters = 0;
+
+    public void AddMinusOneCounter()
+    {
+        minusOneCounters++;
+    }
 }
