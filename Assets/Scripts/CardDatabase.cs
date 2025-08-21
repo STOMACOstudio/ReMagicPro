@@ -2962,6 +2962,54 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/burn_mind")
                     });
 
+                Add(new CardData //Fireborn Succubus
+                    {
+                    cardName = "Fireborn Succubus",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Black", "Red" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Demon" },
+                    artwork = Resources.Load<Sprite>("Art/fireborn_succubus"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "gain control of target creature with converted mana cost 2 or less until this creature leaves the battlefield.",
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Creature,
+                            effect = (Player owner, Card target) =>
+                            {
+                                if (target is CreatureCard creature && creature.manaCost <= 2)
+                                {
+                                    Card source = GameManager.Instance.lastAbilitySource;
+                                    if (source == null)
+                                        return;
+                                    source.gainedControlCard = target;
+                                    source.gainedControlCardOriginalOwner = GameManager.Instance.GetOwnerOfCard(target);
+                                    GameManager.Instance.ChangeController(target, owner);
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnDeath,
+                            effect = (Player owner, Card card) =>
+                            {
+                                if (card.gainedControlCard != null && card.gainedControlCardOriginalOwner != null)
+                                {
+                                    GameManager.Instance.ChangeController(card.gainedControlCard, card.gainedControlCardOriginalOwner);
+                                    card.gainedControlCard = null;
+                                    card.gainedControlCardOriginalOwner = null;
+                                }
+                            }
+                        }
+                    }
+                    });
+
         // Artifacts
             Add(new CardData // Pressure Sphere
                 {
