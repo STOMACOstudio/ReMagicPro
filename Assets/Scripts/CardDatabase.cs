@@ -3471,6 +3471,21 @@ public static class CardDatabase
                         }
                     });
 
+                Add(new CardData //Like a Thunder
+                    {
+                        cardName = "Like a Thunder",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "Red" },
+                        cardType = CardType.Enchantment,
+                        keywordAbilities = new List<KeywordAbility>
+                        {
+                            KeywordAbility.HasteCreaturesOnlyBlockedByHaste
+                        },
+                        artwork = Resources.Load<Sprite>("Art/like_a_thunder"),
+                        rulesText = "Creatures with haste you control can only be blocked by creatures with haste.",
+                    });
+
                 Add(new CardData //Shrine of rot
                     {
                         cardName = "Shrine of Rot",

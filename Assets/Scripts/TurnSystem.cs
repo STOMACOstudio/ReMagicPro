@@ -1237,6 +1237,11 @@ public class TurnSystem : MonoBehaviour
                 if (IsLandwalkPreventingBlock(attacker, defender))
                     return false;
 
+                if (GameManager.Instance.IsHasteCreaturesOnlyBlockedByHasteActive(attacker.owner) &&
+                    attacker.keywordAbilities.Contains(KeywordAbility.Haste) &&
+                    !blocker.keywordAbilities.Contains(KeywordAbility.Haste))
+                    return false;
+
                 if (blocker.color.Any(c => attacker.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
                     return false;
 

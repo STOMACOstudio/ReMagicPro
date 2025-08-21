@@ -2526,6 +2526,12 @@ public class GameManager : MonoBehaviour
                         card.keywordAbilities.Contains(KeywordAbility.OnlyCastCreatureSpells));
     }
 
+    public bool IsHasteCreaturesOnlyBlockedByHasteActive(Player player)
+    {
+        return player.Battlefield.Any(card => card.keywordAbilities != null &&
+            card.keywordAbilities.Contains(KeywordAbility.HasteCreaturesOnlyBlockedByHaste));
+    }
+
     public int GetCreatureCostReduction(Player player)
     {
         return player.Battlefield.Count(card => card.keywordAbilities != null &&

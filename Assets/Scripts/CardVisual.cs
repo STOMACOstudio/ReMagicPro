@@ -1656,6 +1656,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.Log($"{blocker.cardName} can't block {clickedCreature.cardName} due to landwalk.");
                             return;
                         }
+                        // Check if haste creatures can only be blocked by haste
+                        if (GameManager.Instance.IsHasteCreaturesOnlyBlockedByHasteActive(enemy) &&
+                            clickedCreature.keywordAbilities.Contains(KeywordAbility.Haste) &&
+                            !blocker.keywordAbilities.Contains(KeywordAbility.Haste))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can only be blocked by creatures with haste.");
+                            return;
+                        }
                         // Prevent blocking if attacker has protection from blocker's color
                         if (blocker.color.Any(c => clickedCreature.keywordAbilities.Contains(ProtectionUtils.GetProtectionKeyword(c))))
                         {
