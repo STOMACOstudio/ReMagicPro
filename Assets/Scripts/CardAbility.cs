@@ -15,6 +15,7 @@ public enum TriggerTiming
     OnCreatureDiesOrDiscarded,
     OnPlayerDiscard,
     OnOpponentDiscard,
+    OnBlock,
     OnCombatDamageToPlayer,
 }
 
