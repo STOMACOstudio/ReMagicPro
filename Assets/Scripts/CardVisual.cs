@@ -2145,6 +2145,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += "Each player exchanges their graveyard with their library, then shuffles their deck.\n";
             if (sorcery.revealUntilCreature)
                 rules += "Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand, then shuffle.\n";
+            if (sorcery.revealUntilLand)
+                rules += "Reveal cards from the top of your library until you reveal a land card. Put that card into your hand, then shuffle.\n";
             if (sorcery.destroyTargetIfTypeMatches)
             {
                 string destroyType = sorcery.requiredTargetType switch

@@ -18,6 +18,7 @@ public class SorceryCard : Card
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
     public bool revealUntilCreature = false;
+    public bool revealUntilLand = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
     public int maxManaCostForReturn = 0;
@@ -71,6 +72,13 @@ public class SorceryCard : Card
             {
                 GameManager.Instance.pendingStackEffects++;
                 GameManager.Instance.StartCoroutine(GameManager.Instance.RevealUntilCreature(caster));
+                didSomething = true;
+            }
+
+            if (revealUntilLand)
+            {
+                GameManager.Instance.pendingStackEffects++;
+                GameManager.Instance.StartCoroutine(GameManager.Instance.RevealUntilLand(caster));
                 didSomething = true;
             }
 
