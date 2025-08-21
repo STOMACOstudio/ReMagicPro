@@ -32,6 +32,7 @@ public enum KeywordAbility
     OpponentSpellsCostOneMore,
     CantUntap,
     CantDealCombatDamage,
+    HasteCreaturesOnlyBlockedByHaste,
 }
 
 public enum ActivatedAbility
