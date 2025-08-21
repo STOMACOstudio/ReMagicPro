@@ -1678,6 +1678,43 @@ public static class CardDatabase
                         ActivatedAbility.TapForMana
                     }
                     });
+                Add(new CardData //Spinewall Cactus
+                    {
+                    cardName = "Spinewall Cactus",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 2,
+                    subtypes = new List<string> { "Plant" },
+                    artwork = Resources.Load<Sprite>("Art/spinewall_cactus"),
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender
+                    },
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnBlock,
+                            description = "it gets +X/+0 until end of turn where X is the power of the blocked creature.",
+                            effect = (Player owner, Card target) =>
+                            {
+                                var self = GameManager.Instance.lastAbilitySource as CreatureCard;
+                                var attacker = target as CreatureCard;
+                                if (self != null && attacker != null)
+                                {
+                                    self.AddTemporaryBuff(attacker.power, 0);
+                                    var vis = GameManager.Instance.FindCardVisual(self);
+                                    if (vis != null)
+                                        vis.UpdateVisual();
+                                    Debug.Log($"{self.cardName} blocks {attacker.cardName} and gets +{attacker.power}/+0 until end of turn.");
+                                }
+                            }
+                        }
+                    }
+                    });
                 Add(new CardData //Cactusaurus
                     {
                     cardName = "Cactusaurus",

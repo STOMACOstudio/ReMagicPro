@@ -4197,6 +4197,24 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        public void NotifyCreatureBlocks(CreatureCard blocker, CreatureCard attacker)
+        {
+            if (blocker == null || attacker == null)
+                return;
+
+            Player owner = GetOwnerOfCard(blocker);
+            if (owner == null)
+                return;
+
+            foreach (var ability in blocker.abilities)
+            {
+                if (ability.timing == TriggerTiming.OnBlock && ability.effect != null)
+                {
+                    QueueTriggeredAbility(ability, owner, blocker, attacker);
+                }
+            }
+        }
+
         public void GainLife(Player player, int amount)
         {
             TryGainLife(player, amount);

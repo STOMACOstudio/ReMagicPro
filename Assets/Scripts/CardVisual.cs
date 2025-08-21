@@ -1674,6 +1674,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         // Assign the block
                         blocker.blockingThisAttacker = clickedCreature;
                         clickedCreature.blockedByThisBlocker.Add(blocker);
+                        GameManager.Instance.NotifyCreatureBlocks(blocker, clickedCreature);
                         GameManager.Instance.selectedBlockerForBlocking = null;
 
                         Debug.Log($"{blocker.cardName} is blocking {clickedCreature.cardName}");
