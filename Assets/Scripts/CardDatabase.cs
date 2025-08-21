@@ -3486,7 +3486,7 @@ public static class CardDatabase
                     {
                         cardName = "Demonic Corrosion",
                         rarity = "Rare",
-                        manaCost = 1,
+                        manaCost = 3,
                         color = new List<string> { "Black" },
                         cardType = CardType.Enchantment,
                         artwork = Resources.Load<Sprite>("Art/demonic_corrosion"),
