@@ -3636,6 +3636,134 @@ public static class CardDatabase
                         }
                     });
 
+                Add(new CardData // Brotherhood
+                    {
+                        cardName = "Brotherhood",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "White", "Green" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/brotherhood"),
+                        rulesText = "Creatures you control gets +1/+1 for each other creature you control with the same name.",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is EnchantmentCard enchantment)
+                                    {
+                                        enchantment.brotherhoodBuffs.Clear();
+                                        var groups = owner.Battlefield.OfType<CreatureCard>().GroupBy(c => c.cardName);
+                                        foreach (var group in groups)
+                                        {
+                                            int buff = group.Count() - 1;
+                                            foreach (var creature in group)
+                                            {
+                                                if (buff > 0)
+                                                {
+                                                    creature.AddAuraBuff(buff, buff);
+                                                    enchantment.brotherhoodBuffs[creature] = buff;
+                                                }
+                                                GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureEnter,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is EnchantmentCard enchantment)
+                                    {
+                                        Card entering = GameManager.Instance.lastEnteredCreature;
+                                        if (entering is CreatureCard creature && GameManager.Instance.GetOwnerOfCard(entering) == owner)
+                                        {
+                                            string name = creature.cardName;
+                                            var group = owner.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList();
+                                            int buff = group.Count - 1;
+                                            foreach (var c in group)
+                                            {
+                                                if (enchantment.brotherhoodBuffs.TryGetValue(c, out int prev))
+                                                {
+                                                    c.RemoveAuraBuff(prev, prev);
+                                                    enchantment.brotherhoodBuffs.Remove(c);
+                                                }
+                                            }
+                                            foreach (var c in group)
+                                            {
+                                                if (buff > 0)
+                                                {
+                                                    c.AddAuraBuff(buff, buff);
+                                                    enchantment.brotherhoodBuffs[c] = buff;
+                                                }
+                                                GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureDies,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is EnchantmentCard enchantment)
+                                    {
+                                        Card dead = GameManager.Instance.lastDeadCreature;
+                                        if (dead is CreatureCard creature && GameManager.Instance.GetOwnerOfCard(dead) == owner)
+                                        {
+                                            enchantment.brotherhoodBuffs.Remove(creature);
+                                            string name = creature.cardName;
+                                            var group = owner.Battlefield.OfType<CreatureCard>().Where(c => c.cardName == name).ToList();
+                                            int buff = group.Count - 1;
+                                            foreach (var c in group)
+                                            {
+                                                if (enchantment.brotherhoodBuffs.TryGetValue(c, out int prev))
+                                                {
+                                                    c.RemoveAuraBuff(prev, prev);
+                                                    enchantment.brotherhoodBuffs.Remove(c);
+                                                }
+                                            }
+                                            foreach (var c in group)
+                                            {
+                                                if (buff > 0)
+                                                {
+                                                    c.AddAuraBuff(buff, buff);
+                                                    enchantment.brotherhoodBuffs[c] = buff;
+                                                }
+                                                GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnDeath,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is EnchantmentCard enchantment)
+                                    {
+                                        foreach (var kv in enchantment.brotherhoodBuffs)
+                                        {
+                                            kv.Key.RemoveAuraBuff(kv.Value, kv.Value);
+                                            GameManager.Instance.FindCardVisual(kv.Key)?.UpdateVisual();
+                                        }
+                                        enchantment.brotherhoodBuffs.Clear();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Faith protection
                     {
                         cardName = "Faith Protection",
