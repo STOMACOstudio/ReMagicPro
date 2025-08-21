@@ -1048,7 +1048,6 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.blockingAssignments[attacker].Add(blocker);
                                     blocker.blockingThisAttacker = attacker;
                                     attacker.blockedByThisBlocker.Add(blocker);
-                                    GameManager.Instance.NotifyCreatureBlocks(blocker, attacker);
                                     availableBlockers.Remove(blocker);
                                     Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
                                 }
@@ -1073,6 +1072,14 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.ConfirmBlockers:
+                    foreach (var attacker in GameManager.Instance.currentAttackers)
+                    {
+                        foreach (var blocker in attacker.blockedByThisBlocker)
+                        {
+                            GameManager.Instance.NotifyCreatureBlocks(blocker, attacker);
+                        }
+                    }
+
                     if (!waitingForPlayerInput)
                     {
                         waitingForPlayerInput = true;
