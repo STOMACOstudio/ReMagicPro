@@ -68,6 +68,7 @@ public class CardData
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
     public bool revealUntilCreature = false;
+    public bool revealUntilLand = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
     public int maxManaCostForReturn = 0;

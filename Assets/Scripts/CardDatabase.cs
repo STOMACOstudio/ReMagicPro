@@ -2889,6 +2889,16 @@ public static class CardDatabase
                     eachPlayerGainLifeEqualToLands = true,
                     artwork = Resources.Load<Sprite>("Art/feast"),
                     });
+                Add(new CardData { //Touch Grass
+                    cardName = "Touch Grass",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 1,
+                    color = new List<string> { "Green" },
+                    revealUntilLand = true,
+                    artwork = Resources.Load<Sprite>("Art/touch_grass"),
+                    abilities = new List<CardAbility>(),
+                    });
                 Add(new CardData { //Rolling Energy
                     cardName = "Rolling Energy",
                     rarity = "Common",

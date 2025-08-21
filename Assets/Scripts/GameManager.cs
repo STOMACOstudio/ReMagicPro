@@ -1902,6 +1902,77 @@ public class GameManager : MonoBehaviour
         pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
     }
 
+    public IEnumerator RevealUntilLand(Player player)
+    {
+        List<Card> revealedNonLands = new List<Card>();
+        List<CardVisual> visuals = new List<CardVisual>();
+        Card landCard = null;
+        CardVisual landVisual = null;
+
+        int index = 0;
+        float spacing = 150f;
+
+        while (player.Deck.Count > 0)
+        {
+            Card top = player.Deck[0];
+            player.Deck.RemoveAt(0);
+
+            GameObject obj = Instantiate(cardPrefab, stackZone);
+            obj.transform.localPosition = new Vector3(index * spacing, 0f, 0f);
+            CardVisual visual = obj.GetComponent<CardVisual>();
+            CardData data = CardDatabase.GetCardData(top.cardName);
+            visual.Setup(top, this, data);
+            visual.isInStack = true;
+            visuals.Add(visual);
+
+            if (top is LandCard)
+            {
+                landCard = top;
+                landVisual = visual;
+                break;
+            }
+            else
+            {
+                revealedNonLands.Add(top);
+            }
+
+            index++;
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (landCard != null)
+        {
+            player.Hand.Add(landCard);
+            if (player == humanPlayer)
+            {
+                landVisual.transform.SetParent(playerHandArea, false);
+                landVisual.isInStack = false;
+                activeCardVisuals.Add(landVisual);
+            }
+            else
+            {
+                Destroy(landVisual.gameObject);
+                if (enemyHandText != null)
+                    enemyHandText.text = "Hand: " + player.Hand.Count;
+            }
+        }
+
+        foreach (var card in revealedNonLands)
+            player.Deck.Add(card);
+
+        foreach (var visual in visuals)
+        {
+            if (!(visual.linkedCard is LandCard))
+                Destroy(visual.gameObject);
+        }
+
+        ShuffleDeck(player);
+        UpdateUI();
+        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+    }
+
     public void ReturnRandomInstantOrSorceryFromGraveyard(Player player)
     {
         var spells = player.Graveyard
