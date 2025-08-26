@@ -1193,7 +1193,19 @@ public class TurnSystem : MonoBehaviour
 
         private IEnumerator WaitForBannerAndStart()
             {
-                yield return new WaitWhile(() => turnBanner.activeSelf);
+                // Previously this coroutine waited until the banner was manually
+                // hidden somewhere else. If that never happened, the coroutine
+                // would yield forever and the turn would never progress,
+                // effectively preventing the player from ending their turn.
+
+                // Show the banner for a short, fixed duration then hide it
+                // ourselves to ensure the game always advances to the next
+                // phase.
+                yield return new WaitForSeconds(1f);
+
+                if (turnBanner != null)
+                    turnBanner.SetActive(false);
+
                 AdvancePhase();
             }
 
