@@ -66,6 +66,7 @@ public static class CardDatabase
                 Add(new CardData //Iconoclast monk
                     {
                         cardName = "Iconoclast Monk",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string> { "White" },
@@ -93,6 +94,7 @@ public static class CardDatabase
                     });
                 Add (new CardData { // Beasthunter
                     cardName = "Beasthunter",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "White" },
@@ -111,6 +113,7 @@ public static class CardDatabase
                 Add(new CardData // Angry farmer
                     {
                     cardName = "Angry Farmer",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "White" },
@@ -125,6 +128,7 @@ public static class CardDatabase
                 Add(new CardData //Trinkets Collector
                     {
                     cardName = "Trinkets Collector",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "White" },
@@ -149,6 +153,7 @@ public static class CardDatabase
                 Add(new CardData //Gallant lord
                     {
                     cardName = "Gallant Lord",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "White" },
@@ -165,6 +170,7 @@ public static class CardDatabase
                 Add(new CardData //Gentle giant
                     {
                     cardName = "Gentle Giant",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "White" },
@@ -181,6 +187,7 @@ public static class CardDatabase
                 Add(new CardData //Waterbearer
                     {
                     cardName = "Waterbearer",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "White" },
@@ -217,6 +224,7 @@ public static class CardDatabase
                 Add(new CardData //Virgins procession
                     {
                     cardName = "Virgins Procession",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "White" },
@@ -245,6 +253,7 @@ public static class CardDatabase
                 Add(new CardData //Realm protector
                     {
                     cardName = "Realm Protector",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 5,
                     color = new List<string> { "White" },
@@ -261,6 +270,7 @@ public static class CardDatabase
                 Add(new CardData //Hamlet Recruiter
                     {
                     cardName = "Hamlet Recruiter",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "White" },
@@ -294,6 +304,7 @@ public static class CardDatabase
                 Add(new CardData //Skyhunter unicorn
                     {
                     cardName = "Skyhunter Unicorn",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "White" },
@@ -310,6 +321,7 @@ public static class CardDatabase
                 Add(new CardData //Pure angel
                     {
                     cardName = "Pure Angel",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 7,
                     color = new List<string> { "White" },
@@ -339,6 +351,7 @@ public static class CardDatabase
                 Add(new CardData //Untamed Unicorn
                     {
                     cardName = "Untamed Unicorn",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 6,
                     color = new List<string> { "White" },
@@ -408,6 +421,7 @@ public static class CardDatabase
                 Add(new CardData // Human Soldier Token
                     {
                         cardName = "Human Soldier",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -423,6 +437,7 @@ public static class CardDatabase
                 Add(new CardData // Spirit Token
                     {
                         cardName = "Spirit",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -439,6 +454,7 @@ public static class CardDatabase
                 Add(new CardData //Skyward whale
                     {
                     cardName = "Skyward Whale",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 6,
                     color = new List<string> { "Blue" },
@@ -455,6 +471,7 @@ public static class CardDatabase
                 Add(new CardData //Wandering squid
                     {
                     cardName = "Wandering Squid",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 6,
                     color = new List<string> { "Blue" },
@@ -468,6 +485,7 @@ public static class CardDatabase
                 Add(new CardData //Giant crab
                     {
                     cardName = "Giant Crab",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Blue" },
@@ -481,6 +499,7 @@ public static class CardDatabase
                 Add(new CardData //Wandering cloud
                     {
                     cardName = "Wandering Cloud",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Blue" },
@@ -498,6 +517,7 @@ public static class CardDatabase
                 Add(new CardData //Lucky fisherman
                     {
                         cardName = "Lucky Fisherman",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 2,
                         color = new List<string> { "Blue" },
@@ -524,6 +544,7 @@ public static class CardDatabase
                 Add(new CardData //Colossal Octopus
                     {
                     cardName = "Colossal Octopus",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 9,
                     color = new List<string> { "Blue" },
@@ -537,6 +558,7 @@ public static class CardDatabase
                 Add(new CardData //Replicator
                     {
                     cardName = "Replicator",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 3,
                     color = new List<string> { "Blue" },
@@ -573,6 +595,7 @@ public static class CardDatabase
                 Add(new CardData //Sharkmen tribe
                     {
                     cardName = "Sharkmen Tribe",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "Blue" },
@@ -587,6 +610,7 @@ public static class CardDatabase
                 Add(new CardData //Cosmic Whale
                     {
                     cardName = "Cosmic Whale",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 8,
                     color = new List<string> { "Blue" },
@@ -615,6 +639,7 @@ public static class CardDatabase
                 Add(new CardData //Tide Spirit
                     {
                     cardName = "Tide Spirit",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Blue" },
@@ -650,6 +675,7 @@ public static class CardDatabase
                 Add(new CardData //Apprentice potionist
                     {
                     cardName = "Apprentice Potionist",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Blue" },
@@ -674,6 +700,7 @@ public static class CardDatabase
                 Add(new CardData //Master potionist
                     {
                     cardName = "Master Potionist",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 4,
                     color = new List<string> { "Blue" },
@@ -707,6 +734,7 @@ public static class CardDatabase
             //BLACK
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 6,
                     color = new List<string> { "Black" },
@@ -738,6 +766,7 @@ public static class CardDatabase
                 });
                 Add (new CardData { //Flayed Deer
                     cardName = "Flayed Deer",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Black" },
@@ -754,6 +783,7 @@ public static class CardDatabase
                 Add(new CardData //Giant Bat
                         {
                         cardName = "Giant Bat",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 4,
                         color = new List<string> { "Black" },
@@ -776,6 +806,7 @@ public static class CardDatabase
                 Add(new CardData //Bog crocodile
                         {
                         cardName = "Bog Crocodile",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string> { "Black" },
@@ -793,6 +824,7 @@ public static class CardDatabase
                 Add(new CardData //Undead gorilla
                     {
                     cardName = "Undead Gorilla",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Black" },
@@ -809,6 +841,7 @@ public static class CardDatabase
                 Add(new CardData //Rotting whale
                     {
                     cardName = "Rotting Whale",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 6,
                     color = new List<string> { "Black" },
@@ -823,6 +856,7 @@ public static class CardDatabase
                 Add(new CardData //Rotting Dragon
                     {
                     cardName = "Rotting Dragon",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 5,
                     color = new List<string> { "Black" },
@@ -857,6 +891,7 @@ public static class CardDatabase
                 Add(new CardData //Limping corpse
                     {
                     cardName = "Limping Corpse",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Black" },
@@ -872,6 +907,7 @@ public static class CardDatabase
                 Add(new CardData //Stubborn Skeleton
                     {
                     cardName = "Stubborn Skeleton",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Black" },
@@ -891,6 +927,7 @@ public static class CardDatabase
                 Add(new CardData //Wall of Putrid Flesh
                     {
                     cardName = "Wall of Putrid Flesh",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Black" },
@@ -912,6 +949,7 @@ public static class CardDatabase
                 Add(new CardData //Famished crow
                     {
                     cardName = "Famished Crow",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Black" },
@@ -929,6 +967,7 @@ public static class CardDatabase
                 Add(new CardData //Giant crow
                     {
                     cardName = "Giant Crow",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Black" },
@@ -959,6 +998,7 @@ public static class CardDatabase
                 Add(new CardData //Possessed innocent
                     {
                     cardName = "Possessed Innocent",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 5,
                     color = new List<string> { "Black" },
@@ -992,6 +1032,7 @@ public static class CardDatabase
                 Add(new CardData //Lunatic necromancer
                     {
                     cardName = "Lunatic Necromancer",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Black" },
@@ -1025,6 +1066,7 @@ public static class CardDatabase
                 Add(new CardData //Sad clown
                     {
                     cardName = "Sad Clown",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Black" },
@@ -1061,6 +1103,7 @@ public static class CardDatabase
                 Add(new CardData //Ratbat
                     {
                     cardName = "Ratbat",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Black" },
@@ -1079,6 +1122,7 @@ public static class CardDatabase
                 Add(new CardData //Giant rat
                     {
                     cardName = "Giant Rat",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Black" },
@@ -1093,6 +1137,7 @@ public static class CardDatabase
                 Add(new CardData //Dump People
                     {
                     cardName = "Dump People",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Black" },
@@ -1117,6 +1162,7 @@ public static class CardDatabase
                 Add(new CardData //Bog mosquito
                     {
                     cardName = "Bog Mosquito",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Black" },
@@ -1134,6 +1180,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Wicked witch
                     cardName = "Wicked Witch",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Black" },
@@ -1150,6 +1197,7 @@ public static class CardDatabase
                 Add(new CardData //Undead Army
                     {
                     cardName = "Undead Army",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 8,
                     color = new List<string> { "Black" },
@@ -1163,6 +1211,7 @@ public static class CardDatabase
                 Add(new CardData // Zombie Token
                     {
                         cardName = "Zombie",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -1179,6 +1228,7 @@ public static class CardDatabase
                 Add(new CardData //Nocturnal Spectre
                     {
                         cardName = "Nocturnal Spectre",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string> { "Black" },
@@ -1213,6 +1263,7 @@ public static class CardDatabase
                 Add(new CardData //Alchemist Renegade
                     {
                         cardName = "Alchemist Renegade",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -1237,6 +1288,7 @@ public static class CardDatabase
                 Add(new CardData //Cursed Necromancer
                     {
                         cardName = "Cursed Necromancer",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string> { "Black" },
@@ -1261,6 +1313,7 @@ public static class CardDatabase
                 Add(new CardData //The Worlds Evil
                     {
                         cardName = "The Worlds Evil",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 8,
                         color = new List<string> { "Black" },
@@ -1324,6 +1377,7 @@ public static class CardDatabase
                 Add(new CardData // Demon Token
                     {
                         cardName = "Demon",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -1338,6 +1392,7 @@ public static class CardDatabase
             //RED
                 Add (new CardData { //Firedancer
                     cardName = "Firedancer",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Red" },
@@ -1354,6 +1409,7 @@ public static class CardDatabase
                 Add(new CardData //Rabid dog
                     {
                     cardName = "Rabid Dog",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Red" },
@@ -1371,6 +1427,7 @@ public static class CardDatabase
                 Add(new CardData //Fireborn dragon
                     {
                     cardName = "Fireborn Dragon",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 6,
                     color = new List<string> { "Red" },
@@ -1388,6 +1445,7 @@ public static class CardDatabase
                 Add(new CardData //Dragon summoner
                     {
                     cardName = "Dragon Summoner",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 7,
                     color = new List<string> { "Red" },
@@ -1421,6 +1479,7 @@ public static class CardDatabase
                 Add(new CardData //Great boulder
                     {
                     cardName = "Great Boulder",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Red" },
@@ -1438,6 +1497,7 @@ public static class CardDatabase
                 Add(new CardData //Flying pig
                     {
                     cardName = "Flying Pig",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Red" },
@@ -1454,6 +1514,7 @@ public static class CardDatabase
                 Add(new CardData //Goblin puncher
                     {
                     cardName = "Goblin Puncher",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Red" },
@@ -1471,6 +1532,7 @@ public static class CardDatabase
                 Add(new CardData //Goblin Beastmaster
                     {
                     cardName = "Goblin Beastmaster",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Red" },
@@ -1487,6 +1549,7 @@ public static class CardDatabase
                 Add(new CardData //Goblin Invader
                     {
                     cardName = "Goblin Invader",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 5,
                     color = new List<string> { "Red" },
@@ -1533,6 +1596,7 @@ public static class CardDatabase
                 Add(new CardData //Thundermare
                     {
                     cardName = "Thundermare",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Red" },
@@ -1551,6 +1615,7 @@ public static class CardDatabase
                 Add(new CardData //Village idiot
                     {
                     cardName = "Village Idiot",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Red" },
@@ -1579,6 +1644,7 @@ public static class CardDatabase
                 Add(new CardData //Wild ostrich
                     {
                     cardName = "Wild Ostrich",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Red" },
@@ -1597,6 +1663,7 @@ public static class CardDatabase
                 Add(new CardData //Spitfire Cobrox
                     {
                     cardName = "Spitfire Cobrox",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 5,
                     color = new List<string> { "Red" },
@@ -1614,6 +1681,7 @@ public static class CardDatabase
                 Add(new CardData // Dragon Token
                     {
                         cardName = "Dragon",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -1629,6 +1697,7 @@ public static class CardDatabase
                 Add(new CardData //River crocodile
                         {
                         cardName = "River Crocodile",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string> { "Green" },
@@ -1646,6 +1715,7 @@ public static class CardDatabase
                 Add(new CardData //Living tree
                     {
                     cardName = "Living Tree",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "Green" },
@@ -1666,6 +1736,7 @@ public static class CardDatabase
                 Add(new CardData //Wall of roots
                     {
                     cardName = "Wall of Roots",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Green" },
@@ -1686,6 +1757,7 @@ public static class CardDatabase
                 Add(new CardData //Spinewall Cactus
                     {
                     cardName = "Spinewall Cactus",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Green" },
@@ -1723,6 +1795,7 @@ public static class CardDatabase
                 Add(new CardData //Cactusaurus
                     {
                     cardName = "Cactusaurus",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "Green" },
@@ -1739,6 +1812,7 @@ public static class CardDatabase
                 Add(new CardData //Realms crasher
                     {
                     cardName = "Realms Crasher",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 7,
                     color = new List<string> { "Green" },
@@ -1754,6 +1828,7 @@ public static class CardDatabase
                 Add(new CardData //Drumming elf
                     {
                     cardName = "Drumming Elf",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 5,
                     color = new List<string> { "Green" },
@@ -1787,6 +1862,7 @@ public static class CardDatabase
                 Add(new CardData //Crazy cat lady
                     {
                     cardName = "Crazy Cat Lady",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Green" },
@@ -1822,6 +1898,7 @@ public static class CardDatabase
                 Add(new CardData //Domestic cat
                     {
                     cardName = "Domestic Cat",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Green" },
@@ -1839,6 +1916,7 @@ public static class CardDatabase
                 Add(new CardData //Deep forest monkeys
                     {
                     cardName = "Deep Forest Monkeys",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Green" },
@@ -1853,6 +1931,7 @@ public static class CardDatabase
                 Add(new CardData //Violent Monkey
                     {
                     cardName = "Violent Ape",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Green" },
@@ -1867,6 +1946,7 @@ public static class CardDatabase
                 Add(new CardData //Gorilla Chief
                     {
                     cardName = "Gorilla Chief",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 3,
                     color = new List<string> { "Green" },
@@ -1931,6 +2011,7 @@ public static class CardDatabase
                 Add(new CardData //Veilbreaker Druid
                     {
                     cardName = "Veilbreaker Druid",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Green" },
@@ -1959,6 +2040,7 @@ public static class CardDatabase
                 Add(new CardData //Flying donkey
                     {
                     cardName = "Flying Donkey",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Green" },
@@ -1975,6 +2057,7 @@ public static class CardDatabase
                 Add(new CardData //Slack tungo
                     {
                     cardName = "Slack Tungo",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 8,
                     color = new List<string> { "Green" },
@@ -1989,6 +2072,7 @@ public static class CardDatabase
                 Add(new CardData // Cat Token
                     {
                         cardName = "Cat",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -2003,6 +2087,7 @@ public static class CardDatabase
                 Add(new CardData // Monkey Token
                     {
                         cardName = "Monkey",
+                        artist = "Sora AI",
                         rarity = "Token",
                         manaCost = 0,
                         isToken = true,
@@ -2018,6 +2103,7 @@ public static class CardDatabase
                 Add(new CardData //Sphyx lynx
                     {
                     cardName = "Sphynx Lynx",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 6,
                     color = new List<string> { "Artifact" },
@@ -2036,6 +2122,7 @@ public static class CardDatabase
                 Add(new CardData //Origin Golem
                     {
                     cardName = "Origin Golem",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "Artifact" },
@@ -2050,6 +2137,7 @@ public static class CardDatabase
                 Add(new CardData //Omega golemoid
                     {
                     cardName = "Omega Golemoid",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 7,
                     color = new List<string> { "Artifact" },
@@ -2065,6 +2153,7 @@ public static class CardDatabase
                 Add(new CardData //Glassmole
                     {
                     cardName = "Glassmole",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Artifact" },
@@ -2079,6 +2168,7 @@ public static class CardDatabase
                 Add(new CardData //Obstacle
                     {
                     cardName = "Obstacle",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 0,
                     color = new List<string> { "Artifact" },
@@ -2096,6 +2186,7 @@ public static class CardDatabase
                 Add(new CardData //Iron skyman
                     {
                     cardName = "Iron Skyman",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
                     color = new List<string> { "Artifact" },
@@ -2114,6 +2205,7 @@ public static class CardDatabase
                 Add(new CardData //Autonomous miner
                     {
                     cardName = "Autonomous Miner",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 3,
                     color = new List<string> { "Artifact" },
@@ -2132,6 +2224,7 @@ public static class CardDatabase
                 Add(new CardData //Stormcutter Galleon
                     {
                     cardName = "Stormcutter Galleon",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 6,
                     color = new List<string> { "Artifact" },
@@ -2161,6 +2254,7 @@ public static class CardDatabase
                 Add(new CardData //Blazefire angel
                     {
                     cardName = "Blazefire Angel",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 7,
                     color = new List<string> { "White", "Red" },
@@ -2179,6 +2273,7 @@ public static class CardDatabase
                 Add(new CardData //Wild crusher
                         {
                         cardName = "Wild crusher",
+                        artist = "Sora AI",
                         rarity = "rare",
                         manaCost = 4,
                         color = new List<string> { "Red", "Green" },
@@ -2201,6 +2296,7 @@ public static class CardDatabase
                 Add(new CardData //Wild dragon
                     {
                     cardName = "Wild Dragon",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 7,
                     color = new List<string> { "Red", "Green" },
@@ -2220,6 +2316,7 @@ public static class CardDatabase
                 Add(new CardData //Twin elves
                     {
                     cardName = "Twin Elves",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "White", "Green" },
@@ -2237,6 +2334,7 @@ public static class CardDatabase
                 Add(new CardData //Night moth
                     {
                     cardName = "Night Moth",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Black", "Green" },
@@ -2256,6 +2354,7 @@ public static class CardDatabase
                 Add(new CardData //Poison mushroom
                     {
                     cardName = "Poison Mushroom",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Black", "Green" },
@@ -2273,6 +2372,7 @@ public static class CardDatabase
                 Add(new CardData //Mindcat
                     {
                     cardName = "Mindcat",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Blue", "Black" },
@@ -2311,6 +2411,7 @@ public static class CardDatabase
                 Add(new CardData //Mutant gorilla
                     {
                     cardName = "Mutant Gorilla",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Blue", "Green" },
@@ -2339,6 +2440,7 @@ public static class CardDatabase
                 Add(new CardData //Battle bear
                     {
                     cardName = "Battle Bear",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 3,
                     color = new List<string> { "Red", "Green" },
@@ -2358,6 +2460,7 @@ public static class CardDatabase
                 Add(new CardData //Robin
                     {
                     cardName = "Robin",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Red", "Green" },
@@ -2376,6 +2479,7 @@ public static class CardDatabase
                 Add(new CardData //Crazed shaman
                     {
                     cardName = "Crazed Shaman",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "Red", "Green" },
@@ -2396,6 +2500,7 @@ public static class CardDatabase
                 Add(new CardData //Bloodmoon vampire
                     {
                     cardName = "Bloodmoon Vampire",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 2,
                     color = new List<string> { "White", "Red" },
@@ -2414,6 +2519,7 @@ public static class CardDatabase
                 Add(new CardData //Battle Mage
                     {
                     cardName = "Battle Mage",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Blue", "Red" },
@@ -2460,6 +2566,7 @@ public static class CardDatabase
                 Add(new CardData //Cloudmane Leviathan
                     {
                     cardName = "Cloudmane Leviathan",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "White", "Blue" },
@@ -2477,6 +2584,7 @@ public static class CardDatabase
                 Add(new CardData //Lich Queen
                     {
                     cardName = "Lich Queen",
+                    artist = "Sora AI",
                     rarity = "Mythic",
                     manaCost = 4,
                     color = new List<string> { "Black", "White" },
@@ -2496,6 +2604,7 @@ public static class CardDatabase
             //WHITE
                 Add(new CardData { //Exorcism
                     cardName = "Exorcism",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2508,6 +2617,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //for glory
                     cardName = "For Glory",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
@@ -2520,6 +2630,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //rolling army
                     cardName = "Rolling Army",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 4,
@@ -2532,6 +2643,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Sacred Horn Nectar
                     cardName = "Sacred Horn Nectar",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
@@ -2542,6 +2654,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Solid prayer
                     cardName = "Solid Prayer",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2553,6 +2666,7 @@ public static class CardDatabase
                 Add(new CardData
                     {
                         cardName = "Deny the Afterlife",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2562,6 +2676,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Bell Call
                     cardName = "Bell Call",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2573,6 +2688,7 @@ public static class CardDatabase
                 Add(new CardData //Blinding light
                     {
                     cardName = "Blinding Light",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 1,
@@ -2586,6 +2702,7 @@ public static class CardDatabase
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
@@ -2595,6 +2712,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Astral Plane
                     cardName = "Astral Plane",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
@@ -2604,6 +2722,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Rolling thoughts
                     cardName = "Rolling Thoughts",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     cardType = CardType.Sorcery,
                     manaCost = 6,
@@ -2615,6 +2734,7 @@ public static class CardDatabase
             //BLACK
                 Add(new CardData { //Blasphemy
                     cardName = "Blasphemy",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2628,6 +2748,7 @@ public static class CardDatabase
                 Add(new CardData //stain of rot
                     {
                         cardName = "Stain of Rot",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         color = new List<string> { "Black" },
@@ -2641,6 +2762,7 @@ public static class CardDatabase
                 Add(new CardData //Forced mummification
                     {
                         cardName = "Forced Mummification",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         color = new List<string> { "Black" },
@@ -2657,6 +2779,7 @@ public static class CardDatabase
                 Add(new CardData //Lights out
                     {
                         cardName = "Lights Out",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Instant,
                         manaCost = 4,
@@ -2668,6 +2791,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Witches rite
                     cardName = "Witches Rite",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
@@ -2677,6 +2801,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Communed rot
                     cardName = "Communed Rot",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2687,6 +2812,7 @@ public static class CardDatabase
                 Add(new CardData //Forget
                     {
                         cardName = "Forget",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2698,6 +2824,7 @@ public static class CardDatabase
                 Add(new CardData //Massacre
                     {
                         cardName = "Massacre",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
@@ -2708,6 +2835,7 @@ public static class CardDatabase
                 Add(new CardData //Mirrorbreak
                     {
                         cardName = "Mirrorbreak",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 3,
@@ -2720,6 +2848,7 @@ public static class CardDatabase
                 Add(new CardData //Filth Discharge
                     {
                         cardName = "Filth Discharge",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2734,6 +2863,7 @@ public static class CardDatabase
                 Add(new CardData //Sinister Murmurs
                     {
                         cardName = "Sinister Murmurs",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 3,
@@ -2746,6 +2876,7 @@ public static class CardDatabase
                 Add(new CardData //Pact of Bones
                     {
                         cardName = "Pact of Bones",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2759,6 +2890,7 @@ public static class CardDatabase
                 Add(new CardData //To dig a hole
                         {
                             cardName = "To Dig a Hole",
+                            artist = "Sora AI",
                             rarity = "Common",
                             cardType = CardType.Sorcery,
                             manaCost = 3,
@@ -2771,6 +2903,7 @@ public static class CardDatabase
                 Add(new CardData //Melt
                         {
                             cardName = "Melt",
+                            artist = "Sora AI",
                             rarity = "Common",
                             cardType = CardType.Instant,
                             manaCost = 1,
@@ -2783,6 +2916,7 @@ public static class CardDatabase
                 Add(new CardData //Dash
                     {
                         cardName = "Dash",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2796,6 +2930,7 @@ public static class CardDatabase
                 Add(new CardData //thunderstrike
                     {
                         cardName = "Thunderstrike",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Instant,
                         manaCost = 6,
@@ -2808,6 +2943,7 @@ public static class CardDatabase
                 Add(new CardData //fire hatchet
                     {
                         cardName = "Fire Hatchet",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
@@ -2820,6 +2956,7 @@ public static class CardDatabase
                 Add(new CardData
                     {
                         cardName = "Explosion",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2832,6 +2969,7 @@ public static class CardDatabase
                 Add(new CardData //Moonfall
                     {
                         cardName = "Moonfall",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
@@ -2842,6 +2980,7 @@ public static class CardDatabase
                 Add(new CardData
                     {
                         cardName = "Fire Spirals",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 3,
@@ -2852,6 +2991,7 @@ public static class CardDatabase
                 Add(new CardData //Rolling Thunder
                     {
                         cardName = "Rolling Thunder",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         cardType = CardType.Sorcery,
                         manaCost = 4,
@@ -2866,6 +3006,7 @@ public static class CardDatabase
                 Add(new CardData //whip of thorns
                         {
                             cardName = "Whip of Thorns",
+                            artist = "Sora AI",
                             rarity = "Common",
                             cardType = CardType.Sorcery,
                             manaCost = 1,
@@ -2878,6 +3019,7 @@ public static class CardDatabase
                 Add(new CardData //Natures Rebuke
                         {
                             cardName = "Natures Rebuke",
+                            artist = "Sora AI",
                             rarity = "Rare",
                             cardType = CardType.Sorcery,
                             manaCost = 4,
@@ -2887,6 +3029,7 @@ public static class CardDatabase
                         });
                 Add(new CardData { //Feast
                     cardName = "Feast",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
@@ -2896,6 +3039,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Touch Grass
                     cardName = "Touch Grass",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 1,
@@ -2906,6 +3050,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Rolling Energy
                     cardName = "Rolling Energy",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2916,6 +3061,7 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Muscle Blast
                     cardName = "Muscle Blast",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     cardType = CardType.Instant,
                     manaCost = 6,
@@ -2930,6 +3076,7 @@ public static class CardDatabase
                 Add(new CardData //Empowering Charge
                     {
                         cardName = "Empowering Charge",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
@@ -2945,6 +3092,7 @@ public static class CardDatabase
                 Add(new CardData //Drain mind
                         {
                         cardName = "Drain Mind",
+                        artist = "Sora AI",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 2,
@@ -2957,6 +3105,7 @@ public static class CardDatabase
                 Add(new CardData //Burn mind
                     {
                     cardName = "Burn Mind",
+                    artist = "Sora AI",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
@@ -2970,6 +3119,7 @@ public static class CardDatabase
                 Add(new CardData //Fireborn Succubus
                     {
                     cardName = "Fireborn Succubus",
+                    artist = "Sora AI",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Black", "Red" },
@@ -3019,6 +3169,7 @@ public static class CardDatabase
             Add(new CardData // Pressure Sphere
                 {
                     cardName = "Pressure Sphere",
+                    artist = "Sora AI",
                     rarity = "Rare",
                     manaCost = 2,
                     color = new List<string>(),
@@ -3032,6 +3183,7 @@ public static class CardDatabase
             Add(new CardData //Potion of lava
                 {
                     cardName = "Potion of Lava",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string>(),
@@ -3049,6 +3201,7 @@ public static class CardDatabase
             Add(new CardData // Potion of knowledge
                 {
                     cardName = "Potion of Knowledge",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string>(),
@@ -3066,6 +3219,7 @@ public static class CardDatabase
             Add(new CardData // Potion of health
                 {
                     cardName = "Potion of Health",
+                    artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string>(),
@@ -3083,6 +3237,7 @@ public static class CardDatabase
                   Add(new CardData // Potion of mana
                       {
                           cardName = "Potion of Mana",
+                          artist = "Sora AI",
                           rarity = "Common",
                           manaCost = 1,
                           color = new List<string>(),
@@ -3100,6 +3255,7 @@ public static class CardDatabase
                   Add(new CardData // Potion of strength
                       {
                           cardName = "Potion of Strength",
+                          artist = "Sora AI",
                           rarity = "Common",
                           manaCost = 1,
                           color = new List<string>(),
@@ -3118,6 +3274,7 @@ public static class CardDatabase
                   Add(new CardData //Stone of plague
                       {
                           cardName = "Stone of Plague",
+                          artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 3,
                         color = new List<string>(),
@@ -3133,6 +3290,7 @@ public static class CardDatabase
                 Add(new CardData //Mana rock
                     {
                         cardName = "Mana Rock",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string>(),
@@ -3147,6 +3305,7 @@ public static class CardDatabase
                 Add(new CardData //Crystallium
                     {
                         cardName = "Crystallium",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string>(),
@@ -3161,6 +3320,7 @@ public static class CardDatabase
                 Add(new CardData //Bonfire
                     {
                         cardName = "Bonfire",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 2,
                         color = new List<string>(),
@@ -3174,6 +3334,7 @@ public static class CardDatabase
                 Add(new CardData //Blood Grail
                     {
                         cardName = "Blood Grail",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 1,
                         color = new List<string>(),
@@ -3188,6 +3349,7 @@ public static class CardDatabase
                 Add(new CardData //Potionist grimoire
                     {
                         cardName = "Potionist Grimoire",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string>(),
@@ -3203,6 +3365,7 @@ public static class CardDatabase
                 Add(new CardData //Anti-Magic Grid
                     {
                         cardName = "Anti-Magic Grid",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 6,
                         color = new List<string>(),
@@ -3217,6 +3380,7 @@ public static class CardDatabase
                 Add(new CardData //Tablet of Creation
                     {
                         cardName = "Tablet of Creation",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 2,
                         color = new List<string>(),
@@ -3231,6 +3395,7 @@ public static class CardDatabase
                 Add(new CardData // Morning Star
                     {
                         cardName = "Morning Star",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string>(),
@@ -3247,6 +3412,7 @@ public static class CardDatabase
                 Add(new CardData // Battle Shield
                     {
                         cardName = "Battle Shield",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string>(),
@@ -3264,6 +3430,7 @@ public static class CardDatabase
                 Add(new CardData //Progress Incarnate
                     {
                         cardName = "Progress Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Artifact" },
@@ -3293,6 +3460,7 @@ public static class CardDatabase
                 Add(new CardData //Faith Incarnate
                     {
                         cardName = "Faith Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "White" },
@@ -3324,6 +3492,7 @@ public static class CardDatabase
                 Add(new CardData //Wisdom Incarnate
                     {
                         cardName = "Wisdom Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Blue" },
@@ -3355,6 +3524,7 @@ public static class CardDatabase
                 Add(new CardData //Death Incarnate
                     {
                         cardName = "Death Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -3385,6 +3555,7 @@ public static class CardDatabase
                 Add(new CardData //War Incarnate
                     {
                         cardName = "War Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Red" },
@@ -3415,6 +3586,7 @@ public static class CardDatabase
                 Add(new CardData //Nature Incarnate
                     {
                         cardName = "Nature Incarnate",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Green" },
@@ -3445,6 +3617,7 @@ public static class CardDatabase
                 Add(new CardData //Pyramid of Pain
                     {
                         cardName = "Pyramid of Pain",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -3490,6 +3663,7 @@ public static class CardDatabase
                 Add(new CardData //Demonic Corrosion
                     {
                         cardName = "Demonic Corrosion",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -3528,6 +3702,7 @@ public static class CardDatabase
                 Add(new CardData //Heavy Taxation
                     {
                         cardName = "Heavy Taxation",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 4,
                         color = new List<string> { "White" },
@@ -3542,6 +3717,7 @@ public static class CardDatabase
                 Add(new CardData //Headeache
                     {
                         cardName = "Headache",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 2,
                         color = new List<string> { "Red" },
@@ -3574,6 +3750,7 @@ public static class CardDatabase
                 Add(new CardData //Like a Thunder
                     {
                         cardName = "Like a Thunder",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "Red" },
@@ -3589,6 +3766,7 @@ public static class CardDatabase
                 Add(new CardData //Shrine of rot
                     {
                         cardName = "Shrine of Rot",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 3,
                         color = new List<string> { "Black", "Green" },
@@ -3611,6 +3789,7 @@ public static class CardDatabase
                 Add(new CardData //Afterlife jinx lantern
                     {
                         cardName = "Afterlife Jinx Lantern",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 4,
                         color = new List<string> { "White", "Black" },
@@ -3644,6 +3823,7 @@ public static class CardDatabase
                 Add(new CardData // Brotherhood
                     {
                         cardName = "Brotherhood",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "White", "Green" },
@@ -3772,6 +3952,7 @@ public static class CardDatabase
                 Add(new CardData // Faith protection
                     {
                         cardName = "Faith Protection",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "White" },
@@ -3786,6 +3967,7 @@ public static class CardDatabase
                 Add(new CardData // Sacred Horn
                     {
                         cardName = "Sacred Horn",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 2,
                         color = new List<string> { "White" },
@@ -3801,6 +3983,7 @@ public static class CardDatabase
                 Add(new CardData // Tame
                     {
                         cardName = "Tame",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "White" },
@@ -3814,6 +3997,7 @@ public static class CardDatabase
                 Add(new CardData // Cut off Hands
                     {
                         cardName = "Cut off Hands",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Blue" },
@@ -3828,6 +4012,7 @@ public static class CardDatabase
                 Add(new CardData // Sickness
                     {
                         cardName = "Sickness",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Black" },
@@ -3842,6 +4027,7 @@ public static class CardDatabase
                 Add(new CardData // Bog Pest
                     {
                         cardName = "Bog Pest",
+                        artist = "Sora AI",
                         rarity = "Rare",
                         manaCost = 1,
                         color = new List<string> { "Black" },
@@ -3881,6 +4067,7 @@ public static class CardDatabase
                 Add(new CardData // Devouring Fury
                     {
                         cardName = "Devouring Fury",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Red" },
@@ -3896,6 +4083,7 @@ public static class CardDatabase
                 Add(new CardData // Woodskin
                     {
                         cardName = "Woodskin",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Green" },
@@ -3910,6 +4098,7 @@ public static class CardDatabase
                 Add(new CardData // Sleep
                     {
                         cardName = "Sleep",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string> { "Blue" },
@@ -3924,6 +4113,7 @@ public static class CardDatabase
                 Add(new CardData // Stardust
                     {
                         cardName = "Stardust",
+                        artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Blue" },
@@ -3937,6 +4127,7 @@ public static class CardDatabase
                 Add(new CardData // Fascinate
                     {
                         cardName = "Fascinate",
+                        artist = "Sora AI",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string> { "Blue" },
