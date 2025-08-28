@@ -18,7 +18,7 @@ public static class CardDatabase
                 color = new List<string> { "White" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/plains"),
-                artist = "Unknown"
+                artist = "Sora AI"
             });
             Add(new CardData //Island
             {
@@ -28,7 +28,7 @@ public static class CardDatabase
                 color = new List<string> { "Blue" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/island"),
-                artist = "Unknown"
+                artist = "Sora AI"
             });
             Add(new CardData //Swamp
             {
@@ -38,7 +38,7 @@ public static class CardDatabase
                 color = new List<string> { "Black" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/swamp"),
-                artist = "Unknown"
+                artist = "Sora AI"
             });
             Add(new CardData //Mountain
             {
@@ -48,7 +48,7 @@ public static class CardDatabase
                 color = new List<string> { "Red" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/mountain"),
-                artist = "Unknown"
+                artist = "Sora AI"
             });
             Add(new CardData //Forest
             {
@@ -58,7 +58,7 @@ public static class CardDatabase
                 color = new List<string> { "Green" },
                 cardType = CardType.Land,
                 artwork = Resources.Load<Sprite>("Art/forest"),
-                artist = "Unknown"
+                artist = "Sora AI"
             });
 
         // Creatures
