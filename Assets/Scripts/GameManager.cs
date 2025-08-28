@@ -1380,70 +1380,75 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        switch (ability)
+        try
         {
-            case ActivatedAbility.TapToGainLife:
-                TryGainLife(controller, 1);
-                break;
-            case ActivatedAbility.TapToPlague:
-                humanPlayer.Life -= artifact.plagueAmount;
-                aiPlayer.Life -= artifact.plagueAmount;
-                ShowFloatingDamage(artifact.plagueAmount, playerLifeContainer);
-                ShowFloatingDamage(artifact.plagueAmount, enemyLifeContainer);
-                SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
-                ShowBloodSplatVFX(artifact);
-                break;
-            case ActivatedAbility.SacrificeForLife:
-                TryGainLife(controller, artifact.lifeToGain);
-                SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
-                SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
-                break;
-            case ActivatedAbility.SacrificeToDrawCards:
-                DrawCards(controller, artifact.cardsToDraw);
-                break;
-            case ActivatedAbility.TapToPlayRandomPotion:
-                SearchLibraryForRandomPotionToBattlefield(controller);
-                break;
-            case ActivatedAbility.DealDamageToCreature:
-                if (target is CreatureCard targetCreature)
-                {
-                    targetCreature.TakeDamage(artifact.damageToCreature);
-                    Card asCard = artifact;
-                    if (asCard is CreatureCard srcCreature &&
-                        srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
-                        artifact.damageToCreature > 0)
+            switch (ability)
+            {
+                case ActivatedAbility.TapToGainLife:
+                    TryGainLife(controller, 1);
+                    break;
+                case ActivatedAbility.TapToPlague:
+                    humanPlayer.Life -= artifact.plagueAmount;
+                    aiPlayer.Life -= artifact.plagueAmount;
+                    ShowFloatingDamage(artifact.plagueAmount, playerLifeContainer);
+                    ShowFloatingDamage(artifact.plagueAmount, enemyLifeContainer);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
+                    ShowBloodSplatVFX(artifact);
+                    break;
+                case ActivatedAbility.SacrificeForLife:
+                    TryGainLife(controller, artifact.lifeToGain);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.drink);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+                    break;
+                case ActivatedAbility.SacrificeToDrawCards:
+                    DrawCards(controller, artifact.cardsToDraw);
+                    break;
+                case ActivatedAbility.TapToPlayRandomPotion:
+                    SearchLibraryForRandomPotionToBattlefield(controller);
+                    break;
+                case ActivatedAbility.DealDamageToCreature:
+                    if (target is CreatureCard targetCreature)
                     {
-                        targetCreature.Kill();
+                        targetCreature.TakeDamage(artifact.damageToCreature);
+                        Card asCard = artifact;
+                        if (asCard is CreatureCard srcCreature &&
+                            srcCreature.keywordAbilities.Contains(KeywordAbility.Deathtouch) &&
+                            artifact.damageToCreature > 0)
+                        {
+                            targetCreature.Kill();
+                        }
                     }
-                }
-                break;
-            case ActivatedAbility.BuffTargetCreature:
-                if (target is CreatureCard buffTarget)
-                {
-                    buffTarget.AddTemporaryBuff(artifact.buffPower, artifact.buffToughness);
-                    CardVisual tVis = FindCardVisual(buffTarget);
-                    if (tVis != null)
-                        tVis.UpdateVisual();
-                }
-                break;
+                    break;
+                case ActivatedAbility.BuffTargetCreature:
+                    if (target is CreatureCard buffTarget)
+                    {
+                        buffTarget.AddTemporaryBuff(artifact.buffPower, artifact.buffToughness);
+                        CardVisual tVis = FindCardVisual(buffTarget);
+                        if (tVis != null)
+                            tVis.UpdateVisual();
+                    }
+                    break;
+            }
+
+            CheckDeaths(humanPlayer);
+            CheckDeaths(aiPlayer);
+            UpdateUI();
         }
-
-        CheckDeaths(humanPlayer);
-        CheckDeaths(aiPlayer);
-        UpdateUI();
-
-        if (triggerVFX != null)
-            Destroy(triggerVFX);
-        Destroy(stackObj);
-        isStackBusy = false;
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
-        CheckForGameEnd();
-
-        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        finally
         {
-            Debug.Log("Resuming AI phase after stack.");
-            TurnSystem.Instance.waitingToResumeAI = false;
-            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            if (triggerVFX != null)
+                Destroy(triggerVFX);
+            Destroy(stackObj);
+            isStackBusy = false;
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+            CheckForGameEnd();
+
+            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
         }
     }
 
