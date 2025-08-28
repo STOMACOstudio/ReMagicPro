@@ -27,6 +27,9 @@ public class Card
     public string rulesText;
     public string flavorText;
 
+    // Artist credited for the card's artwork
+    public string artist;
+
     public int plagueAmount;
     public int manaToGain;
     public int lifeToGain;

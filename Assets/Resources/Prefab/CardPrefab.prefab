@@ -1633,6 +1633,7 @@ MonoBehaviour:
   statsText: {fileID: 6757367444350756674}
   keywordText: {fileID: 1868721622052657023}
   cardTypeText: {fileID: 7949847088018398147}
+  artistText: {fileID: 5808068336578498604}
   counterContainer: {fileID: 4710456736074502014}
   counterText: {fileID: 853636567053323019}
   counterImage: {fileID: 7194320920966003589}
