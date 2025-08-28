@@ -161,6 +161,7 @@ public static class CardFactory
         newCard.abilities = new List<CardAbility>(data.abilities);
         newCard.rulesText = data.rulesText;
         newCard.flavorText = data.flavorText;
+        newCard.artist = data.artist;
         newCard.isToken = data.isToken;
         newCard.keywordBuff = data.keywordBuff;
 

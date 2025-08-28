@@ -55,6 +55,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TMP_Text statsText;
     public TMP_Text keywordText;
     public TMP_Text cardTypeText;
+    public TMP_Text artistText;
 
     // UI elements showing +1/+1 or -1/-1 counters
     public GameObject counterContainer;
@@ -479,6 +480,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             SetCardBorder(data);
             UpdateLandIcon();
 
+            if (artistText != null)
+            {
+                if (data != null && !string.IsNullOrEmpty(data.artist) && !isInBattlefield)
+                {
+                    artistText.text = data.artist;
+                    artistText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    artistText.gameObject.SetActive(false);
+                }
+            }
+
             // Display +1/+1 or -1/-1 counters if present
             if (counterContainer != null)
             {
@@ -753,6 +767,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (costText != null) costText.enabled = true;
             if (statsText != null) statsText.enabled = true;
             if (keywordText != null) keywordText.enabled = true;
+            if (artistText != null) artistText.enabled = true;
 
             var data = CardDatabase.GetCardData(linkedCard.cardName);
             SetTypeLine(data);
@@ -1804,6 +1819,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             sicknessText.text = "";
             keywordText.text = "";
             statsText.text = "";
+            if (artistText != null)
+            {
+                artistText.text = "";
+                artistText.gameObject.SetActive(false);
+            }
         }
 
     public void PrepareForGraveyard()
@@ -1819,6 +1839,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (costText != null) costText.enabled = true;
             if (statsText != null) statsText.enabled = true;
             if (keywordText != null) keywordText.enabled = true;
+            if (artistText != null) artistText.enabled = true;
 
             costBackground.SetActive(true);
             statsBackground.SetActive(true);
@@ -1893,6 +1914,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (statsText != null) statsText.enabled = true;
             if (keywordText != null) keywordText.enabled = true;
             if (cardRarity != null) cardRarity.enabled = true;
+            if (artistText != null) artistText.enabled = true;
 
             titleText.text = linkedCard.cardName;
             sicknessText.text = "";
@@ -1927,6 +1949,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Load card data
             CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
             SetCardBorder(sourceData);
+
+            if (artistText != null)
+            {
+                if (sourceData != null && !string.IsNullOrEmpty(sourceData.artist))
+                {
+                    artistText.text = sourceData.artist;
+                    artistText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    artistText.gameObject.SetActive(false);
+                }
+            }
 
             if (artImage != null && linkedCard.artwork != null)
                 artImage.sprite = linkedCard.artwork;

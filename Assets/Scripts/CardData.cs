@@ -20,6 +20,9 @@ public class CardData
     public string rulesText;
     public string flavorText;
 
+    // Name of the artist who illustrated the card
+    public string artist;
+
     public bool entersTapped = false;
     public bool isToken = false;
     public bool destroyTargetIfTypeMatches = false;

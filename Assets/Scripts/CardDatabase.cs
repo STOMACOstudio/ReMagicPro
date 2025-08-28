@@ -17,7 +17,8 @@ public static class CardDatabase
                 manaCost = 0,
                 color = new List<string> { "White" },
                 cardType = CardType.Land,
-                artwork = Resources.Load<Sprite>("Art/plains")
+                artwork = Resources.Load<Sprite>("Art/plains"),
+                artist = "Unknown"
             });
             Add(new CardData //Island
             {
@@ -26,7 +27,8 @@ public static class CardDatabase
                 manaCost = 0,
                 color = new List<string> { "Blue" },
                 cardType = CardType.Land,
-                artwork = Resources.Load<Sprite>("Art/island")
+                artwork = Resources.Load<Sprite>("Art/island"),
+                artist = "Unknown"
             });
             Add(new CardData //Swamp
             {
@@ -35,7 +37,8 @@ public static class CardDatabase
                 manaCost = 0,
                 color = new List<string> { "Black" },
                 cardType = CardType.Land,
-                artwork = Resources.Load<Sprite>("Art/swamp")
+                artwork = Resources.Load<Sprite>("Art/swamp"),
+                artist = "Unknown"
             });
             Add(new CardData //Mountain
             {
@@ -44,7 +47,8 @@ public static class CardDatabase
                 manaCost = 0,
                 color = new List<string> { "Red" },
                 cardType = CardType.Land,
-                artwork = Resources.Load<Sprite>("Art/mountain")
+                artwork = Resources.Load<Sprite>("Art/mountain"),
+                artist = "Unknown"
             });
             Add(new CardData //Forest
             {
@@ -53,7 +57,8 @@ public static class CardDatabase
                 manaCost = 0,
                 color = new List<string> { "Green" },
                 cardType = CardType.Land,
-                artwork = Resources.Load<Sprite>("Art/forest")
+                artwork = Resources.Load<Sprite>("Art/forest"),
+                artist = "Unknown"
             });
 
         // Creatures
