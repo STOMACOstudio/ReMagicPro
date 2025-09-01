@@ -113,7 +113,7 @@ public static class CardDatabase
                 Add(new CardData // Angry farmer
                     {
                     cardName = "Angry Farmer",
-                    artist = "Anna Macattari",
+                    artist = "Anna Camattari",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "White" },
@@ -187,7 +187,7 @@ public static class CardDatabase
                 Add(new CardData //Waterbearer
                     {
                     cardName = "Waterbearer",
-                    artist = "Anna Macattari",
+                    artist = "Anna Camattari",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "White" },
@@ -1615,7 +1615,7 @@ public static class CardDatabase
                 Add(new CardData //Village idiot
                     {
                     cardName = "Village Idiot",
-                    artist = "Anna Macattari",
+                    artist = "Anna Camattari",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Red" },
