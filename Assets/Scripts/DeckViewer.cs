@@ -44,25 +44,25 @@ public class DeckViewer : MonoBehaviour
             prefab = Resources.Load<GameObject>("Prefab/CardPrefab");
 #endif
 
-        var groupedBasics = new Dictionary<string, (CardData data, int count)>();
+        var groupedCards = new Dictionary<string, (CardData data, int count)>();
+        var order = new List<string>();
 
         foreach (var data in DeckHolder.SelectedDeck)
         {
-            if (CardData.IsBasicLand(data))
-            {
-                if (groupedBasics.TryGetValue(data.cardName, out var entry))
-                    groupedBasics[data.cardName] = (entry.data, entry.count + 1);
-                else
-                    groupedBasics[data.cardName] = (data, 1);
-            }
+            if (groupedCards.TryGetValue(data.cardName, out var entry))
+                groupedCards[data.cardName] = (entry.data, entry.count + 1);
             else
             {
-                Spawn(prefab, container, data, 1);
+                groupedCards[data.cardName] = (data, 1);
+                order.Add(data.cardName);
             }
         }
 
-        foreach (var kvp in groupedBasics.Values)
-            Spawn(prefab, container, kvp.data, kvp.count);
+        foreach (var name in order)
+        {
+            var entry = groupedCards[name];
+            Spawn(prefab, container, entry.data, entry.count);
+        }
     }
 
     private static void Spawn(GameObject prefab, Transform container, CardData data, int count)
