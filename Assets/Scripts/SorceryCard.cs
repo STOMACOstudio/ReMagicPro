@@ -12,6 +12,8 @@ public class SorceryCard : Card
     public int cardsToDiscardorDraw = 0;
     public bool drawIfOpponentCantDiscard = true;
     public int damageToEachCreatureAndPlayer = 0;
+    public int creaturesToSacrificeEachPlayerMin = 0;
+    public int creaturesToSacrificeEachPlayerMax = 0;
     public int manaToGainMin = 0;
     public int manaToGainMax = 0;
     public bool eachPlayerGainLifeEqualToLands = false;
@@ -195,16 +197,45 @@ public class SorceryCard : Card
                         {
                             Debug.Log($"{opponent} has no cards to discard.");
                         }
-                    }
-
-                    if (!opponentDiscarded && drawIfOpponentCantDiscard)
-                    {
-                        GameManager.Instance.DrawCard(caster);
-                        Debug.Log($"{caster} draws a card because opponent had nothing to discard.");
-                    }
-
-                    didSomething = true;
                 }
+
+                if (!opponentDiscarded && drawIfOpponentCantDiscard)
+                {
+                    GameManager.Instance.DrawCard(caster);
+                    Debug.Log($"{caster} draws a card because opponent had nothing to discard.");
+                }
+
+                didSomething = true;
+            }
+            if (creaturesToSacrificeEachPlayerMax > 0)
+            {
+                List<(Card card, Player owner)> sacrifices = new List<(Card, Player)>();
+                foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                {
+                    int amount = (creaturesToSacrificeEachPlayerMin == creaturesToSacrificeEachPlayerMax)
+                        ? creaturesToSacrificeEachPlayerMin
+                        : Random.Range(creaturesToSacrificeEachPlayerMin, creaturesToSacrificeEachPlayerMax + 1);
+
+                    var creatures = player.Battlefield.OfType<CreatureCard>().ToList();
+                    if (amount > creatures.Count)
+                        amount = creatures.Count;
+
+                    for (int i = 0; i < amount; i++)
+                    {
+                        var chosen = creatures[Random.Range(0, creatures.Count)];
+                        creatures.Remove(chosen);
+                        sacrifices.Add((chosen, player));
+                    }
+                }
+
+                foreach (var (card, owner) in sacrifices)
+                {
+                    GameManager.Instance.SendToGraveyard(card, owner);
+                }
+
+                if (sacrifices.Count > 0)
+                    didSomething = true;
+            }
             if (eachPlayerGainLifeEqualToLands)
                 {
                     Player human = GameManager.Instance.humanPlayer;

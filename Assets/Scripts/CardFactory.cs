@@ -81,6 +81,8 @@ public static class CardFactory
                 sorcery.buffToughness = data.toughnessBuff;
                 sorcery.addXPlusOneCounters = data.addXPlusOneCounters;
                 sorcery.addXMinusOneCounters = data.addXMinusOneCounters;
+                sorcery.creaturesToSacrificeEachPlayerMin = data.creaturesToSacrificeEachPlayerMin;
+                sorcery.creaturesToSacrificeEachPlayerMax = data.creaturesToSacrificeEachPlayerMax;
                 newCard = sorcery;
                 break;
             case CardType.Artifact:

@@ -2886,6 +2886,19 @@ public static class CardDatabase
                         maxManaCostForReturn = 1,
                         artwork = Resources.Load<Sprite>("Art/pact_of_bones")
                     });
+                Add(new CardData //Rolling Despair
+                    {
+                        cardName = "Rolling Despair",
+                        artist = "Sora AI",
+                        rarity = "Uncommon",
+                        cardType = CardType.Sorcery,
+                        manaCost = 5,
+                        color = new List<string> { "Black", "Black" },
+                        rulesText = "Each player rolls a six-sided die and sacrifices that many creatures.",
+                        creaturesToSacrificeEachPlayerMin = 1,
+                        creaturesToSacrificeEachPlayerMax = 6,
+                        artwork = Resources.Load<Sprite>("Art/rolling_despair")
+                    });
             // RED
                 Add(new CardData //To dig a hole
                         {
