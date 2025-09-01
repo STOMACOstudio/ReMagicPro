@@ -89,6 +89,8 @@ public class CardData
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;
+    public int creaturesToSacrificeEachPlayerMin = 0;
+    public int creaturesToSacrificeEachPlayerMax = 0;
 
     public SorceryCard.PermanentTypeToDestroy typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.None;
 
