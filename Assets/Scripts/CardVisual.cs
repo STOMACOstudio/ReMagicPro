@@ -284,25 +284,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private int CalculateGenericCost()
         {
-            if (linkedCard is CreatureCard c)
+            if (GameManager.Instance != null)
             {
-                return (linkedCard.PrimaryColor == "Artifact" || linkedCard.PrimaryColor == "None")
-                    ? c.manaCost
-                    : Mathf.Max(c.manaCost - linkedCard.color.Count, 0);
+                var breakdown = GameManager.Instance.GetManaCostBreakdown(linkedCard.manaCost, linkedCard.color);
+                return breakdown.TryGetValue("Colorless", out int generic) ? generic : 0;
             }
-            if (linkedCard is SorceryCard s)
-            {
-                return Mathf.Max(s.manaCost - linkedCard.color.Count, 0);
-            }
-            if (linkedCard is ArtifactCard a)
-            {
-                return a.manaCost;
-            }
-            if (linkedCard is EnchantmentCard e)
-            {
-                return Mathf.Max(e.manaCost - linkedCard.color.Count, 0);
-            }
-            return 0;
+
+            int coloredCount = linkedCard.color.Count(c => c != "Artifact");
+            return Mathf.Max(linkedCard.manaCost - coloredCount, 0);
         }
 
     private string GetCostDisplay(int genericCost)
@@ -1969,7 +1958,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // Show correct info by card type
             if (linkedCard is CreatureCard creature)
             {
-                costText.text = Mathf.Max(creature.manaCost - linkedCard.color.Count, 0).ToString();
+                costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = $"{creature.power}/{creature.toughness}";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -1978,7 +1967,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is ArtifactCard artifact)
             {
-                costText.text = artifact.manaCost.ToString();
+                costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = "";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -1987,7 +1976,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is SorceryCard sorcery)
             {
-                costText.text = Mathf.Max(sorcery.manaCost - linkedCard.color.Count, 0).ToString();
+                costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = "";
 
                 sorceryEffect(sorcery);
@@ -1997,7 +1986,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             else if (linkedCard is EnchantmentCard enchantment)
             {
-                costText.text = Mathf.Max(enchantment.manaCost - linkedCard.color.Count, 0).ToString();
+                costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = "";
                 keywordText.text = linkedCard.GetCardText();
 
@@ -2037,7 +2026,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     backgroundImage.sprite = artifactBorder;
                 }
-                else if (data.color.Count > 1)
+                else if (data.color.Distinct().Count() > 1)
                 {
                     backgroundImage.sprite = multicolorBorder;
                 }
