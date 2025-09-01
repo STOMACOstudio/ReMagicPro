@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 public class TurnSystem : MonoBehaviour
 {
@@ -116,14 +117,32 @@ public class TurnSystem : MonoBehaviour
             // Handle spacebar shortcut
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                // Prevent UI buttons from also processing the spacebar press
+                if (EventSystem.current != null)
+                    EventSystem.current.SetSelectedGameObject(null);
+
                 if (currentPlayer == PlayerType.Human &&
                     waitingForPlayerInput &&
-                    (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                     !GameManager.Instance.graveyardViewActive &&
-                    currentPhase != TurnPhase.ConfirmAttackers &&
-                    currentPhase != TurnPhase.ChooseAttackers)
+                    (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode))
                 {
-                    NextPhaseButton();
+                    switch (currentPhase)
+                    {
+                        case TurnPhase.ConfirmAttackers:
+                            ConfirmAttackers();
+                            break;
+                        case TurnPhase.ChooseAttackers:
+                            waitingForPlayerInput = false;
+                            HideAllConfirmButtons();
+                            AdvancePhase();
+                            break;
+                        case TurnPhase.ConfirmBlockers:
+                            ConfirmBlockers();
+                            break;
+                        default:
+                            NextPhaseButton();
+                            break;
+                    }
                 }
             }
         }
