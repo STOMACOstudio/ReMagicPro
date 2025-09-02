@@ -95,6 +95,8 @@ public class GameManager : MonoBehaviour
     public bool graveyardViewActive = false;
     public GraveyardUIManager graveyardUIManager;
 
+    private bool skipStackWait = false;
+
     // Tracks cards already moved to the graveyard this turn to
     // prevent duplicate death triggers if CheckDeaths runs again.
     private HashSet<Card> processedDeaths = new HashSet<Card>();
@@ -143,6 +145,23 @@ public class GameManager : MonoBehaviour
     public bool IsStackActive()
     {
         return isStackBusy || pendingStackEffects > 0;
+    }
+
+    public void ResolveStackNow()
+    {
+        skipStackWait = true;
+    }
+
+    public IEnumerator WaitForStackOrSkip(float seconds)
+    {
+        skipStackWait = false;
+        float elapsed = 0f;
+        while (elapsed < seconds && !skipStackWait)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        skipStackWait = false;
     }
 
     void Start()
@@ -1020,7 +1039,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
             // PREVENT executing if required target is missing
             if (sorcery.requiresTarget && sorcery.chosenTarget == null && sorcery.chosenPlayerTarget == null)
@@ -1074,7 +1093,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator ResolveCreatureAfterDelay(CreatureCard creature, CardVisual visual, Player caster)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
             caster.Battlefield.Add(creature);
 
@@ -1147,7 +1166,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator ResolveArtifactAfterDelay(ArtifactCard artifact, CardVisual visual, Player caster)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
             caster.Battlefield.Add(artifact);
 
@@ -1186,7 +1205,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator ResolveEnchantmentAfterDelay(EnchantmentCard enchantment, CardVisual visual, Player caster)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
             caster.Battlefield.Add(enchantment);
 
@@ -1225,7 +1244,7 @@ public class GameManager : MonoBehaviour
 
         public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
         caster.Battlefield.Add(aura);
         aura.OnEnterPlay(caster);
@@ -1306,7 +1325,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return WaitForStackOrSkip(2f);
 
         Card previousDead = lastDeadCreature;
         if (deadCreature != null)
@@ -1378,7 +1397,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return WaitForStackOrSkip(2f);
 
         try
         {
@@ -1482,7 +1501,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return WaitForStackOrSkip(2f);
 
         switch (ability)
         {
@@ -2708,7 +2727,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
     {
-        yield return new WaitForSeconds(2f);
+        yield return WaitForStackOrSkip(2f);
 
         // The card-specific ResolveEffect(target) already invokes the general
         // ResolveEffect method internally. Calling it again here caused cards
@@ -3106,7 +3125,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual)
         {
-            yield return new WaitForSeconds(2f);
+            yield return WaitForStackOrSkip(2f);
 
             sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
             SendToGraveyard(sorcery, caster, fromStack: true);
