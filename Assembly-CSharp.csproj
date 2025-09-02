@@ -102,6 +102,7 @@
     <Compile Include="Assets\Scripts\CardFactory.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Scripts\MerchantNavigation.cs" />
+    <Compile Include="Assets\Scripts\ResolveButtonUI.cs" />
     <Compile Include="Assets\Scripts\MerchantManager.cs" />
     <Compile Include="Assets\Scripts\SoundManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
