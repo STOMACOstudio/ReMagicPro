@@ -19,7 +19,10 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector3 startPosition;
-    private Vector3 startScale;
+    // Track the star's size in world space to keep it constant regardless
+    // of resolution or parent scaling.
+    private Vector3 startWorldScale;
+    private Vector3 currentWorldScale;
     private Transform startParent;
     private bool dragging;
     private CardVisual currentFavourite;
@@ -42,7 +45,9 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             audioSource = gameObject.AddComponent<AudioSource>();
         startParent = rectTransform.parent;
         startPosition = rectTransform.localPosition;
-        startScale = rectTransform.localScale;
+        // Cache the initial world-space scale so it can be restored later.
+        startWorldScale = rectTransform.lossyScale;
+        currentWorldScale = startWorldScale;
         deckEditorManager = FindObjectOfType<DeckEditorManager>();
     }
 
@@ -93,6 +98,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             currentFavourite = target;
             rectTransform.SetParent(target.transform, true);
             rectTransform.localPosition = Vector3.zero;
+            ApplyWorldScale(currentWorldScale);
             if (deckEditorManager != null)
                 deckEditorManager.SetFavouriteCard(data);
             if (audioSource != null && attachSound != null)
@@ -124,37 +130,44 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             StopCoroutine(hoverRoutine);
             hoverRoutine = null;
         }
-        rectTransform.localScale = startScale;
+        currentWorldScale = startWorldScale;
+        ApplyWorldScale(currentWorldScale);
     }
 
     private System.Collections.IEnumerator BounceAnimation()
     {
-        Vector3 big = startScale * bounceScale;
-        Vector3 small = startScale * 0.9f;
+        Vector3 big = startWorldScale * bounceScale;
+        Vector3 small = startWorldScale * 0.9f;
         float t = 0f;
         while (t < bounceDuration)
         {
-            rectTransform.localScale = Vector3.Lerp(startScale, big, t / bounceDuration);
+            currentWorldScale = Vector3.Lerp(startWorldScale, big, t / bounceDuration);
+            ApplyWorldScale(currentWorldScale);
             t += Time.unscaledDeltaTime;
             yield return null;
         }
-        rectTransform.localScale = big;
+        currentWorldScale = big;
+        ApplyWorldScale(currentWorldScale);
         t = 0f;
         while (t < bounceDuration)
         {
-            rectTransform.localScale = Vector3.Lerp(big, small, t / bounceDuration);
+            currentWorldScale = Vector3.Lerp(big, small, t / bounceDuration);
+            ApplyWorldScale(currentWorldScale);
             t += Time.unscaledDeltaTime;
             yield return null;
         }
-        rectTransform.localScale = small;
+        currentWorldScale = small;
+        ApplyWorldScale(currentWorldScale);
         t = 0f;
         while (t < bounceDuration)
         {
-            rectTransform.localScale = Vector3.Lerp(small, startScale, t / bounceDuration);
+            currentWorldScale = Vector3.Lerp(small, startWorldScale, t / bounceDuration);
+            ApplyWorldScale(currentWorldScale);
             t += Time.unscaledDeltaTime;
             yield return null;
         }
-        rectTransform.localScale = startScale;
+        currentWorldScale = startWorldScale;
+        ApplyWorldScale(currentWorldScale);
         hoverRoutine = null;
     }
 
@@ -163,6 +176,8 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
     {
         rectTransform.SetParent(startParent, true);
         rectTransform.localPosition = startPosition;
+        currentWorldScale = startWorldScale;
+        ApplyWorldScale(currentWorldScale);
         if (currentFavourite != null && deckEditorManager != null)
             deckEditorManager.ClearFavourite();
         currentFavourite = null;
@@ -178,6 +193,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
 
         rectTransform.SetParent(target.transform, true);
         rectTransform.localPosition = Vector3.zero;
+        ApplyWorldScale(currentWorldScale);
         currentFavourite = target;
 
         if (deckEditorManager != null)
@@ -185,5 +201,21 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
             CardData data = CardDatabase.GetCardData(target.linkedCard.cardName);
             deckEditorManager.SetFavouriteCard(data);
         }
+    }
+
+    private void LateUpdate()
+    {
+        // Ensure the star maintains its intended world scale even if the
+        // parent hierarchy or screen resolution changes.
+        ApplyWorldScale(currentWorldScale);
+    }
+
+    private void ApplyWorldScale(Vector3 worldScale)
+    {
+        Vector3 parentScale = rectTransform.parent != null ? rectTransform.parent.lossyScale : Vector3.one;
+        rectTransform.localScale = new Vector3(
+            worldScale.x / parentScale.x,
+            worldScale.y / parentScale.y,
+            worldScale.z / parentScale.z);
     }
 }
