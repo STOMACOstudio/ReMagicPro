@@ -3,7 +3,7 @@ using TMPro;
 
 public class CoinsManager : MonoBehaviour
 {
-    public static int Coins = 0;
+    public static int Coins = 15;
     public static event System.Action OnCoinsChanged;
 
     [SerializeField] private TMP_Text coinsText;
