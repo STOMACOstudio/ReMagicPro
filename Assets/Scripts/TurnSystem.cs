@@ -949,6 +949,9 @@ public class TurnSystem : MonoBehaviour
                         clearAttackersButton.gameObject.SetActive(true);
                         waitingForPlayerInput = true;
                         confirmAttackersButton.gameObject.SetActive(true);
+                        TMP_Text atkLabel = confirmAttackersButton.GetComponentInChildren<TMP_Text>();
+                        if (atkLabel != null)
+                            atkLabel.text = "CONFIRM ATTACKERS";
                     }
                     else
                     {
@@ -1087,6 +1090,9 @@ public class TurnSystem : MonoBehaviour
                         Debug.Log("→ Player chooses blockers.");
                         waitingForPlayerInput = true;
                         confirmBlockersButton.gameObject.SetActive(true);
+                        TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
+                        if (blkLabel != null)
+                            blkLabel.text = "CONFIRM BLOCKERS";
                     }
                     break;
 
@@ -1103,7 +1109,12 @@ public class TurnSystem : MonoBehaviour
                     {
                         waitingForPlayerInput = true;
                         if (currentPlayer == PlayerType.AI)
+                        {
                             confirmBlockersButton.gameObject.SetActive(true);
+                            TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
+                            if (blkLabel != null)
+                                blkLabel.text = "TO DAMAGES";
+                        }
                         Debug.Log("→ Blockers declared. Awaiting confirmation.");
                     }
                     break;
