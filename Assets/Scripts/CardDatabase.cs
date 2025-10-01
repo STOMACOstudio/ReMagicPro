@@ -3554,7 +3554,7 @@ public static class CardDatabase
                         {
                             new CardAbility
                             {
-                                timing = TriggerTiming.OnCreatureDiesOrDiscarded,
+                                timing = TriggerTiming.OnCreatureDies,
                                 description = "put a +1/+1 counter on this creature.",
                                 effect = (Player owner, Card selfCard) =>
                                 {
