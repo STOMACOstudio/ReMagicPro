@@ -1134,11 +1134,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
-            // PAY-TO-GAIN-ABILITY during Main Phase
-                if (linkedCard is CreatureCard abilityCreature &&
+            // PAY-TO-GAIN-ABILITY during Main Phase or combat confirmation
+            if (linkedCard is CreatureCard abilityCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(abilityCreature) &&
                 TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                (phase == TurnSystem.TurnPhase.Main1 ||
+                 phase == TurnSystem.TurnPhase.Main2 ||
+                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
                 abilityCreature.activatedAbilities != null &&
                 abilityCreature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
             {
@@ -1183,11 +1186,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
-            // PAY-TO-BUFF-SELF during Main Phase
+            // PAY-TO-BUFF-SELF during Main Phase or combat confirmation
             if (linkedCard is CreatureCard pumpCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(pumpCreature) &&
                 TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
+                (phase == TurnSystem.TurnPhase.Main1 ||
+                 phase == TurnSystem.TurnPhase.Main2 ||
+                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
                 pumpCreature.activatedAbilities != null &&
                 pumpCreature.activatedAbilities.Contains(ActivatedAbility.PayToBuffSelf))
             {
@@ -1232,68 +1238,74 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
 
                 
-            // TAP-TO-CREATE-TOKEN generic ability
-                if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken) &&
-                    linkedCard is CreatureCard tokenSpawner &&
-                    !linkedCard.isTapped &&
-                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
-                    (!tokenSpawner.hasSummoningSickness || tokenSpawner.keywordAbilities.Contains(KeywordAbility.Haste)))
+            // TAP-TO-CREATE-TOKEN generic ability during Main Phase or combat confirmation
+            if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken) &&
+                linkedCard is CreatureCard tokenSpawner &&
+                !linkedCard.isTapped &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (phase == TurnSystem.TurnPhase.Main1 ||
+                 phase == TurnSystem.TurnPhase.Main2 ||
+                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                (!tokenSpawner.hasSummoningSickness || tokenSpawner.keywordAbilities.Contains(KeywordAbility.Haste)))
+            {
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = linkedCard.manaToPayToActivate;
+
+                if (player.ColoredMana.Total() >= cost)
                 {
-                    Player player = GameManager.Instance.humanPlayer;
-                    int cost = linkedCard.manaToPayToActivate;
+                    int remaining = cost;
 
-                    if (player.ColoredMana.Total() >= cost)
-                    {
-                        int remaining = cost;
+                    // Spend colorless first
+                    int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                    player.ColoredMana.Colorless -= useColorless;
+                    remaining -= useColorless;
 
-                        // Spend colorless first
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
+                    // Spend from WUBRG
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
 
-                        // Spend from WUBRG
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
-                        {
-                            Debug.Log("Not enough mana to activate token creation.");
-                            return;
-                        }
-
-                        linkedCard.isTapped = true;
-                        GameManager.Instance.QueueCreatureActivatedAbility(tokenSpawner, ActivatedAbility.TapToCreateToken, player);
-                        GameManager.Instance.UpdateUI();
-                        UpdateVisual();
-                    }
-                    else
+                    if (remaining > 0)
                     {
                         Debug.Log("Not enough mana to activate token creation.");
+                        return;
                     }
 
-                    return;
-                }
-            // TAP-TO-LOSE-LIFE ability during Main Phase
-                if (linkedCard is CreatureCard creatureForDrain &&
-                    GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&
-                    TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 || TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2) &&
-                    creatureForDrain.activatedAbilities != null &&
-                    creatureForDrain.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife) &&
-                    !creatureForDrain.isTapped &&
-                    (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
-                {
-                    creatureForDrain.isTapped = true;
-                    GameManager.Instance.QueueCreatureActivatedAbility(creatureForDrain, ActivatedAbility.TapToLoseLife, GameManager.Instance.humanPlayer);
-                    UpdateVisual();
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.QueueCreatureActivatedAbility(tokenSpawner, ActivatedAbility.TapToCreateToken, player);
                     GameManager.Instance.UpdateUI();
-                    return;
+                    UpdateVisual();
                 }
+                else
+                {
+                    Debug.Log("Not enough mana to activate token creation.");
+                }
+
+                return;
+            }
+            // TAP-TO-LOSE-LIFE ability during Main Phase or combat confirmation
+            if (linkedCard is CreatureCard creatureForDrain &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (phase == TurnSystem.TurnPhase.Main1 ||
+                 phase == TurnSystem.TurnPhase.Main2 ||
+                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                creatureForDrain.activatedAbilities != null &&
+                creatureForDrain.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife) &&
+                !creatureForDrain.isTapped &&
+                (!creatureForDrain.hasSummoningSickness || creatureForDrain.keywordAbilities.Contains(KeywordAbility.Haste)))
+            {
+                creatureForDrain.isTapped = true;
+                GameManager.Instance.QueueCreatureActivatedAbility(creatureForDrain, ActivatedAbility.TapToLoseLife, GameManager.Instance.humanPlayer);
+                UpdateVisual();
+                GameManager.Instance.UpdateUI();
+                return;
+            }
 
             // TAP-TO-PLAGUE ability
             if (linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToPlague) &&
