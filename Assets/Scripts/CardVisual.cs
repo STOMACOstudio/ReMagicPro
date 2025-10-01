@@ -78,6 +78,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private List<Graphic> raycastGraphics = new List<Graphic>();
     private readonly Dictionary<Graphic, bool> originalRaycastStates = new Dictionary<Graphic, bool>();
 
+    [SerializeField]
+    private float keywordTextMinFontSize = 12f;
+
+    [SerializeField]
+    private float keywordTextShrinkStep = 0.5f;
+
+    private float keywordTextDefaultFontSize;
+
     void Awake()
     {
         DisableRaycast(highlightBorder);
@@ -126,6 +134,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         raycastGraphics = GetComponentsInChildren<Graphic>(true).ToList();
         foreach (var g in raycastGraphics)
             originalRaycastStates[g] = g.raycastTarget;
+
+        if (keywordText != null)
+        {
+            keywordTextDefaultFontSize = keywordText.fontSize;
+            keywordText.enableWordWrapping = true;
+            keywordText.overflowMode = TextOverflowModes.Overflow;
+        }
 
         UpdateRaycastTargets();
     }
@@ -589,7 +604,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 titleText.text = "";
                 costText.text = "";
                 sicknessText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 if (linkedCard is CreatureCard battlefieldCreature)
                 {
@@ -616,7 +631,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             costText.text = "";
             statsText.text = "";
-            keywordText.text = "";
+            SetKeywordText(string.Empty);
             sicknessText.text = "";
 
             int genericCost = CalculateGenericCost();
@@ -651,7 +666,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = FormatStats(creature);
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 if (isInBattlefield)
                 {
@@ -682,7 +697,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = GetCostDisplay(genericCost);
                 if (genericCostBG != null) genericCostBG.SetActive(true);
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -692,7 +707,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
                 costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -701,7 +716,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -710,7 +725,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -813,7 +828,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
 
                 statsText.text = FormatStats(creature);
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(true);
@@ -837,7 +852,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 costText.text = GetCostDisplay(genericCost);
                 if (genericCostBG != null) genericCostBG.SetActive(true);
                 statsText.text = "";
-                keywordText.text = artifact.GetCardText();
+                SetKeywordText(artifact.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -847,7 +862,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
                 costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
                 if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -856,7 +871,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -865,7 +880,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -1777,7 +1792,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             statsBackground.SetActive(false);
 
             sicknessText.text = "";
-            keywordText.text = "";
+            SetKeywordText(string.Empty);
             statsText.text = "";
             if (artistText != null)
             {
@@ -1931,7 +1946,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = $"{creature.power}/{creature.toughness}";
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(true);
@@ -1940,7 +1955,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = "";
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -1959,7 +1974,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = GetCostDisplay(CalculateGenericCost());
                 statsText.text = "";
-                keywordText.text = linkedCard.GetCardText();
+                SetKeywordText(linkedCard.GetCardText());
 
                 costBackground.SetActive(true);
                 statsBackground.SetActive(false);
@@ -1968,7 +1983,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -1978,7 +1993,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 // Unknown type — hide everything
                 costText.text = "";
                 statsText.text = "";
-                keywordText.text = "";
+                SetKeywordText(string.Empty);
 
                 costBackground.SetActive(false);
                 statsBackground.SetActive(false);
@@ -2165,16 +2180,62 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     rules += "\n";
                 rules += $"<i>{sorcery.flavorText}</i>";
             }
-            keywordText.text = rules.Trim();
+            SetKeywordText(rules.Trim());
             }
 
 
 
-        public void EnableTargetingHighlight(bool enable)
-            {
-                if (highlightBorder != null)
-                    highlightBorder.SetActive(enable);
-            }
+    private void SetKeywordText(string text)
+    {
+        if (keywordText == null)
+            return;
+
+        if (keywordTextDefaultFontSize <= 0f)
+            keywordTextDefaultFontSize = keywordText.fontSize;
+
+        keywordText.text = string.IsNullOrEmpty(text) ? string.Empty : text;
+        FitKeywordTextToBounds(keywordText);
+    }
+
+    private void FitKeywordTextToBounds(TMP_Text textComponent)
+    {
+        if (textComponent == null)
+            return;
+
+        Rect rect = textComponent.rectTransform.rect;
+        if (rect.width <= 0f || rect.height <= 0f)
+            return;
+
+        textComponent.enableWordWrapping = true;
+        textComponent.overflowMode = TextOverflowModes.Overflow;
+
+        float minFontSize = Mathf.Max(1f, keywordTextMinFontSize);
+        float shrinkStep = Mathf.Max(0.1f, keywordTextShrinkStep);
+        float targetFontSize = keywordTextDefaultFontSize > 0f ? keywordTextDefaultFontSize : textComponent.fontSize;
+
+        textComponent.fontSize = targetFontSize;
+        textComponent.ForceMeshUpdate();
+
+        Vector2 preferred = textComponent.GetPreferredValues(textComponent.text, rect.width, Mathf.Infinity);
+        int safety = 0;
+        while (safety < 200 && (preferred.y > rect.height || preferred.x > rect.width) && textComponent.fontSize > minFontSize)
+        {
+            targetFontSize = Mathf.Max(textComponent.fontSize - shrinkStep, minFontSize);
+            textComponent.fontSize = targetFontSize;
+            textComponent.ForceMeshUpdate();
+            preferred = textComponent.GetPreferredValues(textComponent.text, rect.width, Mathf.Infinity);
+            safety++;
+        }
+
+        if (preferred.y > rect.height || preferred.x > rect.width)
+            textComponent.overflowMode = TextOverflowModes.Truncate;
+    }
+
+    public void EnableTargetingHighlight(bool enable)
+    {
+        if (highlightBorder != null)
+            highlightBorder.SetActive(enable);
+    }
 
         
         private Sprite GetIconForColor(string color)
