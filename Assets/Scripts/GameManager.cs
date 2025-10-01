@@ -2178,12 +2178,13 @@ public class GameManager : MonoBehaviour
 
     public void TapCardForMana(CreatureCard creature)
     {
-        if (!creature.isTapped)
-        {
-            creature.isTapped = true;
-            humanPlayer.ColoredMana.Colorless++;
-            UpdateUI();
-        }
+        if (creature == null || creature.isTapped)
+            return;
+
+        creature.isTapped = true;
+        Player owner = GetOwnerOfCard(creature) ?? humanPlayer;
+        owner.ColoredMana.AddMana(creature.GetActivationColor());
+        UpdateUI();
     }
 
     public void TapToLoseLife(CreatureCard creature)
@@ -2241,27 +2242,21 @@ public class GameManager : MonoBehaviour
         }
 
         Player owner = GetOwnerOfCard(creature);
-        int remaining = creature.manaToPayToActivate;
+        int cost = creature.manaToPayToActivate;
+        string abilityColor = creature.GetActivationColor();
 
-        if (owner.ColoredMana.Total() >= remaining)
+        if (!owner.ColoredMana.SpendColor(abilityColor, cost))
         {
-            // Spend colorless first
-            int useColorless = Mathf.Min(owner.ColoredMana.Colorless, remaining);
-            owner.ColoredMana.Colorless -= useColorless;
-            remaining -= useColorless;
-
-            // Spend from WUBRG
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
-
-            if (remaining > 0)
+            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
             {
-                Debug.LogWarning("PayToGainAbility: Not enough mana despite Total() check.");
-                return;
+                Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
             }
+            else
+            {
+                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to activate {creature.cardName}'s ability.");
+            }
+            return;
+        }
 
             if (!creature.keywordAbilities.Contains(creature.abilityToGain))
                 creature.keywordAbilities.Add(creature.abilityToGain);
@@ -2279,36 +2274,26 @@ public class GameManager : MonoBehaviour
                 }
             }
             UpdateUI();
-        }
-        else
-        {
-            Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
-            return;
-        }
     }
 
     public void PayToBuffSelf(CreatureCard creature)
     {
         Player owner = GetOwnerOfCard(creature);
-        int remaining = creature.manaToPayToActivate;
+        int cost = creature.manaToPayToActivate;
+        string abilityColor = creature.GetActivationColor();
 
-        if (owner.ColoredMana.Total() >= remaining)
+        if (!owner.ColoredMana.SpendColor(abilityColor, cost))
         {
-            int useColorless = Mathf.Min(owner.ColoredMana.Colorless, remaining);
-            owner.ColoredMana.Colorless -= useColorless;
-            remaining -= useColorless;
-
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
-            remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
-
-            if (remaining > 0)
+            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
             {
-                Debug.LogWarning("PayToBuffSelf: Not enough mana despite Total() check.");
-                return;
+                Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
             }
+            else
+            {
+                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to activate {creature.cardName}'s ability.");
+            }
+            return;
+        }
 
             creature.AddTemporaryBuff(1, 0);
             var vis = FindCardVisual(creature);
@@ -2317,11 +2302,6 @@ public class GameManager : MonoBehaviour
 
             Debug.Log($"{creature.cardName} gets +1/+0 until end of turn.");
             UpdateUI();
-        }
-        else
-        {
-            Debug.Log($"Not enough mana to activate {creature.cardName}'s ability.");
-        }
     }
 
     public Player GetOwnerOfCard(Card card)
