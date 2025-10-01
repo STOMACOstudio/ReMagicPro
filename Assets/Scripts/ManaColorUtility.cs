@@ -1,0 +1,35 @@
+using System;
+
+public static class ManaColorUtility
+{
+    public static string NormalizeColor(string color)
+    {
+        if (string.IsNullOrEmpty(color))
+            return "Colorless";
+
+        return color switch
+        {
+            "Artifact" => "Colorless",
+            "None" => "Colorless",
+            _ => color
+        };
+    }
+
+    public static string GetHexCode(string color)
+    {
+        return NormalizeColor(color) switch
+        {
+            "White" => "#FFD966",   // Yellow
+            "Blue" => "#0096FF",    // Azure
+            "Black" => "#8A2BE2",   // Purple
+            "Red" => "#FF8C00",     // Orange
+            "Green" => "#228B22",   // Green
+            _ => "#B0B0B0"            // Grey for colorless
+        };
+    }
+
+    public static string GetDisplayName(string color)
+    {
+        return NormalizeColor(color).ToLowerInvariant();
+    }
+}

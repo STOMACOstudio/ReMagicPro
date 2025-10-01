@@ -37,6 +37,72 @@ public class Player
                 return White + Blue + Black + Red + Green + Colorless;
             }
 
+        public int GetColorAmount(string color)
+        {
+            string normalized = ManaColorUtility.NormalizeColor(color);
+            return normalized switch
+            {
+                "White" => White,
+                "Blue" => Blue,
+                "Black" => Black,
+                "Red" => Red,
+                "Green" => Green,
+                "Colorless" => Colorless,
+                _ => 0
+            };
+        }
+
+        public bool HasEnough(string color, int amount)
+        {
+            string normalized = ManaColorUtility.NormalizeColor(color);
+            if (normalized == "Colorless")
+                return Total() >= amount;
+
+            return GetColorAmount(normalized) >= amount;
+        }
+
+        public bool SpendColor(string color, int amount)
+        {
+            string normalized = ManaColorUtility.NormalizeColor(color);
+
+            if (normalized == "Colorless")
+            {
+                if (Total() < amount)
+                    return false;
+
+                SpendGeneric(amount);
+                return true;
+            }
+
+            if (GetColorAmount(normalized) < amount)
+                return false;
+
+            switch (normalized)
+            {
+                case "White": White -= amount; break;
+                case "Blue": Blue -= amount; break;
+                case "Black": Black -= amount; break;
+                case "Red": Red -= amount; break;
+                case "Green": Green -= amount; break;
+            }
+
+            return true;
+        }
+
+        public void AddMana(string color, int amount = 1)
+        {
+            string normalized = ManaColorUtility.NormalizeColor(color);
+            switch (normalized)
+            {
+                case "White": White += amount; break;
+                case "Blue": Blue += amount; break;
+                case "Black": Black += amount; break;
+                case "Red": Red += amount; break;
+                case "Green": Green += amount; break;
+                default: Colorless += amount; break;
+            }
+        }
+
         public bool CanPay(Dictionary<string, int> cost)
             {
                 int genericRequired = cost.ContainsKey("Colorless") ? cost["Colorless"] : 0;

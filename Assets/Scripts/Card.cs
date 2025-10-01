@@ -54,6 +54,36 @@ public class Card
     public List<ActivatedAbility> activatedAbilities = new List<ActivatedAbility>();
     public List<KeywordAbility> keywordAbilities = new List<KeywordAbility>();
 
+    public string GetPrimaryManaColor()
+    {
+        if (color == null || color.Count == 0)
+            return "Colorless";
+
+        string firstColored = color.FirstOrDefault(c => c != "Artifact");
+        if (string.IsNullOrEmpty(firstColored))
+            firstColored = color.FirstOrDefault();
+
+        return ManaColorUtility.NormalizeColor(firstColored);
+    }
+
+    public virtual string GetActivationColor()
+    {
+        return GetPrimaryManaColor();
+    }
+
+    protected string FormatColoredManaNumber(int amount, string colorName)
+    {
+        string normalized = ManaColorUtility.NormalizeColor(colorName);
+        string hex = ManaColorUtility.GetHexCode(normalized);
+        return $"<color={hex}>{amount}</color>";
+    }
+
+    protected string FormatColoredManaWithLabel(int amount, string colorName)
+    {
+        string normalized = ManaColorUtility.NormalizeColor(colorName);
+        return $"{FormatColoredManaNumber(amount, normalized)} {ManaColorUtility.GetDisplayName(normalized)} mana";
+    }
+
     public virtual void Play(Player player)
         {
             if (entersTapped)
@@ -177,25 +207,25 @@ public class Card
                             switch (activated)
                             {
                                 case ActivatedAbility.TapForMana:
-                                    lines.Add("Tap: Add 1 mana.");
+                                    lines.Add($"Tap: Add {FormatColoredManaWithLabel(1, creature.GetActivationColor())}.");
                                     break;
                                 case ActivatedAbility.TapToLoseLife:
                                     lines.Add($"Tap: Your opponent loses {creature.tapLifeLossAmount} life.");
                                     break;
                                 case ActivatedAbility.TapToCreateToken:
-                                    lines.Add($"{creature.manaToPayToActivate}TAP: Create a {tokenToCreate} token.");
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}TAP: Create a {tokenToCreate} token.");
                                     break;
                                 case ActivatedAbility.PayToGainAbility:
-                                    lines.Add($"{creature.manaToPayToActivate}: Gains {creature.abilityToGain} until end of turn.");
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Gains {creature.abilityToGain} until end of turn.");
                                     break;
                                 case ActivatedAbility.PayToBuffSelf:
-                                    lines.Add($"{creature.manaToPayToActivate}: +1/+0 until end of turn.");
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: +1/+0 until end of turn.");
                                     break;
                                 case ActivatedAbility.ReturnSelfFromGraveyard:
-                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to the battlefield.");
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Return this card from your graveyard to the battlefield.");
                                     break;
                                 case ActivatedAbility.ReturnSelfFromGraveyardToHand:
-                                    lines.Add($"{creature.manaToPayToActivate}: Return this card from your graveyard to your hand.");
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Return this card from your graveyard to your hand.");
                                     break;
                             }
                         }
@@ -219,20 +249,20 @@ public class Card
                         switch (activated)
                         {
                             case ActivatedAbility.TapForMana:
-                                lines.Add("Tap: Add 1 mana.");
+                                lines.Add($"Tap: Add {FormatColoredManaWithLabel(1, GetActivationColor())}.");
                                 break;
                             case ActivatedAbility.TapToGainLife:
                                 lines.Add("Tap: Gain 1 life.");
                                 //lines.Add($"Tap: Gain {plagueAmount} life.");
                                 break;
                             case ActivatedAbility.TapAndSacrificeForMana:
-                                lines.Add("Tap, sacrifice: Add 1 mana.");
+                                lines.Add($"Tap, sacrifice: Add {FormatColoredManaWithLabel(1, GetActivationColor())}.");
                                 break;
                             case ActivatedAbility.TapToPlague:
                                 lines.Add($"Tap: Each player loses {plagueAmount} life.");
                                 break;
                             case ActivatedAbility.SacrificeForMana:
-                                lines.Add($"{manaToPayToActivate}TAP, sacrifice: Add {manaToGain}.");
+                                lines.Add($"{FormatColoredManaNumber(manaToPayToActivate, GetActivationColor())}TAP, sacrifice: Add {FormatColoredManaWithLabel(manaToGain, GetActivationColor())}.");
                                 break;
                             case ActivatedAbility.SacrificeForLife:
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Gain {lifeToGain} life.");
@@ -247,10 +277,10 @@ public class Card
                                 lines.Add($"{manaToPayToActivate}TAP, sacrifice: Target creature gets +{buffPower}/+{buffToughness} until end of turn.");
                                 break;
                             case ActivatedAbility.TapToPlayRandomPotion:
-                                lines.Add($"{manaToPayToActivate}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
+                                lines.Add($"{FormatColoredManaNumber(manaToPayToActivate, GetActivationColor())}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
                                 break;
                             case ActivatedAbility.Equip:
-                                lines.Add($"Equip {manaToPayToActivate}");
+                                lines.Add($"Equip {FormatColoredManaNumber(manaToPayToActivate, GetActivationColor())}");
                                 break;
                         }
                     }

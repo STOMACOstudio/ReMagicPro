@@ -885,28 +885,43 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     Player player = GameManager.Instance.humanPlayer;
                     int cost = graveCreature.manaToPayToActivate;
+                    string abilityColor = graveCreature.GetActivationColor();
                     if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyard))
                     {
-                        if (player.ColoredMana.Total() >= cost)
+                        if (player.ColoredMana.HasEnough(abilityColor, cost))
                         {
-                            player.ColoredMana.SpendGeneric(cost);
+                            if (!player.ColoredMana.SpendColor(abilityColor, cost))
+                            {
+                                Debug.LogWarning("Graveyard activation failed to spend mana despite HasEnough check.");
+                                return;
+                            }
                             GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyard, player);
                         }
                         else
                         {
-                            Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
+                                Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                            else
+                                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to return {graveCreature.cardName} from the graveyard.");
                         }
                     }
                     else if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyardToHand))
                     {
-                        if (player.ColoredMana.Total() >= cost)
+                        if (player.ColoredMana.HasEnough(abilityColor, cost))
                         {
-                            player.ColoredMana.SpendGeneric(cost);
+                            if (!player.ColoredMana.SpendColor(abilityColor, cost))
+                            {
+                                Debug.LogWarning("Graveyard activation failed to spend mana despite HasEnough check.");
+                                return;
+                            }
                             GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyardToHand, player);
                         }
                         else
                         {
-                            Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
+                                Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
+                            else
+                                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to return {graveCreature.cardName} from the graveyard.");
                         }
                     }
                 }
@@ -1114,20 +1129,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 SoundManager.Instance.PlaySound(SoundManager.Instance.tap_for_mana);
                 linkedCard.isTapped = true;
 
-                string color = linkedCard.PrimaryColor;
-
-                switch (color)
-                {
-                    case "White": GameManager.Instance.humanPlayer.ColoredMana.White++; break;
-                    case "Blue": GameManager.Instance.humanPlayer.ColoredMana.Blue++; break;
-                    case "Black": GameManager.Instance.humanPlayer.ColoredMana.Black++; break;
-                    case "Red": GameManager.Instance.humanPlayer.ColoredMana.Red++; break;
-                    case "Green": GameManager.Instance.humanPlayer.ColoredMana.Green++; break;
-                    default:
-                        GameManager.Instance.humanPlayer.ColoredMana.Colorless++;
-                        Debug.LogWarning($"{linkedCard.cardName} has no valid color for mana — added colorless instead.");
-                        break;
-                }
+                string color = linkedCard.GetActivationColor();
+                GameManager.Instance.humanPlayer.ColoredMana.AddMana(color);
 
                 GameManager.Instance.UpdateUI();
                 UpdateVisual();
@@ -1147,41 +1150,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 Player player = GameManager.Instance.humanPlayer;
                 int cost = abilityCreature.manaToPayToActivate;
-                string cardColor = abilityCreature.PrimaryColor;
+                string abilityColor = abilityCreature.GetActivationColor();
 
-                // Colored ability: must pay using that color (plus generic if cost > 1)
-                if (!string.IsNullOrEmpty(cardColor) && cardColor != "Artifact")
+                if (player.ColoredMana.HasEnough(abilityColor, cost))
                 {
-                    int available = cardColor switch
-                    {
-                        "White" => player.ColoredMana.White,
-                        "Blue" => player.ColoredMana.Blue,
-                        "Black" => player.ColoredMana.Black,
-                        "Red" => player.ColoredMana.Red,
-                        "Green" => player.ColoredMana.Green,
-                        _ => 0
-                    };
-
-                    int remaining = cost - 1;
-                    if (available >= 1 && player.ColoredMana.Total() - available >= remaining)
-                    {
-                        GameManager.Instance.QueueCreatureActivatedAbility(abilityCreature, ActivatedAbility.PayToGainAbility, player);
-                    }
-                    else
-                    {
-                        Debug.Log($"Not enough {cardColor} + generic mana to activate {abilityCreature.cardName}'s ability.");
-                    }
+                    GameManager.Instance.QueueCreatureActivatedAbility(abilityCreature, ActivatedAbility.PayToGainAbility, player);
                 }
-                else // Colorless/generic activation
+                else
                 {
-                    if (player.ColoredMana.Total() >= cost)
-                    {
-                        GameManager.Instance.QueueCreatureActivatedAbility(abilityCreature, ActivatedAbility.PayToGainAbility, player);
-                    }
+                    if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
+                        Debug.Log($"Not enough mana to activate {abilityCreature.cardName}'s ability.");
                     else
-                    {
-                        Debug.Log($"Not enough generic mana to activate {abilityCreature.cardName}'s ability.");
-                    }
+                        Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to activate {abilityCreature.cardName}'s ability.");
                 }
                 return;
             }
@@ -1199,39 +1179,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 Player player = GameManager.Instance.humanPlayer;
                 int cost = pumpCreature.manaToPayToActivate;
-                string color = pumpCreature.PrimaryColor;
+                string color = pumpCreature.GetActivationColor();
 
-                if (!string.IsNullOrEmpty(color) && color != "Artifact")
+                if (player.ColoredMana.HasEnough(color, cost))
                 {
-                    int available = color switch
-                    {
-                        "White" => player.ColoredMana.White,
-                        "Blue" => player.ColoredMana.Blue,
-                        "Black" => player.ColoredMana.Black,
-                        "Red" => player.ColoredMana.Red,
-                        "Green" => player.ColoredMana.Green,
-                        _ => 0
-                    };
-
-                    if (available >= cost)
-                    {
-                        GameManager.Instance.QueueCreatureActivatedAbility(pumpCreature, ActivatedAbility.PayToBuffSelf, player);
-                    }
-                    else
-                    {
-                        Debug.Log($"Not enough {color} mana to activate {pumpCreature.cardName}'s ability.");
-                    }
+                    GameManager.Instance.QueueCreatureActivatedAbility(pumpCreature, ActivatedAbility.PayToBuffSelf, player);
                 }
                 else
                 {
-                    if (player.ColoredMana.Total() >= cost)
-                    {
-                        GameManager.Instance.QueueCreatureActivatedAbility(pumpCreature, ActivatedAbility.PayToBuffSelf, player);
-                    }
-                    else
-                    {
+                    if (ManaColorUtility.NormalizeColor(color) == "Colorless")
                         Debug.Log($"Not enough mana to activate {pumpCreature.cardName}'s ability.");
-                    }
+                    else
+                        Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(color)} mana to activate {pumpCreature.cardName}'s ability.");
                 }
 
                 return;
