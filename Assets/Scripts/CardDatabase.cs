@@ -358,8 +358,8 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 0,
                     toughness = 0,
-                    subtypes = new List<string> { "Horse" },
-                    rulesText = "Untamed Unicorn's power and toughness are each equal to the number of Plains you control. (It only counts Plains you control, and if it has 0 toughness it dies.)",
+                    subtypes = new List<string> { "Unicorn" },
+                    rulesText = "This creature has power and toughness equal to the number of Plains you control.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance,

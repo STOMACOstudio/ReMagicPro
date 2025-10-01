@@ -130,6 +130,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\Scripts\DeckEditorCardButton.cs" />
     <Compile Include="Assets\Scripts\CreatureCard.cs" />
+    <Compile Include="Assets\Scripts\ManaColorUtility.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Scripts\ArtifactCard.cs" />
     <Compile Include="Assets\Scripts\LibraryPicManager.cs" />
