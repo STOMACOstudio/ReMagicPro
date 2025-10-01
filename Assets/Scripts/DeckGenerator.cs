@@ -60,9 +60,9 @@ public class DeckGenerator : MonoBehaviour
                 }
             }
 
-            // 3. Add 16 lands proportionally
+            // 3. Add 17 lands proportionally
             int totalColoredCards = colorCounts.Values.Sum();
-            int landsToAdd = 16;
+            int landsToAdd = 17;
             Dictionary<string, int> landsPerColor = new Dictionary<string, int>();
 
             int totalAdded = 0;
@@ -74,12 +74,12 @@ public class DeckGenerator : MonoBehaviour
                 totalAdded += share;
             }
 
-            // Adjust if over 16 due to rounding
-            while (totalAdded > 16)
+            // Adjust if over 17 due to rounding
+            while (totalAdded > landsToAdd)
             {
                 foreach (string color in chosenColors)
                 {
-                    if (landsPerColor[color] > 0 && totalAdded > 16)
+                    if (landsPerColor[color] > 0 && totalAdded > landsToAdd)
                     {
                         landsPerColor[color]--;
                         totalAdded--;
@@ -87,14 +87,14 @@ public class DeckGenerator : MonoBehaviour
                 }
             }
 
-            // Fill up to exactly 16 if needed
-            while (totalAdded < 16)
+            // Fill up to exactly 17 if needed
+            while (totalAdded < landsToAdd)
             {
                 foreach (string color in chosenColors)
                 {
                     landsPerColor[color]++;
                     totalAdded++;
-                    if (totalAdded == 16) break;
+                    if (totalAdded == landsToAdd) break;
                 }
             }
 
