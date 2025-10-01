@@ -359,7 +359,7 @@ public static class CardDatabase
                     power = 0,
                     toughness = 0,
                     subtypes = new List<string> { "Horse" },
-                    rulesText = "This creature has power and toughness equal to the number of Plains you control.",
+                    rulesText = "Untamed Unicorn's power and toughness are each equal to the number of Plains you control. (It only counts Plains you control, and if it has 0 toughness it dies.)",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Vigilance,
@@ -381,6 +381,7 @@ public static class CardDatabase
                                     creature.baseToughness = plains;
                                     creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
                                 }
                             }
                         },
@@ -397,6 +398,7 @@ public static class CardDatabase
                                     creature.baseToughness = plains;
                                     creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
                                 }
                             }
                         },
@@ -413,6 +415,7 @@ public static class CardDatabase
                                     creature.baseToughness = plains;
                                     creature.RecalculateStats();
                                     GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
                                 }
                             }
                         }

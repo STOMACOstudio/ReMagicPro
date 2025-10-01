@@ -2364,7 +2364,20 @@ public class GameManager : MonoBehaviour
             visual.UpdateVisual();
         }
 
+        HandleControlChange(card, newController);
         UpdateUI();
+    }
+
+    private void HandleControlChange(Card card, Player newController)
+    {
+        if (card is CreatureCard creature && card.cardName == "Untamed Unicorn")
+        {
+            int plains = newController.Battlefield.Count(c => c.cardName == "Plains");
+            creature.basePower = plains;
+            creature.baseToughness = plains;
+            creature.RecalculateStats();
+            CheckDeaths(newController);
+        }
     }
 
     public void UpdateUI()
