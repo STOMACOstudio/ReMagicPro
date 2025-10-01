@@ -3071,24 +3071,58 @@ public class GameManager : MonoBehaviour
         }
 
     public void CompletePlayerTargetSelection(Player targetPlayer)
+    {
+        // Edge case: accidentally triggered for non-sorcery
+        if (targetingSorcery == null)
         {
-            // Edge case: accidentally triggered for non-sorcery
-            if (targetingSorcery == null)
-            {
-                Debug.LogWarning("CompletePlayerTargetSelection called but no sorcery is being resolved.");
-                isTargetingMode = false;
-                targetingPlayer = null;
-                targetingVisual = null;
-                isStackBusy = false;
-                UpdateUI();
-                return;
-            }
+            Debug.LogWarning("CompletePlayerTargetSelection called but no sorcery is being resolved.");
+            isTargetingMode = false;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isStackBusy = false;
+            UpdateUI();
+            return;
+        }
 
-            if (targetingVisual != null)
-                targetingVisual.EnableTargetingHighlight(false);
+        if (targetingPlayer == null)
+        {
+            Debug.LogWarning("CompletePlayerTargetSelection called without a casting player.");
+            CancelTargeting();
+            return;
+        }
 
-            // Move visual to stack
-            targetingVisual.transform.SetParent(stackZone, false);
+        // Ensure mana is paid before resolving on the stack
+        var cost = GetManaCostBreakdown(targetingSorcery.manaCost, targetingSorcery.color);
+        int tax = GetOpponentSpellTax(targetingPlayer);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+
+        if (!targetingPlayer.ColoredMana.CanPay(cost))
+        {
+            Debug.LogWarning("Not enough mana to cast targeted sorcery.");
+            CancelTargeting();
+            return;
+        }
+
+        targetingPlayer.ColoredMana.Pay(cost);
+        if (targetingSorcery.hasXCost)
+        {
+            targetingSorcery.xValue = targetingPlayer.ColoredMana.Total();
+            if (targetingSorcery.xValue > 0)
+                targetingPlayer.ColoredMana.SpendGeneric(targetingSorcery.xValue);
+        }
+
+        targetingPlayer.Hand.Remove(targetingSorcery);
+
+        if (targetingVisual != null)
+            targetingVisual.EnableTargetingHighlight(false);
+
+        // Move visual to stack
+        targetingVisual.transform.SetParent(stackZone, false);
             targetingVisual.isInStack = true;
             targetingVisual.transform.localPosition = Vector3.zero;
             targetingVisual.transform.localRotation = Quaternion.identity;
