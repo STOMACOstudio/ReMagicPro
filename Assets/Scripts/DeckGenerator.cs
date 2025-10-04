@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.SceneManagement;
 using TMPro;
 
 public class DeckGenerator : MonoBehaviour
@@ -23,6 +22,7 @@ public class DeckGenerator : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
             Generate();
             Debug.Log("DECK GENERATED");
+            EnsureBasicLandsAvailable();
             DeckHolder.SelectedDeck = GeneratedDeck;
             ShowCardsInDeckBuilder();
             UpdateRerollText();
@@ -39,72 +39,20 @@ public class DeckGenerator : MonoBehaviour
 
             string[] chosenColors = colorPref.Split(',');
 
+            var sanitizedColors = chosenColors
+                .Select(c => c.Trim())
+                .Where(c => !string.IsNullOrEmpty(c))
+                .Distinct()
+                .ToList();
+
+            if (sanitizedColors.Count == 0)
+                sanitizedColors.Add("Red");
+
             GeneratedDeck = new List<CardData>();
 
-            // 1. Add cards by rarity for each color
-            foreach (string color in chosenColors)
-            {
-                AddCardsByRarity(color, "Rare", 2 / chosenColors.Length);
-                AddCardsByRarity(color, "Uncommon", 8 / chosenColors.Length);
-                AddCardsByRarity(color, "Common", 14 / chosenColors.Length);
-            }
-
-            // 2. Count how many cards of each color were actually added (excluding artifacts)
-            Dictionary<string, int> colorCounts = chosenColors.ToDictionary(c => c, c => 0);
-            foreach (var card in GeneratedDeck)
-            {
-                foreach (string c in card.color)
-                {
-                    if (colorCounts.ContainsKey(c))
-                        colorCounts[c]++;
-                }
-            }
-
-            // 3. Add 17 lands proportionally
-            int totalColoredCards = colorCounts.Values.Sum();
-            int landsToAdd = 17;
-            Dictionary<string, int> landsPerColor = new Dictionary<string, int>();
-
-            int totalAdded = 0;
-            foreach (string color in chosenColors)
-            {
-                int count = colorCounts[color];
-                int share = Mathf.RoundToInt((count / (float)totalColoredCards) * landsToAdd);
-                landsPerColor[color] = share;
-                totalAdded += share;
-            }
-
-            // Adjust if over 17 due to rounding
-            while (totalAdded > landsToAdd)
-            {
-                foreach (string color in chosenColors)
-                {
-                    if (landsPerColor[color] > 0 && totalAdded > landsToAdd)
-                    {
-                        landsPerColor[color]--;
-                        totalAdded--;
-                    }
-                }
-            }
-
-            // Fill up to exactly 17 if needed
-            while (totalAdded < landsToAdd)
-            {
-                foreach (string color in chosenColors)
-                {
-                    landsPerColor[color]++;
-                    totalAdded++;
-                    if (totalAdded == landsToAdd) break;
-                }
-            }
-
-            // Now add the lands
-            foreach (var kvp in landsPerColor)
-            {
-                var land = CardDatabase.GetCardData(BasicLandNameForColor(kvp.Key));
-                for (int i = 0; i < kvp.Value; i++)
-                    GeneratedDeck.Add(land);
-            }
+            DistributeCardsByRarity(sanitizedColors, "Rare", 2);
+            DistributeCardsByRarity(sanitizedColors, "Uncommon", 8);
+            DistributeCardsByRarity(sanitizedColors, "Common", 14);
 
             // Print result
             Debug.Log("Generated Deck:");
@@ -112,7 +60,56 @@ public class DeckGenerator : MonoBehaviour
                 Debug.Log(card.cardName);
         }
 
-    private void AddCardsByRarity(string color, string rarity, int count)
+    private void DistributeCardsByRarity(IList<string> colors, string rarity, int totalCount)
+        {
+            if (colors == null || colors.Count == 0 || totalCount <= 0)
+                return;
+
+            int baseCount = totalCount / colors.Count;
+            int remainder = totalCount % colors.Count;
+            int remainingToAssign = totalCount;
+
+            foreach (string color in colors)
+            {
+                int countForColor = baseCount;
+                if (remainder > 0)
+                {
+                    countForColor++;
+                    remainder--;
+                }
+
+                if (countForColor <= 0)
+                    continue;
+
+                int added = AddCardsByRarity(color, rarity, countForColor);
+                remainingToAssign -= added;
+            }
+
+            int safety = 0;
+            while (remainingToAssign > 0 && safety < 1000)
+            {
+                bool progress = false;
+                foreach (string color in colors)
+                {
+                    if (remainingToAssign <= 0)
+                        break;
+
+                    int added = AddCardsByRarity(color, rarity, 1);
+                    if (added > 0)
+                    {
+                        remainingToAssign -= added;
+                        progress = true;
+                    }
+                }
+
+                if (!progress)
+                    break;
+
+                safety++;
+            }
+        }
+
+    private int AddCardsByRarity(string color, string rarity, int count)
         {
             string chosenColorsPref = PlayerPrefs.GetString("PlayerColors", "Red");
             if (string.IsNullOrEmpty(chosenColorsPref))
@@ -138,6 +135,7 @@ public class DeckGenerator : MonoBehaviour
 
             int attempts = 0;
             int maxAttempts = 500;
+            int added = 0;
 
             while (count > 0 && attempts < maxAttempts)
             {
@@ -157,20 +155,10 @@ public class DeckGenerator : MonoBehaviour
                 copies[candidate.cardName]++;
                 count--;
                 attempts++;
+                added++;
             }
-        }
 
-    private string BasicLandNameForColor(string color)
-        {
-            return color switch
-            {
-                "White" => "Plains",
-                "Blue" => "Island",
-                "Black" => "Swamp",
-                "Red" => "Mountain",
-                "Green" => "Forest",
-                _ => "Plains"
-            };
+            return added;
         }
 
     public void ShowCardsInDeckBuilder()
@@ -238,4 +226,19 @@ public class DeckGenerator : MonoBehaviour
             UpdateRerollText();
         }
 
+    private void EnsureBasicLandsAvailable()
+        {
+            string[] basicLands = { "Plains", "Island", "Swamp", "Mountain", "Forest" };
+
+            foreach (string landName in basicLands)
+            {
+                CardData landData = CardDatabase.GetCardData(landName);
+                if (landData == null)
+                    continue;
+
+                int existing = PlayerCollection.OwnedCards.Count(card => card.cardName == landName);
+                for (int i = existing; i < 16; i++)
+                    PlayerCollection.OwnedCards.Add(landData);
+            }
+        }
 }
