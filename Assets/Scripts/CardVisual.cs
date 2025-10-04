@@ -2087,15 +2087,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             {
                 int min = sorcery.manaToGainMin;
                 int max = sorcery.manaToGainMax;
+                string manaColor = sorcery.PrimaryColor;
 
-                string colorName = sorcery.PrimaryColor.ToLower();
                 if (min == max)
                 {
-                    rules += $"Add {min} {colorName} mana.\n";
+                    string amountText = ManaColorUtility.FormatColoredManaNumber(min, manaColor);
+                    rules += $"Add {amountText}.\n";
                 }
                 else
                 {
-                    rules += $"Add {min}-{max} {colorName} mana.\n";
+                    string minText = ManaColorUtility.FormatColoredManaNumber(min, manaColor);
+                    string maxText = ManaColorUtility.FormatColoredManaNumber(max, manaColor);
+                    rules += $"Add {minText}-{maxText}.\n";
                 }
             }
             if (sorcery.cardsToDiscardorDraw > 0)
