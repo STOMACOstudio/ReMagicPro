@@ -38,15 +38,7 @@ public static class ManaColorUtility
     {
         string normalized = NormalizeColor(colorName);
         string hex = GetHexCode(normalized);
-        string markHex = hex.Length == 7 ? hex + "FF" : hex;
 
-        string textColorHex = "#000000";
-        if (ColorUtility.TryParseHtmlString(hex, out Color color))
-        {
-            float luminance = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
-            textColorHex = luminance < 0.5f ? "#FFFFFF" : "#000000";
-        }
-
-        return $"<color={textColorHex}><mark={markHex}>{amount}</mark></color>";
+        return $"<color={hex}>{amount}</color>";
     }
 }
