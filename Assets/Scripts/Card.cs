@@ -73,25 +73,12 @@ public class Card
 
     protected string FormatColoredManaNumber(int amount, string colorName)
     {
-        string normalized = ManaColorUtility.NormalizeColor(colorName);
-        string hex = ManaColorUtility.GetHexCode(normalized);
-        string textColorHex = "#000000";
-
-        if (ColorUtility.TryParseHtmlString(hex, out Color color))
-        {
-            float luminance = 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
-            textColorHex = luminance < 0.5f ? "#FFFFFF" : "#000000";
-        }
-
-        string markHex = hex.Length == 7 ? hex + "FF" : hex;
-
-        return $"<mark={markHex}><color={textColorHex}>{amount}</color></mark>";
+        return ManaColorUtility.FormatColoredManaNumber(amount, colorName);
     }
 
     protected string FormatColoredManaWithLabel(int amount, string colorName)
     {
-        string normalized = ManaColorUtility.NormalizeColor(colorName);
-        return $"{FormatColoredManaNumber(amount, normalized)} {ManaColorUtility.GetDisplayName(normalized)} mana";
+        return ManaColorUtility.FormatColoredManaNumber(amount, colorName);
     }
 
     public virtual void Play(Player player)
