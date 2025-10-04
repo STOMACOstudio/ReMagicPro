@@ -47,6 +47,6 @@ public static class ManaColorUtility
             textColorHex = luminance < 0.5f ? "#FFFFFF" : "#000000";
         }
 
-        return $"<mark={markHex}><color={textColorHex}>{amount}</color></mark>";
+        return $"<color={textColorHex}><mark={markHex}>{amount}</mark></color>";
     }
 }
