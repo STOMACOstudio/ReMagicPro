@@ -3351,7 +3351,7 @@ public static class CardDatabase
                     {
                         cardName = "Blood Grail",
                         artist = "Sora AI",
-                        rarity = "Rare",
+                        rarity = "Mythic",
                         manaCost = 1,
                         color = new List<string>(),
                         cardType = CardType.Artifact,
