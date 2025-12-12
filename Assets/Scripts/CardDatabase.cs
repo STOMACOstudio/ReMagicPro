@@ -2601,6 +2601,39 @@ public static class CardDatabase
                         KeywordAbility.Indestructible,
                         KeywordAbility.Lifelink
                     },
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "sacrifice a creature.",
+                            effect = (Player owner, Card source) =>
+                            {
+                                var creatures = owner.Battlefield.OfType<CreatureCard>().ToList();
+                                if (creatures.Count == 0)
+                                    return;
+
+                                bool isLichQueen = source != null && source.cardName == "Lich Queen";
+                                bool ownerIsAI = owner == GameManager.Instance.aiPlayer;
+
+                                if (ownerIsAI && isLichQueen && creatures.Count > 1)
+                                {
+                                    creatures = creatures.Where(c => c != source).ToList();
+
+                                    if (creatures.Count == 0)
+                                        creatures = owner.Battlefield.OfType<CreatureCard>().ToList();
+                                }
+
+                                Card chosen = creatures
+                                    .OrderBy(c => c.power + c.toughness)
+                                    .ThenBy(c => c.power)
+                                    .ThenBy(c => c.manaCost)
+                                    .First();
+
+                                GameManager.Instance.SendToGraveyard(chosen, owner);
+                            }
+                        }
+                    },
                     artwork = Resources.Load<Sprite>("Art/lich_queen")
                     });
         // Sorceries
