@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Linq;
 using UnityEngine.EventSystems;
+using System.Diagnostics.CodeAnalysis;
 
 public class TurnSystem : MonoBehaviour
 {
@@ -40,16 +41,23 @@ public class TurnSystem : MonoBehaviour
 
     public bool waitingForPlayerInput = false;
     private bool waitingForAIAction = false;
+    [SerializeField, DisallowNull]
     public TMP_Text phaseText;
+    [SerializeField, DisallowNull]
     public GameObject turnBanner;
     private bool firstTurn = true;
     private bool skipDrawThisTurn = false;
 
     [Header("Buttons")]
+    [SerializeField, DisallowNull]
     public Button nextPhaseButton;
+    [SerializeField, DisallowNull]
     public Button confirmAttackersButton;
+    [SerializeField, DisallowNull]
     public Button confirmBlockersButton;
+    [SerializeField, DisallowNull]
     public Button attackAllButton;
+    [SerializeField, DisallowNull]
     public Button clearAttackersButton;
 
     public TurnPhase lastPhaseBeforeStack;
@@ -58,26 +66,86 @@ public class TurnSystem : MonoBehaviour
     private Coroutine damageCoroutine;
 
     void Start()
+    {
+        Instance = this;
+
+        if (!ValidateUIReferences())
         {
-            Instance = this;
-
-            nextPhaseButton.onClick.AddListener(NextPhaseButton);
-            confirmAttackersButton.onClick.AddListener(ConfirmAttackers);
-            confirmBlockersButton.onClick.AddListener(ConfirmBlockers);
-            attackAllButton.onClick.AddListener(SelectAllEligibleAttackers);
-            clearAttackersButton.onClick.AddListener(ClearAllSelectedAttackers);
-
-            confirmAttackersButton.gameObject.SetActive(false);
-            confirmBlockersButton.gameObject.SetActive(false);
-            attackAllButton.gameObject.SetActive(false);
-            clearAttackersButton.gameObject.SetActive(false);
-
-            if (turnBanner != null)
-                turnBanner.SetActive(false);
-
-            if (autoStart)
-                StartGame();
+            enabled = false;
+            return;
         }
+
+        nextPhaseButton.onClick.AddListener(NextPhaseButton);
+        confirmAttackersButton.onClick.AddListener(ConfirmAttackers);
+        confirmBlockersButton.onClick.AddListener(ConfirmBlockers);
+        attackAllButton.onClick.AddListener(SelectAllEligibleAttackers);
+        clearAttackersButton.onClick.AddListener(ClearAllSelectedAttackers);
+
+        confirmAttackersButton.gameObject.SetActive(false);
+        confirmBlockersButton.gameObject.SetActive(false);
+        attackAllButton.gameObject.SetActive(false);
+        clearAttackersButton.gameObject.SetActive(false);
+
+        if (turnBanner != null)
+            turnBanner.SetActive(false);
+
+        if (autoStart)
+            StartGame();
+    }
+
+    private bool ValidateUIReferences()
+    {
+        bool valid = true;
+
+        if (nextPhaseButton == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the Next Phase button.");
+            valid = false;
+        }
+
+        if (confirmAttackersButton == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the Confirm Attackers button.");
+            valid = false;
+        }
+
+        if (confirmBlockersButton == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the Confirm Blockers button.");
+            valid = false;
+        }
+
+        if (attackAllButton == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the Attack All button.");
+            valid = false;
+        }
+
+        if (clearAttackersButton == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the Clear Attackers button.");
+            valid = false;
+        }
+
+        if (phaseText == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the phase text label.");
+            valid = false;
+        }
+
+        if (turnBanner == null)
+        {
+            Debug.LogError("TurnSystem is missing a reference to the turn banner.");
+            valid = false;
+        }
+
+        if (!valid)
+        {
+            Debug.LogError("TurnSystem setup halted due to missing UI references. Please assign all UI fields in the inspector.");
+        }
+
+        return valid;
+    }
 
     public void StartGame()
         {
