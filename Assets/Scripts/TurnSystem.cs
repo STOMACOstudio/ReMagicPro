@@ -30,6 +30,13 @@ public class TurnSystem : MonoBehaviour
         EndTurn
     }
 
+    private enum CombatUIState
+    {
+        Idle,
+        ChoosingAttackers,
+        ConfirmingBlockers
+    }
+
     public enum PlayerType
     {
         Human,
@@ -81,10 +88,7 @@ public class TurnSystem : MonoBehaviour
         attackAllButton.onClick.AddListener(SelectAllEligibleAttackers);
         clearAttackersButton.onClick.AddListener(ClearAllSelectedAttackers);
 
-        confirmAttackersButton.gameObject.SetActive(false);
-        confirmBlockersButton.gameObject.SetActive(false);
-        attackAllButton.gameObject.SetActive(false);
-        clearAttackersButton.gameObject.SetActive(false);
+        SetCombatUIState(CombatUIState.Idle);
 
         if (turnBanner != null)
             turnBanner.SetActive(false);
@@ -216,33 +220,33 @@ public class TurnSystem : MonoBehaviour
         }
 
     public void NextPhaseButton()
+    {
+        if (GameManager.Instance.gameOver)
+            return;
+
+        if (GameManager.Instance.graveyardViewActive)
+            return;
+
+        if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
         {
-            if (GameManager.Instance.gameOver)
-                return;
+            SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
 
-            if (GameManager.Instance.graveyardViewActive)
-                return;
-
-            if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
+            if (GameManager.Instance.isTargetingMode)
             {
-                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
-
-                if (GameManager.Instance.isTargetingMode)
-                {
-                    Debug.Log("Canceled targeting because player pressed Next Phase.");
-                    GameManager.Instance.CancelTargeting();
-                }
-                if (GameManager.Instance.targetingCreatureOptional != null)
-                {
-                    Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
-                    GameManager.Instance.CancelOptionalTargeting();
-                }
-
-                waitingForPlayerInput = false;
-                HideAllConfirmButtons();
-                AdvancePhase();
+                Debug.Log("Canceled targeting because player pressed Next Phase.");
+                GameManager.Instance.CancelTargeting();
             }
+            if (GameManager.Instance.targetingCreatureOptional != null)
+            {
+                Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
+                GameManager.Instance.CancelOptionalTargeting();
+            }
+
+            waitingForPlayerInput = false;
+            HideAllConfirmButtons();
+            AdvancePhase();
         }
+    }
 
     public void ConfirmAttackers()
         {
@@ -253,9 +257,7 @@ public class TurnSystem : MonoBehaviour
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
-                confirmAttackersButton.gameObject.SetActive(false);
-                attackAllButton.gameObject.SetActive(false);
-                clearAttackersButton.gameObject.SetActive(false);
+                SetCombatUIState(CombatUIState.Idle);
 
                 // Use only manually selected attackers
                 GameManager.Instance.currentAttackers.Clear();
@@ -280,19 +282,27 @@ public class TurnSystem : MonoBehaviour
             {
                 SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
                 waitingForPlayerInput = false;
-                confirmBlockersButton.gameObject.SetActive(false);
+                SetCombatUIState(CombatUIState.Idle);
                 AdvancePhase();
                 GameManager.Instance.UpdateUI();
             }
         }
 
     void HideAllConfirmButtons()
-        {
-            confirmAttackersButton.gameObject.SetActive(false);
-            confirmBlockersButton.gameObject.SetActive(false);
-            attackAllButton.gameObject.SetActive(false);
-            clearAttackersButton.gameObject.SetActive(false);
-        }
+    {
+        SetCombatUIState(CombatUIState.Idle);
+    }
+
+    private void SetCombatUIState(CombatUIState state)
+    {
+        bool choosingAttackers = state == CombatUIState.ChoosingAttackers;
+        bool confirmingBlockers = state == CombatUIState.ConfirmingBlockers;
+
+        confirmAttackersButton.gameObject.SetActive(choosingAttackers);
+        attackAllButton.gameObject.SetActive(choosingAttackers);
+        clearAttackersButton.gameObject.SetActive(choosingAttackers);
+        confirmBlockersButton.gameObject.SetActive(confirmingBlockers);
+    }
 
     public void BeginTurn(PlayerType player)
         {
@@ -1013,10 +1023,8 @@ public class TurnSystem : MonoBehaviour
                     if (currentPlayer == PlayerType.Human)
                     {
                         Debug.Log("→ Choose attackers.");
-                        attackAllButton.gameObject.SetActive(true);
-                        clearAttackersButton.gameObject.SetActive(true);
                         waitingForPlayerInput = true;
-                        confirmAttackersButton.gameObject.SetActive(true);
+                        SetCombatUIState(CombatUIState.ChoosingAttackers);
                         TMP_Text atkLabel = confirmAttackersButton.GetComponentInChildren<TMP_Text>();
                         if (atkLabel != null)
                             atkLabel.text = "CONFIRM ATTACKERS";
@@ -1076,7 +1084,7 @@ public class TurnSystem : MonoBehaviour
                         if (waitingForPlayerInput)
                         {
                             Debug.Log("→ Confirm attackers.");
-                            confirmAttackersButton.gameObject.SetActive(true);
+                            SetCombatUIState(CombatUIState.ChoosingAttackers);
                         }
                         else
                         {
@@ -1096,7 +1104,7 @@ public class TurnSystem : MonoBehaviour
                         Debug.Log("→ No attackers. Skipping combat.");
                         GameManager.Instance.currentAttackers.Clear();
                         waitingForPlayerInput = false;
-                        confirmBlockersButton.gameObject.SetActive(false);
+                        SetCombatUIState(CombatUIState.Idle);
                         RunSpecificPhase(TurnPhase.Main2);
                         break;
                     }
@@ -1157,7 +1165,7 @@ public class TurnSystem : MonoBehaviour
                     {
                         Debug.Log("→ Player chooses blockers.");
                         waitingForPlayerInput = true;
-                        confirmBlockersButton.gameObject.SetActive(true);
+                        SetCombatUIState(CombatUIState.ConfirmingBlockers);
                         TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
                         if (blkLabel != null)
                             blkLabel.text = "CONFIRM BLOCKERS";
@@ -1178,7 +1186,7 @@ public class TurnSystem : MonoBehaviour
                         waitingForPlayerInput = true;
                         if (currentPlayer == PlayerType.AI)
                         {
-                            confirmBlockersButton.gameObject.SetActive(true);
+                            SetCombatUIState(CombatUIState.ConfirmingBlockers);
                             TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
                             if (blkLabel != null)
                                 blkLabel.text = "TO DAMAGES";
