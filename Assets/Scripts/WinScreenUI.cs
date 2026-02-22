@@ -30,7 +30,7 @@ public class WinScreenUI : MonoBehaviour
     {
         winPanel.SetActive(false);
         canvasGroup = winPanel.GetComponent<CanvasGroup>();
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = UnityEngine.Object.FindFirstObjectByType<GameManager>();
 
         if (wonCardImage != null)
             wonCardImage.sprite = null;

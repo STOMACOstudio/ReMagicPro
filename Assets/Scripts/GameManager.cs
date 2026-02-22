@@ -220,7 +220,7 @@ public class GameManager : MonoBehaviour
         //     {
         //         Debug.Log("[DEV] Instant win triggered for zone ID: " + BattleData.CurrentZoneId);
         //         gameOver = true;
-        //         FindObjectOfType<WinScreenUI>().ShowWinScreen();
+        //         UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen();
         //     }
         //     else
         //     {
@@ -267,13 +267,13 @@ public class GameManager : MonoBehaviour
                 Debug.Log("AI tried to draw from an empty deck — player wins by mill.");
                 CardData reward = PlayerCollection.AddRandomCard();
                 gameOver = true;
-                FindObjectOfType<WinScreenUI>().ShowWinScreen(reward);
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(reward);
             }
             else if (player == humanPlayer)
             {
                 Debug.Log("Player tried to draw from an empty deck — player loses by mill.");
                 gameOver = true;
-                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowLoseScreen();
             }
             return;
         }
@@ -4365,7 +4365,7 @@ public class GameManager : MonoBehaviour
                 gameOver = true;
                 if (TurnSystem.Instance != null)
                     TurnSystem.Instance.StopAllCoroutines();
-                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowLoseScreen();
             }
             else if (aiPlayer.Life <= 0)
             {
@@ -4374,7 +4374,7 @@ public class GameManager : MonoBehaviour
                 gameOver = true;
                 if (TurnSystem.Instance != null)
                     TurnSystem.Instance.StopAllCoroutines();
-                FindObjectOfType<WinScreenUI>().ShowWinScreen(reward);
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(reward);
             }
             else if (humanPlayer.Life <= 0)
             {
@@ -4382,7 +4382,7 @@ public class GameManager : MonoBehaviour
                 gameOver = true;
                 if (TurnSystem.Instance != null)
                     TurnSystem.Instance.StopAllCoroutines();
-                FindObjectOfType<WinScreenUI>().ShowLoseScreen();
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowLoseScreen();
             }
         }
 }

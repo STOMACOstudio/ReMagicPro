@@ -43,7 +43,7 @@ public class FavouriteCardManager : MonoBehaviour, IBeginDragHandler, IDragHandl
         startParent = rectTransform.parent;
         startPosition = rectTransform.localPosition;
         startScale = rectTransform.localScale;
-        deckEditorManager = FindObjectOfType<DeckEditorManager>();
+        deckEditorManager = UnityEngine.Object.FindFirstObjectByType<DeckEditorManager>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)

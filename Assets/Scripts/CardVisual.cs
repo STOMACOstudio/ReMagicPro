@@ -934,14 +934,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             if (SceneManager.GetActiveScene().name == "DeckBuilderScene")
             {
-                DeckGenerator dg = FindObjectOfType<DeckGenerator>();
+                DeckGenerator dg = UnityEngine.Object.FindFirstObjectByType<DeckGenerator>();
                 if (dg != null)
                     dg.RerollCard(transform.GetSiblingIndex());
                 return;
             }
             if (SceneManager.GetActiveScene().name == "DeckEditorScene")
             {
-                var mgr = FindObjectOfType<DeckEditorManager>();
+                var mgr = UnityEngine.Object.FindFirstObjectByType<DeckEditorManager>();
                 if (mgr != null)
                 {
                     CardData data = CardDatabase.GetCardData(linkedCard.cardName);

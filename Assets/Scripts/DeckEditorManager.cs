@@ -271,7 +271,7 @@ public class DeckEditorManager : MonoBehaviour
         {
             if (isFavourite)
             {
-                FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+                FavouriteCardManager star = UnityEngine.Object.FindFirstObjectByType<FavouriteCardManager>();
                 if (star != null)
                     star.ReturnToStart();
             }
@@ -371,7 +371,7 @@ public class DeckEditorManager : MonoBehaviour
 
     private void AttachFavouriteStar()
     {
-        FavouriteCardManager star = FindObjectOfType<FavouriteCardManager>();
+        FavouriteCardManager star = UnityEngine.Object.FindFirstObjectByType<FavouriteCardManager>();
         if (star == null || FavouriteCard == null)
             return;
 
