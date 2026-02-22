@@ -471,6 +471,40 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/skyward_whale")
                     });
+                Add(new CardData //Arcane barrier
+                    {
+                    cardName = "Arcane Barrier",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 2,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender
+                    },
+                    artwork = Resources.Load<Sprite>("Art/arcane_barrier")
+                    });
+                Add(new CardData //Deepwood owl
+                    {
+                    cardName = "Deepwood Owl",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 3,
+                    subtypes = new List<string> { "Leviathan" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/deepwood_owl")
+                    });
                 Add(new CardData //Wandering squid
                     {
                     cardName = "Wandering Squid",
@@ -1532,6 +1566,20 @@ public static class CardDatabase
                     flavorText = "Goblins are raised as bullies from youth, trained to charge into battle without a single thought in their heads.",
                     artwork = Resources.Load<Sprite>("Art/goblin_puncher")
                     });
+                Add(new CardData //Scarred Wildboar
+                    {
+                    cardName = "Scarred Wildboar",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 1,
+                    subtypes = new List<string> { "Beast" },
+                    flavorText = "Its fresh wounds do not stop it the charge.",
+                    artwork = Resources.Load<Sprite>("Art/scarred_wildboar")
+                    });
                 Add(new CardData //Goblin Beastmaster
                     {
                     cardName = "Goblin Beastmaster",
@@ -1916,9 +1964,9 @@ public static class CardDatabase
                     flavorText = "Cats are just tiny tigers living in your home.",
                     artwork = Resources.Load<Sprite>("Art/domestic_cat")
                     });
-                Add(new CardData //Deep forest monkeys
+                Add(new CardData //Deepwood monkeys
                     {
-                    cardName = "Deep Forest Monkeys",
+                    cardName = "Deepwood Monkeys",
                     artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 2,
@@ -1929,7 +1977,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
                     flavorText = "Beneath the fur and teeth lies a mind that knows the forest better than any map ever could.",
-                    artwork = Resources.Load<Sprite>("Art/deep_forest_monkeys")
+                    artwork = Resources.Load<Sprite>("Art/deepwood_monkeys")
                     });
                 Add(new CardData //Violent Monkey
                     {

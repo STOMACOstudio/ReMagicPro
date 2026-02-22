@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f4bd7ead1a24b7a44824f7ad428360b4
+guid: 618863df1076f3e4586f5f2324c4f8c3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3395099947013340427
-    second: angry_farmer_0
+      213: -5530348243714132837
+    second: deepwood_owl_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: angry_farmer_0
+      name: deepwood_owl_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0d7daee961dd1f20800000000000000
-      internalID: 3395099947013340427
+      spriteID: b94b639c2914043b0800000000000000
+      internalID: -5530348243714132837
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      angry_farmer_0: 3395099947013340427
+      deepwood_owl_0: -5530348243714132837
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
