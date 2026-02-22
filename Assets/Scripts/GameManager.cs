@@ -2166,7 +2166,7 @@ public class GameManager : MonoBehaviour
 
         creature.OnEnterPlay(player);
         NotifyCreatureEntered(creature, player);
-        if ((creature is ArtifactCard) || creature.color.Contains("Artifact"))
+        if (creature.color.Contains("Artifact"))
             NotifyArtifactEntered(creature, player);
 
         RefreshGraveyardVisuals(player);

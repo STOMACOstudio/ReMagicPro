@@ -68,20 +68,16 @@ public class SorceryCard : Card
 
     public virtual void ResolveEffect(Player caster)
         {
-            bool didSomething = false;
-
             if (revealUntilCreature)
             {
                 GameManager.Instance.pendingStackEffects++;
                 GameManager.Instance.StartCoroutine(GameManager.Instance.RevealUntilCreature(caster));
-                didSomething = true;
             }
 
             if (revealUntilLand)
             {
                 GameManager.Instance.pendingStackEffects++;
                 GameManager.Instance.StartCoroutine(GameManager.Instance.RevealUntilLand(caster));
-                didSomething = true;
             }
 
             if (!string.IsNullOrEmpty(tokenToCreate) && numberOfTokensMax > 0)
@@ -104,20 +100,17 @@ public class SorceryCard : Card
             if (returnRandomCreatureFromGraveyard)
             {
                 GameManager.Instance.ReturnRandomCreatureFromGraveyard(caster);
-                didSomething = true;
             }
 
             if (returnRandomCheapCreatureToBattlefield)
             {
                 GameManager.Instance.ReturnRandomCreatureFromGraveyardToBattlefield(caster, maxManaCostForReturn);
-                didSomething = true;
             }
 
             if (lifeToGain > 0)
             {
                 GameManager.Instance.TryGainLife(caster, lifeToGain);
                 Debug.Log($"{caster} gains {lifeToGain} life.");
-                didSomething = true;
             }
             if (manaToGainMax > 0)
             {
@@ -137,7 +130,6 @@ public class SorceryCard : Card
 
                 Debug.Log($"{caster} gains {amount} {PrimaryColor} mana.");
                 GameManager.Instance.UpdateUI();
-                didSomething = true;
             }
             if (lifeToLoseForOpponent > 0)
             {
@@ -151,7 +143,6 @@ public class SorceryCard : Card
 
                 GameManager.Instance.ShowFloatingDamage(lifeToLoseForOpponent, targetUI);
                 GameManager.Instance.CheckForGameEnd();
-                didSomething = true;
             }
             if (lifeLossForBothPlayers > 0)
             {
@@ -162,7 +153,6 @@ public class SorceryCard : Card
                 GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.playerLifeContainer);
                 GameManager.Instance.ShowFloatingDamage(lifeLossForBothPlayers, GameManager.Instance.enemyLifeContainer);
                 GameManager.Instance.CheckForGameEnd();
-                didSomething = true;
             }
             if (cardsToDrawMax > 0)
             {
@@ -171,13 +161,11 @@ public class SorceryCard : Card
                     : Random.Range(cardsToDrawMin, cardsToDrawMax + 1);
                 GameManager.Instance.DrawCards(caster, amount);
                 Debug.Log($"{caster} draws {amount} card(s).");
-                didSomething = true;
             }
             else if (cardsToDraw > 0)
             {
                 GameManager.Instance.DrawCards(caster, cardsToDraw);
                 Debug.Log($"{caster} draws {cardsToDraw} card(s).");
-                didSomething = true;
             }
             if (cardsToDiscardorDraw > 0)
                 {
@@ -205,7 +193,6 @@ public class SorceryCard : Card
                     Debug.Log($"{caster} draws a card because opponent had nothing to discard.");
                 }
 
-                didSomething = true;
             }
             if (creaturesToSacrificeEachPlayerMax > 0)
             {
@@ -233,8 +220,6 @@ public class SorceryCard : Card
                     GameManager.Instance.SendToGraveyard(card, owner);
                 }
 
-                if (sacrifices.Count > 0)
-                    didSomething = true;
             }
             if (eachPlayerGainLifeEqualToLands)
                 {
@@ -248,7 +233,6 @@ public class SorceryCard : Card
                     GameManager.Instance.TryGainLife(ai, aiLands);
 
                     Debug.Log($"Each player gains life equal to their own lands. Human: +{humanLands}, AI: +{aiLands}");
-                    didSomething = true;
                 }
             if (typeOfPermanentToDestroyAll != PermanentTypeToDestroy.None)
                 {
@@ -300,7 +284,6 @@ public class SorceryCard : Card
                     }
 
                     Debug.Log($"Destroyed all {typeOfPermanentToDestroyAll}s: {string.Join(", ", destroyedCards.Select(c => c.card.cardName))}");
-                    didSomething = true;
                 }
             if (exileAllCreaturesFromGraveyards)
                     {
@@ -328,7 +311,6 @@ public class SorceryCard : Card
                         }
 
                         Debug.Log($"Exiled creatures from graveyards: {string.Join(", ", exiledCards.Select(c => c.cardName))}");
-                        didSomething = true;
                     }
             if (damageToEachCreatureAndPlayer > 0)
                 {
@@ -360,7 +342,6 @@ public class SorceryCard : Card
                     GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
                     GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                     GameManager.Instance.CheckForGameEnd();
-                    didSomething = true;
                 }
             if (swapGraveyardAndLibrary)
                 {
@@ -382,7 +363,6 @@ public class SorceryCard : Card
                     }
 
                     Debug.Log("Graveyards and libraries swapped and shuffled.");
-                    didSomething = true;
                 }
                 GameManager.Instance.UpdateUI();
         }
