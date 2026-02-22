@@ -472,8 +472,14 @@ public class TurnSystem : MonoBehaviour
                         {
                             playedCard = false;
 
+                            ai.Hand.RemoveAll(card => card == null);
+
                             ai.Hand.Sort((a, b) =>
                             {
+                                if (ReferenceEquals(a, b)) return 0;
+                                if (a == null) return 1;
+                                if (b == null) return -1;
+
                                 int costA = CardDatabase.GetCardData(a.cardName)?.manaCost ?? 0;
                                 int costB = CardDatabase.GetCardData(b.cardName)?.manaCost ?? 0;
                                 return costB.CompareTo(costA);
