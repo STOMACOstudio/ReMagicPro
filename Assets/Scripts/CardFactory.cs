@@ -4,6 +4,11 @@ using UnityEngine;
 
 public static class CardFactory
 {
+    private static List<T> CloneOrEmpty<T>(List<T> source)
+    {
+        return source != null ? new List<T>(source) : new List<T>();
+    }
+
     public static Card Create(string cardName)
     {
         CardData data = CardDatabase.GetCardData(cardName);
@@ -104,10 +109,8 @@ public static class CardFactory
                 artifact.cardsToDraw = data.cardsToDraw;
                 artifact.tokenToCreate = data.tokenToCreate;
                 artifact.manaToPayToActivate = data.manaToPayToActivate;
-                artifact.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
-                artifact.keywordAbilities = data.keywordAbilities != null
-                    ? new List<KeywordAbility>(data.keywordAbilities)
-                    : new List<KeywordAbility>();
+                artifact.activatedAbilities = CloneOrEmpty(data.activatedAbilities);
+                artifact.keywordAbilities = CloneOrEmpty(data.keywordAbilities);
                 artifact.damageToCreature = data.damageToCreature;
                 artifact.buffPower = data.powerBuff;
                 artifact.buffToughness = data.toughnessBuff;
@@ -126,10 +129,8 @@ public static class CardFactory
                 enchantment.cardsToDraw = data.cardsToDraw;
                 enchantment.tokenToCreate = data.tokenToCreate;
                 enchantment.manaToPayToActivate = data.manaToPayToActivate;
-                enchantment.activatedAbilities = new List<ActivatedAbility>(data.activatedAbilities);
-                enchantment.keywordAbilities = data.keywordAbilities != null
-                    ? new List<KeywordAbility>(data.keywordAbilities)
-                    : new List<KeywordAbility>();
+                enchantment.activatedAbilities = CloneOrEmpty(data.activatedAbilities);
+                enchantment.keywordAbilities = CloneOrEmpty(data.keywordAbilities);
                 enchantment.damageToCreature = data.damageToCreature;
                 enchantment.buffPower = data.powerBuff;
                 enchantment.buffToughness = data.toughnessBuff;
@@ -156,11 +157,11 @@ public static class CardFactory
         newCard.cardName = data.cardName;
         newCard.manaCost = data.manaCost;
         newCard.hasXCost = data.hasXCost;
-        newCard.color = data.color != null ? new List<string>(data.color) : new List<string>();
-        newCard.subtypes = data.subtypes != null ? new List<string>(data.subtypes) : new List<string>();
+        newCard.color = CloneOrEmpty(data.color);
+        newCard.subtypes = CloneOrEmpty(data.subtypes);
         newCard.artwork = data.artwork;
         newCard.entersTapped = data.entersTapped;
-        newCard.abilities = new List<CardAbility>(data.abilities);
+        newCard.abilities = CloneOrEmpty(data.abilities);
         newCard.rulesText = data.rulesText;
         newCard.flavorText = data.flavorText;
         newCard.artist = data.artist;
@@ -170,4 +171,5 @@ public static class CardFactory
         Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");
 
         return newCard;
-    }}
+    }
+}
