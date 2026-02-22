@@ -48,6 +48,11 @@ public class TurnSystem : MonoBehaviour
 
     public bool waitingForPlayerInput = false;
     private bool waitingForAIAction = false;
+    [Header("AI Pacing")]
+    [SerializeField, Min(0.25f)]
+    private float aiActionDelaySeconds = 2f;
+    [SerializeField, Min(0f)]
+    private float aiPhaseAdvanceDelaySeconds = 0.75f;
     [SerializeField, DisallowNull]
     public TMP_Text phaseText;
     [SerializeField, DisallowNull]
@@ -452,7 +457,7 @@ public class TurnSystem : MonoBehaviour
                                     ai.hasPlayedLandThisTurn = true;
 
                                     waitingForAIAction = true;
-                                    StartCoroutine(WaitForAIAction(1f));
+                                    StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
                                     return;
                                 }
                             }
@@ -758,7 +763,7 @@ public class TurnSystem : MonoBehaviour
                                         playedCard = true;
 
                                         waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(1f));
+                                        StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
                                         return;
                                     }
                                 }
@@ -803,7 +808,7 @@ public class TurnSystem : MonoBehaviour
                                     if (!ai.Battlefield.Contains(auraCard))
                                     {
                                         waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(1f));
+                                        StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
                                         return;
                                     }
 
@@ -828,7 +833,7 @@ public class TurnSystem : MonoBehaviour
                                     playedCard = true;
 
                                     waitingForAIAction = true;
-                                    StartCoroutine(WaitForAIAction(1f));
+                                    StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
                                     return;
                                 }
                                 else if (card is EnchantmentCard enchantment)
@@ -871,7 +876,7 @@ public class TurnSystem : MonoBehaviour
                                         playedCard = true;
 
                                         waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(1f));
+                                        StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
                                         return;
                                     }
                                 }
@@ -1009,7 +1014,8 @@ public class TurnSystem : MonoBehaviour
                             return; // just wait
                         }
 
-                        AdvancePhase();
+                        waitingForAIAction = true;
+                        StartCoroutine(WaitForAIActionAndAdvance(aiPhaseAdvanceDelaySeconds));
                         break;
                     }
                     break;
@@ -1319,6 +1325,15 @@ public class TurnSystem : MonoBehaviour
             {
                 yield return new WaitForSeconds(seconds);
                 waitingForAIAction = false;
+            }
+
+        private IEnumerator WaitForAIActionAndAdvance(float seconds)
+            {
+                yield return new WaitForSeconds(seconds);
+                waitingForAIAction = false;
+
+                if (!GameManager.Instance.gameOver)
+                    AdvancePhase();
             }
         
         private bool IsLandwalkPreventingBlock(CreatureCard attacker, Player defender)
