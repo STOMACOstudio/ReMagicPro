@@ -311,6 +311,28 @@ public class GameManager : MonoBehaviour
 
             Card card = visual.linkedCard;
 
+            // MTG timing guard for non-instant card types in this project:
+            // lands and permanent/sorcery spells can only be played on your own main phase.
+            if (TurnSystem.Instance != null)
+            {
+                bool isPlayersTurn = (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human && player == humanPlayer) ||
+                                     (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI && player == aiPlayer);
+                bool isMainPhase = TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 ||
+                                   TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2;
+                bool requiresMainPhaseTiming = card is LandCard ||
+                                              card is CreatureCard ||
+                                              card is SorceryCard ||
+                                              card is ArtifactCard ||
+                                              card is EnchantmentCard ||
+                                              card is AuraCard;
+
+                if (requiresMainPhaseTiming && (!isPlayersTurn || !isMainPhase))
+                {
+                    Debug.Log("This card can only be played during its controller's own main phase.");
+                    return;
+                }
+            }
+
             if (IsOnlyCastCreatureSpellsActive() && !(card is CreatureCard) && !(card is LandCard))
             {
                 Debug.Log("Anti-Magic Grid prevents casting non-creature spells.");
