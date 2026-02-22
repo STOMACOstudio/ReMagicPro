@@ -16,7 +16,7 @@ public class DeckEditorNavigation : MonoBehaviour
 
     public void ConfirmDeck()
     {
-        var manager = FindObjectOfType<DeckEditorManager>();
+        var manager = UnityEngine.Object.FindFirstObjectByType<DeckEditorManager>();
         if (manager != null && manager.IsDeckComplete)
         {
             manager.ConfirmDeck();
