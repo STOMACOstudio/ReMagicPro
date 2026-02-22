@@ -1555,6 +1555,30 @@ public class TurnSystem : MonoBehaviour
                 return results;
             }
 
+        private bool CanReliablyDealFaceDamage(CreatureCard attacker, Player defender)
+        {
+            var blockers = defender.Battlefield
+                .OfType<CreatureCard>()
+                .Where(b => !b.isTapped && !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                .ToList();
+
+            if (blockers.Count == 0)
+                return true;
+
+            return blockers.All(b => !BlockerCanBlockAttacker(b, attacker, defender));
+        }
+
+        private bool IsVeryBadAttackIntoBlocker(CreatureCard attacker, CreatureCard blocker)
+        {
+            bool attackerDies = !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                               (blocker.keywordAbilities.Contains(KeywordAbility.Deathtouch) || blocker.power >= attacker.toughness);
+
+            bool blockerSurvives = blocker.keywordAbilities.Contains(KeywordAbility.Indestructible) ||
+                                  attacker.power < blocker.toughness;
+
+            return attackerDies && blockerSurvives;
+        }
+
         private bool ShouldAIAttackCreature(CreatureCard creature, Player ai, Player human, bool goForLethal, bool lowLifeNeedsDefense)
         {
             // Avoid attacking with creatures that cannot deal damage
@@ -1589,6 +1613,10 @@ public class TurnSystem : MonoBehaviour
             if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
                 return false;
 
+            bool isLikelyUnblockable = CanReliablyDealFaceDamage(creature, human);
+            if (isLikelyUnblockable)
+                return true;
+
             if (possibleBlockers.Count == 0)
                 return true;
 
@@ -1600,13 +1628,17 @@ public class TurnSystem : MonoBehaviour
             if (blockerKillsAndSurvives && !goForLethal)
                 return false;
 
+            if (IsVeryBadAttackIntoBlocker(creature, best) && ai.Life <= human.Life)
+                return false;
+
             int creatureValue = creature.power + creature.baseToughness;
             int blockerValue = best.power + best.baseToughness;
             bool tradeUp = creature.power >= best.toughness && creatureValue <= blockerValue &&
                            !best.keywordAbilities.Contains(KeywordAbility.Indestructible);
             bool aggressive = ai.Life >= human.Life;
+            bool chipPressure = ai.Life > 8 && human.Life <= 10;
 
-            return tradeUp || goForLethal || (aggressive && creatureValue >= blockerValue);
+            return tradeUp || goForLethal || isLikelyUnblockable || chipPressure || (aggressive && creatureValue >= blockerValue);
         }
         
         public void ContinueAIAfterStack()
