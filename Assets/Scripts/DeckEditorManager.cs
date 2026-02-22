@@ -33,6 +33,14 @@ public class DeckEditorManager : MonoBehaviour
 
     private List<CardData> deck = new List<CardData>();
     private List<CardData> collection = new List<CardData>();
+    private readonly List<string> basicLandNames = new List<string>
+    {
+        "Plains",
+        "Island",
+        "Swamp",
+        "Mountain",
+        "Forest"
+    };
 
     // Card that has been marked as favourite in the editor
     public CardData FavouriteCard { get; private set; }
@@ -135,11 +143,23 @@ public class DeckEditorManager : MonoBehaviour
     {
         ClearContainer(removedListContainer);
 
-        IEnumerable<CardData> filtered = PlayerCollection.OwnedCards;
+        IEnumerable<CardData> filtered = PlayerCollection.OwnedCards.FindAll(card => !CardData.IsBasicLand(card));
         if (activeFilters.Count > 0)
-            filtered = PlayerCollection.OwnedCards.FindAll(CardMatchesFilters);
+            filtered = PlayerCollection.OwnedCards.FindAll(card => !CardData.IsBasicLand(card) && CardMatchesFilters(card));
 
         collection = new List<CardData>(filtered);
+
+        foreach (string basicLandName in basicLandNames)
+        {
+            CardData basicLand = CardDatabase.GetCardData(basicLandName);
+            if (basicLand == null)
+                continue;
+
+            if (!CardMatchesFilters(basicLand))
+                continue;
+
+            collection.Add(basicLand);
+        }
 
         foreach (var data in collection)
         {
@@ -284,14 +304,20 @@ public class DeckEditorManager : MonoBehaviour
 
     public void OnCollectionEntryClicked(CardData data, GameObject entry)
     {
+        bool isBasicLand = CardData.IsBasicLand(data);
+
         // Try to remove the card from the local collection list. In some edge
         // cases the reference might not exist (for example after changing
         // filters), but we still want to allow adding the card back to the deck
         // even if the removal fails.
-        collection.Remove(data);
+        if (!isBasicLand)
+            collection.Remove(data);
 
-        PlayerCollection.OwnedCards.Remove(data);
-        Destroy(entry);
+        if (!isBasicLand)
+        {
+            PlayerCollection.OwnedCards.Remove(data);
+            Destroy(entry);
+        }
 
         GameObject prefab = cardPrefab;
         if (prefab == null)
@@ -327,7 +353,9 @@ public class DeckEditorManager : MonoBehaviour
             SpawnCardVisual(prefab, data, 1);
         }
 
-        RefreshCollectionDisplay();
+        if (!isBasicLand)
+            RefreshCollectionDisplay();
+
         UpdateDeckCardNumber();
     }
 
