@@ -66,8 +66,8 @@ public class ManaPopupVFX : MonoBehaviour
 
             Rigidbody2D rb = mini.AddComponent<Rigidbody2D>();
             rb.gravityScale = 0f;
-            rb.velocity = offset.normalized * Random.Range(0.5f, 1.5f);
-            rb.drag = 2f;
+            rb.linearVelocity = offset.normalized * Random.Range(0.5f, 1.5f);
+            rb.linearDamping = 2f;
         }
     }
 }
