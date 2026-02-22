@@ -84,7 +84,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     [SerializeField]
     private float keywordTextShrinkStep = 0.5f;
 
+    [SerializeField]
+    private float cardTypeTextMinFontSize = 8f;
+
+    [SerializeField]
+    private float cardTypeTextShrinkStep = 0.5f;
+
     private float keywordTextDefaultFontSize;
+    private float cardTypeTextDefaultFontSize;
 
     void Awake()
     {
@@ -140,6 +147,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             keywordTextDefaultFontSize = keywordText.fontSize;
             keywordText.enableWordWrapping = true;
             keywordText.overflowMode = TextOverflowModes.Overflow;
+        }
+
+        if (cardTypeText != null)
+        {
+            cardTypeTextDefaultFontSize = cardTypeText.fontSize;
+            cardTypeText.enableWordWrapping = true;
+            cardTypeText.overflowMode = TextOverflowModes.Overflow;
         }
 
         UpdateRaycastTargets();
@@ -268,32 +282,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             if (cardTypeText == null || data == null) return;
 
-            string typeLine;
-
-        if (data.cardType == CardType.Creature)
-        {
-            bool isArtifactCreature = data.color != null && data.color.Contains("Artifact");
-            string baseType = isArtifactCreature ? "Artifact Creature" : "Creature";
-
-            if (data.subtypes != null && data.subtypes.Count > 0)
-                typeLine = $"{baseType} — {string.Join(" ", data.subtypes)}";
-            else
-                typeLine = baseType;
-        }
-        else if (data.cardType == CardType.Enchantment && data.subtypes != null && data.subtypes.Count > 0)
-        {
-            typeLine = $"Enchantment — {string.Join(" ", data.subtypes)}";
-        }
-        else if (data.cardType == CardType.Artifact && data.subtypes != null && data.subtypes.Count > 0)
-        {
-            typeLine = $"Artifact — {string.Join(" ", data.subtypes)}";
-        }
-        else
-        {
-            typeLine = data.cardType.ToString();
-        }
-
-            cardTypeText.text = typeLine;
+            cardTypeText.text = BuildTypeLine(data);
+            FitTextToBounds(cardTypeText, ref cardTypeTextDefaultFontSize, cardTypeTextMinFontSize, cardTypeTextShrinkStep);
             cardTypeText.enabled = !isInBattlefield;
         }
 
@@ -1838,32 +1828,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
             if (cardData != null && cardTypeText != null)
             {
-                string typeLine;
-
-            if (cardData.cardType == CardType.Creature)
-            {
-                bool isArtifactCreature = cardData.color != null && cardData.color.Contains("Artifact");
-                string baseType = isArtifactCreature ? "Artifact Creature" : "Creature";
-
-                if (cardData.subtypes != null && cardData.subtypes.Count > 0)
-                    typeLine = $"{baseType} — {string.Join(" ", cardData.subtypes)}";
-                else
-                    typeLine = baseType;
-            }
-            else if (cardData.cardType == CardType.Enchantment && cardData.subtypes != null && cardData.subtypes.Count > 0)
-            {
-                typeLine = $"Enchantment — {string.Join(" ", cardData.subtypes)}"; // e.g. Aura
-            }
-            else if (cardData.cardType == CardType.Artifact && cardData.subtypes != null && cardData.subtypes.Count > 0)
-            {
-                typeLine = $"Artifact — {string.Join(" ", cardData.subtypes)}";
-            }
-            else
-            {
-                typeLine = cardData.cardType.ToString(); // e.g. "Artifact", "Land", etc.
-            }
-
-                cardTypeText.text = typeLine;
+                cardTypeText.text = BuildTypeLine(cardData);
+                FitTextToBounds(cardTypeText, ref cardTypeTextDefaultFontSize, cardTypeTextMinFontSize, cardTypeTextShrinkStep);
                 cardTypeText.enabled = !isInBattlefield;
             }
 
@@ -2197,10 +2163,32 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             keywordTextDefaultFontSize = keywordText.fontSize;
 
         keywordText.text = string.IsNullOrEmpty(text) ? string.Empty : text;
-        FitKeywordTextToBounds(keywordText);
+        FitTextToBounds(keywordText, ref keywordTextDefaultFontSize, keywordTextMinFontSize, keywordTextShrinkStep);
     }
 
-    private void FitKeywordTextToBounds(TMP_Text textComponent)
+    private string BuildTypeLine(CardData data)
+    {
+        if (data.cardType == CardType.Creature)
+        {
+            bool isArtifactCreature = data.color != null && data.color.Contains("Artifact");
+            string baseType = isArtifactCreature ? "Artifact Creature" : "Creature";
+
+            if (data.subtypes != null && data.subtypes.Count > 0)
+                return $"{baseType} — {string.Join(" ", data.subtypes)}";
+
+            return baseType;
+        }
+
+        if (data.cardType == CardType.Enchantment && data.subtypes != null && data.subtypes.Count > 0)
+            return $"Enchantment — {string.Join(" ", data.subtypes)}";
+
+        if (data.cardType == CardType.Artifact && data.subtypes != null && data.subtypes.Count > 0)
+            return $"Artifact — {string.Join(" ", data.subtypes)}";
+
+        return data.cardType.ToString();
+    }
+
+    private void FitTextToBounds(TMP_Text textComponent, ref float defaultFontSize, float minAllowedFontSize, float shrinkStep)
     {
         if (textComponent == null)
             return;
@@ -2212,9 +2200,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         textComponent.enableWordWrapping = true;
         textComponent.overflowMode = TextOverflowModes.Overflow;
 
-        float minFontSize = Mathf.Max(1f, keywordTextMinFontSize);
-        float shrinkStep = Mathf.Max(0.1f, keywordTextShrinkStep);
-        float targetFontSize = keywordTextDefaultFontSize > 0f ? keywordTextDefaultFontSize : textComponent.fontSize;
+        if (defaultFontSize <= 0f)
+            defaultFontSize = textComponent.fontSize;
+
+        float minFontSize = Mathf.Max(1f, minAllowedFontSize);
+        float shrinkStepValue = Mathf.Max(0.1f, shrinkStep);
+        float targetFontSize = defaultFontSize;
 
         textComponent.fontSize = targetFontSize;
         textComponent.ForceMeshUpdate();
@@ -2223,15 +2214,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         int safety = 0;
         while (safety < 200 && (preferred.y > rect.height || preferred.x > rect.width) && textComponent.fontSize > minFontSize)
         {
-            targetFontSize = Mathf.Max(textComponent.fontSize - shrinkStep, minFontSize);
+            targetFontSize = Mathf.Max(textComponent.fontSize - shrinkStepValue, minFontSize);
             textComponent.fontSize = targetFontSize;
             textComponent.ForceMeshUpdate();
             preferred = textComponent.GetPreferredValues(textComponent.text, rect.width, Mathf.Infinity);
             safety++;
         }
-
-        if (preferred.y > rect.height || preferred.x > rect.width)
-            textComponent.overflowMode = TextOverflowModes.Truncate;
     }
 
     public void EnableTargetingHighlight(bool enable)
