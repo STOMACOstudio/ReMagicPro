@@ -145,14 +145,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (keywordText != null)
         {
             keywordTextDefaultFontSize = keywordText.fontSize;
-            keywordText.enableWordWrapping = true;
+            keywordText.textWrappingMode = TextWrappingModes.Normal;
             keywordText.overflowMode = TextOverflowModes.Overflow;
         }
 
         if (cardTypeText != null)
         {
             cardTypeTextDefaultFontSize = cardTypeText.fontSize;
-            cardTypeText.enableWordWrapping = true;
+            cardTypeText.textWrappingMode = TextWrappingModes.Normal;
             cardTypeText.overflowMode = TextOverflowModes.Overflow;
         }
 
@@ -2197,7 +2197,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (rect.width <= 0f || rect.height <= 0f)
             return;
 
-        textComponent.enableWordWrapping = true;
+        textComponent.textWrappingMode = TextWrappingModes.Normal;
         textComponent.overflowMode = TextOverflowModes.Overflow;
 
         if (defaultFontSize <= 0f)
