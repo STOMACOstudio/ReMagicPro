@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -17,26 +15,57 @@ public class MapZoneUIManager : MonoBehaviour
 
     private MapZone selectedZone;
 
-    void Awake()
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            Debug.LogWarning("Duplicate MapZoneUIManager found. Destroying the new instance.");
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
+        if (panel != null)
+        {
             panel.SetActive(false);
         }
+        else
+        {
+            Debug.LogWarning("MapZoneUIManager panel reference is missing.");
+        }
+    }
 
     public void ShowZoneDetails(MapZone zone)
+    {
+        if (zone == null)
         {
-            selectedZone = zone;
+            Debug.LogWarning("ShowZoneDetails was called with a null zone.");
+            return;
+        }
 
-            enemyPortrait.sprite = null;
+        selectedZone = zone;
 
-            if (zone.enemyPortrait != null)
-                enemyPortrait.sprite = zone.enemyPortrait;
+        if (enemyPortrait != null)
+        {
+            enemyPortrait.sprite = zone.enemyPortrait;
+        }
 
+        if (descriptionText != null)
+        {
             descriptionText.text = zone.enemyDescription;
+        }
 
+        if (panel != null)
+        {
             panel.SetActive(true);
+        }
+
+        if (engageButton != null)
+        {
             engageButton.interactable = zone.isUnlocked && !zone.isCompleted;
         }
+    }
 
     /*public void OnEngageClicked()
         {
@@ -50,14 +79,17 @@ public class MapZoneUIManager : MonoBehaviour
         }*/
 
     public void OnEngageClicked()
+    {
+        if (selectedZone == null || !selectedZone.isUnlocked)
         {
-            if (selectedZone == null || !selectedZone.isUnlocked) return;
-
-            Debug.Log("Engaging zone: " + selectedZone.zoneId);
-            //BattleData.CurrentZone = selectedZone;
-            BattleData.CurrentZoneId = selectedZone.zoneId;
-            BattleData.CurrentDeckKey = selectedZone.deckKey;
-
-            SceneManager.LoadScene("GameScene");
+            return;
         }
+
+        Debug.Log("Engaging zone: " + selectedZone.zoneId);
+        //BattleData.CurrentZone = selectedZone;
+        BattleData.CurrentZoneId = selectedZone.zoneId;
+        BattleData.CurrentDeckKey = selectedZone.deckKey;
+
+        SceneManager.LoadScene("GameScene");
+    }
 }
