@@ -25,7 +25,6 @@ public class MerchantManager : MonoBehaviour
         [HideInInspector] public bool sold;
     }
 
-    public MerchantSlot basicLandSlot;
     public MerchantSlot commonSlot;
     public MerchantSlot uncommonSlot;
     public MerchantSlot rareSlot;
@@ -37,7 +36,6 @@ public class MerchantManager : MonoBehaviour
 
     private void SaveSoldState()
     {
-        PlayerPrefs.SetInt("Merchant_BasicLandSold", basicLandSlot.sold ? 1 : 0);
         PlayerPrefs.SetInt("Merchant_CommonSold", commonSlot.sold ? 1 : 0);
         PlayerPrefs.SetInt("Merchant_UncommonSold", uncommonSlot.sold ? 1 : 0);
         PlayerPrefs.SetInt("Merchant_RareSold", rareSlot.sold ? 1 : 0);
@@ -85,10 +83,6 @@ public class MerchantManager : MonoBehaviour
 
     private void SetupSlots()
     {
-        basicLandSlot.cardData = GetRandomBasicLand();
-        basicLandSlot.sold = false;
-        SetupSlot(basicLandSlot, 2);
-
         commonSlot.cardData = GetRandomCardByRarity("Common");
         commonSlot.sold = false;
         SetupSlot(commonSlot, 6);
@@ -102,7 +96,7 @@ public class MerchantManager : MonoBehaviour
         SetupSlot(rareSlot, 20);
 
         // special offer from one of the above with 50% discount
-        var options = new List<MerchantSlot> { basicLandSlot, commonSlot, uncommonSlot, rareSlot };
+        var options = new List<MerchantSlot> { commonSlot, uncommonSlot, rareSlot };
         int index = Random.Range(0, options.Count);
         var chosen = options[index];
         int discounted = Mathf.CeilToInt(chosen.price * 0.5f);
@@ -172,13 +166,6 @@ public class MerchantManager : MonoBehaviour
         }
     }
 
-    private CardData GetRandomBasicLand()
-    {
-        string[] lands = { "Plains", "Island", "Swamp", "Mountain", "Forest" };
-        string name = lands[Random.Range(0, lands.Length)];
-        return CardDatabase.GetCardData(name);
-    }
-
     private CardData GetRandomCardByRarity(string rarity)
     {
         string[] basicLands = { "Plains", "Island", "Swamp", "Mountain", "Forest" };
@@ -192,17 +179,18 @@ public class MerchantManager : MonoBehaviour
 
     private bool HasSavedInventory()
     {
-        return PlayerPrefs.HasKey("Merchant_BasicLand");
+        return PlayerPrefs.HasKey("Merchant_Common")
+            && PlayerPrefs.HasKey("Merchant_Uncommon")
+            && PlayerPrefs.HasKey("Merchant_Rare")
+            && PlayerPrefs.HasKey("Merchant_Offer");
     }
 
     private void SaveInventory()
     {
-        PlayerPrefs.SetString("Merchant_BasicLand", basicLandSlot.cardData.cardName);
         PlayerPrefs.SetString("Merchant_Common", commonSlot.cardData.cardName);
         PlayerPrefs.SetString("Merchant_Uncommon", uncommonSlot.cardData.cardName);
         PlayerPrefs.SetString("Merchant_Rare", rareSlot.cardData.cardName);
         PlayerPrefs.SetString("Merchant_Offer", specialOfferSlot.cardData.cardName);
-        PlayerPrefs.SetInt("Merchant_BasicLandPrice", basicLandSlot.price);
         PlayerPrefs.SetInt("Merchant_CommonPrice", commonSlot.price);
         PlayerPrefs.SetInt("Merchant_UncommonPrice", uncommonSlot.price);
         PlayerPrefs.SetInt("Merchant_RarePrice", rareSlot.price);
@@ -213,29 +201,51 @@ public class MerchantManager : MonoBehaviour
 
     private void LoadInventory()
     {
-        basicLandSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_BasicLand"));
         commonSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Common"));
         uncommonSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Uncommon"));
         rareSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Rare"));
         specialOfferSlot.cardData = CardDatabase.GetCardData(PlayerPrefs.GetString("Merchant_Offer"));
 
-        basicLandSlot.sold = PlayerPrefs.GetInt("Merchant_BasicLandSold", 0) == 1;
+        if (!IsValidSlotCard(commonSlot.cardData, "Common")
+            || !IsValidSlotCard(uncommonSlot.cardData, "Uncommon")
+            || !IsValidSlotCard(rareSlot.cardData, "Rare")
+            || !IsValidOfferCard(specialOfferSlot.cardData))
+        {
+            SetupSlots();
+            SaveInventory();
+            return;
+        }
+
         commonSlot.sold = PlayerPrefs.GetInt("Merchant_CommonSold", 0) == 1;
         uncommonSlot.sold = PlayerPrefs.GetInt("Merchant_UncommonSold", 0) == 1;
         rareSlot.sold = PlayerPrefs.GetInt("Merchant_RareSold", 0) == 1;
         specialOfferSlot.sold = PlayerPrefs.GetInt("Merchant_OfferSold", 0) == 1;
 
-        SetupSlot(basicLandSlot, PlayerPrefs.GetInt("Merchant_BasicLandPrice", 2));
         SetupSlot(commonSlot, PlayerPrefs.GetInt("Merchant_CommonPrice", 6));
         SetupSlot(uncommonSlot, PlayerPrefs.GetInt("Merchant_UncommonPrice", 10));
         SetupSlot(rareSlot, PlayerPrefs.GetInt("Merchant_RarePrice", 20));
         SetupSlot(specialOfferSlot, PlayerPrefs.GetInt("Merchant_OfferPrice", 1));
 
-        if (basicLandSlot.sold) MarkSlotAsSold(basicLandSlot);
         if (commonSlot.sold) MarkSlotAsSold(commonSlot);
         if (uncommonSlot.sold) MarkSlotAsSold(uncommonSlot);
         if (rareSlot.sold) MarkSlotAsSold(rareSlot);
         if (specialOfferSlot.sold) MarkSlotAsSold(specialOfferSlot);
+    }
+
+    private bool IsValidSlotCard(CardData card, string rarity)
+    {
+        return card != null
+            && card.rarity == rarity
+            && !card.isToken
+            && !CardData.IsBasicLand(card);
+    }
+
+    private bool IsValidOfferCard(CardData card)
+    {
+        return card != null
+            && !card.isToken
+            && !CardData.IsBasicLand(card)
+            && (card.rarity == "Common" || card.rarity == "Uncommon" || card.rarity == "Rare");
     }
 
     public void Purchase(MerchantSlot slot)
