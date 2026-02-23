@@ -748,29 +748,29 @@ public class TurnSystem : MonoBehaviour
                                                 ai.ColoredMana.SpendGeneric(card.xValue);
                                         }
                                         ai.Hand.Remove(card);
-                                        ai.Battlefield.Add(card);
-                                        card.OnEnterPlay(ai);
-                                        GameManager.Instance.NotifyCreatureEntered(card, ai);
-                                        GameManager.Instance.NotifyArtifactEntered(card, ai);
+                                        artifact.owner = ai;
 
-                                        if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                                        {
-                                            card.isTapped = true;
-                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
-                                        }
-
-                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiArtifactArea);
+                                        GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.stackZone);
                                         CardVisual visual = obj.GetComponent<CardVisual>();
-                                        visual.Setup(card, GameManager.Instance);
-                                        visual.isInBattlefield = true;
+                                        CardData data = CardDatabase.GetCardData(card.cardName);
+                                        visual.Setup(card, GameManager.Instance, data);
                                         GameManager.Instance.activeCardVisuals.Add(visual);
 
-                                        Debug.Log($"AI played artifact: {card.cardName}");
-                                        playedCard = true;
+                                        visual.transform.localPosition = Vector3.zero;
+                                        visual.transform.SetParent(GameManager.Instance.stackZone, false);
+                                        visual.isInStack = true;
 
-                                        waitingForAIAction = true;
-                                        StartCoroutine(WaitForAIAction(aiActionDelaySeconds));
-                                        return;
+                                        GameManager.Instance.UpdateUI();
+                                        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+                                        GameManager.Instance.isStackBusy = true;
+                                        TurnSystem.Instance.waitingToResumeAI = true;
+                                        TurnSystem.Instance.lastPhaseBeforeStack = currentPhase;
+
+                                        GameManager.Instance.StartCoroutine(GameManager.Instance.ResolveArtifactAfterDelay(artifact, visual, ai));
+
+                                        playedCard = true;
+                                        break;
                                     }
                                 }
                                 else if (card is AuraCard auraCard)
