@@ -221,16 +221,11 @@ public class DeckEditorManager : MonoBehaviour
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
 
-        GameObject prefab = cardPrefab;
+        GameObject prefab = ResolveCardPrefab();
         if (prefab == null)
         {
-            prefab = CardHoverPreview.Instance != null
-                ? CardHoverPreview.Instance.CardVisualPrefab
-#if UNITY_EDITOR
-                : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/CardPrefab.prefab");
-#else
-                : Resources.Load<GameObject>("Prefab/CardPrefab");
-#endif
+            Debug.LogError("DeckEditorManager could not load a card prefab.");
+            return;
         }
 
         var groupedCards = new Dictionary<string, (CardData data, int count)>();
@@ -256,10 +251,26 @@ public class DeckEditorManager : MonoBehaviour
 
     private void SpawnCardVisual(GameObject prefab, CardData data, int count)
     {
+        if (prefab == null || data == null)
+            return;
+
         Card card = CardFactory.Create(data.cardName);
+        if (card == null)
+        {
+            Debug.LogError($"Failed to spawn deck editor card for '{data.cardName}'.");
+            return;
+        }
+
         GameObject go = Instantiate(prefab, cardContainer);
         go.transform.localScale = Vector3.one * 1.5f;
         CardVisual visual = go.GetComponent<CardVisual>();
+        if (visual == null)
+        {
+            Debug.LogError("Card prefab is missing CardVisual component.");
+            Destroy(go);
+            return;
+        }
+
         CardData sourceData = CardDatabase.GetCardData(card.cardName);
         visual.Setup(card, null, sourceData);
 
@@ -304,6 +315,9 @@ public class DeckEditorManager : MonoBehaviour
 
     public void OnCollectionEntryClicked(CardData data, GameObject entry)
     {
+        if (data == null)
+            return;
+
         bool isBasicLand = CardData.IsBasicLand(data);
 
         // Try to remove the card from the local collection list. In some edge
@@ -319,16 +333,11 @@ public class DeckEditorManager : MonoBehaviour
             Destroy(entry);
         }
 
-        GameObject prefab = cardPrefab;
+        GameObject prefab = ResolveCardPrefab();
         if (prefab == null)
         {
-            prefab = CardHoverPreview.Instance != null
-                ? CardHoverPreview.Instance.CardVisualPrefab
-#if UNITY_EDITOR
-                : UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/CardPrefab.prefab");
-#else
-                : Resources.Load<GameObject>("Prefab/CardPrefab");
-#endif
+            Debug.LogError("DeckEditorManager could not load a card prefab.");
+            return;
         }
 
         deck.Add(data);
@@ -357,6 +366,21 @@ public class DeckEditorManager : MonoBehaviour
             RefreshCollectionDisplay();
 
         UpdateDeckCardNumber();
+    }
+
+    private GameObject ResolveCardPrefab()
+    {
+        if (cardPrefab != null)
+            return cardPrefab;
+
+        if (CardHoverPreview.Instance != null && CardHoverPreview.Instance.CardVisualPrefab != null)
+            return CardHoverPreview.Instance.CardVisualPrefab;
+
+#if UNITY_EDITOR
+        return UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Prefab/CardPrefab.prefab");
+#else
+        return Resources.Load<GameObject>("Prefab/CardPrefab");
+#endif
     }
 
     private void UpdateRemovedButtons()
