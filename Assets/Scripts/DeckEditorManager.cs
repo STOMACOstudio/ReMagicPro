@@ -12,9 +12,6 @@ public class DeckEditorManager : MonoBehaviour
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private Transform removedListContainer;
     [SerializeField] private GameObject textPrefab;
-    [Header("Removed List Layout")]
-    [SerializeField] private float removedEntryHeight = 30f;
-    [SerializeField] private float removedEntryMinWidth = 0f;
     [Header("Color Filter Buttons")]
     [SerializeField] private Button whiteFilterButton;
     [SerializeField] private Button blueFilterButton;
@@ -58,8 +55,6 @@ public class DeckEditorManager : MonoBehaviour
 
     void Start()
     {
-        ConfigureRemovedListLayout();
-
         if (DeckHolder.SelectedDeck != null)
             deck = new List<CardData>(DeckHolder.SelectedDeck);
         ShowDeck();
@@ -169,46 +164,12 @@ public class DeckEditorManager : MonoBehaviour
         foreach (var data in collection)
         {
             GameObject entry = Instantiate(textPrefab, removedListContainer);
-            ApplyRemovedEntryLayout(entry);
-
             TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
             if (text != null)
                 text.text = data.cardName;
         }
 
         UpdateRemovedButtons();
-    }
-
-    private void ConfigureRemovedListLayout()
-    {
-        if (removedListContainer == null)
-            return;
-
-        VerticalLayoutGroup verticalLayout = removedListContainer.GetComponent<VerticalLayoutGroup>();
-        if (verticalLayout == null)
-            return;
-
-        verticalLayout.childForceExpandHeight = false;
-        verticalLayout.childForceExpandWidth = false;
-        verticalLayout.childControlHeight = true;
-        verticalLayout.childControlWidth = true;
-    }
-
-    private void ApplyRemovedEntryLayout(GameObject entry)
-    {
-        if (entry == null)
-            return;
-
-        LayoutElement layoutElement = entry.GetComponent<LayoutElement>();
-        if (layoutElement == null)
-            layoutElement = entry.AddComponent<LayoutElement>();
-
-        layoutElement.minHeight = removedEntryHeight;
-        layoutElement.preferredHeight = removedEntryHeight;
-        layoutElement.flexibleHeight = 0f;
-
-        layoutElement.minWidth = removedEntryMinWidth;
-        layoutElement.flexibleWidth = 0f;
     }
 
     public void ToggleColorFilter(string color)
