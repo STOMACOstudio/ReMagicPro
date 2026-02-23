@@ -5909,6 +5909,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_AlphaHitTestMinimumThreshold: 0.1
 --- !u!222 &1329120657
 CanvasRenderer:
   m_ObjectHideFlags: 0
