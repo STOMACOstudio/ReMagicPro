@@ -319,9 +319,11 @@ public class GameManager : MonoBehaviour
                                      (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI && player == aiPlayer);
                 bool isMainPhase = TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 ||
                                    TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2;
+                CardData cardData = CardDatabase.GetCardData(card.cardName);
+                bool isInstantSpell = cardData != null && cardData.cardType == CardType.Instant;
                 bool requiresMainPhaseTiming = card is LandCard ||
                                               card is CreatureCard ||
-                                              card is SorceryCard ||
+                                              (card is SorceryCard && !isInstantSpell) ||
                                               card is ArtifactCard ||
                                               card is EnchantmentCard ||
                                               card is AuraCard;
