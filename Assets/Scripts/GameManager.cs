@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Combat Animation")]
     [SerializeField] private float attackWindupFraction = 0.18f;
+    [SerializeField] private float attackAccelerationExponent = 1.35f;
     [SerializeField] private float impactBounceDistance = 22f;
     [SerializeField] private float impactBounceDuration = 0.04f;
 
@@ -3784,7 +3785,8 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             float accelT = (normalized - windup) / Mathf.Max(0.0001f, 1f - windup);
-                            eased = Mathf.Lerp(0.02f, 1f, accelT * accelT);
+                            float accelCurve = Mathf.Pow(accelT, Mathf.Max(1.01f, attackAccelerationExponent));
+                            eased = Mathf.Lerp(0.02f, 1f, accelCurve);
                         }
                     }
 
@@ -3984,7 +3986,7 @@ public class GameManager : MonoBehaviour
                         targetPos = targetLife.position;
                     }
 
-                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.24f, false));
+                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.30f, false));
                     yield return StartCoroutine(PlayImpactBounce(attackerVisual.transform, startPos, targetPos));
                     yield return new WaitForSeconds(0.05f);
 
