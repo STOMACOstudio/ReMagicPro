@@ -88,6 +88,10 @@ public class GameManager : MonoBehaviour
 
     public Dictionary<CreatureCard, List<CreatureCard>> blockingAssignments = new Dictionary<CreatureCard, List<CreatureCard>>();
 
+    [Header("Combat Animation")]
+    [SerializeField] private float attackMoveAcceleration = 2200f;
+    [SerializeField] private float attackMoveMaxSpeed = 3200f;
+
     public bool isStackBusy = false;
     public int pendingStackEffects = 0;
     public bool gameOver = false;
@@ -3723,7 +3727,7 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
 
-        private IEnumerator MoveCard(Transform tf, Vector3 start, Vector3 end, float duration)
+        private IEnumerator MoveCard(Transform tf, Vector3 start, Vector3 end, float duration, bool decelerateNearEnd)
             {
                 Canvas cardCanvas = tf.GetComponentInChildren<Canvas>();
                 int originalOrder = 0;
@@ -3736,12 +3740,46 @@ public class GameManager : MonoBehaviour
                     cardCanvas.sortingOrder = 100;
                 }
 
-                float t = 0f;
-                while (t < duration)
+                float distance = Vector3.Distance(start, end);
+                if (distance <= 0.001f)
                 {
-                    if (tf == null) yield break;
-                    t += Time.deltaTime;
-                    tf.position = Vector3.Lerp(start, end, t / duration);
+                    if (tf != null)
+                        tf.position = end;
+
+                    if (cardCanvas != null)
+                    {
+                        cardCanvas.sortingOrder = originalOrder;
+                        cardCanvas.overrideSorting = originalOverride;
+                    }
+
+                    yield break;
+                }
+
+                float minimumDuration = Mathf.Max(0.01f, duration);
+                float derivedAcceleration = (4f * distance) / (minimumDuration * minimumDuration);
+                float acceleration = Mathf.Max(attackMoveAcceleration, derivedAcceleration);
+                float maxSpeed = Mathf.Max(attackMoveMaxSpeed, (2f * distance) / minimumDuration);
+                float speed = decelerateNearEnd ? maxSpeed : 0f;
+
+                while (tf != null)
+                {
+                    Vector3 toTarget = end - tf.position;
+                    float remainingDistance = toTarget.magnitude;
+                    if (remainingDistance <= 0.001f)
+                        break;
+
+                    if (decelerateNearEnd)
+                    {
+                        float targetSpeed = Mathf.Sqrt(2f * acceleration * remainingDistance);
+                        speed = Mathf.MoveTowards(speed, targetSpeed, acceleration * Time.deltaTime);
+                    }
+                    else
+                    {
+                        speed = Mathf.Min(maxSpeed, speed + acceleration * Time.deltaTime);
+                    }
+
+                    float step = speed * Time.deltaTime;
+                    tf.position = Vector3.MoveTowards(tf.position, end, step);
                     yield return null;
                 }
 
@@ -3897,7 +3935,7 @@ public class GameManager : MonoBehaviour
                         targetPos = targetLife.position;
                     }
 
-                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.15f));
+                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.15f, false));
                     yield return new WaitForSeconds(0.05f);
 
                     var (pd, ad) = ResolveCombatForAttacker(attacker);
@@ -3909,7 +3947,7 @@ public class GameManager : MonoBehaviour
 
                     if (activeCardVisuals.Contains(attackerVisual))
                     {
-                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.15f));
+                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.15f, true));
                     }
 
                     yield return new WaitForSeconds(0.05f);
