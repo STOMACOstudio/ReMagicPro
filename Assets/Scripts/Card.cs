@@ -132,7 +132,25 @@ public class Card
         {
             if (ability.timing != TriggerTiming.OnDeath || ability.effect == null)
                 continue;
-            GameManager.Instance.QueueTriggeredAbility(ability, owner, this, this);
+
+            if (ability.usesStack)
+            {
+                GameManager.Instance.QueueTriggeredAbility(ability, owner, this, this);
+            }
+            else
+            {
+                int oldLife = owner.Life;
+                ability.effect.Invoke(owner, this);
+                int gained = owner.Life - oldLife;
+
+                if (gained > 0)
+                {
+                    GameManager.Instance.ShowFloatingHeal(gained,
+                        owner == GameManager.Instance.humanPlayer
+                            ? GameManager.Instance.playerLifeContainer
+                            : GameManager.Instance.enemyLifeContainer);
+                }
+            }
         }
     }
 

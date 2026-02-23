@@ -371,6 +371,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
+                            usesStack = false,
                             description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
@@ -2012,6 +2013,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnEnter,
+                            usesStack = false,
                             description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
@@ -2044,6 +2046,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnDeath,
+                            usesStack = false,
                             description = "",
                             effect = (Player owner, Card selfCard) =>
                             {
