@@ -253,9 +253,16 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < amount; i++)
         {
+            if (gameOver)
+                break;
+
             // only play the draw sound on the first card if this is the human player
-            bool playSfx = (i == 0);
+            bool playSfx = (player == humanPlayer && i == 0);
             DrawCard(player, playSfx);
+
+            // Drawing from an empty deck ends the game inside DrawCard.
+            if (gameOver)
+                break;
         }
     }
     public void DrawCard(Player player, bool playSfx = true)
