@@ -1515,6 +1515,20 @@ public class TurnSystem : MonoBehaviour
                 if (bestTrade != null)
                     return bestTrade;
 
+                // Non-lethal chump block: preserve life against high-impact attackers
+                // when we can sacrifice a clearly less valuable creature.
+                if (remainingDamage < remainingLife &&
+                    ShouldChumpBlockBigAttacker(attacker, possible, remainingLife, remainingDamage))
+                {
+                    var sacrificialBlocker = possible
+                        .OrderBy(GetCreatureValue)
+                        .ThenBy(b => b.toughness)
+                        .FirstOrDefault();
+
+                    if (sacrificialBlocker != null)
+                        return new List<CreatureCard> { sacrificialBlocker };
+                }
+
                 // Chump block to avoid lethal damage
                 if (remainingDamage >= remainingLife)
                     return new List<CreatureCard> { possible.OrderByDescending(b => b.toughness).First() };
@@ -1560,6 +1574,31 @@ public class TurnSystem : MonoBehaviour
                 }
 
                 return (killsAttacker, casualties, valueLost);
+            }
+
+        private bool ShouldChumpBlockBigAttacker(CreatureCard attacker, List<CreatureCard> possibleBlockers, int remainingLife, int remainingDamage)
+            {
+                if (possibleBlockers == null || possibleBlockers.Count == 0)
+                    return false;
+
+                // Against trample, pure chump blocks are often inefficient.
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
+                    return false;
+
+                int attackerValue = GetCreatureValue(attacker);
+                int cheapestBlockerValue = possibleBlockers.Min(GetCreatureValue);
+                bool attackerIsBigThreat = attacker.power >= 4 || attackerValue >= 8;
+                bool underLifePressure = remainingLife <= 12 ||
+                                         attacker.power >= Mathf.CeilToInt(remainingLife * 0.25f) ||
+                                         remainingDamage >= remainingLife - 3;
+                bool sacrificeIsEfficient = cheapestBlockerValue * 2 <= attackerValue;
+
+                return attackerIsBigThreat && underLifePressure && sacrificeIsEfficient;
+            }
+
+        private int GetCreatureValue(CreatureCard creature)
+            {
+                return creature.power + creature.baseToughness;
             }
 
         private IEnumerable<List<CreatureCard>> GenerateBlockerCombinations(List<CreatureCard> cards, int maxSize)
