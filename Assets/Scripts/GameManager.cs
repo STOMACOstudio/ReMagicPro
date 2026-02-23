@@ -89,10 +89,10 @@ public class GameManager : MonoBehaviour
     public Dictionary<CreatureCard, List<CreatureCard>> blockingAssignments = new Dictionary<CreatureCard, List<CreatureCard>>();
 
     [Header("Combat Animation")]
-    [SerializeField] private float attackWindupFraction = 0.18f;
-    [SerializeField] private float attackAccelerationExponent = 1.35f;
-    [SerializeField] private float impactBounceDistance = 22f;
-    [SerializeField] private float impactBounceDuration = 0.04f;
+    [SerializeField] private float attackWindupFraction = 0.20f;
+    [SerializeField] private float attackAccelerationExponent = 1.8f;
+    [SerializeField] private float impactBounceDistance = 10f;
+    [SerializeField] private float impactBounceDuration = 0.08f;
 
     public bool isStackBusy = false;
     public int pendingStackEffects = 0;
@@ -3813,7 +3813,7 @@ public class GameManager : MonoBehaviour
                 if (dir.sqrMagnitude <= 0.0001f)
                     yield break;
 
-                Vector3 bouncePoint = hitPoint + dir * Mathf.Max(0f, impactBounceDistance);
+                Vector3 bouncePoint = hitPoint - dir * Mathf.Max(0f, impactBounceDistance);
                 float halfDuration = Mathf.Max(0.01f, impactBounceDuration * 0.5f);
 
                 float t = 0f;
@@ -3986,7 +3986,7 @@ public class GameManager : MonoBehaviour
                         targetPos = targetLife.position;
                     }
 
-                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.30f, false));
+                    yield return StartCoroutine(MoveCard(attackerVisual.transform, startPos, targetPos, 0.42f, false));
                     yield return StartCoroutine(PlayImpactBounce(attackerVisual.transform, startPos, targetPos));
                     yield return new WaitForSeconds(0.05f);
 
@@ -3999,7 +3999,7 @@ public class GameManager : MonoBehaviour
 
                     if (activeCardVisuals.Contains(attackerVisual))
                     {
-                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.22f, true));
+                        yield return StartCoroutine(MoveCard(attackerVisual.transform, attackerVisual.transform.position, startPos, 0.32f, true));
                     }
 
                     yield return new WaitForSeconds(0.05f);
