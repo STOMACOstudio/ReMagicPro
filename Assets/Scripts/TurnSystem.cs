@@ -6,6 +6,9 @@ using TMPro;
 using System.Linq;
 using UnityEngine.EventSystems;
 using System.Diagnostics.CodeAnalysis;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class TurnSystem : MonoBehaviour
 {
@@ -192,7 +195,7 @@ public class TurnSystem : MonoBehaviour
             }
 
             // Handle spacebar shortcut
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (IsAdvanceShortcutPressedThisFrame())
             {
                 // Prevent UI buttons from also processing the spacebar press
                 if (EventSystem.current != null)
@@ -223,6 +226,15 @@ public class TurnSystem : MonoBehaviour
                 }
             }
         }
+
+    private static bool IsAdvanceShortcutPressedThisFrame()
+    {
+#if ENABLE_INPUT_SYSTEM
+        return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+#else
+        return Input.GetKeyDown(KeyCode.Space);
+#endif
+    }
 
     public void NextPhaseButton()
     {
