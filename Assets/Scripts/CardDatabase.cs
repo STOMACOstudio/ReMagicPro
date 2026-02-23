@@ -695,7 +695,7 @@ public static class CardDatabase
                         new CardAbility
                         {
                             timing = TriggerTiming.OnCardDraw,
-                            description = "this creature gets +2/+2 until end of turn.",
+                            description = " if it is not your draw step, this creature gets +2/+2 until end of turn.",
                             effect = (Player owner, Card selfCard) =>
                             {
                                 if (selfCard is CreatureCard creature &&
