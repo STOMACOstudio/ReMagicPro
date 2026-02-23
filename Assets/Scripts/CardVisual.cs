@@ -1111,6 +1111,23 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
 
             TurnSystem.TurnPhase phase = TurnSystem.Instance.currentPhase;
+            bool humanMainPhaseWindow =
+                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                (phase == TurnSystem.TurnPhase.Main1 ||
+                 phase == TurnSystem.TurnPhase.Main2);
+
+            bool humanCombatPriorityWindow =
+                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
+                    (phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                     phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
+                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
+                    (phase == TurnSystem.TurnPhase.ChooseBlockers ||
+                     phase == TurnSystem.TurnPhase.ConfirmBlockers));
+
+            bool canHumanActivateCreatureAbilities =
+                (humanMainPhaseWindow || humanCombatPriorityWindow) &&
+                !GameManager.Instance.IsStackActive();
+
             bool canActivateArtifact =
                 (
                     (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
@@ -1145,11 +1162,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // PAY-TO-GAIN-ABILITY during Main Phase or combat confirmation
             if (linkedCard is CreatureCard abilityCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(abilityCreature) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (phase == TurnSystem.TurnPhase.Main1 ||
-                 phase == TurnSystem.TurnPhase.Main2 ||
-                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
-                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                canHumanActivateCreatureAbilities &&
                 abilityCreature.activatedAbilities != null &&
                 abilityCreature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility))
             {
@@ -1174,11 +1187,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // PAY-TO-BUFF-SELF during Main Phase or combat confirmation
             if (linkedCard is CreatureCard pumpCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(pumpCreature) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (phase == TurnSystem.TurnPhase.Main1 ||
-                 phase == TurnSystem.TurnPhase.Main2 ||
-                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
-                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                canHumanActivateCreatureAbilities &&
                 pumpCreature.activatedAbilities != null &&
                 pumpCreature.activatedAbilities.Contains(ActivatedAbility.PayToBuffSelf))
             {
@@ -1207,11 +1216,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 linkedCard is CreatureCard tokenSpawner &&
                 !linkedCard.isTapped &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (phase == TurnSystem.TurnPhase.Main1 ||
-                 phase == TurnSystem.TurnPhase.Main2 ||
-                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
-                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                canHumanActivateCreatureAbilities &&
                 (!tokenSpawner.hasSummoningSickness || tokenSpawner.keywordAbilities.Contains(KeywordAbility.Haste)))
             {
                 Player player = GameManager.Instance.humanPlayer;
@@ -1254,11 +1259,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             // TAP-TO-LOSE-LIFE ability during Main Phase or combat confirmation
             if (linkedCard is CreatureCard creatureForDrain &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&
-                TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                (phase == TurnSystem.TurnPhase.Main1 ||
-                 phase == TurnSystem.TurnPhase.Main2 ||
-                 phase == TurnSystem.TurnPhase.ConfirmAttackers ||
-                 phase == TurnSystem.TurnPhase.ConfirmBlockers) &&
+                canHumanActivateCreatureAbilities &&
                 creatureForDrain.activatedAbilities != null &&
                 creatureForDrain.activatedAbilities.Contains(ActivatedAbility.TapToLoseLife) &&
                 !creatureForDrain.isTapped &&
