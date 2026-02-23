@@ -24,6 +24,7 @@ public class CardAbility
     public TriggerTiming timing;
     public System.Action<Player, Card> effect;
     public string description;
+    public bool usesStack = true;
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public bool excludeArtifactCreatures = false;
