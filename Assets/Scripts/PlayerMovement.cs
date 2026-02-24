@@ -12,10 +12,12 @@ public class PlayerMovement : MonoBehaviour
     public float deceleration = 10f;
 
     [Header("Intro Settings")]
-    public float startY = 10f;       // Height where the player starts
-    public float targetY = 0.6f;     // Height where movement unlocks
-    public float descentSpeed = 2f;  // How fast the player floats down
+    public float startY = 10f;
+    public float targetY = 0.6f;
+    public float descentSpeed = 2f;
+    public float initialLookDownAngle = -5f; 
     private bool isIntroFinished = false;
+    private float landingTimer = 0f;
 
     [Header("Audio")]
     public AudioSource footstepAudio; 
@@ -24,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 1f;
 
     [Header("Boundary Settings")]
-    public float platformHalfSize = 12.5f;
+    public float platformRadius = 12.5f; // Changed from HalfSize to Radius
 
     private float xRotation = 0f;
     private float fixedY;
@@ -34,17 +36,15 @@ public class PlayerMovement : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         
-        // Set the initial starting position for the intro
+        xRotation = initialLookDownAngle;
+        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
         transform.position = new Vector3(transform.position.x, startY, transform.position.z);
-        
-        // We set fixedY to targetY so once the intro is done, 
-        // the player stays at the correct height.
         fixedY = targetY;
     }
 
     void Update()
     {
-        // Looking is always allowed
         Look();
 
         if (!isIntroFinished)
@@ -60,14 +60,17 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleIntro()
     {
-        // Move the player downwards
         float newY = Mathf.MoveTowards(transform.position.y, targetY, descentSpeed * Time.deltaTime);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
 
-        // Check if we've reached the target height
         if (Mathf.Abs(transform.position.y - targetY) < 0.001f)
         {
             isIntroFinished = true;
+            if (footstepAudio != null)
+            {
+                footstepAudio.Play();
+                landingTimer = 0.2f;
+            }
         }
     }
 
@@ -96,9 +99,20 @@ public class PlayerMovement : MonoBehaviour
         Vector3 desiredMove = currentVelocity * Time.deltaTime;
         Vector3 nextPos = transform.position + desiredMove;
 
-        float padding = controller.radius;
-        nextPos.x = Mathf.Clamp(nextPos.x, -platformHalfSize + padding, platformHalfSize - padding);
-        nextPos.z = Mathf.Clamp(nextPos.z, -platformHalfSize + padding, platformHalfSize - padding);
+        // --- NEW CIRCULAR BOUNDARY LOGIC ---
+        // Calculate horizontal distance from center (0,0)
+        Vector2 flatPos = new Vector2(nextPos.x, nextPos.z);
+        float maxAllowedRadius = platformRadius - controller.radius;
+
+        if (flatPos.magnitude > maxAllowedRadius)
+        {
+            // Clamp the position to the edge of the circle
+            flatPos = flatPos.normalized * maxAllowedRadius;
+            nextPos.x = flatPos.x;
+            nextPos.z = flatPos.y;
+        }
+        // ------------------------------------
+
         nextPos.y = fixedY;
 
         Vector3 finalMove = nextPos - transform.position;
@@ -107,19 +121,19 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleFootsteps()
     {
+        if (landingTimer > 0)
+        {
+            landingTimer -= Time.deltaTime;
+            return;
+        }
+
         if (currentVelocity.magnitude > 0.1f)
         {
-            if (!footstepAudio.isPlaying)
-            {
-                footstepAudio.Play();
-            }
+            if (!footstepAudio.isPlaying) footstepAudio.Play();
         }
         else
         {
-            if (footstepAudio.isPlaying)
-            {
-                footstepAudio.Pause();
-            }
+            if (footstepAudio.isPlaying) footstepAudio.Pause();
         }
     }
 }
