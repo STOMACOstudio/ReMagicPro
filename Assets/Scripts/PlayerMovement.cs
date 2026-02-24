@@ -11,6 +11,9 @@ public class PlayerMovement : MonoBehaviour
     public float acceleration = 12f;
     public float deceleration = 10f;
 
+    [Header("Audio")] // <--- Nuova sezione
+    public AudioSource footstepAudio; 
+
     [Header("Mouse")]
     public float mouseSensitivity = 1f;
 
@@ -31,15 +34,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Look();
         Move();
+        HandleFootsteps(); // <--- Chiamata al nuovo metodo
     }
 
     void Look()
     {
         Vector2 mouseDelta = Mouse.current.delta.ReadValue() * mouseSensitivity * 0.1f;
-
         xRotation -= mouseDelta.y;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseDelta.x);
     }
@@ -61,12 +63,32 @@ public class PlayerMovement : MonoBehaviour
         Vector3 nextPos = transform.position + desiredMove;
 
         float padding = controller.radius;
-
         nextPos.x = Mathf.Clamp(nextPos.x, -platformHalfSize + padding, platformHalfSize - padding);
         nextPos.z = Mathf.Clamp(nextPos.z, -platformHalfSize + padding, platformHalfSize - padding);
         nextPos.y = fixedY;
 
         Vector3 finalMove = nextPos - transform.position;
         controller.Move(finalMove);
+    }
+
+    // <--- Nuovo Metodo per i passi
+    void HandleFootsteps()
+    {
+        // Controlliamo se il giocatore si sta muovendo (velocità > soglia minima)
+        // e se è a terra (usando la logica del controller)
+        if (currentVelocity.magnitude > 0.1f)
+        {
+            if (!footstepAudio.isPlaying)
+            {
+                footstepAudio.Play();
+            }
+        }
+        else
+        {
+            if (footstepAudio.isPlaying)
+            {
+                footstepAudio.Pause();
+            }
+        }
     }
 }
