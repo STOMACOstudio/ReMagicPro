@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b445e81f0941a4f49a16b89accc9230d
+guid: b0b11f302ed0eb44a89b8e5bcad8aa11
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3023107952119410683
-    second: shades-tile_albedo_0
+      213: 1915910714089194225
+    second: SpecularMap(7)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,9 +40,9 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shades-tile_albedo_0
+      name: SpecularMap(7)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2048
-        height: 2048
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 500934ca553cb06d0800000000000000
-      internalID: -3023107952119410683
+      spriteID: 1f2c6aeb4aea69a10800000000000000
+      internalID: 1915910714089194225
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      shades-tile_albedo_0: -3023107952119410683
+      SpecularMap(7)_0: 1915910714089194225
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

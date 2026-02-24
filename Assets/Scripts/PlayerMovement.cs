@@ -11,7 +11,13 @@ public class PlayerMovement : MonoBehaviour
     public float acceleration = 12f;
     public float deceleration = 10f;
 
-    [Header("Audio")] // <--- Nuova sezione
+    [Header("Intro Settings")]
+    public float startY = 10f;       // Height where the player starts
+    public float targetY = 0.6f;     // Height where movement unlocks
+    public float descentSpeed = 2f;  // How fast the player floats down
+    private bool isIntroFinished = false;
+
+    [Header("Audio")]
     public AudioSource footstepAudio; 
 
     [Header("Mouse")]
@@ -27,14 +33,42 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        fixedY = transform.position.y;
+        
+        // Set the initial starting position for the intro
+        transform.position = new Vector3(transform.position.x, startY, transform.position.z);
+        
+        // We set fixedY to targetY so once the intro is done, 
+        // the player stays at the correct height.
+        fixedY = targetY;
     }
 
     void Update()
     {
+        // Looking is always allowed
         Look();
-        Move();
-        HandleFootsteps(); // <--- Chiamata al nuovo metodo
+
+        if (!isIntroFinished)
+        {
+            HandleIntro();
+        }
+        else
+        {
+            Move();
+            HandleFootsteps();
+        }
+    }
+
+    void HandleIntro()
+    {
+        // Move the player downwards
+        float newY = Mathf.MoveTowards(transform.position.y, targetY, descentSpeed * Time.deltaTime);
+        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+
+        // Check if we've reached the target height
+        if (Mathf.Abs(transform.position.y - targetY) < 0.001f)
+        {
+            isIntroFinished = true;
+        }
     }
 
     void Look()
@@ -71,11 +105,8 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(finalMove);
     }
 
-    // <--- Nuovo Metodo per i passi
     void HandleFootsteps()
     {
-        // Controlliamo se il giocatore si sta muovendo (velocità > soglia minima)
-        // e se è a terra (usando la logica del controller)
         if (currentVelocity.magnitude > 0.1f)
         {
             if (!footstepAudio.isPlaying)
