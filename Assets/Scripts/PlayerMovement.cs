@@ -1,46 +1,54 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Components")]
     public CharacterController controller;
     public Transform playerCamera;
+    public AudioSource footstepAudio;
 
-    [Header("Movement")]
+    [Header("Movement Settings")]
     public float maxSpeed = 5f;
     public float acceleration = 12f;
     public float deceleration = 10f;
+    public float mouseSensitivity = 1f;
 
     [Header("Intro Settings")]
     public float startY = 10f;
     public float targetY = 0.6f;
     public float descentSpeed = 2f;
-    public float initialLookDownAngle = -5f; 
-    private bool isIntroFinished = false;
-    private float landingTimer = 0f;
-
-    [Header("Audio")]
-    public AudioSource footstepAudio; 
-
-    [Header("Mouse")]
-    public float mouseSensitivity = 1f;
+    public float initialLookDownAngle = -5f;
+    
+    [Header("Intro Narrative")]
+    public SubtitleManager subtitleManager;
+    public List<SubtitleManager.SubtitleLine> introLines;
 
     [Header("Boundary Settings")]
-    public float platformRadius = 12.5f; // Changed from HalfSize to Radius
+    public float platformRadius = 12.5f;
 
     private float xRotation = 0f;
     private float fixedY;
     private Vector3 currentVelocity;
+    private bool isIntroFinished = false;
+    private bool subtitlesStarted = false;
+    private float landingTimer = 0f;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         
+        // Setup initial camera and position
         xRotation = initialLookDownAngle;
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
         transform.position = new Vector3(transform.position.x, startY, transform.position.z);
+        
         fixedY = targetY;
+
+        // Auto-hook SubtitleManager if not assigned
+        if (subtitleManager == null)
+            subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
     }
 
     void Update()
@@ -60,6 +68,14 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleIntro()
     {
+        // Trigger multi-line subtitle sequence through the manager
+        if (!subtitlesStarted && subtitleManager != null)
+        {
+            subtitlesStarted = true;
+            subtitleManager.DisplaySequence(introLines);
+        }
+
+        // Descend to floor
         float newY = Mathf.MoveTowards(transform.position.y, targetY, descentSpeed * Time.deltaTime);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
 
@@ -69,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
             if (footstepAudio != null)
             {
                 footstepAudio.Play();
-                landingTimer = 0.2f;
+                landingTimer = 0.2f; // Slight delay for first movement sounds
             }
         }
     }
@@ -77,44 +93,42 @@ public class PlayerMovement : MonoBehaviour
     void Look()
     {
         Vector2 mouseDelta = Mouse.current.delta.ReadValue() * mouseSensitivity * 0.1f;
+        
         xRotation -= mouseDelta.y;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseDelta.x);
     }
 
     void Move()
     {
+        // Calculate input
         float x = (Keyboard.current.dKey.isPressed ? 1 : 0) - (Keyboard.current.aKey.isPressed ? 1 : 0);
         float z = (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0);
 
         Vector3 inputDir = (transform.right * x + transform.forward * z).normalized;
         Vector3 targetVelocity = inputDir * maxSpeed;
 
-        if (inputDir.magnitude > 0)
-            currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity, acceleration * Time.deltaTime);
-        else
-            currentVelocity = Vector3.MoveTowards(currentVelocity, Vector3.zero, deceleration * Time.deltaTime);
+        // Apply acceleration/deceleration
+        float lerpSpeed = (inputDir.magnitude > 0) ? acceleration : deceleration;
+        currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity, lerpSpeed * Time.deltaTime);
 
-        Vector3 desiredMove = currentVelocity * Time.deltaTime;
-        Vector3 nextPos = transform.position + desiredMove;
-
-        // --- NEW CIRCULAR BOUNDARY LOGIC ---
-        // Calculate horizontal distance from center (0,0)
+        // Circular Boundary Constraint
+        Vector3 nextPos = transform.position + (currentVelocity * Time.deltaTime);
         Vector2 flatPos = new Vector2(nextPos.x, nextPos.z);
         float maxAllowedRadius = platformRadius - controller.radius;
 
         if (flatPos.magnitude > maxAllowedRadius)
         {
-            // Clamp the position to the edge of the circle
             flatPos = flatPos.normalized * maxAllowedRadius;
             nextPos.x = flatPos.x;
             nextPos.z = flatPos.y;
         }
-        // ------------------------------------
 
         nextPos.y = fixedY;
 
+        // Move the controller
         Vector3 finalMove = nextPos - transform.position;
         controller.Move(finalMove);
     }
