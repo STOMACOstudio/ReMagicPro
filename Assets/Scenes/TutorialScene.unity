@@ -20910,7 +20910,7 @@ MonoBehaviour:
   initialLookDownAngle: 90
   subtitleManager: {fileID: 1833829486}
   introLines:
-  - text: Welcome, planeswalker
+  - text: Welcome, Planeswalker
     displayDuration: 3
   - text: This place has been here for a long time
     displayDuration: 4
@@ -20918,19 +20918,19 @@ MonoBehaviour:
     displayDuration: 2
   - text: And I've been waiting for you down here
     displayDuration: 4
-  - text: For a long time
+  - text: For a long time as well
     displayDuration: 2
   - text: And you are finally ready to make
     displayDuration: 4
   - text: Your one true choice
     displayDuration: 2
-  - text: Which mana color lives within you?
+  - text: Which Mana color thrives within you?
     displayDuration: 4
-  - text: But beware...
+  - text: But beware
     displayDuration: 2
-  - text: As for each ally you choose
+  - text: As for each ally you choose...
     displayDuration: 3
-  - text: An equally powerful enemy will rise to stop you
+  - text: ...an equally powerful enemy will rise against you
     displayDuration: 5
   - text: Now make your choice
     displayDuration: 2
