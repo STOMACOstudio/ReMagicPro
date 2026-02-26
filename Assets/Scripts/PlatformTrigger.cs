@@ -1,21 +1,35 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlatformTrigger : MonoBehaviour
 {
     public string playerTag = "Player";
     public Material activeMaterial;
+    public Material lockedMaterial; 
+    public float lockTimeRequirement = 15f;
     
+    [Header("Audio")]
+    public AudioClip lockSound;
+
     [Header("Subtitles")]
     public SubtitleManager subtitleManager;
-    // This creates the same list structure you have in PlayerMovement
     public List<SubtitleManager.SubtitleLine> interactionLines; 
+    public List<SubtitleManager.SubtitleLine> postLockLines; 
 
+    [Header("Spawning")]
+    [Tooltip("Assign the specific Prefab for this platform here.")]
+    public GameObject rewardPrefab; 
+    [Tooltip("Place an Empty GameObject in your scene where the item should appear.")]
+    public Transform spawnPoint;
+
+    private static bool isAnyPlatformLocked = false;
     private Material originalMaterial;
     private Renderer rend;
     private AudioSource audioSource;
     private int playerCount = 0;
-    private bool hasTriggered = false; // Prevents re-triggering the text repeatedly
+    private Coroutine lockCoroutine;
+    private bool isThisPlatformLocked = false;
 
     void Awake()
     {
@@ -27,7 +41,7 @@ public class PlatformTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag(playerTag)) return;
+        if (isAnyPlatformLocked || !other.CompareTag(playerTag)) return;
 
         playerCount++;
 
@@ -36,32 +50,63 @@ public class PlatformTrigger : MonoBehaviour
             if (activeMaterial != null) rend.material = activeMaterial;
             if (audioSource != null) audioSource.Play();
 
-            if (subtitleManager != null && !hasTriggered)
+            if (subtitleManager != null)
             {
                 subtitleManager.DisplaySequence(interactionLines);
-                hasTriggered = true; // Only play the sequence once
             }
+
+            lockCoroutine = StartCoroutine(LockTimer());
         }
+    }
+
+    IEnumerator LockTimer()
+    {
+        yield return new WaitForSeconds(lockTimeRequirement);
+        
+        isAnyPlatformLocked = true;
+        isThisPlatformLocked = true;
+
+        if (lockedMaterial != null) rend.material = lockedMaterial;
+        
+        if (audioSource != null && lockSound != null)
+        {
+            audioSource.PlayOneShot(lockSound);
+        }
+
+        // --- NEW ACTIONS ON LOCK ---
+        
+        // 1. Play the "Success" Subtitles
+        if (subtitleManager != null && postLockLines.Count > 0)
+        {
+            subtitleManager.DisplaySequence(postLockLines);
+        }
+
+        // 2. Spawn the specific prefab
+        if (rewardPrefab != null && spawnPoint != null)
+        {
+            Instantiate(rewardPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
+
+        Debug.Log(gameObject.name + " is now LOCKED and spawned an object.");
     }
 
     void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
+        if (isThisPlatformLocked) return;
 
         playerCount--;
 
         if (playerCount <= 0)
         {
             playerCount = 0;
+            if (lockCoroutine != null) StopCoroutine(lockCoroutine);
             rend.material = originalMaterial;
             
-            // --- NEW: STOP SUBTITLES ON EXIT ---
             if (subtitleManager != null)
             {
                 subtitleManager.StopSequence(); 
             }
-            
-            hasTriggered = false; // Allows the sequence to play again if they re-enter
         }
     }
 }

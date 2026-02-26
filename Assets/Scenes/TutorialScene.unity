@@ -10228,16 +10228,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformTrigger
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: 7800b4cebfacd5c44be41ce4478f5265, type: 2}
+  lockedMaterial: {fileID: 2100000, guid: 0c7e61e1f3e141f48ac970972de30e35, type: 2}
+  lockTimeRequirement: 25
+  lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
   - text: The White Mana
-    displayDuration: 3
+    displayDuration: 2
   - text: Order, cooperation and morality
     displayDuration: 3
   - text: The power to defeat evil and protect others
     displayDuration: 5
   - text: To accept its blessing, stand still
     displayDuration: 4
+  postLockLines:
+  - text: You can now manipulate White Mana
+    displayDuration: 3
+  - text: Now come and take me
+    displayDuration: 2
+  rewardPrefab: {fileID: 6534971374858432288, guid: b290169ec40e59741a737235030fe4ae, type: 3}
+  spawnPoint: {fileID: 1370593355}
 --- !u!82 &417361485
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15301,16 +15311,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformTrigger
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: b77a30196995e084586baf989701137b, type: 2}
+  lockedMaterial: {fileID: 2100000, guid: 6b37d3347e455e245be265aaf2b009ba, type: 2}
+  lockTimeRequirement: 25
+  lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
   - text: The Red Mana
-    displayDuration: 3
+    displayDuration: 2
   - text: Emotion, chaos and passion
     displayDuration: 3
   - text: The power to be free and recklessly face any adversity
     displayDuration: 5
   - text: To accept its pact, stand still
     displayDuration: 4
+  postLockLines:
+  - text: You can now manipulate Red Mana
+    displayDuration: 3
+  - text: Now come and take me
+    displayDuration: 2
+  rewardPrefab: {fileID: 1889863161958709174, guid: 558e0d305254e654385705e7775b8f14, type: 3}
+  spawnPoint: {fileID: 1370593355}
 --- !u!82 &537337816
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20603,16 +20623,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformTrigger
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: cb165c9ee66e1584bb553bb0bab10b88, type: 2}
+  lockedMaterial: {fileID: 2100000, guid: a43d5279cd21fd349b2e23c9fa22e730, type: 2}
+  lockTimeRequirement: 25
+  lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
   - text: The Black Mana
-    displayDuration: 3
+    displayDuration: 2
   - text: Ambition, power and egotism
     displayDuration: 3
   - text: The power to conquer and corrupt anyone that crosses your path
     displayDuration: 5
   - text: To accept its curse, stand still
     displayDuration: 4
+  postLockLines:
+  - text: You can now manipulate Black Mana
+    displayDuration: 3
+  - text: Now come and take me
+    displayDuration: 2
+  rewardPrefab: {fileID: 4766727113529985076, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+  spawnPoint: {fileID: 1370593355}
 --- !u!82 &793363000
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21170,16 +21200,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformTrigger
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: ff5aec737b7a83947a901ac56cc94bb4, type: 2}
+  lockedMaterial: {fileID: 2100000, guid: ce53b14db9756bf44a58cf724209dabe, type: 2}
+  lockTimeRequirement: 25
+  lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
   - text: The Blue Mana
-    displayDuration: 3
+    displayDuration: 2
   - text: Knowledge, control and perfectionism
     displayDuration: 3
   - text: The power to manipulate enemies and read their minds
     displayDuration: 5
   - text: To accept it shenanigans, stand still
     displayDuration: 4
+  postLockLines:
+  - text: You can now manipulate Blue Mana
+    displayDuration: 3
+  - text: Now come and take me
+    displayDuration: 2
+  rewardPrefab: {fileID: 1601507365291559033, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
+  spawnPoint: {fileID: 1370593355}
 --- !u!82 &916973403
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21642,86 +21682,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!1001 &1009270023
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -9.66
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.27059805
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.6532815
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.6532815
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.27059805
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 5027266210799723050, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5660953637895731344, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: m_Name
-      value: Book
-      objectReference: {fileID: 0}
-    - target: {fileID: 6165220249711237445, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: c1dc814e26e59ea498253c25691388c7, type: 2}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5660953637895731344, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1917214099}
-  m_SourcePrefab: {fileID: 100100000, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
 --- !u!1 &1084944019
 GameObject:
   m_ObjectHideFlags: 0
@@ -31508,6 +31468,37 @@ Transform:
   - {fileID: 2077706087}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1370593354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1370593355}
+  m_Layer: 0
+  m_Name: BookSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1370593355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1370593354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.6830127, y: 0.6830127, z: -0.18301274, w: 0.18301274}
+  m_LocalPosition: {x: 0, y: 0.75, z: -9.66}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 180, z: 90}
 --- !u!1 &1400003603
 GameObject:
   m_ObjectHideFlags: 0
@@ -31993,16 +31984,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformTrigger
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: 4479e89caeb0fa84a861d63cda976b7f, type: 2}
+  lockedMaterial: {fileID: 2100000, guid: 220df74ac59ce5043b91e2b91287b283, type: 2}
+  lockTimeRequirement: 25
+  lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
   - text: The Green Mana
-    displayDuration: 3
+    displayDuration: 2
   - text: Nature, growth and harmony
     displayDuration: 3
   - text: The power to be strong and unshaken through all trials
     displayDuration: 5
   - text: To accept its gift, stand still
     displayDuration: 4
+  postLockLines:
+  - text: You can now manipulate Green Mana
+    displayDuration: 3
+  - text: Now come and take me
+    displayDuration: 2
+  rewardPrefab: {fileID: 1596541806755776429, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+  spawnPoint: {fileID: 1370593355}
 --- !u!82 &1767433766
 AudioSource:
   m_ObjectHideFlags: 0
@@ -32295,26 +32296,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1917214095 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5660953637895731344, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
-  m_PrefabInstance: {fileID: 1009270023}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1917214099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1917214095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a66c1060959e488428e467b0b86c0773, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FloatingObject
-  rotationSpeed: {x: 0, y: 0, z: 0}
-  amplitude: 0.02
-  frequency: 1
 --- !u!1 &2077706086
 GameObject:
   m_ObjectHideFlags: 0
@@ -37442,7 +37423,7 @@ SceneRoots:
   - {fileID: 2104580346}
   - {fileID: 584808070}
   - {fileID: 2110921062}
-  - {fileID: 1009270023}
+  - {fileID: 1370593355}
   - {fileID: 972068805}
   - {fileID: 222053487}
   - {fileID: 1833829487}
