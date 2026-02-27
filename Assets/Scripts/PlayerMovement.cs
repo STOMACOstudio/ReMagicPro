@@ -74,6 +74,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             SceneManager.LoadScene(DeckEditorSceneName);
         }
     }
