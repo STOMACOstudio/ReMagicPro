@@ -80,6 +80,10 @@ PrefabInstance:
       propertyPath: itemName
       value: Green Library
       objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: starterColor
+      value: Green
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3838384185886413647, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
     m_RemovedGameObjects: []

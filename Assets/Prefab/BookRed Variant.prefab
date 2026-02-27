@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: itemName
       value: Red Library
       objectReference: {fileID: 0}
+    - target: {fileID: 5781464409971651742, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+      propertyPath: starterColor
+      value: Red
+      objectReference: {fileID: 0}
     - target: {fileID: 6423871936631286241, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

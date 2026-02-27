@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: itemName
       value: Black Library
       objectReference: {fileID: 0}
+    - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
+      propertyPath: starterColor
+      value: Black
+      objectReference: {fileID: 0}
     - target: {fileID: 952878586456418732, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
