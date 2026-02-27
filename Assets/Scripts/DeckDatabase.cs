@@ -4,6 +4,18 @@ using UnityEngine;
 
 public static class DeckDatabase
 {
+    private struct DeckEntry
+    {
+        public string CardName;
+        public int Count;
+
+        public DeckEntry(string cardName, int count)
+        {
+            CardName = cardName;
+            Count = count;
+        }
+    }
+
     private static void AddCards(Player player, string cardName, int count)
         {
             for (int i = 0; i < count; i++)
@@ -11,6 +23,74 @@ public static class DeckDatabase
                 player.Deck.Add(CardFactory.Create(cardName));
             }
         }
+
+    private static void AddCardData(List<CardData> deck, string cardName, int count)
+    {
+        CardData data = CardDatabase.GetCardData(cardName);
+        if (data == null)
+        {
+            Debug.LogWarning($"Starter deck card '{cardName}' does not exist in CardDatabase.");
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+            deck.Add(data);
+    }
+
+    private static void AddDeckEntries(List<CardData> deck, DeckEntry[] entries)
+    {
+        foreach (DeckEntry entry in entries)
+            AddCardData(deck, entry.CardName, entry.Count);
+    }
+
+    private static DeckEntry[] GetBeginnerDeckEntries(string color)
+    {
+        switch (color.ToLowerInvariant())
+        {
+            case "white":
+                return new[]
+                {
+                    new DeckEntry("Plains", 16), new DeckEntry("Angry Farmer", 3), new DeckEntry("Waterbearer", 3),
+                    new DeckEntry("Iconoclast Monk", 2), new DeckEntry("Gallant Lord", 2), new DeckEntry("Gentle Giant", 2),
+                    new DeckEntry("Hamlet Recruiter", 2), new DeckEntry("Skyhunter Unicorn", 2), new DeckEntry("Solid Prayer", 2),
+                    new DeckEntry("Beasthunter", 2), new DeckEntry("Sacred Horn Nectar", 2), new DeckEntry("Bonfire", 2)
+                };
+            case "blue":
+                return new[]
+                {
+                    new DeckEntry("Island", 16), new DeckEntry("Lucky Fisherman", 4), new DeckEntry("Giant Crab", 3),
+                    new DeckEntry("Wandering Squid", 3), new DeckEntry("Wandering Cloud", 3), new DeckEntry("Sharkmen Tribe", 3),
+                    new DeckEntry("Colossal Octopus", 2), new DeckEntry("Mana Rock", 2), new DeckEntry("Crystallium", 2),
+                    new DeckEntry("Blast of Knowledge", 2)
+                };
+            case "black":
+                return new[]
+                {
+                    new DeckEntry("Swamp", 16), new DeckEntry("Limping Corpse", 3), new DeckEntry("Famished Crow", 3),
+                    new DeckEntry("Ratbat", 3), new DeckEntry("Forced Mummification", 2), new DeckEntry("Giant Rat", 3),
+                    new DeckEntry("Bog Mosquito", 2), new DeckEntry("Forget", 3), new DeckEntry("Rotting Whale", 2),
+                    new DeckEntry("Flayed Deer", 3)
+                };
+            case "red":
+                return new[]
+                {
+                    new DeckEntry("Mountain", 16), new DeckEntry("Village Idiot", 3), new DeckEntry("Rabid Dog", 3),
+                    new DeckEntry("Fire Hatchet", 2), new DeckEntry("Great Boulder", 2), new DeckEntry("Explosion", 2),
+                    new DeckEntry("Goblin Puncher", 2), new DeckEntry("Melt", 2), new DeckEntry("Flying Pig", 3),
+                    new DeckEntry("To Dig a Hole", 1), new DeckEntry("Crystallium", 2), new DeckEntry("Wild Ostrich", 2)
+                };
+            case "green":
+                return new[]
+                {
+                    new DeckEntry("Forest", 16), new DeckEntry("Wall of Roots", 3), new DeckEntry("Domestic Cat", 3),
+                    new DeckEntry("Deep Forest Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Living Tree", 3),
+                    new DeckEntry("Flying Donkey", 3), new DeckEntry("Feast", 3), new DeckEntry("Mana Rock", 3)
+                };
+            default:
+                Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");
+                return GetBeginnerDeckEntries("red");
+        }
+    }
     public static void BuildStartingDeck(Player player)
         {
             if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
@@ -32,41 +112,9 @@ public static class DeckDatabase
 
     public static List<CardData> BuildPlayerStarterDeck(string color)
     {
-        Player starterPlayer = new Player();
         string normalized = string.IsNullOrWhiteSpace(color) ? "Red" : color.Trim();
-
-        switch (normalized.ToLowerInvariant())
-        {
-            case "white":
-                BuildWhiteBeginnerDeck(starterPlayer);
-                break;
-            case "blue":
-                BuildBlueBeginnerDeck(starterPlayer);
-                break;
-            case "black":
-                BuildBlackBeginnerDeck(starterPlayer);
-                break;
-            case "red":
-                BuildRedBeginnerDeck(starterPlayer);
-                break;
-            case "green":
-                BuildGreenBeginnerDeck(starterPlayer);
-                break;
-            default:
-                Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");
-                BuildRedBeginnerDeck(starterPlayer);
-                break;
-        }
-
         List<CardData> starterDeck = new List<CardData>();
-        foreach (Card card in starterPlayer.Deck)
-        {
-            CardData data = CardDatabase.GetCardData(card.cardName);
-            if (data != null)
-                starterDeck.Add(data);
-            else
-                Debug.LogWarning($"Starter deck card '{card.cardName}' does not exist in CardDatabase.");
-        }
+        AddDeckEntries(starterDeck, GetBeginnerDeckEntries(normalized));
 
         return starterDeck;
     }
