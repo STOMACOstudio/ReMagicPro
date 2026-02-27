@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: itemName
       value: Blue Library
       objectReference: {fileID: 0}
+    - target: {fileID: 5237074923629417354, guid: b290169ec40e59741a737235030fe4ae, type: 3}
+      propertyPath: starterColor
+      value: Blue
+      objectReference: {fileID: 0}
     - target: {fileID: 5907369744561354138, guid: b290169ec40e59741a737235030fe4ae, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.75
