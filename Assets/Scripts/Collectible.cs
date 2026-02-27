@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class Collectible : MonoBehaviour
 {
@@ -63,6 +64,21 @@ public class Collectible : MonoBehaviour
     {
         hasBeenCollected = true;
         playerInRange = false;
+
+        StartCoroutine(GenerateDeckRoutine());
+    }
+
+    private IEnumerator GenerateDeckRoutine()
+    {
+        if (textObject != null)
+        {
+            textObject.SetActive(true);
+            if (tmpComponent != null)
+                tmpComponent.text = "Generating starting deck...";
+        }
+
+        // Allow one frame for the message to render before doing heavy work.
+        yield return null;
 
         PlayerPrefs.SetString("PlayerColors", starterColor);
         DeckHolder.SelectedDeck = DeckDatabase.BuildPlayerStarterDeck(starterColor);
