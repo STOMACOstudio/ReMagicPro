@@ -83,7 +83,7 @@ public static class DeckDatabase
                 return new[]
                 {
                     new DeckEntry("Forest", 16), new DeckEntry("Wall of Roots", 3), new DeckEntry("Domestic Cat", 3),
-                    new DeckEntry("Deep Forest Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Living Tree", 3),
+                    new DeckEntry("Deepwood Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Living Tree", 3),
                     new DeckEntry("Flying Donkey", 3), new DeckEntry("Feast", 3), new DeckEntry("Mana Rock", 3)
                 };
             default:
@@ -274,7 +274,7 @@ public static class DeckDatabase
             AddCards(ai, "Forest", 16);
             AddCards(ai, "Wall of Roots", 3);
             AddCards(ai, "Domestic Cat", 3);
-            AddCards(ai, "Deep Forest Monkeys", 3);
+            AddCards(ai, "Deepwood Monkeys", 3);
             AddCards(ai, "Violent Ape", 3);
             AddCards(ai, "Living Tree", 3);
             AddCards(ai, "Flying Donkey", 3);
@@ -287,7 +287,7 @@ public static class DeckDatabase
             ai.Deck.Clear();
             AddCards(ai, "Forest", 16);
             AddCards(ai, "Wall of Roots", 3);
-            AddCards(ai, "Deep Forest Monkeys", 3);
+            AddCards(ai, "Deepwood Monkeys", 3);
             AddCards(ai, "Violent Ape", 3);
             AddCards(ai, "Crazy Cat Lady", 3);
             AddCards(ai, "Drumming Elf", 2);
@@ -449,7 +449,7 @@ public static class DeckDatabase
 
             //Creature
             AddCards(player, "Domestic Cat", 3);
-            AddCards(player, "Deep Forest Monkeys", 3);
+            AddCards(player, "Deepwood Monkeys", 3);
             AddCards(player, "Violent Ape", 3);
             AddCards(player, "Flying Donkey", 2);
             AddCards(player, "Cactusaurus", 2);
