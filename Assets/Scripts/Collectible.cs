@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class Collectible : MonoBehaviour
 {
@@ -9,8 +8,6 @@ public class Collectible : MonoBehaviour
     public string itemName = "Item";
     public string starterColor = "Red";
     public GameObject textObject; // Drag your 3D Text object here
-    public bool loadSceneAfterCollect = true;
-    public string nextSceneName = "MapScene";
     public bool destroyOnCollect = true;
 
     private TextMeshPro tmpComponent;
@@ -22,7 +19,7 @@ public class Collectible : MonoBehaviour
         // Get the actual text component and format it
         tmpComponent = textObject.GetComponent<TextMeshPro>();
         tmpComponent.text = "Press Q to collect\n" + "<color=yellow>" + itemName + "</color>";
-        
+
         // Ensure it's hidden at the start
         textObject.SetActive(false);
     }
@@ -54,10 +51,11 @@ public class Collectible : MonoBehaviour
         }
 
         // Bonus: Make the text always face the player so it's readable
-        if (textObject.activeSelf)
+        if (textObject.activeSelf && Camera.main != null)
         {
-            textObject.transform.LookAt(textObject.transform.position + Camera.main.transform.rotation * Vector3.forward,
-                                      Camera.main.transform.rotation * Vector3.up);
+            textObject.transform.LookAt(
+                textObject.transform.position + Camera.main.transform.rotation * Vector3.forward,
+                Camera.main.transform.rotation * Vector3.up);
         }
     }
 
@@ -70,13 +68,16 @@ public class Collectible : MonoBehaviour
         DeckHolder.SelectedDeck = DeckDatabase.BuildPlayerStarterDeck(starterColor);
         PlayerPrefs.Save();
 
+        int deckCount = DeckHolder.SelectedDeck != null ? DeckHolder.SelectedDeck.Count : 0;
+        if (deckCount > 0)
+            Debug.Log($"[Collectible] Starter deck generated for color '{starterColor}' with {deckCount} cards.");
+        else
+            Debug.LogError($"[Collectible] Failed to generate starter deck for color '{starterColor}'.");
+
         if (textObject != null)
             textObject.SetActive(false);
 
         if (destroyOnCollect)
             Destroy(gameObject);
-
-        if (loadSceneAfterCollect && !string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
     }
 }
