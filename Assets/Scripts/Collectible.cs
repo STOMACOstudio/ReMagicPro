@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Collectible : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class Collectible : MonoBehaviour
     public string starterColor = "Red";
     public GameObject textObject; // Drag your 3D Text object here
     public bool destroyOnCollect = true;
+
+    [Header("Post-Collect Subtitle")]
+    [SerializeField] private SubtitleManager subtitleManager;
+    [SerializeField] private List<SubtitleManager.SubtitleLine> postDeckGeneratedSubtitles = new List<SubtitleManager.SubtitleLine>();
 
     private TextMeshPro tmpComponent;
     private bool playerInRange;
@@ -90,10 +95,29 @@ public class Collectible : MonoBehaviour
         else
             Debug.LogError($"[Collectible] Failed to generate starter deck for color '{starterColor}'.");
 
+        TryPlayPostDeckGeneratedSubtitles();
+
         if (textObject != null)
             textObject.SetActive(false);
 
         if (destroyOnCollect)
             Destroy(gameObject);
+    }
+
+    private void TryPlayPostDeckGeneratedSubtitles()
+    {
+        if (postDeckGeneratedSubtitles == null || postDeckGeneratedSubtitles.Count == 0)
+            return;
+
+        if (subtitleManager == null)
+            subtitleManager = FindFirstObjectByType<SubtitleManager>();
+
+        if (subtitleManager == null)
+        {
+            Debug.LogWarning("[Collectible] Post-deck subtitles are configured but no SubtitleManager was found.");
+            return;
+        }
+
+        subtitleManager.DisplaySequence(postDeckGeneratedSubtitles);
     }
 }
