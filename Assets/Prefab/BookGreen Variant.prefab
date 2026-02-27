@@ -84,6 +84,34 @@ PrefabInstance:
       propertyPath: starterColor
       value: Green
       objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[0].text
+      value: Together, at last!
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[1].text
+      value: I am your library
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[2].text
+      value: Press "E" to check me out
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[0].displayDuration
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[1].displayDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[2].displayDuration
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3838384185886413647, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
     m_RemovedGameObjects: []
