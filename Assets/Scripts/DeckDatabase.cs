@@ -50,41 +50,49 @@ public static class DeckDatabase
             case "white":
                 return new[]
                 {
-                    new DeckEntry("Plains", 16), new DeckEntry("Angry Farmer", 3), new DeckEntry("Waterbearer", 3),
-                    new DeckEntry("Iconoclast Monk", 2), new DeckEntry("Gallant Lord", 2), new DeckEntry("Gentle Giant", 2),
-                    new DeckEntry("Hamlet Recruiter", 2), new DeckEntry("Skyhunter Unicorn", 2), new DeckEntry("Solid Prayer", 2),
-                    new DeckEntry("Beasthunter", 2), new DeckEntry("Sacred Horn Nectar", 2), new DeckEntry("Bonfire", 2)
+                    new DeckEntry("Plains", 17), new DeckEntry("Angry Farmer", 3), new DeckEntry("Waterbearer", 3),
+                    new DeckEntry("Virgins Procession", 2), new DeckEntry("Gallant Lord", 3), new DeckEntry("Beasthunter", 1),
+                    new DeckEntry("Realm Protector", 1), new DeckEntry("Skyhunter Unicorn", 2), new DeckEntry("Untamed Unicorn", 1),
+                    new DeckEntry("Sacred Horn Nectar", 2), new DeckEntry("Blinding Light", 1), new DeckEntry("Faith Protection", 1),
+                    new DeckEntry("Sacred Horn", 1), new DeckEntry("For Glory", 1), new DeckEntry("Potion of Knowledge", 1)
                 };
             case "blue":
                 return new[]
                 {
-                    new DeckEntry("Island", 16), new DeckEntry("Lucky Fisherman", 4), new DeckEntry("Giant Crab", 3),
-                    new DeckEntry("Wandering Squid", 3), new DeckEntry("Wandering Cloud", 3), new DeckEntry("Sharkmen Tribe", 3),
-                    new DeckEntry("Colossal Octopus", 2), new DeckEntry("Mana Rock", 2), new DeckEntry("Crystallium", 2),
-                    new DeckEntry("Blast of Knowledge", 2)
+                    new DeckEntry("Island", 17), new DeckEntry("Lucky Fisherman", 3), new DeckEntry("Giant Crab", 2),
+                    new DeckEntry("Arcane Barrier", 3), new DeckEntry("Deepwood Owl", 3), new DeckEntry("Sharkmen Tribe", 2),
+                    new DeckEntry("Tide Spirit", 1), new DeckEntry("Autonomous Miner", 1), new DeckEntry("Cosmic Whale", 1),
+                    new DeckEntry("Blast of Knowledge", 2), new DeckEntry("Cut Off Hands", 1), new DeckEntry("Sleep", 1),
+                    new DeckEntry("Starpowder", 1), new DeckEntry("Fascinate", 1), new DeckEntry("Potion of Lava", 1)
                 };
             case "black":
                 return new[]
                 {
-                    new DeckEntry("Swamp", 16), new DeckEntry("Limping Corpse", 3), new DeckEntry("Famished Crow", 3),
-                    new DeckEntry("Ratbat", 3), new DeckEntry("Forced Mummification", 2), new DeckEntry("Giant Rat", 3),
-                    new DeckEntry("Bog Mosquito", 2), new DeckEntry("Forget", 3), new DeckEntry("Rotting Whale", 2),
-                    new DeckEntry("Flayed Deer", 3)
+                    new DeckEntry("Swamp", 17), new DeckEntry("Limping Corpse", 3), new DeckEntry("Famished Crow", 3),
+                    new DeckEntry("Rotting Dragon", 1), new DeckEntry("Undea Army", 1), new DeckEntry("Giant Rat", 3),
+                    new DeckEntry("Bog Mosquito", 2), new DeckEntry("Forget", 1), new DeckEntry("Possessed Innocent", 1),
+                    new DeckEntry("Filth Discharge", 2), new DeckEntry("Sickness", 1), new DeckEntry("Lights Out", 1),
+                    new DeckEntry("Mirror Break", 1), new DeckEntry("Potion of Health", 1)
                 };
             case "red":
                 return new[]
                 {
-                    new DeckEntry("Mountain", 16), new DeckEntry("Village Idiot", 3), new DeckEntry("Rabid Dog", 3),
-                    new DeckEntry("Fire Hatchet", 2), new DeckEntry("Great Boulder", 2), new DeckEntry("Explosion", 2),
-                    new DeckEntry("Goblin Puncher", 2), new DeckEntry("Melt", 2), new DeckEntry("Flying Pig", 3),
-                    new DeckEntry("To Dig a Hole", 1), new DeckEntry("Crystallium", 2), new DeckEntry("Wild Ostrich", 2)
+                    new DeckEntry("Mountain", 17), new DeckEntry("Scarred Wildboar", 2), new DeckEntry("Rabid Dog", 3),
+                    new DeckEntry("Fire Hatchet", 2), new DeckEntry("Great Boulder", 3), new DeckEntry("Explosion", 2),
+                    new DeckEntry("Goblin Puncher", 3), new DeckEntry("Iron Skyman", 2), new DeckEntry("Spitfire Cobrox", 1),
+                    new DeckEntry("Wild Ostrich", 1), new DeckEntry("Firborn Dragon", 1), new DeckEntry("Explosion", 2),
+                    new DeckEntry("Devouring Fury", 1), new DeckEntry("Dash", 1), new DeckEntry("Thunderstrike", 1),
+                    new DeckEntry("Fire Spirals", 1), new DeckEntry("Potion of Mana", 1)
                 };
             case "green":
                 return new[]
                 {
-                    new DeckEntry("Forest", 16), new DeckEntry("Wall of Roots", 3), new DeckEntry("Domestic Cat", 3),
-                    new DeckEntry("Deepwood Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Living Tree", 3),
-                    new DeckEntry("Flying Donkey", 3), new DeckEntry("Feast", 3), new DeckEntry("Mana Rock", 3)
+                    new DeckEntry("Forest", 17), new DeckEntry("Cactusaurus", 2), new DeckEntry("Domestic Cat", 3),
+                    new DeckEntry("Deepwood Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Crazy Cat Lady", 1),
+                    new DeckEntry("Flying Donkey", 2), new DeckEntry("Realms Crasher", 1), new DeckEntry("Mana Rock", 1),
+                    new DeckEntry("Gorilla Chief", 1), new DeckEntry("Touch Grass", 2), new DeckEntry("Whip of Thorns", 1),
+                    new DeckEntry("Woodskin", 1), new DeckEntry("Mana Rock", 1), new DeckEntry("Muscleblast", 1),
+                    new DeckEntry("Potion of Might", 1)
                 };
             default:
                 Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");
@@ -340,7 +348,7 @@ public static class DeckDatabase
             ai.StartingPermanents.Add(CardFactory.Create("Pressure Sphere"));
         }
 
-        public static void BuildPlayerStarterWhite(Player player)
+        /*public static void BuildPlayerStarterWhite(Player player)
         {
             player.Deck.Clear();
             AddCards(player, "Plains", 17);
@@ -466,5 +474,5 @@ public static class DeckDatabase
 
             //Artifacts
             AddCards(player, "Potion of Might", 1);
-        }
+        }*/
 }

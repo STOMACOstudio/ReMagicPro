@@ -20,6 +20,34 @@ PrefabInstance:
       propertyPath: starterColor
       value: White
       objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[0].text
+      value: Together, at last!
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[1].text
+      value: I am your library
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[2].text
+      value: Press "E" to check me out
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[0].displayDuration
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[1].displayDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[2].displayDuration
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 948273942057100920, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
