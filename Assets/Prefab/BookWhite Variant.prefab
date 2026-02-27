@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 244680315810143548, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: itemName
+      value: White Library
+      objectReference: {fileID: 0}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: itemName
+      value: White Library
+      objectReference: {fileID: 0}
     - target: {fileID: 948273942057100920, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -67,6 +75,10 @@ PrefabInstance:
     - target: {fileID: 2117781427567025431, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918206740057517170, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: itemName
+      value: White Library
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -101,6 +101,7 @@
     <Compile Include="Assets\Scripts\SorceryCard.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\CreatureCard.cs" />
+    <Compile Include="Assets\Scripts\Collectible.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\FavouritePopupVFX.cs" />
     <Compile Include="Assets\Scripts\DeckGenerator.cs" />

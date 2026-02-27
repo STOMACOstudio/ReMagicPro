@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8621088242230697996, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+      propertyPath: itemName
+      value: Red Library
+      objectReference: {fileID: 0}
+    - target: {fileID: 4174203872302851051, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+      propertyPath: itemName
+      value: Red Library
+      objectReference: {fileID: 0}
     - target: {fileID: 4766727113529985076, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
       propertyPath: m_Name
       value: BookRed Variant
@@ -52,11 +60,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 5781464409971651742, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+      propertyPath: itemName
+      value: Red Library
+      objectReference: {fileID: 0}
     - target: {fileID: 6423871936631286241, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 65902498ee7e0bf4997b30bd9f22755a, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6299295830917796517, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
+    - {fileID: 619316312043956442, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

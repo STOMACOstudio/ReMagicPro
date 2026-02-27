@@ -10229,7 +10229,7 @@ MonoBehaviour:
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: 7800b4cebfacd5c44be41ce4478f5265, type: 2}
   lockedMaterial: {fileID: 2100000, guid: 0c7e61e1f3e141f48ac970972de30e35, type: 2}
-  lockTimeRequirement: 25
+  lockTimeRequirement: 22
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -15312,7 +15312,7 @@ MonoBehaviour:
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: b77a30196995e084586baf989701137b, type: 2}
   lockedMaterial: {fileID: 2100000, guid: 6b37d3347e455e245be265aaf2b009ba, type: 2}
-  lockTimeRequirement: 25
+  lockTimeRequirement: 22
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -20403,6 +20403,7 @@ GameObject:
   - component: {fileID: 653449773}
   - component: {fileID: 653449772}
   - component: {fileID: 653449771}
+  - component: {fileID: 653449774}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -20493,6 +20494,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &653449774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653449769}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 547933559174ecc4ba8625668913b11e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  interactPrompt: {fileID: 0}
+  itemNameText: {fileID: 0}
 --- !u!1 &793362994
 GameObject:
   m_ObjectHideFlags: 0
@@ -20624,7 +20639,7 @@ MonoBehaviour:
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: cb165c9ee66e1584bb553bb0bab10b88, type: 2}
   lockedMaterial: {fileID: 2100000, guid: a43d5279cd21fd349b2e23c9fa22e730, type: 2}
-  lockTimeRequirement: 25
+  lockTimeRequirement: 22
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -20920,9 +20935,9 @@ MonoBehaviour:
     displayDuration: 4
   - text: For a long time as well
     displayDuration: 2
-  - text: And you are finally ready to make
+  - text: You are finally ready to make
     displayDuration: 4
-  - text: Your one true choice
+  - text: The one true choice
     displayDuration: 2
   - text: Which Mana color thrives within you?
     displayDuration: 4
@@ -21201,7 +21216,7 @@ MonoBehaviour:
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: ff5aec737b7a83947a901ac56cc94bb4, type: 2}
   lockedMaterial: {fileID: 2100000, guid: ce53b14db9756bf44a58cf724209dabe, type: 2}
-  lockTimeRequirement: 25
+  lockTimeRequirement: 22
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -31985,7 +32000,7 @@ MonoBehaviour:
   playerTag: Player
   activeMaterial: {fileID: 2100000, guid: 4479e89caeb0fa84a861d63cda976b7f, type: 2}
   lockedMaterial: {fileID: 2100000, guid: 220df74ac59ce5043b91e2b91287b283, type: 2}
-  lockTimeRequirement: 25
+  lockTimeRequirement: 22
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:

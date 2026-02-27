@@ -8,10 +8,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2412786547394741503, guid: b290169ec40e59741a737235030fe4ae, type: 3}
+      propertyPath: itemName
+      value: Blue Library
+      objectReference: {fileID: 0}
     - target: {fileID: 4733315812560457461, guid: b290169ec40e59741a737235030fe4ae, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: e1b1447b909edb4498a64bbb032af6ed, type: 2}
+    - target: {fileID: 5237074923629417354, guid: b290169ec40e59741a737235030fe4ae, type: 3}
+      propertyPath: itemName
+      value: Blue Library
+      objectReference: {fileID: 0}
     - target: {fileID: 5907369744561354138, guid: b290169ec40e59741a737235030fe4ae, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.75
@@ -68,7 +76,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: BookBlue Variant
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5763948865641362865, guid: b290169ec40e59741a737235030fe4ae, type: 3}
+    - {fileID: 2412786547394741503, guid: b290169ec40e59741a737235030fe4ae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
