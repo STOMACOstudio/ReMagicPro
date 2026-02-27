@@ -29,6 +29,48 @@ public static class DeckDatabase
                 // etc.
             }
         }
+
+    public static List<CardData> BuildPlayerStarterDeck(string color)
+    {
+        Player starterPlayer = new Player();
+        string normalized = string.IsNullOrWhiteSpace(color) ? "Red" : color.Trim();
+
+        switch (normalized.ToLowerInvariant())
+        {
+            case "white":
+                BuildWhiteBeginnerDeck(starterPlayer);
+                break;
+            case "blue":
+                BuildBlueBeginnerDeck(starterPlayer);
+                break;
+            case "black":
+                BuildBlackBeginnerDeck(starterPlayer);
+                break;
+            case "red":
+                BuildRedBeginnerDeck(starterPlayer);
+                break;
+            case "green":
+                BuildGreenBeginnerDeck(starterPlayer);
+                break;
+            default:
+                Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");
+                BuildRedBeginnerDeck(starterPlayer);
+                break;
+        }
+
+        List<CardData> starterDeck = new List<CardData>();
+        foreach (Card card in starterPlayer.Deck)
+        {
+            CardData data = CardDatabase.GetCardData(card.cardName);
+            if (data != null)
+                starterDeck.Add(data);
+            else
+                Debug.LogWarning($"Starter deck card '{card.cardName}' does not exist in CardDatabase.");
+        }
+
+        return starterDeck;
+    }
+
     public static void BuildStarterDeck(Player ai)
         {
             ai.Deck.Clear();
