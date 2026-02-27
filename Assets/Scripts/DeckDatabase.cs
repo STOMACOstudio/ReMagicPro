@@ -245,9 +245,136 @@ public static class DeckDatabase
             AddCards(ai, "Potion of Mana", 1);
             AddCards(ai, "Potion of Knowledge", 1);
             AddCards(ai, "Potion of Lava", 1);
-            //AddCards(ai, "Pressure Sphere", 1);
             AddCards(ai, "Trinkets Collector", 1);
             AddCards(ai, "Blast of Knowledge", 1);
             ai.StartingPermanents.Add(CardFactory.Create("Pressure Sphere"));
+        }
+
+        public static void BuildPlayerStarterWhite(Player player)
+        {
+            player.Deck.Clear();
+            AddCards(player, "Plains", 17);
+
+            //Creature
+            AddCards(player, "Angry Farmer", 3);
+            AddCards(player, "Waterbearer", 3);
+            AddCards(player, "Gallant Lord", 3);
+            AddCards(player, "Skyhunter Unicorn", 2);
+            AddCards(player, "Virgins Procession", 2);
+            AddCards(player, "Beasthunter", 1);
+            AddCards(player, "Realm Protector", 1);
+            AddCards(player, "Untamed Unicorn", 1);
+
+            AddCards(player, "Sacred Horn Nectar", 2);
+            AddCards(player, "Blinding Light", 1);
+            AddCards(player, "Faith Protection", 1);
+            AddCards(player, "Sacred Horn", 1);
+            AddCards(player, "For Glory", 1);
+
+            AddCards(player, "Potion of Knowledge", 1);
+        }
+
+        public static void BuildPlayerStarterBlue(Player player)
+        {
+            player.Deck.Clear();
+            AddCards(player, "Island", 17);
+
+            //Creature
+            AddCards(player, "Arcane Barrier", 3);
+            AddCards(player, "Lucky Fisherman", 3);
+            AddCards(player, "Deepwood Owl", 3);
+            AddCards(player, "Giant Crab", 2);
+            AddCards(player, "Sharkmen Tribe", 2);
+            AddCards(player, "Tide Spirit", 1);
+            AddCards(player, "Autonomous Miner", 1);
+            AddCards(player, "Cosmic Whale", 1);
+
+            //Spells
+            AddCards(player, "Blast of Knowledge", 2);
+            AddCards(player, "Cut Off Hands", 1);
+            AddCards(player, "Sleep", 1);
+            AddCards(player, "Starpowder", 1);
+            AddCards(player, "Fascinate", 1);
+
+            //Artifacts
+            AddCards(player, "Potion of Lava", 1);
+        }
+
+        public static void BuildPlayerStarterBlack(Player player)
+        {
+            player.Deck.Clear();
+            AddCards(player, "Swamp", 17);
+
+            //Creature
+            AddCards(player, "Famished Crow", 3);
+            AddCards(player, "Limping Corpse", 3);
+            AddCards(player, "Giant Rat", 3);
+            AddCards(player, "Bog Mosquito", 2);
+            AddCards(player, "Giant Bat", 2);
+            AddCards(player, "Rotting Dragon", 1);
+            AddCards(player, "Undead Army", 1);
+            AddCards(player, "Possessed Innocent", 1);
+
+            //Spells
+            AddCards(player, "Filth Discharge", 2);
+            AddCards(player, "Sickness", 1);
+            AddCards(player, "Forget", 1);
+            AddCards(player, "Lights Out", 1);
+            AddCards(player, "Mirror Break", 1);
+
+            //Artifacts
+            AddCards(player, "Potion of Health", 1);
+        }
+
+        public static void BuildPlayerStarterRed(Player player)
+        {
+            player.Deck.Clear();
+            AddCards(player, "Mountain", 17);
+
+            //Creature
+            AddCards(player, "Rabid Dog", 3);
+            AddCards(player, "Great Boulder", 3);
+            AddCards(player, "Goblin Puncher", 3);
+            AddCards(player, "Scarred Wildboar", 2);
+            AddCards(player, "Iron Skyman", 2);
+            AddCards(player, "Spitfire Cobrox", 1);
+            AddCards(player, "Wild Ostrich", 1);
+            AddCards(player, "Fireborn Dragon", 1);
+
+            //Spells
+            AddCards(player, "Explosion", 2);
+            AddCards(player, "Devouring Fury", 1);
+            AddCards(player, "Dash", 1);
+            AddCards(player, "Thunderstrike", 1);
+            AddCards(player, "Fire Spirals", 1);
+
+            //Artifacts
+            AddCards(player, "Potion of Mana", 1);
+        }
+
+        public static void BuildPlayerStarterGreen(Player player)
+        {
+            player.Deck.Clear();
+            AddCards(player, "Forest", 17);
+
+            //Creature
+            AddCards(player, "Domestic Cat", 3);
+            AddCards(player, "Deep Forest Monkeys", 3);
+            AddCards(player, "Violent Ape", 3);
+            AddCards(player, "Flying Donkey", 2);
+            AddCards(player, "Cactusaurus", 2);
+            AddCards(player, "Crazy Cat Lady", 1);
+            AddCards(player, "Realms Crasher", 1);
+            AddCards(player, "Gorilla Chief", 1);
+
+            //Spells
+            AddCards(player, "Touch Grass", 2);
+            AddCards(player, "Whip of Thorns", 1);
+            AddCards(player, "Woodskin", 1);
+            AddCards(player, "Mana Rock", 1);
+            AddCards(player, "Muscleblast", 1);
+
+            //Artifacts
+            AddCards(player, "Potion of Might", 1);
         }
 }
