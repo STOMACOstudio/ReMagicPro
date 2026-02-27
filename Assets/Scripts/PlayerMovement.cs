@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private const string DeckEditorSceneName = "DeckEditorScene";
+
     [Header("Components")]
     public CharacterController controller;
     public Transform playerCamera;
@@ -63,6 +66,15 @@ public class PlayerMovement : MonoBehaviour
         {
             Move();
             HandleFootsteps();
+            HandleDeckEditorShortcut();
+        }
+    }
+
+    void HandleDeckEditorShortcut()
+    {
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            SceneManager.LoadScene(DeckEditorSceneName);
         }
     }
 
