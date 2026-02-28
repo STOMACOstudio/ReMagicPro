@@ -16,6 +16,9 @@ public class Collectible : MonoBehaviour
     [SerializeField] private SubtitleManager subtitleManager;
     [SerializeField] private List<SubtitleManager.SubtitleLine> postDeckGeneratedSubtitles = new List<SubtitleManager.SubtitleLine>();
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip collectSfx;
+
     private TextMeshPro tmpComponent;
     private bool playerInRange;
     private bool hasBeenCollected;
@@ -70,7 +73,20 @@ public class Collectible : MonoBehaviour
         hasBeenCollected = true;
         playerInRange = false;
 
+        TryPlayCollectSfx();
+
         StartCoroutine(GenerateDeckRoutine());
+    }
+
+    private void TryPlayCollectSfx()
+    {
+        if (collectSfx == null)
+            return;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(collectSfx);
+        else
+            AudioSource.PlayClipAtPoint(collectSfx, transform.position);
     }
 
     private IEnumerator GenerateDeckRoutine()
