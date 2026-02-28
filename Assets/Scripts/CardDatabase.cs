@@ -4235,19 +4235,17 @@ public static class CardDatabase
                         subtypes = new List<string> { "Aura" },
                         keywordBuff = KeywordAbility.Flying,
                         artwork = Resources.Load<Sprite>("Art/starpowder"),
-                        rulesText = "Enchanted creature has flying. When enchanted creature dies, draw a card.",
+                        rulesText = "Enchanted creature has flying.",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnCreatureDies,
-                                description = "if enchanted creature died, draw a card.",
+                                description = "draw a card.",
+                                triggerOnlyOnAttachedCreatureDeath = true,
                                 effect = (Player owner, Card source) =>
                                 {
-                                    if (source is AuraCard aura && GameManager.Instance.lastDeadCreature == aura.attachedTo)
-                                    {
-                                        GameManager.Instance.DrawCard(owner);
-                                    }
+                                    GameManager.Instance.DrawCard(owner);
                                 }
                             }
                         }

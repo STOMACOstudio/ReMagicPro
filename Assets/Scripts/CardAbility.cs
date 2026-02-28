@@ -28,4 +28,5 @@ public class CardAbility
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
     public bool excludeArtifactCreatures = false;
+    public bool triggerOnlyOnAttachedCreatureDeath = false;
 }
