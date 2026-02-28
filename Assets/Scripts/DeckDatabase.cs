@@ -91,8 +91,7 @@ public static class DeckDatabase
                     new DeckEntry("Deepwood Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Crazy Cat Lady", 1),
                     new DeckEntry("Flying Donkey", 2), new DeckEntry("Realms Crasher", 1), new DeckEntry("Mana Rock", 1),
                     new DeckEntry("Gorilla Chief", 1), new DeckEntry("Touch Grass", 2), new DeckEntry("Whip of Thorns", 1),
-                    new DeckEntry("Woodskin", 1), new DeckEntry("Mana Rock", 1), new DeckEntry("Muscleblast", 1),
-                    new DeckEntry("Potion of Might", 1)
+                    new DeckEntry("Woodskin", 1), new DeckEntry("Muscle Blast", 1), new DeckEntry("Potion of Strength", 1)
                 };
             default:
                 Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");

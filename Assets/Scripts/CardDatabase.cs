@@ -4210,20 +4210,6 @@ public static class CardDatabase
                         rulesText = "Enchanted creature cannot untap.",
                     });
 
-                Add(new CardData // Stardust
-                    {
-                        cardName = "Stardust",
-                        artist = "Sora AI",
-                        rarity = "Common",
-                        manaCost = 1,
-                        color = new List<string> { "Blue" },
-                        cardType = CardType.Enchantment,
-                        subtypes = new List<string> { "Aura" },
-                        keywordBuff = KeywordAbility.Flying,
-                        artwork = Resources.Load<Sprite>("Art/stardust"),
-                        rulesText = "Enchanted creature has flying.",
-                    });
-
                 Add(new CardData // Starpowder
                     {
                         cardName = "Starpowder",

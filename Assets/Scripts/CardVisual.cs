@@ -9,6 +9,13 @@ using UnityEngine.SceneManagement;
 
 public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    private static readonly string[] LineShaderCandidates =
+    {
+        "Universal Render Pipeline/Unlit",
+        "Sprites/Default",
+        "Unlit/Color"
+    };
+
     public Card linkedCard; // which card it represents
     public GameManager gameManager; // which manager it talks to
     public CreatureCard blockingThisAttacker; // If blocking, who am I blocking
@@ -89,6 +96,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     [SerializeField]
     private float cardTypeTextShrinkStep = 0.5f;
+
+    [SerializeField]
+    private Material lineMaterialOverride;
 
     private float keywordTextDefaultFontSize;
     private float cardTypeTextDefaultFontSize;
@@ -362,7 +372,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             lineRenderer.positionCount = 2;
             lineRenderer.startWidth = 0.04f;
             lineRenderer.endWidth = 0.04f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.material = CreateLineMaterial();
             lineRenderer.startColor = new Color(0.95f, 0.2f, 0.2f, 0.9f);
             lineRenderer.endColor = new Color(0.95f, 0.2f, 0.2f, 0.9f);
             lineRenderer.sortingOrder = 100;
@@ -370,6 +380,26 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
 
         lineRenderer.enabled = false;
+    }
+
+    private Material CreateLineMaterial()
+    {
+        if (lineMaterialOverride != null)
+            return lineMaterialOverride;
+
+        foreach (var shaderName in LineShaderCandidates)
+        {
+            var shader = Shader.Find(shaderName);
+            if (shader != null)
+                return new Material(shader);
+        }
+
+        var fallbackShader = Shader.Find("Hidden/Internal-Colored");
+        if (fallbackShader != null)
+            return new Material(fallbackShader);
+
+        Debug.LogWarning("CardVisual: could not find a supported line shader. Assign Line Material Override on the prefab to make connection lines render in builds.");
+        return null;
     }
 
     private void UpdateConnectionLine()
