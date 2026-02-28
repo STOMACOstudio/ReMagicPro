@@ -4094,9 +4094,9 @@ public static class CardDatabase
                         rulesText = "Enchanted creature has defender.",
                     });
 
-                Add(new CardData // Cut off Hands
+                Add(new CardData // Cut off hands
                     {
-                        cardName = "Cut off Hands",
+                        cardName = "Cut Off Hands",
                         artist = "Sora AI",
                         rarity = "Common",
                         manaCost = 1,

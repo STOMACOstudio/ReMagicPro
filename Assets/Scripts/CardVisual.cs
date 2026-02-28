@@ -350,6 +350,31 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         return IsAttacking() && ((CreatureCard)linkedCard).blockedByThisBlocker.Count == 0;
     }
 
+    private void EnsureLineRenderer()
+    {
+        if (lineRenderer != null)
+            return;
+
+        lineRenderer = GetComponent<LineRenderer>();
+        if (lineRenderer == null)
+            lineRenderer = GetComponentInChildren<LineRenderer>(true);
+
+        if (lineRenderer == null)
+        {
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
+            lineRenderer.positionCount = 2;
+            lineRenderer.startWidth = 0.04f;
+            lineRenderer.endWidth = 0.04f;
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.startColor = new Color(0.95f, 0.2f, 0.2f, 0.9f);
+            lineRenderer.endColor = new Color(0.95f, 0.2f, 0.2f, 0.9f);
+            lineRenderer.sortingOrder = 100;
+            lineRenderer.useWorldSpace = true;
+        }
+
+        lineRenderer.enabled = false;
+    }
+
     private void UpdateConnectionLine()
         {
             if (lineRenderer == null)
@@ -429,6 +454,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void Update()
         {
+            if (lineRenderer == null)
+                EnsureLineRenderer();
+
             if (lastBattlefieldState != isInBattlefield)
             {
                 lastBattlefieldState = isInBattlefield;
@@ -767,7 +795,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             SetTypeLine(data);
 
             titleText.text = card.cardName;
-            lineRenderer = GetComponent<LineRenderer>();
+            EnsureLineRenderer();
             artImage.sprite = linkedCard.artwork;
 
             if (cardRarity != null)
