@@ -4235,7 +4235,7 @@ public static class CardDatabase
                         subtypes = new List<string> { "Aura" },
                         keywordBuff = KeywordAbility.Flying,
                         artwork = Resources.Load<Sprite>("Art/starpowder"),
-                        rulesText = "Enchanted creature has flying. When enchanted creature dies, draw a card.",
+                        rulesText = "Enchanted creature has flying.",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
