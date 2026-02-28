@@ -17,6 +17,10 @@ PrefabInstance:
       value: White Library
       objectReference: {fileID: 0}
     - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
+      propertyPath: collectSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: dee6a8bde05b65449b2986ac20e90db9, type: 3}
+    - target: {fileID: 303214943107087111, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
       propertyPath: starterColor
       value: White
       objectReference: {fileID: 0}
