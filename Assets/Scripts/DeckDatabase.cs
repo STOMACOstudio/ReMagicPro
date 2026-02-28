@@ -78,11 +78,11 @@ public static class DeckDatabase
                 return new[]
                 {
                     new DeckEntry("Mountain", 17), new DeckEntry("Scarred Wildboar", 2), new DeckEntry("Rabid Dog", 3),
-                    new DeckEntry("Fire Hatchet", 2), new DeckEntry("Great Boulder", 3), new DeckEntry("Explosion", 2),
+                    new DeckEntry("Great Boulder", 3), new DeckEntry("Explosion", 2),
                     new DeckEntry("Goblin Puncher", 3), new DeckEntry("Iron Skyman", 2), new DeckEntry("Spitfire Cobrox", 1),
-                    new DeckEntry("Wild Ostrich", 1), new DeckEntry("Firborn Dragon", 1), new DeckEntry("Explosion", 2),
-                    new DeckEntry("Devouring Fury", 1), new DeckEntry("Dash", 1), new DeckEntry("Thunderstrike", 1),
-                    new DeckEntry("Fire Spirals", 1), new DeckEntry("Potion of Mana", 1)
+                    new DeckEntry("Wild Ostrich", 1), new DeckEntry("Fireborn Dragon", 1), new DeckEntry("Devouring Fury", 1),
+                    new DeckEntry("Dash", 1), new DeckEntry("Thunderstrike", 1), new DeckEntry("Fire Spirals", 1),
+                    new DeckEntry("Potion of Mana", 1)
                 };
             case "green":
                 return new[]

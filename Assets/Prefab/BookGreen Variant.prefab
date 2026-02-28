@@ -81,6 +81,10 @@ PrefabInstance:
       value: Green Library
       objectReference: {fileID: 0}
     - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
+      propertyPath: collectSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: dee6a8bde05b65449b2986ac20e90db9, type: 3}
+    - target: {fileID: 6670549463397499962, guid: 2fdb17832b4256940b5b9971dad832e4, type: 3}
       propertyPath: starterColor
       value: Green
       objectReference: {fileID: 0}
