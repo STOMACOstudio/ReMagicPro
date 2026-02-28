@@ -12,6 +12,12 @@ public class Collectible : MonoBehaviour
     public GameObject textObject; // Drag your 3D Text object here
     public bool destroyOnCollect = true;
 
+    [Header("Collect Feedback")]
+    [SerializeField] private GameObject collectVfxPrefab;
+    [SerializeField] private Transform collectVfxSpawnPoint;
+    [SerializeField] private AudioClip collectSfx;
+    [SerializeField] private float collectSfxVolume = 1f;
+
     [Header("Post-Collect Subtitle")]
     [SerializeField] private SubtitleManager subtitleManager;
     [SerializeField] private List<SubtitleManager.SubtitleLine> postDeckGeneratedSubtitles = new List<SubtitleManager.SubtitleLine>();
@@ -70,7 +76,20 @@ public class Collectible : MonoBehaviour
         hasBeenCollected = true;
         playerInRange = false;
 
+        PlayCollectFeedback();
+
         StartCoroutine(GenerateDeckRoutine());
+    }
+
+    private void PlayCollectFeedback()
+    {
+        Vector3 spawnPosition = collectVfxSpawnPoint != null ? collectVfxSpawnPoint.position : transform.position;
+
+        if (collectVfxPrefab != null)
+            Instantiate(collectVfxPrefab, spawnPosition, Quaternion.identity);
+
+        if (collectSfx != null)
+            AudioSource.PlayClipAtPoint(collectSfx, spawnPosition, collectSfxVolume);
     }
 
     private IEnumerator GenerateDeckRoutine()
