@@ -1145,9 +1145,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                     (phase == TurnSystem.TurnPhase.ConfirmAttackers ||
                      phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
+                // During AI ChooseBlockers, clicks must be reserved for assigning blockers,
+                // not activating creature abilities.
                 (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
-                    (phase == TurnSystem.TurnPhase.ChooseBlockers ||
-                     phase == TurnSystem.TurnPhase.ConfirmBlockers));
+                    phase == TurnSystem.TurnPhase.ConfirmBlockers);
 
             bool canHumanActivateCreatureAbilities =
                 (humanMainPhaseWindow || humanCombatPriorityWindow) &&
