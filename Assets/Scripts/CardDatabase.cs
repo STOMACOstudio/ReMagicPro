@@ -4224,6 +4224,35 @@ public static class CardDatabase
                         rulesText = "Enchanted creature has flying.",
                     });
 
+                Add(new CardData // Starpowder
+                    {
+                        cardName = "Starpowder",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        keywordBuff = KeywordAbility.Flying,
+                        artwork = Resources.Load<Sprite>("Art/starpowder"),
+                        rulesText = "Enchanted creature has flying. When enchanted creature dies, draw a card.",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureDies,
+                                description = "if enchanted creature died, draw a card.",
+                                effect = (Player owner, Card source) =>
+                                {
+                                    if (source is AuraCard aura && GameManager.Instance.lastDeadCreature == aura.attachedTo)
+                                    {
+                                        GameManager.Instance.DrawCard(owner);
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Fascinate
                     {
                         cardName = "Fascinate",
