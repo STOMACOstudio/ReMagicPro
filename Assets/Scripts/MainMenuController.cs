@@ -33,6 +33,7 @@ public class MainMenuController : MonoBehaviour
 
         // Reset any generated deck and previously selected colors
         DeckHolder.SelectedDeck = null;
+        DeckHolder.IsStarterDeckRewardCollected = false;
         ColorButtonBehavior.ResetSelections();
     }
 }

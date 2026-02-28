@@ -72,12 +72,15 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleDeckEditorShortcut()
     {
-        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            SceneManager.LoadScene(DeckEditorSceneName);
-        }
+        if (Keyboard.current == null || !Keyboard.current.eKey.wasPressedThisFrame)
+            return;
+
+        if (!DeckHolder.IsStarterDeckRewardCollected || DeckHolder.SelectedDeck == null || DeckHolder.SelectedDeck.Count == 0)
+            return;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        SceneManager.LoadScene(DeckEditorSceneName);
     }
 
     void HandleIntro()
