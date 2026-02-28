@@ -1606,7 +1606,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  lineRenderer: {fileID: 0}
+  lineRenderer: {fileID: 3408271308123586847}
   artImage: {fileID: 1285546587198178736}
   backgroundImage: {fileID: 7762345805739480164}
   cardRarity: {fileID: 6613250637717637995}
@@ -1658,6 +1658,7 @@ MonoBehaviour:
   keywordTextShrinkStep: 0.5
   cardTypeTextMinFontSize: 8
   cardTypeTextShrinkStep: 0.5
+  lineMaterialOverride: {fileID: 2100000, guid: 37da0647b433fac4cbf231b9163a6737, type: 2}
 --- !u!120 &3408271308123586847
 LineRenderer:
   serializedVersion: 3
@@ -1684,7 +1685,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e6b9b44320f4448d9d5e0ee634259966, type: 2}
+  - {fileID: 2100000, guid: 37da0647b433fac4cbf231b9163a6737, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
