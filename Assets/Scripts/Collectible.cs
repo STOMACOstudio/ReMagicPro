@@ -106,6 +106,8 @@ public class Collectible : MonoBehaviour
         PlayerPrefs.Save();
 
         int deckCount = DeckHolder.SelectedDeck != null ? DeckHolder.SelectedDeck.Count : 0;
+        DeckHolder.IsStarterDeckRewardCollected = deckCount > 0;
+
         if (deckCount > 0)
             Debug.Log($"[Collectible] Starter deck generated for color '{starterColor}' with {deckCount} cards.");
         else
