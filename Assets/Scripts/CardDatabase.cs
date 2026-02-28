@@ -4241,13 +4241,11 @@ public static class CardDatabase
                             new CardAbility
                             {
                                 timing = TriggerTiming.OnCreatureDies,
-                                description = "if enchanted creature died, draw a card.",
+                                description = "draw a card.",
+                                triggerOnlyOnAttachedCreatureDeath = true,
                                 effect = (Player owner, Card source) =>
                                 {
-                                    if (source is AuraCard aura && GameManager.Instance.lastDeadCreature == aura.attachedTo)
-                                    {
-                                        GameManager.Instance.DrawCard(owner);
-                                    }
+                                    GameManager.Instance.DrawCard(owner);
                                 }
                             }
                         }

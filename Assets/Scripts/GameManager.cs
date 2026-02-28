@@ -4329,6 +4329,12 @@ public class GameManager : MonoBehaviour
                     {
                         if (ability.timing == TriggerTiming.OnCreatureDies && ability.effect != null)
                         {
+                            if (ability.triggerOnlyOnAttachedCreatureDeath)
+                            {
+                                if (!(card is AuraCard aura) || aura.attachedTo != creature)
+                                    continue;
+                            }
+
                             QueueTriggeredAbility(ability, player, card, card, creature);
                         }
                     }
