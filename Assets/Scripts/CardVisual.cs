@@ -118,11 +118,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             var tex = artImage.sprite.texture;
             if (tex != null && tex.isReadable)
             {
+                // Alpha hit testing requires texture read/write access.
                 artImage.alphaHitTestMinimumThreshold = 0.1f;
-            }
-            else
-            {
-                Debug.LogWarning($"Texture for {artImage.name} is not readable; alpha hit testing disabled.");
             }
         }
 
