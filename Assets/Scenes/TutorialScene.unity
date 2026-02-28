@@ -10241,6 +10241,8 @@ MonoBehaviour:
     displayDuration: 5
   - text: To accept its blessing, stand still
     displayDuration: 4
+  - text: ...
+    displayDuration: 2
   postLockLines:
   - text: You can now manipulate White Mana
     displayDuration: 3
@@ -15324,6 +15326,8 @@ MonoBehaviour:
     displayDuration: 5
   - text: To accept its pact, stand still
     displayDuration: 4
+  - text: ...
+    displayDuration: 2
   postLockLines:
   - text: You can now manipulate Red Mana
     displayDuration: 3
@@ -20636,6 +20640,8 @@ MonoBehaviour:
     displayDuration: 5
   - text: To accept its curse, stand still
     displayDuration: 4
+  - text: ...
+    displayDuration: 2
   postLockLines:
   - text: You can now manipulate Black Mana
     displayDuration: 3
@@ -21213,6 +21219,8 @@ MonoBehaviour:
     displayDuration: 5
   - text: To accept it shenanigans, stand still
     displayDuration: 4
+  - text: ...
+    displayDuration: 2
   postLockLines:
   - text: You can now manipulate Blue Mana
     displayDuration: 3
@@ -31997,6 +32005,8 @@ MonoBehaviour:
     displayDuration: 5
   - text: To accept its gift, stand still
     displayDuration: 4
+  - text: ...
+    displayDuration: 2
   postLockLines:
   - text: You can now manipulate Green Mana
     displayDuration: 3
