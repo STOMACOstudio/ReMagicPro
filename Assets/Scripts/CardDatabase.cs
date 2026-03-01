@@ -555,6 +555,123 @@ public static class CardDatabase
                     });
             
             //BLUE
+                Add(new CardData // Fugitive wizard
+                    {
+                    cardName = "Fugitive Wizard",
+                    artist = "Jim Nelson",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Wizard" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "The College of Lat-Nam is often forced to expel students whose experiments grow too risky or too cruel.",
+                    artwork = Resources.Load<Sprite>("Art/fugitive_wizard")
+                    });
+                Add(new CardData // Coral Eel
+                    {
+                    cardName = "Coral Eel",
+                    artist = "Una Fricker",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 1,
+                    subtypes = new List<string> { "Fish" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Some fishers like to eat eels, and some eels like to eat fishers.",
+                    artwork = Resources.Load<Sprite>("Art/coral_eel")
+                    });
+                Add(new CardData // Giant octopus
+                    {
+                    cardName = "Giant Octopus",
+                    artist = "Heather Hudson",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Octopus" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Before my eyes was a horrible monster, worthy to figure in the legends of the marvellous... Its eight arms, or rather feet, fixed to its head... were twice as long as its body, and were twisted like the furies' hair.\n-Jules Verne, Twenty Thousands Leagues under the Sea",
+                    artwork = Resources.Load<Sprite>("Art/giant_octopus")
+                    });
+                Add(new CardData //Sea eagle
+                    {
+                    cardName = "Sea Eagle",
+                    artist = "Anthony S. Waters",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Bird" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "Where air meets water, fish meets talon.",
+                    artwork = Resources.Load<Sprite>("Art/sea_eagle")
+                    });
+                Add(new CardData //Wind drake
+                    {
+                    cardName = "Wind Drake",
+                    artist = "Tom Wanerstrand",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Drake" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "But high she shoots through air and light,\nAbove all low delay,\nWhere nothing earthly bounds her flight,\nNor shadow dims her way.\n-Thomas Moore,\n'Oh that I had Wings'",
+                    artwork = Resources.Load<Sprite>("Art/wind_drake")
+                    });
+                Add(new CardData //Fighting drake
+                    {
+                    cardName = "Fighting Drake",
+                    artist = "Matt Cavotta",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 4,
+                    subtypes = new List<string> { "Drake" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "Scholars in their ivory towers call them 'sharks of the sky'. Scholars on the road don't call them at all.",
+                    artwork = Resources.Load<Sprite>("Art/fighting_drake")
+                    });
+                Add(new CardData //Mahamoti djinn
+                    {
+                    cardName = "Mahamoti Djinn",
+                    artist = "Eric Peterson",
+                    rarity = "Rare",
+                    manaCost = 6,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 6,
+                    subtypes = new List<string> { "Djinn" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "Of royal blood among the spirits of the air, the Mahamoti djinn rides on the wings of the winds. As dangerous in the gambling hall as he is in battle, he is a master of trickery and misdirection.",
+                    artwork = Resources.Load<Sprite>("Art/mahamoti_djinn")
+                    });
                 Add(new CardData //Skyward whale
                     {
                     cardName = "Skyward Whale",

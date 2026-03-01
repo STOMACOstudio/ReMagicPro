@@ -58,11 +58,11 @@ public static class DeckDatabase
             case "blue":
                 return new[]
                 {
-                    new DeckEntry("Island", 17), new DeckEntry("Lucky Fisherman", 3), new DeckEntry("Giant Crab", 2),
-                    new DeckEntry("Arcane Barrier", 3), new DeckEntry("Deepwood Owl", 3), new DeckEntry("Sharkmen Tribe", 2),
-                    new DeckEntry("Tide Spirit", 1), new DeckEntry("Autonomous Miner", 1), new DeckEntry("Cosmic Whale", 1),
+                    new DeckEntry("Island", 16), new DeckEntry("Fugitive Wizard", 3), new DeckEntry("Coral Eel", 3),
+                    new DeckEntry("Sea Eagle", 3), new DeckEntry("Wind Drake", 3), new DeckEntry("Fighting Drake", 2),
+                    new DeckEntry("Giant Octopus", 2), new DeckEntry("Autonomous Miner", 1), new DeckEntry("Mahamoti Djinn", 1),
                     new DeckEntry("Blast of Knowledge", 2), new DeckEntry("Cut Off Hands", 1), new DeckEntry("Sleep", 1),
-                    new DeckEntry("Starpowder", 1), new DeckEntry("Fascinate", 1), new DeckEntry("Potion of Lava", 1)
+                    new DeckEntry("Starpowder", 1), new DeckEntry("Fascinate", 1)
                 };
             case "black":
                 return new[]
