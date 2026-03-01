@@ -1478,6 +1478,15 @@ public class GameManager : MonoBehaviour
                             tVis.UpdateVisual();
                     }
                     break;
+                case ActivatedAbility.TapTargetArtifactCreatureOrLand:
+                    if (target != null)
+                    {
+                        target.isTapped = true;
+                        CardVisual targetVisual = FindCardVisual(target);
+                        if (targetVisual != null)
+                            targetVisual.UpdateVisual();
+                    }
+                    break;
             }
 
             CheckDeaths(humanPlayer);
@@ -2860,6 +2869,50 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             return;
         }
+        // Artifact tap-target ability
+        if (targetingArtifact != null &&
+            targetingArtifact.activatedAbilities.Contains(ActivatedAbility.TapTargetArtifactCreatureOrLand))
+        {
+            bool isValidTarget = (chosen is ArtifactCard || chosen is CreatureCard || chosen is LandCard) &&
+                                 GetOwnerOfCard(chosen)?.Battlefield.Contains(chosen) == true;
+
+            if (isValidTarget)
+            {
+                Player controller = targetingPlayer;
+                int remaining = targetingArtifact.manaToPayToActivate;
+
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Colorless, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.White, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Blue, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Black, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Red, remaining);
+                remaining -= Player.ManaPool.SpendFromPool(ref controller.ColoredMana.Green, remaining);
+
+                if (remaining > 0)
+                {
+                    Debug.LogWarning("Not enough mana to activate artifact.");
+                    CancelTargeting();
+                    return;
+                }
+
+                ArtifactCard artifact = targetingArtifact;
+                targetingArtifact.isTapped = true;
+                QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapTargetArtifactCreatureOrLand, controller, chosen);
+                UpdateUI();
+            }
+            else
+            {
+                Debug.Log("Invalid target. Artifact effect canceled.");
+                targetingArtifact.isTapped = false;
+            }
+
+            targetingArtifact = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            return;
+        }
+
         // Equipment equip ability
         if (targetingEquipment != null &&
             targetingEquipment.activatedAbilities.Contains(ActivatedAbility.Equip))
@@ -3259,6 +3312,22 @@ public class GameManager : MonoBehaviour
         FindCardVisual(artifact)?.UpdateVisual();
 
         Debug.Log("Targeting creature to buff with artifact.");
+    }
+
+    public void BeginTargetingWithArtifactTap(ArtifactCard artifact, Player player, CardVisual visual)
+    {
+        targetingArtifact = artifact;
+        targetingSorcery = null;
+        targetingAura = null;
+        targetingEquipment = null;
+        targetingPlayer = player;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        artifact.isTapped = true; // show tapped state while selecting target
+        FindCardVisual(artifact)?.UpdateVisual();
+
+        Debug.Log("Targeting artifact, creature, or land to tap with artifact.");
     }
 
     public void BeginAuraTargetSelection(AuraCard aura, Player caster, CardVisual visual)

@@ -3781,6 +3781,23 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/tablet_of_creation")
                     });
 
+                Add(new CardData // Icy Manipulator
+                    {
+                        cardName = "Icy Manipulator",
+                        artist = "Sora AI",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        manaToPayToActivate = 1,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapTargetArtifactCreatureOrLand
+                        },
+                        rulesText = "{1}, {T}: Tap target artifact, creature, or land.",
+                        artwork = Resources.Load<Sprite>("Art/icy_manipulator")
+                    });
+
                 Add(new CardData // Morning Star
                     {
                         cardName = "Morning Star",

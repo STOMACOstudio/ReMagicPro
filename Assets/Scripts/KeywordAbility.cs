@@ -52,6 +52,7 @@ public enum ActivatedAbility
     TapToPlayRandomPotion,
     PayToBuffSelf,
     Equip,
+    TapTargetArtifactCreatureOrLand,
     ReturnSelfFromGraveyard,
     ReturnSelfFromGraveyardToHand,
 }

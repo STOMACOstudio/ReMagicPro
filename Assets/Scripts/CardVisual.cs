@@ -1514,6 +1514,29 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
+                // PAY 1 AND TAP: TAP TARGET ARTIFACT, CREATURE, OR LAND
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapTargetArtifactCreatureOrLand) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    canActivateArtifact)
+                {
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+                    Player player = GameManager.Instance.humanPlayer;
+                    int cost = artifact.manaToPayToActivate;
+
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        GameManager.Instance.BeginTargetingWithArtifactTap(artifact, player, this);
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate tap artifact ability.");
+                    }
+
+                    return;
+                }
+
                 // EQUIP artifact during Main Phase
                 if (linkedCard is EquipmentCard equipment &&
                     linkedCard.activatedAbilities.Contains(ActivatedAbility.Equip) &&
