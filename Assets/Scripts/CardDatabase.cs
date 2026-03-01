@@ -4523,31 +4523,18 @@ public static class CardDatabase
                         rulesText = "Enchanted creature cannot untap.",
                     });
 
-                Add(new CardData // Starpowder
+                Add(new CardData // Flight
                     {
-                        cardName = "Starpowder",
-                        artist = "Sora AI",
+                        cardName = "Flight",
+                        artist = "Jerry Tiritilli",
                         rarity = "Common",
                         manaCost = 1,
                         color = new List<string> { "Blue" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         keywordBuff = KeywordAbility.Flying,
-                        artwork = Resources.Load<Sprite>("Art/starpowder"),
-                        rulesText = "Enchanted creature has flying.",
-                        abilities = new List<CardAbility>
-                        {
-                            new CardAbility
-                            {
-                                timing = TriggerTiming.OnCreatureDies,
-                                description = "draw a card.",
-                                triggerOnlyOnAttachedCreatureDeath = true,
-                                effect = (Player owner, Card source) =>
-                                {
-                                    GameManager.Instance.DrawCard(owner);
-                                }
-                            }
-                        }
+                        artwork = Resources.Load<Sprite>("Art/flight"),
+                        rulesText = "Enchanted creature has flying."
                     });
 
                 Add(new CardData // Fascinate
