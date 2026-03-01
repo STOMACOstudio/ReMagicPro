@@ -2929,6 +2929,19 @@ public static class CardDatabase
                     rulesText = "Prevent all combat damage that target creature would deal this turn.",
                     artwork = Resources.Load<Sprite>("Art/blinding_light"),
                     });
+                Add(new CardData //Charge
+                    {
+                    cardName = "Charge",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 1,
+                    color = new List<string> { "White" },
+                    controlledCreaturesPowerBuff = 1,
+                    controlledCreaturesToughnessBuff = 1,
+                    rulesText = "Creatures you control get +1/+1 until the end of turn.",
+                    artwork = Resources.Load<Sprite>("Art/charge"),
+                    });
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",
