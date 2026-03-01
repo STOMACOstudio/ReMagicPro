@@ -47,7 +47,7 @@ public class AuraCard : EnchantmentCard
                 GameManager.Instance.ChangeController(creature, creature.owner);
             }
         }
-        attachedTo = null;
         base.OnLeavePlay(owner);
+        attachedTo = null;
     }
 }
