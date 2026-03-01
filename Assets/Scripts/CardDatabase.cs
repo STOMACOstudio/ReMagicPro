@@ -1850,7 +1850,7 @@ public static class CardDatabase
                     artist = "Sora AI",
                     rarity = "Common",
                     manaCost = 5,
-                    color = new List<string> { "Green" },
+                    color = new List<string> { "Green", "Green" },
                     cardType = CardType.Creature,
                     power = 5,
                     toughness = 5,
