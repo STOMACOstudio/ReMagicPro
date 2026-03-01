@@ -2742,7 +2742,9 @@ public class GameManager : MonoBehaviour
                     colorMatches = data != null && data.color.Contains(targetingSorcery.requiredTargetColor);
                 }
 
-                if (correctType && isOnBattlefield && colorMatches && !IsProtectedFromSpell(target))
+                bool nonTokenMatches = !(sorcery.requireNonTokenTarget && target is CreatureCard creatureTarget && creatureTarget.isToken);
+
+                if (correctType && isOnBattlefield && colorMatches && nonTokenMatches && !IsProtectedFromSpell(target))
                 {
                     // Valid target exists, but no visual feedback is shown
                 }
@@ -2998,11 +3000,13 @@ public class GameManager : MonoBehaviour
                 // Validate type
                 bool correctType =
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Creature && chosen is CreatureCard creatureT &&
-                        !(targetingSorcery.excludeArtifactCreatures && creatureT.color.Contains("Artifact"))) ||
+                        !(targetingSorcery.excludeArtifactCreatures && creatureT.color.Contains("Artifact")) &&
+                        !(targetingSorcery.requireNonTokenTarget && creatureT.isToken)) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Land && chosen is LandCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Artifact && chosen is ArtifactCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && chosen is EnchantmentCard) ||
-                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && chosen is CreatureCard);
+                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && chosen is CreatureCard creatureOrPlayer &&
+                        !(targetingSorcery.requireNonTokenTarget && creatureOrPlayer.isToken));
 
                 // Validate color
                 bool colorMatches = true;

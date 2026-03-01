@@ -2929,6 +2929,7 @@ public static class CardDatabase
                         color = new List<string> { "Black", "Black" },
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
+                        requireNonTokenTarget = true,
                         destroyAllWithSameName = true,
                         artwork = Resources.Load<Sprite>("Art/mirrorbreak"),
                     });
