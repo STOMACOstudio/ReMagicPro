@@ -23,6 +23,7 @@ public class SorceryCard : Card
     public bool revealUntilLand = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
+    public bool returnTargetCreatureToOwnerHand = false;
     public int maxManaCostForReturn = 0;
     public int numberOfTokensMin = 0;
     public int numberOfTokensMax = 0;
@@ -437,6 +438,35 @@ public class SorceryCard : Card
 
                     ResolveEffect(caster);
                     return;
+                }
+
+                if (returnTargetCreatureToOwnerHand && target is CreatureCard)
+                {
+                    Player owner = GameManager.Instance.GetOwnerOfCard(target);
+                    if (owner != null && owner.Battlefield.Remove(target))
+                    {
+                        owner.Hand.Add(target);
+
+                        CardVisual targetVisual = GameManager.Instance.FindCardVisual(target);
+                        if (targetVisual != null)
+                        {
+                            GameManager.Instance.activeCardVisuals.Remove(targetVisual);
+                            Object.Destroy(targetVisual.gameObject);
+                        }
+
+                        if (owner == GameManager.Instance.humanPlayer)
+                        {
+                            GameObject obj = Object.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.playerHandArea);
+                            CardVisual visual = obj.GetComponent<CardVisual>();
+                            CardData sourceData = CardDatabase.GetCardData(target.cardName);
+                            visual.Setup(target, GameManager.Instance, sourceData);
+                            GameManager.Instance.activeCardVisuals.Add(visual);
+                        }
+
+                        Debug.Log($"{cardName} returned {target.cardName} to its owner's hand.");
+                        ResolveEffect(caster);
+                        return;
+                    }
                 }
 
                 if (destroyTargetIfTypeMatches)

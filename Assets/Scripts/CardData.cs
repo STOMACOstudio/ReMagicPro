@@ -74,6 +74,7 @@ public class CardData
     public bool revealUntilLand = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
+    public bool returnTargetCreatureToOwnerHand = false;
     public int maxManaCostForReturn = 0;
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;

@@ -3092,6 +3092,20 @@ public static class CardDatabase
                     cardsToDrawMax = 6,
                     artwork = Resources.Load<Sprite>("Art/rolling_thoughts"),
                     });
+                Add(new CardData //Unsummon
+                    {
+                        cardName = "Unsummon",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        cardType = CardType.Instant,
+                        manaCost = 1,
+                        color = new List<string> { "Blue" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        returnTargetCreatureToOwnerHand = true,
+                        rulesText = "Return target creature to its owner's hand.",
+                        artwork = Resources.Load<Sprite>("Art/unsummon"),
+                    });
             //BLACK
                 Add(new CardData { //Blasphemy
                     cardName = "Blasphemy",
