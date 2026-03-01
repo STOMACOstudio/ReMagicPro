@@ -84,6 +84,8 @@ public class CardData
     public int damageToTargetMax = 0;
     public int powerBuff = 0;
     public int toughnessBuff = 0;
+    public int controlledCreaturesPowerBuff = 0;
+    public int controlledCreaturesToughnessBuff = 0;
     public KeywordAbility keywordBuff = KeywordAbility.None;
     public bool targetMustBeControlledCreature = false;
     public bool gainControlOfCreature = false;

@@ -41,6 +41,8 @@ public class SorceryCard : Card
     public Player chosenPlayerTarget = null;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;
+    public int controlledCreaturesPowerBuff = 0;
+    public int controlledCreaturesToughnessBuff = 0;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -194,7 +196,21 @@ public class SorceryCard : Card
                     Debug.Log($"{caster} draws a card because opponent had nothing to discard.");
                 }
 
+                }
+
+            if (controlledCreaturesPowerBuff != 0 || controlledCreaturesToughnessBuff != 0)
+            {
+                foreach (CreatureCard creature in caster.Battlefield.OfType<CreatureCard>())
+                {
+                    creature.AddTemporaryBuff(controlledCreaturesPowerBuff, controlledCreaturesToughnessBuff);
+                    var visual = GameManager.Instance.FindCardVisual(creature);
+                    if (visual != null)
+                        visual.UpdateVisual();
+                }
+
+                Debug.Log($"{cardName} gives your creatures +{controlledCreaturesPowerBuff}/+{controlledCreaturesToughnessBuff} until end of turn.");
             }
+
             if (creaturesToSacrificeEachPlayerMax > 0)
             {
                 List<(Card card, Player owner)> sacrifices = new List<(Card, Player)>();
