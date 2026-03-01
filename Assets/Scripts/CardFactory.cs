@@ -74,6 +74,7 @@ public static class CardFactory
                 sorcery.cardsToDrawMax = data.cardsToDrawMax;
                 sorcery.requiresTarget = data.requiresTarget;
                 sorcery.requiredTargetType = data.requiredTargetType;
+                sorcery.requireNonTokenTarget = data.requireNonTokenTarget;
                 sorcery.damageToTarget = data.damageToTarget;
                 sorcery.damageToTargetMin = data.damageToTargetMin;
                 sorcery.damageToTargetMax = data.damageToTargetMax;
