@@ -1042,14 +1042,20 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (GameManager.Instance.targetingArtifact != null)
             {
                 Card clicked = linkedCard;
+                ArtifactCard targetingArtifact = GameManager.Instance.targetingArtifact;
 
-                if (clicked is CreatureCard)
+                bool validForTapAbility =
+                    targetingArtifact.activatedAbilities != null &&
+                    targetingArtifact.activatedAbilities.Contains(ActivatedAbility.TapTargetArtifactCreatureOrLand) &&
+                    (clicked is ArtifactCard || clicked is CreatureCard || clicked is LandCard);
+
+                if (validForTapAbility || clicked is CreatureCard)
                 {
                     GameManager.Instance.CompleteTargetSelection(this);
                 }
                 else
                 {
-                    Debug.Log("Clicked non-creature during artifact targeting — cancelling.");
+                    Debug.Log("Clicked invalid target during artifact targeting — cancelling.");
                     GameManager.Instance.CancelTargeting();
                 }
 
