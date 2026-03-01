@@ -37,6 +37,7 @@ public class SorceryCard : Card
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
     public bool excludeArtifactCreatures = false;
+    public bool requireNonTokenTarget = false;
     public Player chosenPlayerTarget = null;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;

@@ -579,6 +579,7 @@ public class TurnSystem : MonoBehaviour
                                             var target = opponent.Battlefield
                                                 .OfType<CreatureCard>()
                                                 .Where(c => !(sorcery.excludeArtifactCreatures && c.color.Contains("Artifact")))
+                                                .Where(c => !(sorcery.requireNonTokenTarget && c.isToken))
                                                 .OrderByDescending(c =>
                                                 {
                                                     var data = CardDatabase.GetCardData(c.cardName);

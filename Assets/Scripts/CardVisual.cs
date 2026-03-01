@@ -1122,7 +1122,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     {
                         var protection = ProtectionUtils.GetProtectionKeyword(spell.PrimaryColor);
                         bool notArtifact = !(spell.excludeArtifactCreatures && targetCreature.color.Contains("Artifact"));
-                        if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact)
+                        bool nonTokenMatch = !(spell.requireNonTokenTarget && targetCreature.isToken);
+                        if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact && nonTokenMatch)
                             valid = true;
                     }
                 }
@@ -2172,7 +2173,10 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 rules += $"Destroy all {typeStr}.\n";
             }
             if (sorcery.destroyAllWithSameName)
-                rules += "Destroy target creature and each other creature with the same name.\n";
+            {
+                string targetPrefix = sorcery.requireNonTokenTarget ? "non-token " : "";
+                rules += $"Destroy target {targetPrefix}creature and each other creature with the same name.\n";
+            }
             if (sorcery.exileAllCreaturesFromGraveyards)
                 rules += "Exile all creature cards from all graveyards.\n";
             if (sorcery.damageToEachCreatureAndPlayer > 0)
