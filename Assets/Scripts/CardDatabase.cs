@@ -3794,7 +3794,7 @@ public static class CardDatabase
                         {
                             ActivatedAbility.TapTargetArtifactCreatureOrLand
                         },
-                        rulesText = "{1}, {T}: Tap target artifact, creature, or land.",
+                        rulesText = "1T: Tap target artifact, creature, or land.",
                         flavorText = "Ice may thaw, but malice never does.",
                         artwork = Resources.Load<Sprite>("Art/icy_manipulator")
                     });
