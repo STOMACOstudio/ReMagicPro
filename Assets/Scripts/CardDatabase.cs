@@ -2932,7 +2932,7 @@ public static class CardDatabase
                 Add(new CardData //Charge
                     {
                     cardName = "Charge",
-                    artist = "Sora AI",
+                    artist = "Zehou Chen",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 1,
@@ -2940,6 +2940,7 @@ public static class CardDatabase
                     controlledCreaturesPowerBuff = 1,
                     controlledCreaturesToughnessBuff = 1,
                     rulesText = "Creatures you control get +1/+1 until the end of turn.",
+                    flavorText = "Honor rides before us. All we have to do is catch up.\n-Danitha Capashen",
                     artwork = Resources.Load<Sprite>("Art/charge"),
                     });
             //BLUE
@@ -4254,7 +4255,7 @@ public static class CardDatabase
                 Add(new CardData // Pacifism
                     {
                         cardName = "Pacifism",
-                        artist = "Sora AI",
+                        artist = "Matthew D. Wilson",
                         rarity = "Common",
                         manaCost = 2,
                         color = new List<string> { "White" },
@@ -4263,6 +4264,7 @@ public static class CardDatabase
                         keywordBuff = KeywordAbility.Defender,
                         artwork = Resources.Load<Sprite>("Art/pacifism"),
                         rulesText = "Enchanted creature cannot attack or block.",
+                        flavorText = "Even those born to battle could only lay their blades at Akroma's feet",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility

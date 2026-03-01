@@ -52,9 +52,8 @@ public static class DeckDatabase
                 {
                     new DeckEntry("Plains", 16), new DeckEntry("Eager Cadet", 3), new DeckEntry("Glory Seeker", 3),
                     new DeckEntry("Angelic Wall", 3), new DeckEntry("Yotian Soldier", 3), new DeckEntry("Abbey Griffin", 2),
-                    new DeckEntry("Foot Soldiers", 2), new DeckEntry("Serra Angel", 1), new DeckEntry("Serra Angel", 1),
-                    new DeckEntry("Sacred Horn Nectar", 2), new DeckEntry("Blinding Light", 1), new DeckEntry("Faith Protection", 1),
-                    new DeckEntry("Sacred Horn", 1), new DeckEntry("For Glory", 1)
+                    new DeckEntry("Foot Soldiers", 2), new DeckEntry("Serra Angel", 1), new DeckEntry("Charge", 3),
+                    new DeckEntry("Sacred Nectar", 2), new DeckEntry("Pacifism", 1), new DeckEntry("Demystify", 1),
                 };
             case "blue":
                 return new[]
