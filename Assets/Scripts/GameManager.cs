@@ -2906,7 +2906,8 @@ public class GameManager : MonoBehaviour
             Card targetCard = chosen;
             bool correctType =
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard) ||
-                (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped);
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped) ||
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.Artifact && targetCard is ArtifactCard);
             Player targetOwner = GetOwnerOfCard(targetCard);
             bool isOnBattlefield = targetOwner?.Battlefield.Contains(targetCard) == true;
             bool correctController = !targetingAura.targetMustBeControlledCreature || targetOwner == targetingPlayer;

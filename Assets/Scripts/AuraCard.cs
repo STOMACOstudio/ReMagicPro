@@ -31,6 +31,12 @@ public class AuraCard : EnchantmentCard
             GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
             GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
         }
+        else if (attachedTo != null)
+        {
+            if (keywordBuff != KeywordAbility.None && !attachedTo.keywordAbilities.Contains(keywordBuff))
+                attachedTo.keywordAbilities.Add(keywordBuff);
+            GameManager.Instance.FindCardVisual(attachedTo)?.UpdateVisual();
+        }
     }
 
     public override void OnLeavePlay(Player owner)
@@ -46,6 +52,12 @@ public class AuraCard : EnchantmentCard
             {
                 GameManager.Instance.ChangeController(creature, creature.owner);
             }
+        }
+        else if (attachedTo != null)
+        {
+            if (keywordBuff != KeywordAbility.None)
+                attachedTo.keywordAbilities.Remove(keywordBuff);
+            GameManager.Instance.FindCardVisual(attachedTo)?.UpdateVisual();
         }
         base.OnLeavePlay(owner);
         attachedTo = null;

@@ -4537,6 +4537,21 @@ public static class CardDatabase
                         rulesText = "Enchanted creature cannot untap.",
                     });
 
+                Add(new CardData // Inertia Bubble
+                    {
+                        cardName = "Inertia Bubble",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        manaCost = 2,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        requiredTargetType = SorceryCard.TargetType.Artifact,
+                        keywordBuff = KeywordAbility.CantUntap,
+                        artwork = Resources.Load<Sprite>("Art/inertia_bubble"),
+                        rulesText = "Enchant Artifact. Enchanted artifact doesn't untap during its controller's untap step.",
+                    });
+
                 Add(new CardData // Flight
                     {
                         cardName = "Flight",
