@@ -1079,14 +1079,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             }
             if (GameManager.Instance.targetingAura != null)
             {
-                if (linkedCard is CreatureCard linkedCreature)
+                var aura = GameManager.Instance.targetingAura;
+                bool valid =
+                    (aura.requiredTargetType == SorceryCard.TargetType.Creature && linkedCard is CreatureCard) ||
+                    (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature && linkedCard is CreatureCard linkedCreature && linkedCreature.isTapped) ||
+                    (aura.requiredTargetType == SorceryCard.TargetType.Artifact && GameManager.Instance.IsArtifactPermanent(linkedCard));
+
+                if (valid)
                 {
-                    var aura = GameManager.Instance.targetingAura;
-                    bool valid = (aura.requiredTargetType == SorceryCard.TargetType.Creature ||
-                                  (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature && linkedCreature.isTapped)) &&
-                                 (!aura.targetMustBeControlledCreature ||
-                                  GameManager.Instance.GetOwnerOfCard(linkedCreature) == GameManager.Instance.targetingPlayer);
-                    if (valid)
+                    bool correctController = !aura.targetMustBeControlledCreature ||
+                        GameManager.Instance.GetOwnerOfCard(linkedCard) == GameManager.Instance.targetingPlayer;
+                    if (correctController)
                     {
                         GameManager.Instance.CompleteTargetSelection(this);
                     }
