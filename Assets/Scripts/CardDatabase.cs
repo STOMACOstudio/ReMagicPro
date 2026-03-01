@@ -3095,7 +3095,7 @@ public static class CardDatabase
                 Add(new CardData //Unsummon
                     {
                         cardName = "Unsummon",
-                        artist = "Sora AI",
+                        artist = "Ron Spencer",
                         rarity = "Common",
                         cardType = CardType.Instant,
                         manaCost = 1,
@@ -3784,7 +3784,7 @@ public static class CardDatabase
                 Add(new CardData // Icy Manipulator
                     {
                         cardName = "Icy Manipulator",
-                        artist = "Sora AI",
+                        artist = "Mark Zug",
                         rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string>(),
@@ -3795,6 +3795,7 @@ public static class CardDatabase
                             ActivatedAbility.TapTargetArtifactCreatureOrLand
                         },
                         rulesText = "{1}, {T}: Tap target artifact, creature, or land.",
+                        flavorText = "Ice may thaw, but malice never does.",
                         artwork = Resources.Load<Sprite>("Art/icy_manipulator")
                     });
 
@@ -4557,7 +4558,7 @@ public static class CardDatabase
                 Add(new CardData // Inertia Bubble
                     {
                         cardName = "Inertia Bubble",
-                        artist = "Sora AI",
+                        artist = "Hugh Jamieson",
                         rarity = "Common",
                         manaCost = 2,
                         color = new List<string> { "Blue" },
@@ -4567,6 +4568,7 @@ public static class CardDatabase
                         keywordBuff = KeywordAbility.CantUntap,
                         artwork = Resources.Load<Sprite>("Art/inertia_bubble"),
                         rulesText = "Enchant Artifact. Enchanted artifact doesn't untap during its controller's untap step.",
+                        flavorText = "I wouldn't want you to hurt yourself.\nBruenna, Neurok leader",
                     });
 
                 Add(new CardData // Flight

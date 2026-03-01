@@ -60,9 +60,8 @@ public static class DeckDatabase
                 {
                     new DeckEntry("Island", 16), new DeckEntry("Fugitive Wizard", 3), new DeckEntry("Coral Eel", 3),
                     new DeckEntry("Sea Eagle", 3), new DeckEntry("Wind Drake", 3), new DeckEntry("Fighting Drake", 2),
-                    new DeckEntry("Giant Octopus", 2), new DeckEntry("Autonomous Miner", 1), new DeckEntry("Mahamoti Djinn", 1),
-                    new DeckEntry("Blast of Knowledge", 2), new DeckEntry("Cut Off Hands", 1), new DeckEntry("Sleep", 1),
-                    new DeckEntry("Flight", 1), new DeckEntry("Fascinate", 1)
+                    new DeckEntry("Giant Octopus", 2), new DeckEntry("Unsummon", 3), new DeckEntry("Mahamoti Djinn", 1),
+                    new DeckEntry("Inertia Bubble", 2), new DeckEntry("Icy Manipulator", 1), new DeckEntry("Flight", 1),
                 };
             case "black":
                 return new[]
