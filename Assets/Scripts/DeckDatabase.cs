@@ -17,12 +17,25 @@ public static class DeckDatabase
     }
 
     private static void AddCards(Player player, string cardName, int count)
+    {
+        if (player == null)
         {
-            for (int i = 0; i < count; i++)
-            {
-                player.Deck.Add(CardFactory.Create(cardName));
-            }
+            Debug.LogError($"Cannot add '{cardName}' cards because target player is null.");
+            return;
         }
+
+        for (int i = 0; i < count; i++)
+        {
+            Card createdCard = CardFactory.Create(cardName);
+            if (createdCard == null)
+            {
+                Debug.LogError($"Skipping invalid card '{cardName}' while building deck.");
+                continue;
+            }
+
+            player.Deck.Add(createdCard);
+        }
+    }
 
     private static void AddCardData(List<CardData> deck, string cardName, int count)
     {
@@ -97,23 +110,37 @@ public static class DeckDatabase
         }
     }
     public static void BuildStartingDeck(Player player)
+    {
+        if (player == null)
         {
-            if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
+            Debug.LogError("Cannot build starting deck because player is null.");
+            return;
+        }
+
+        player.Deck.Clear();
+
+        if (DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
+        {
+            foreach (CardData data in DeckHolder.SelectedDeck)
             {
-                foreach (var data in DeckHolder.SelectedDeck)
+                if (data == null)
                 {
-                    player.Deck.Add(CardFactory.Create(data.cardName));
+                    Debug.LogWarning("Skipping null deck entry in selected deck.");
+                    continue;
                 }
-            }
-            else
-            {
-                Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
-                // fallback to your hardcoded test deck if needed
-                player.Deck.Add(CardFactory.Create("Plains"));
-                player.Deck.Add(CardFactory.Create("Angry Farmer"));
-                // etc.
+
+                AddCards(player, data.cardName, 1);
             }
         }
+        else
+        {
+            Debug.LogWarning("No deck found in DeckHolder. Using fallback test deck.");
+            // fallback to your hardcoded test deck if needed
+            AddCards(player, "Plains", 1);
+            AddCards(player, "Angry Farmer", 1);
+            // etc.
+        }
+    }
 
     public static List<CardData> BuildPlayerStarterDeck(string color)
     {
