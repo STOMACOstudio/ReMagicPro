@@ -125,6 +125,106 @@ public static class CardDatabase
                     flavorText = "The Lich Queen took his land, his livestock, and his family. Now, all that remains are vengeance and a rusted fork.",
                     artwork = Resources.Load<Sprite>("Art/angry_farmer")
                     });
+                Add(new CardData // Eager cadet
+                    {
+                    cardName = "Eager Cadet",
+                    artist = "Greg & Tim Hildebrandt",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Training? Seeing my crops burnt to cinders was all the 'training' I needed.",
+                    artwork = Resources.Load<Sprite>("Art/eager_cadet")
+                    });
+                Add(new CardData // Glory seeker
+                    {
+                    cardName = "Glory Seeker",
+                    artist = "Dave Dorman",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "The turning of the tide always begins with one soldier's decision to head back into the fray.",
+                    artwork = Resources.Load<Sprite>("Art/glory_seeker")
+                    });
+                Add(new CardData // Foot soldiers
+                    {
+                    cardName = "Foot Soldiers",
+                    artist = "Kev Walker",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 4,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Infantry deployment is the art of putting your troops in the wrong place at the right time.",
+                    artwork = Resources.Load<Sprite>("Art/foot_soldiers")
+                    });
+                Add(new CardData //Angelic wall
+                    {
+                    cardName = "Angelic Wall",
+                    artist = "John Avon",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 4,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Defender
+                    },
+                    flavorText = "The ancestor protects us in ways we only begin to comprehend.\n-Mystic Elder",
+                    artwork = Resources.Load<Sprite>("Art/angelic_wall")
+                    });
+                Add(new CardData // Abbey griffin
+                    {
+                    cardName = "Abbey Griffin",
+                    artist = "Jaime Jones",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Griffin" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Vigilance
+                    },
+                    flavorText = "The darkness crawls with vampires and ghouls, but we are not without allies.\n-Mikaeus, the Lunarch",
+                    artwork = Resources.Load<Sprite>("Art/abbey_griffin")
+                    });
+                Add(new CardData // Serra angel
+                    {
+                    cardName = "Serra Angel",
+                    artist = "Mark Zug",
+                    rarity = "Rare",
+                    manaCost = 5,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Angel" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Vigilance
+                    },
+                    flavorText = "Her sword sings more beautifully than any choir",
+                    artwork = Resources.Load<Sprite>("Art/serra_angel")
+                    });
                 Add(new CardData //Trinkets Collector
                     {
                     cardName = "Trinkets Collector",
@@ -2188,6 +2288,23 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/origin_golem")
                     });
+                Add(new CardData //Yotian soldier
+                    {
+                    cardName = "Yotian Soldier",
+                    artist = "Luca Zontini",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 4,
+                    subtypes = new List<string> { "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Vigilance
+                    },
+                    flavorText = "Poets dream the verses of otherworldy stories. Artificers dream the blueprints of otherplanar artifacts.",
+                    artwork = Resources.Load<Sprite>("Art/yotian_soldier")
+                    });
                 Add(new CardData //Omega golemoid
                     {
                     cardName = "Omega Golemoid",
@@ -2739,6 +2856,32 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/sacred_horn_nectar"),
                     abilities = new List<CardAbility>(),
                     });
+                Add(new CardData { //Sacred nectar
+                    cardName = "Sacred Nectar",
+                    artist = "Dana Knutson",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = new List<string> { "White" },
+                    lifeToGain = 4,
+                    flavorText = "For he on honey-dew hath fed,\nAnd drunk the milk of Paradise.\n-Samuel Taylor Coleridge,\n'Kubla Khan'",
+                    artwork = Resources.Load<Sprite>("Art/sacred_nectar"),
+                    abilities = new List<CardAbility>(),
+                    });
+                Add(new CardData //Demystify
+                        {
+                            cardName = "Demystify",
+                            artist = "Cristopher Rush",
+                            rarity = "Common",
+                            cardType = CardType.Instant,
+                            manaCost = 1,
+                            color = new List<string> { "White" },
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Enchantment,
+                            destroyTargetIfTypeMatches = true,
+                            flavorText = "The truth will outshine all lies.",
+                            artwork = Resources.Load<Sprite>("Art/demystify"),
+                        });
                 Add(new CardData { //Solid prayer
                     cardName = "Solid Prayer",
                     artist = "Sora AI",

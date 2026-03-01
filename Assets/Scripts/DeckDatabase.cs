@@ -50,11 +50,11 @@ public static class DeckDatabase
             case "white":
                 return new[]
                 {
-                    new DeckEntry("Plains", 17), new DeckEntry("Angry Farmer", 3), new DeckEntry("Waterbearer", 3),
-                    new DeckEntry("Virgins Procession", 2), new DeckEntry("Gallant Lord", 3), new DeckEntry("Beasthunter", 1),
-                    new DeckEntry("Realm Protector", 1), new DeckEntry("Skyhunter Unicorn", 2), new DeckEntry("Untamed Unicorn", 1),
+                    new DeckEntry("Plains", 16), new DeckEntry("Eager Cadet", 3), new DeckEntry("Glory Seeker", 3),
+                    new DeckEntry("Angelic Wall", 3), new DeckEntry("Yotian Soldier", 3), new DeckEntry("Abbey Griffin", 2),
+                    new DeckEntry("Foot Soldiers", 2), new DeckEntry("Serra Angel", 1), new DeckEntry("Serra Angel", 1),
                     new DeckEntry("Sacred Horn Nectar", 2), new DeckEntry("Blinding Light", 1), new DeckEntry("Faith Protection", 1),
-                    new DeckEntry("Sacred Horn", 1), new DeckEntry("For Glory", 1), new DeckEntry("Potion of Knowledge", 1)
+                    new DeckEntry("Sacred Horn", 1), new DeckEntry("For Glory", 1)
                 };
             case "blue":
                 return new[]
