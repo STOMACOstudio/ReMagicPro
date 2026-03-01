@@ -66,6 +66,7 @@ public static class CardFactory
                 sorcery.revealUntilLand = data.revealUntilLand;
                 sorcery.returnRandomCreatureFromGraveyard = data.returnRandomCreatureFromGraveyard;
                 sorcery.returnRandomCheapCreatureToBattlefield = data.returnRandomCheapCreatureToBattlefield;
+                sorcery.returnTargetCreatureToOwnerHand = data.returnTargetCreatureToOwnerHand;
                 sorcery.maxManaCostForReturn = data.maxManaCostForReturn;
                 sorcery.tokenToCreate = data.tokenToCreate;
                 sorcery.numberOfTokensMin = data.numberOfTokensMin;
