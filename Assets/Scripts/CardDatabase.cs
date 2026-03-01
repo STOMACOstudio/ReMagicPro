@@ -4251,6 +4251,43 @@ public static class CardDatabase
                         rulesText = "Enchanted creature has defender.",
                     });
 
+                Add(new CardData // Pacifism
+                    {
+                        cardName = "Pacifism",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        manaCost = 2,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        keywordBuff = KeywordAbility.Defender,
+                        artwork = Resources.Load<Sprite>("Art/pacifism"),
+                        rulesText = "Enchanted creature cannot attack or block.",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = string.Empty,
+                                effect = (Player owner, Card source) =>
+                                {
+                                    if (source is AuraCard aura && aura.attachedTo is CreatureCard creature)
+                                        creature.AddAuraKeyword(KeywordAbility.CantBlock);
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnDeath,
+                                description = string.Empty,
+                                effect = (Player owner, Card source) =>
+                                {
+                                    if (source is AuraCard aura && aura.attachedTo is CreatureCard creature)
+                                        creature.RemoveAuraKeyword(KeywordAbility.CantBlock);
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Cut off hands
                     {
                         cardName = "Cut Off Hands",
