@@ -2782,7 +2782,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void CompleteTargetSelection(CardVisual targetVisual)
-        {
+    {
             Card chosen = targetVisual.linkedCard;
 
             // Artifact damage ability
@@ -2960,7 +2960,7 @@ public class GameManager : MonoBehaviour
             bool correctType =
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard) ||
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped) ||
-                (targetingAura.requiredTargetType == SorceryCard.TargetType.Artifact && targetCard is ArtifactCard);
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.Artifact && IsArtifactPermanent(targetCard));
             Player targetOwner = GetOwnerOfCard(targetCard);
             bool isOnBattlefield = targetOwner?.Battlefield.Contains(targetCard) == true;
             bool correctController = !targetingAura.targetMustBeControlledCreature || targetOwner == targetingPlayer;
@@ -3297,6 +3297,11 @@ public class GameManager : MonoBehaviour
         FindCardVisual(artifact)?.UpdateVisual();
 
         Debug.Log("Targeting creature to deal damage with artifact.");
+    }
+
+    public bool IsArtifactPermanent(Card card)
+    {
+        return card is ArtifactCard || (card is CreatureCard creature && creature.color.Contains("Artifact"));
     }
 
     public void BeginTargetingWithArtifactBuff(ArtifactCard artifact, Player player, CardVisual visual)
