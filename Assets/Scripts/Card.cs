@@ -160,9 +160,12 @@ public class Card
 
         if (this is AuraCard aura)
         {
-            string enchantText = aura.requiredTargetType == SorceryCard.TargetType.TappedCreature
-                ? "Enchant tapped creature"
-                : "Enchant creature";
+            string enchantText = aura.requiredTargetType switch
+            {
+                SorceryCard.TargetType.TappedCreature => "Enchant tapped creature",
+                SorceryCard.TargetType.Artifact => "Enchant artifact",
+                _ => "Enchant creature"
+            };
             if (aura.targetMustBeControlledCreature)
                 enchantText += " you control";
             lines.Add(enchantText);
