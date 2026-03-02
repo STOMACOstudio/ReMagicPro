@@ -987,6 +987,36 @@ public static class CardDatabase
                     }
                     });
             //BLACK
+                Add(new CardData { //Maggot Carrier
+                    cardName = "Maggot Carrier",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Zombie" },
+                    artwork = Resources.Load<Sprite>("Art/maggot_carrier"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "each player loses 1 life.",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                GameManager.Instance.humanPlayer.Life -= 1;
+                                GameManager.Instance.aiPlayer.Life -= 1;
+
+                                GameManager.Instance.ShowFloatingDamage(1, GameManager.Instance.playerLifeContainer);
+                                GameManager.Instance.ShowFloatingDamage(1, GameManager.Instance.enemyLifeContainer);
+                                GameManager.Instance.UpdateUI();
+                                GameManager.Instance.CheckForGameEnd();
+                            }
+                        }
+                    }
+                });
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
                     artist = "Sora AI",
