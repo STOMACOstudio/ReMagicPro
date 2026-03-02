@@ -809,13 +809,7 @@ public class TurnSystem : MonoBehaviour
                                     if (!potential.CanPay(cost))
                                         continue;
 
-                                    CreatureCard target;
-                                    if (auraCard.buffPower >= 0 && auraCard.buffToughness >= 0)
-                                        target = ai.Battlefield.OfType<CreatureCard>()
-                                            .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
-                                    else
-                                        target = GameManager.Instance.GetOpponentOf(ai).Battlefield.OfType<CreatureCard>()
-                                            .FirstOrDefault(c => auraCard.requiredTargetType != SorceryCard.TargetType.TappedCreature || c.isTapped);
+                                    Card target = ChooseBestAuraTarget(ai, auraCard);
 
                                     if (target == null)
                                         continue;
@@ -827,9 +821,9 @@ public class TurnSystem : MonoBehaviour
                                     ai.Hand.Remove(card);
                                     auraCard.attachedTo = target;
                                     auraCard.owner = ai;
-                                   ai.Battlefield.Add(auraCard);
-                                   auraCard.OnEnterPlay(ai);
-                                   GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
+                                    ai.Battlefield.Add(auraCard);
+                                    auraCard.OnEnterPlay(ai);
+                                    GameManager.Instance.NotifyEnchantmentEntered(auraCard, ai);
 
                                     // Aura or enchanted creature might die upon entry
                                     if (!ai.Battlefield.Contains(auraCard))
@@ -1773,6 +1767,93 @@ public class TurnSystem : MonoBehaviour
 
                 damageCoroutine = null;
             }
+
+        private Card ChooseBestAuraTarget(Player ai, AuraCard aura)
+        {
+            List<Card> possibleTargets = GetValidAuraTargets(ai, aura);
+            if (possibleTargets.Count == 0)
+                return null;
+
+            Card bestTarget = null;
+            int bestScore = int.MinValue;
+
+            foreach (Card candidate in possibleTargets)
+            {
+                Player controller = GameManager.Instance.GetControllerOfCard(candidate);
+                int score = EvaluateAuraTargetScore(aura, candidate, controller, ai);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestTarget = candidate;
+                }
+            }
+
+            return bestTarget;
+        }
+
+        private List<Card> GetValidAuraTargets(Player ai, AuraCard aura)
+        {
+            IEnumerable<Card> battlefieldCards = ai.Battlefield.Concat(GameManager.Instance.GetOpponentOf(ai).Battlefield);
+            List<Card> validTargets = new List<Card>();
+
+            foreach (Card candidate in battlefieldCards)
+            {
+                if (candidate == null)
+                    continue;
+
+                bool validType =
+                    (aura.requiredTargetType == SorceryCard.TargetType.Creature && candidate is CreatureCard) ||
+                    (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature && candidate is CreatureCard tc && tc.isTapped) ||
+                    (aura.requiredTargetType == SorceryCard.TargetType.Artifact && GameManager.Instance.IsArtifactPermanent(candidate));
+
+                if (!validType)
+                    continue;
+
+                Player controller = GameManager.Instance.GetControllerOfCard(candidate);
+                bool validController = !aura.targetMustBeControlledCreature || controller == ai;
+                if (!validController)
+                    continue;
+
+                validTargets.Add(candidate);
+            }
+
+            return validTargets;
+        }
+
+        private int EvaluateAuraTargetScore(AuraCard aura, Card target, Player targetController, Player ai)
+        {
+            bool onOwnPermanent = targetController == ai;
+            int score = 0;
+
+            if (aura.gainControlOfCreature)
+            {
+                score += onOwnPermanent ? -25 : 80;
+            }
+
+            int statDelta = aura.buffPower + aura.buffToughness;
+            score += onOwnPermanent ? statDelta * 3 : -statDelta * 3;
+
+            if (aura.keywordBuff != KeywordAbility.None)
+            {
+                bool harmfulKeyword = aura.keywordBuff == KeywordAbility.CantUntap;
+                if (harmfulKeyword)
+                    score += onOwnPermanent ? -25 : 25;
+                else
+                    score += onOwnPermanent ? 12 : -12;
+            }
+
+            if (target is CreatureCard creature)
+            {
+                int creatureValue = creature.power + creature.toughness;
+
+                bool likelyHarmfulToTarget = statDelta < 0 || aura.keywordBuff == KeywordAbility.CantUntap || aura.gainControlOfCreature;
+                score += likelyHarmfulToTarget
+                    ? (onOwnPermanent ? -creatureValue : creatureValue)
+                    : (onOwnPermanent ? creatureValue : -creatureValue);
+            }
+
+            return score;
+        }
 
         private Player.ManaPool GetPotentialManaPool(Player ai)
             {
