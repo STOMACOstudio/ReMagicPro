@@ -2754,9 +2754,17 @@ public class GameManager : MonoBehaviour
                     colorMatches = data != null && data.color.Contains(targetingSorcery.requiredTargetColor);
                 }
 
-                bool nonTokenMatches = !(sorcery.requireNonTokenTarget && target is CreatureCard creatureTarget && creatureTarget.isToken);
+                bool excludedColorMatches = true;
+                if (!string.IsNullOrEmpty(sorcery.excludedTargetColor))
+                {
+                    CardData data = CardDatabase.GetCardData(target.cardName);
+                    excludedColorMatches = data == null || !data.color.Contains(sorcery.excludedTargetColor);
+                }
 
-                if (correctType && isOnBattlefield && colorMatches && nonTokenMatches && !IsProtectedFromSpell(target))
+                bool nonTokenMatches = !(sorcery.requireNonTokenTarget && target is CreatureCard creatureTarget && creatureTarget.isToken);
+                bool nonArtifactMatches = !(sorcery.excludeArtifactCreatures && target is CreatureCard artifactCreature && artifactCreature.color.Contains("Artifact"));
+
+                if (correctType && isOnBattlefield && colorMatches && excludedColorMatches && nonTokenMatches && nonArtifactMatches && !IsProtectedFromSpell(target))
                 {
                     // Valid target exists, but no visual feedback is shown
                 }
@@ -3073,7 +3081,14 @@ public class GameManager : MonoBehaviour
                     colorMatches = data != null && data.color.Contains(targetingSorcery.requiredTargetColor);
                 }
 
-                if (!correctType || !colorMatches)
+                bool excludedColorMatches = true;
+                if (!string.IsNullOrEmpty(targetingSorcery.excludedTargetColor))
+                {
+                    CardData data = CardDatabase.GetCardData(chosen.cardName);
+                    excludedColorMatches = data == null || !data.color.Contains(targetingSorcery.excludedTargetColor);
+                }
+
+                if (!correctType || !colorMatches || !excludedColorMatches)
                 {
                     Debug.LogWarning($"Invalid target: {chosen.cardName} does not match type or color requirements.");
                     return;

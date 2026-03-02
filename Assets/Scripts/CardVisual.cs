@@ -1132,7 +1132,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         var protection = ProtectionUtils.GetProtectionKeyword(spell.PrimaryColor);
                         bool notArtifact = !(spell.excludeArtifactCreatures && targetCreature.color.Contains("Artifact"));
                         bool nonTokenMatch = !(spell.requireNonTokenTarget && targetCreature.isToken);
-                        if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact && nonTokenMatch)
+                        bool colorAllowed = true;
+                        if (!string.IsNullOrEmpty(spell.excludedTargetColor))
+                        {
+                            CardData data = CardDatabase.GetCardData(card.cardName);
+                            colorAllowed = data == null || !data.color.Contains(spell.excludedTargetColor);
+                        }
+                        if (!targetCreature.keywordAbilities.Contains(protection) && notArtifact && nonTokenMatch && colorAllowed)
                             valid = true;
                     }
                 }
@@ -2230,8 +2236,14 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     _ => "permanent"
                 };
 
+                if (sorcery.excludeArtifactCreatures)
+                    destroyType = $"non-artifact {destroyType}";
+
                 if (!string.IsNullOrEmpty(sorcery.requiredTargetColor))
                     destroyType = $"{sorcery.requiredTargetColor} {destroyType}";
+
+                if (!string.IsNullOrEmpty(sorcery.excludedTargetColor))
+                    destroyType = $"non-{sorcery.excludedTargetColor.ToLower()} {destroyType}";
 
                 rules += $"Destroy target {destroyType}.\n";
             }

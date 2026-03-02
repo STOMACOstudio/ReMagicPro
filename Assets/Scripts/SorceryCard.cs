@@ -37,6 +37,7 @@ public class SorceryCard : Card
     public bool destroyAllWithSameName = false;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
+    public string excludedTargetColor = null;
     public bool excludeArtifactCreatures = false;
     public bool requireNonTokenTarget = false;
     public Player chosenPlayerTarget = null;
@@ -484,6 +485,12 @@ public class SorceryCard : Card
                     {
                         CardData data = CardDatabase.GetCardData(target.cardName);
                         colorMatches = data != null && data.color.Contains(requiredTargetColor);
+                    }
+
+                    if (!string.IsNullOrEmpty(excludedTargetColor))
+                    {
+                        CardData data = CardDatabase.GetCardData(target.cardName);
+                        colorMatches = colorMatches && (data == null || !data.color.Contains(excludedTargetColor));
                     }
 
                     if (typeMatches && colorMatches)

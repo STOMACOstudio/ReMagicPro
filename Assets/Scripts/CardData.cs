@@ -16,6 +16,7 @@ public class CardData
     // Only used for creatures
     public string tokenToCreate;
     public string requiredTargetColor = null;
+    public string excludedTargetColor = null;
 
     public string rulesText;
     public string flavorText;
