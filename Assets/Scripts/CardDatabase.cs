@@ -989,7 +989,7 @@ public static class CardDatabase
             //BLACK
                 Add(new CardData { //Maggot Carrier
                     cardName = "Maggot Carrier",
-                    artist = "Sora AI",
+                    artist = "Ron Spencer",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Black" },
@@ -1020,7 +1020,7 @@ public static class CardDatabase
                 });
                 Add(new CardData { //Cyclopean Mummy
                     cardName = "Cyclopean Mummy",
-                    artist = "Sora AI",
+                    artist = "Edward Beard, Jr.",
                     rarity = "Common",
                     manaCost = 2,
                     color = new List<string> { "Black" },
@@ -1335,7 +1335,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Insect", },
                     flavorText = "Toren had stepped on a lot of bugs during his life, so he couldn't help feeling ambarassed when a bug stepped on him.",
                     keywordAbilities = new List<KeywordAbility> { },
-                    artwork = Resources.Load<Sprite>("Art/scavenging_scarab")
+                    artwork = Resources.Load<Sprite>("Art/giant_cockroach")
                     });
                 Add(new CardData //Nightmare
                     {
@@ -2610,7 +2610,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Phyrexian", "Golem" },
                     keywordAbilities = new List<KeywordAbility> { },
                     flavorText = "It doesen't think. It doesn't feel.\nIt doesen't laugh or cry.\nAll it does from dusk till dawn\nIs make the soldiers die.\n-Onean children's rhyme",
-                    artwork = Resources.Load<Sprite>("Art/phyrexian_golem")
+                    artwork = Resources.Load<Sprite>("Art/phyrexian_hulk")
                     });
                 Add(new CardData //Yotian soldier
                     {
