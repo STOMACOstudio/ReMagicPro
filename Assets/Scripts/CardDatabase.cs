@@ -3371,6 +3371,22 @@ public static class CardDatabase
                         destroyTargetIfTypeMatches = true,
                         artwork = Resources.Load<Sprite>("Art/lights_out"),
                     });
+                Add(new CardData //Terror
+                    {
+                        cardName = "Terror",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        cardType = CardType.Instant,
+                        manaCost = 2,
+                        color = new List<string> { "Black" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        destroyTargetIfTypeMatches = true,
+                        excludeArtifactCreatures = true,
+                        excludedTargetColor = "Black",
+                        rulesText = "Destroy target nonartifact, nonblack creature.",
+                        artwork = Resources.Load<Sprite>("Art/terror"),
+                    });
                 Add(new CardData { //Witches rite
                     cardName = "Witches Rite",
                     artist = "Sora AI",

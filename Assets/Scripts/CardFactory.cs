@@ -85,6 +85,7 @@ public static class CardFactory
                 sorcery.destroyAllWithSameName = data.destroyAllWithSameName;
                 sorcery.keywordToGrant = data.keywordToGrant;
                 sorcery.requiredTargetColor = data.requiredTargetColor;
+                sorcery.excludedTargetColor = data.excludedTargetColor;
                 sorcery.excludeArtifactCreatures = data.excludeArtifactCreatures;
                 sorcery.buffPower = data.powerBuff;
                 sorcery.buffToughness = data.toughnessBuff;

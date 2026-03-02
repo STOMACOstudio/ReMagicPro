@@ -580,6 +580,14 @@ public class TurnSystem : MonoBehaviour
                                                 .OfType<CreatureCard>()
                                                 .Where(c => !(sorcery.excludeArtifactCreatures && c.color.Contains("Artifact")))
                                                 .Where(c => !(sorcery.requireNonTokenTarget && c.isToken))
+                                                .Where(c =>
+                                                {
+                                                    if (string.IsNullOrEmpty(sorcery.excludedTargetColor))
+                                                        return true;
+
+                                                    var data = CardDatabase.GetCardData(c.cardName);
+                                                    return data == null || !data.color.Contains(sorcery.excludedTargetColor);
+                                                })
                                                 .OrderByDescending(c =>
                                                 {
                                                     var data = CardDatabase.GetCardData(c.cardName);
