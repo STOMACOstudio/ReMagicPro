@@ -1102,6 +1102,26 @@ public static class CardDatabase
                         },
                         artwork = Resources.Load<Sprite>("Art/giant_bat")
                         });
+                Add(new CardData //Frozen Shade
+                        {
+                        cardName = "Frozen Shade",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Creature,
+                        power = 0,
+                        toughness = 1,
+                        subtypes = new List<string> { "Shade" },
+                        manaToPayToActivate = 1,
+                        powerBuff = 1,
+                        toughnessBuff = 1,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.PayToBuffSelf
+                        },
+                        artwork = Resources.Load<Sprite>("Art/frozen_shade")
+                        });
                 Add(new CardData //Bog crocodile
                         {
                         cardName = "Bog Crocodile",
