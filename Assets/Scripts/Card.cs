@@ -238,7 +238,9 @@ public class Card
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Gains {creature.abilityToGain} until end of turn.");
                                     break;
                                 case ActivatedAbility.PayToBuffSelf:
-                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: +1/+0 until end of turn.");
+                                    int powerBuff = creature.buffPower == 0 && creature.buffToughness == 0 ? 1 : creature.buffPower;
+                                    int toughnessBuff = creature.buffPower == 0 && creature.buffToughness == 0 ? 0 : creature.buffToughness;
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: +{powerBuff}/+{toughnessBuff} until end of turn.");
                                     break;
                                 case ActivatedAbility.ReturnSelfFromGraveyard:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Return this card from your graveyard to the battlefield.");

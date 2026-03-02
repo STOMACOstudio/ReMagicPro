@@ -36,6 +36,8 @@ public static class CardFactory
                 creature.entersTapped = data.entersTapped;
                 creature.tapLifeLossAmount = data.tapLifeLossAmount;
                 creature.manaToPayToActivate = data.manaToPayToActivate;
+                creature.buffPower = data.powerBuff;
+                creature.buffToughness = data.toughnessBuff;
                 creature.tokenToCreate = data.tokenToCreate;
                 creature.abilityToGain = data.abilityToGain;
                 creature.keywordAbilities = data.keywordAbilities != null

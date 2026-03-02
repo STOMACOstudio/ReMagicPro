@@ -2335,12 +2335,15 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-            creature.AddTemporaryBuff(1, 0);
+            int powerBuff = creature.buffPower == 0 && creature.buffToughness == 0 ? 1 : creature.buffPower;
+            int toughnessBuff = creature.buffPower == 0 && creature.buffToughness == 0 ? 0 : creature.buffToughness;
+
+            creature.AddTemporaryBuff(powerBuff, toughnessBuff);
             var vis = FindCardVisual(creature);
             if (vis != null)
                 vis.UpdateVisual();
 
-            Debug.Log($"{creature.cardName} gets +1/+0 until end of turn.");
+            Debug.Log($"{creature.cardName} gets +{powerBuff}/+{toughnessBuff} until end of turn.");
             UpdateUI();
     }
 
