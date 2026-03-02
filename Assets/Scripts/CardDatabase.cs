@@ -3443,6 +3443,18 @@ public static class CardDatabase
                         rulesText = "Put X -1/-1 counters on target creature.",
                     artwork = Resources.Load<Sprite>("Art/filth_discharge"),
                 });
+                Add(new CardData //Raise Dead
+                    {
+                        cardName = "Raise Dead",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        rulesText = "Return a random creature card from your graveyard to your hand.",
+                        returnRandomCreatureFromGraveyard = true,
+                        artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
+                    });
                 Add(new CardData //Sinister Murmurs
                     {
                         cardName = "Sinister Murmurs",
