@@ -1017,6 +1017,20 @@ public static class CardDatabase
                         }
                     }
                 });
+                Add(new CardData { //Cyclopean Mummy
+                    cardName = "Cyclopean Mummy",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 1,
+                    subtypes = new List<string> { "Zombie" },
+                    exileSelfOnDeath = true,
+                    rulesText = "When this creature dies, exile it.",
+                    artwork = Resources.Load<Sprite>("Art/cyclopean_mummy")
+                });
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
                     artist = "Sora AI",

@@ -251,6 +251,12 @@ public class Player
                 if (card is LandCard)
                     GameManager.Instance.NotifyLandLeft(card, this);
                 Graveyard.Add(card);
+
+                if (card.exileSelfOnDeath)
+                {
+                    Graveyard.Remove(card);
+                    Debug.Log($"{card.cardName} is exiled instead of staying in the graveyard.");
+                }
             }
             
     public void DiscardRandomCard(int count = 1)
