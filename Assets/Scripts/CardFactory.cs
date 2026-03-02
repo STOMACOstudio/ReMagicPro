@@ -170,6 +170,7 @@ public static class CardFactory
         newCard.flavorText = data.flavorText;
         newCard.artist = data.artist;
         newCard.isToken = data.isToken;
+        newCard.exileSelfOnDeath = data.exileSelfOnDeath;
         newCard.keywordBuff = data.keywordBuff;
 
         Debug.Log($"{newCard.cardName} created with {newCard.abilities.Count} abilities.");

@@ -11,6 +11,7 @@ public class Card
     public bool isToken = false;
     public bool isTapped = false;
     public bool entersTapped = false;
+    public bool exileSelfOnDeath = false;
 
     // If true, this card has an additional variable mana cost "X".
     public bool hasXCost = false;
