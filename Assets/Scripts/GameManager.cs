@@ -687,6 +687,8 @@ public class GameManager : MonoBehaviour
             owner.Battlefield.Remove(card);
             owner.Hand.Remove(card);
 
+            bool removeFromGameOnDeath = card.exileSelfOnDeath && diedFromBattlefield;
+
             if (diedFromBattlefield && card is CreatureCard deadCreature)
             {
                 currentAttackers.Remove(deadCreature);
@@ -783,21 +785,34 @@ public class GameManager : MonoBehaviour
                 {
                     if (visual != null)
                     {
-                        StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
+                        StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual, removeFromGame: removeFromGameOnDeath));
                     }
                     return;
                 }
 
                 if (diedFromBattlefield && visual != null)
                 {
-                    StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual));
+                    StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual, removeFromGame: removeFromGameOnDeath));
                     return;
                 }
             }
 
             if (card is ArtifactCard && diedFromBattlefield && visual != null)
             {
-                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual, artifactDeathPrefab));
+                StartCoroutine(ShowDeathVFXAndDelayLayout(card, owner, visual, artifactDeathPrefab, removeFromGameOnDeath));
+                return;
+            }
+
+            if (removeFromGameOnDeath)
+            {
+                if (visual != null)
+                {
+                    activeCardVisuals.Remove(visual);
+                    Destroy(visual.gameObject);
+                }
+
+                Debug.Log($"{card.cardName} is removed from the game after dying.");
+                UpdateUI();
                 return;
             }
 
@@ -4058,7 +4073,7 @@ public class GameManager : MonoBehaviour
                 FinalizeLifeDeltas();
             }
 
-        private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual, GameObject overridePrefab = null)
+        private IEnumerator ShowDeathVFXAndDelayLayout(Card card, Player owner, CardVisual visual, GameObject overridePrefab = null, bool removeFromGame = false)
         {
             if (visual != null)
                 visual.EnableTargetingHighlight(false); // ensure highlight removed
@@ -4082,8 +4097,8 @@ public class GameManager : MonoBehaviour
                 // 4. Now destroy the placeholder — this causes the layout to update
                 Destroy(placeholder);
 
-                // 5. Create graveyard visual (if not a token)
-                if (!card.isToken)
+                // 5. Create graveyard visual (if not a token and not removed from game)
+                if (!card.isToken && !removeFromGame)
                 {
                     GameObject visualGO = Instantiate(cardPrefab,
                         owner == humanPlayer ? playerGraveyardArea : aiGraveyardArea);
@@ -4100,9 +4115,11 @@ public class GameManager : MonoBehaviour
                     activeCardVisuals.Add(graveyardVisual);
                 }
 
-                // 6. Move to graveyard data list (skip for tokens)
-                if (!card.isToken)
+                // 6. Move to graveyard data list (skip for tokens and cards removed from game)
+                if (!card.isToken && !removeFromGame)
                     owner.Graveyard.Add(card);
+                else if (removeFromGame)
+                    Debug.Log($"{card.cardName} is removed from the game after dying.");
                 UpdateUI();
                 pendingGraveyardAnimations--;
             }
