@@ -4006,6 +4006,7 @@ GameObject:
   - component: {fileID: 890980360}
   - component: {fileID: 890980362}
   - component: {fileID: 890980361}
+  - component: {fileID: 890980363}
   m_Layer: 5
   m_Name: BackgroundPanel
   m_TagString: Untagged
@@ -4070,6 +4071,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 890980359}
   m_CullTransparentMesh: 1
+--- !u!114 &890980363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890980359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8abc9370dc4c90869eba1708a50ca4, type: 3}
+  m_Name: ''
+  m_EditorClassIdentifier: ''
+  baseTint: {r: 0.94, g: 0.91, b: 0.84, a: 1}
+  pulseTint: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+  pulseSpeed: 0.25
+  pulseStrength: 0.35
+  noiseColor: {r: 0.15, g: 0.09, b: 0.04, a: 0.1}
+  noiseScrollX: 0.003
+  noiseScrollY: 0.002
+  vignetteColor: {r: 0.09, g: 0.05, b: 0.02, a: 0.28}
 --- !u!1 &891623245
 GameObject:
   m_ObjectHideFlags: 0
