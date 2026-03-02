@@ -449,7 +449,7 @@ public static class CardDatabase
                     }
                     });
                 Add(new CardData //Untamed Unicorn
-                    {
+                {
                     cardName = "Untamed Unicorn",
                     artist = "Sora AI",
                     rarity = "Rare",
@@ -521,7 +521,7 @@ public static class CardDatabase
                             }
                         }
                     }
-                    });
+                });
                 Add(new CardData // Human Soldier Token
                     {
                         cardName = "Human Soldier",
@@ -1248,6 +1248,115 @@ public static class CardDatabase
                         KeywordAbility.Flying
                     },
                     artwork = Resources.Load<Sprite>("Art/famished_crow")
+                    });
+                Add(new CardData //Bog imp
+                    {
+                    cardName = "Bog Imp",
+                    artist = "Carl Critchlow",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Imp", },
+                    flavorText = "Think of it as a butcher knife with wings.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/bog_imp")
+                    });
+                Add(new CardData //Scavenging scarab
+                    {
+                    cardName = "Scavenging Scarab",
+                    artist = "Jeff Easley",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Insect", },
+                    flavorText = "The beetles feed not on the flesh of corpses but on the metal, grinding out the iron and steel to add to their own bulky shells.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.CantBlock
+                    },
+                    artwork = Resources.Load<Sprite>("Art/scavenging_scarab")
+                    });
+                Add(new CardData //Nightmare
+                    {
+                    cardName = "Nightmare",
+                    artist = "Carl Critchlow",
+                    rarity = "Rare",
+                    manaCost = 6,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 0,
+                    subtypes = new List<string> { "Nightmare", "Horse" },
+                    rulesText = "This creature has power and toughness each equal to the number of swamps you control.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/nightmare"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            usesStack = false,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int swamp = owner.Battlefield.Count(c => c.cardName == "Swamp");
+                                    creature.basePower = swamp;
+                                    creature.baseToughness = swamp;
+                                    creature.RecalculateStats();
+                                    GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandEnter,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int swamp = owner.Battlefield.Count(c => c.cardName == "Swamp");
+                                    creature.basePower = swamp;
+                                    creature.baseToughness = swamp;
+                                    creature.RecalculateStats();
+                                    GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
+                                }
+                            }
+                        },
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnLandLeave,
+                            description = "",
+                            effect = (Player owner, Card selfCard) =>
+                            {
+                                if (selfCard is CreatureCard creature)
+                                {
+                                    int swamp = owner.Battlefield.Count(c => c.cardName == "Swamp");
+                                    creature.basePower = swamp;
+                                    creature.baseToughness = swamp;
+                                    creature.RecalculateStats();
+                                    GameManager.Instance.UpdateUI();
+                                    GameManager.Instance.CheckDeaths(owner);
+                                }
+                            }
+                        }
+                    }
                     });
                 Add(new CardData //Giant crow
                     {
@@ -2434,6 +2543,20 @@ public static class CardDatabase
                     entersTapped = true,
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/origin_golem")
+                    });
+                Add(new CardData //Phyrexian hulk
+                    {
+                    cardName = "Phyrexian Hulk",
+                    artist = "Brian Snoddy",
+                    rarity = "Uncommon",
+                    manaCost = 6,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 4,
+                    subtypes = new List<string> { "Phyrexian", "Golem" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    artwork = Resources.Load<Sprite>("Art/phyrexian_golem")
                     });
                 Add(new CardData //Yotian soldier
                     {
