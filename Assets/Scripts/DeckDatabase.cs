@@ -82,8 +82,7 @@ public static class DeckDatabase
                     new DeckEntry("Swamp", 16), new DeckEntry("Maggot Carrier", 3), new DeckEntry("Bog Imp", 3),
                     new DeckEntry("Cyclopean Mummy", 3), new DeckEntry("Frozen Shade", 3), new DeckEntry("Giant Cockroach", 2),
                     new DeckEntry("Scavenging Scarab", 2), new DeckEntry("Nightmare", 1), new DeckEntry("Phyrexian Hulk", 1),
-                    new DeckEntry("Filth Discharge", 2), new DeckEntry("Sickness", 1), new DeckEntry("Lights Out", 1),
-                    new DeckEntry("Mirrorbreak", 1), new DeckEntry("Potion of Health", 1)
+                    new DeckEntry("Terror", 2), new DeckEntry("Feast of the Unicorn", 1), new DeckEntry("Raise Dead", 3),
                 };
             case "red":
                 return new[]

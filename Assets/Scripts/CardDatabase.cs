@@ -3374,7 +3374,7 @@ public static class CardDatabase
                 Add(new CardData //Terror
                     {
                         cardName = "Terror",
-                        artist = "Sora AI",
+                        artist = "Ron Spencer",
                         rarity = "Common",
                         cardType = CardType.Instant,
                         manaCost = 2,
@@ -3462,14 +3462,14 @@ public static class CardDatabase
                 Add(new CardData //Raise Dead
                     {
                         cardName = "Raise Dead",
-                        artist = "Sora AI",
+                        artist = "Jeff A. Menges",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 1,
                         color = new List<string> { "Black" },
                         rulesText = "Return a random creature card from your graveyard to your hand.",
                         returnRandomCreatureFromGraveyard = true,
-                        artwork = Resources.Load<Sprite>("Art/sinister_murmurs")
+                        artwork = Resources.Load<Sprite>("Art/raise_dead")
                     });
                 Add(new CardData //Sinister Murmurs
                     {
@@ -4702,6 +4702,22 @@ public static class CardDatabase
                         toughnessBuff = -2,
                         artwork = Resources.Load<Sprite>("Art/sickness"),
                         rulesText = "Enchanted creature gets -2/-2",
+                    });
+                
+                Add(new CardData // Faith protection
+                    {
+                        cardName = "Feast of the Unicorn",
+                        artist = "Dennis Detwiller",
+                        rarity = "Common",
+                        manaCost = 4,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 4,
+                        toughnessBuff = 0,
+                        artwork = Resources.Load<Sprite>("Art/feast_of_the_unicorn"),
+                        rulesText = "Enchanted creature gets +4/+0.",
+                        flavorText = "Could there be a fouler act? No doubt the baron knows of one.\n-Autumn Willow",
                     });
 
                 Add(new CardData // Bog Pest
