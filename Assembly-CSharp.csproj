@@ -68,6 +68,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Scripts\ProtectionUtils.cs" />
     <Compile Include="Assets\Scripts\DeckEditorCollectionButton.cs" />
+    <Compile Include="Assets\Scripts\GameSceneBackgroundDetail.cs" />
     <Compile Include="Assets\Scripts\ArtifactCard.cs" />
     <Compile Include="Assets\Scripts\LibraryPicManager.cs" />
     <Compile Include="Assets\Scripts\PlatformTrigger.cs" />
