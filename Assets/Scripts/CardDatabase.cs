@@ -998,6 +998,7 @@ public static class CardDatabase
                     toughness = 1,
                     subtypes = new List<string> { "Zombie" },
                     artwork = Resources.Load<Sprite>("Art/maggot_carrier"),
+                    flavorText = "The mere sight of our undead allies sickens me. What unholy bargain have you struck?\n-Grizzlegom, to Agnate",
                     abilities = new List<CardAbility>
                     {
                         new CardAbility
@@ -1029,6 +1030,7 @@ public static class CardDatabase
                     subtypes = new List<string> { "Zombie" },
                     exileSelfOnDeath = true,
                     rulesText = "When this creature dies, exile it.",
+                    flavorText = "The ritual of plucking out an eye to gain future sight is but a curse that enables the living to see their own deaths.",
                     artwork = Resources.Load<Sprite>("Art/cyclopean_mummy")
                 });
                 Add(new CardData { //Hired assassin
@@ -1105,7 +1107,7 @@ public static class CardDatabase
                 Add(new CardData //Frozen Shade
                         {
                         cardName = "Frozen Shade",
-                        artist = "Sora AI",
+                        artist = "Douglas Shuler",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string> { "Black" },
@@ -1116,6 +1118,7 @@ public static class CardDatabase
                         manaToPayToActivate = 1,
                         powerBuff = 1,
                         toughnessBuff = 1,
+                        flavorText = "There are some qualities, some incorporate things,\nThat have a doble life, which thus is made\nA type of twin entity which springs\nFrom matter and light, evinced in solid and shade.\n-Edgar Allan Poe, 'Silence'",
                         activatedAbilities = new List<ActivatedAbility>
                         {
                             ActivatedAbility.PayToBuffSelf
@@ -1319,6 +1322,21 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/scavenging_scarab")
                     });
+                Add(new CardData //Giant cockroach
+                    {
+                    cardName = "Giant Cockroach",
+                    artist = "Heather Hudson",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 2,
+                    subtypes = new List<string> { "Insect", },
+                    flavorText = "Toren had stepped on a lot of bugs during his life, so he couldn't help feeling ambarassed when a bug stepped on him.",
+                    keywordAbilities = new List<KeywordAbility> { },
+                    artwork = Resources.Load<Sprite>("Art/scavenging_scarab")
+                    });
                 Add(new CardData //Nightmare
                     {
                     cardName = "Nightmare",
@@ -1331,6 +1349,7 @@ public static class CardDatabase
                     toughness = 0,
                     subtypes = new List<string> { "Nightmare", "Horse" },
                     rulesText = "This creature has power and toughness each equal to the number of swamps you control.",
+                    flavorText = "The thunder of its hooves beats dreams into despair.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.Flying
@@ -2590,6 +2609,7 @@ public static class CardDatabase
                     toughness = 4,
                     subtypes = new List<string> { "Phyrexian", "Golem" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "It doesen't think. It doesn't feel.\nIt doesen't laugh or cry.\nAll it does from dusk till dawn\nIs make the soldiers die.\n-Onean children's rhyme",
                     artwork = Resources.Load<Sprite>("Art/phyrexian_golem")
                     });
                 Add(new CardData //Yotian soldier

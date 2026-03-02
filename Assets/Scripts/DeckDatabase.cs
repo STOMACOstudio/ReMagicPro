@@ -79,9 +79,9 @@ public static class DeckDatabase
             case "black":
                 return new[]
                 {
-                    new DeckEntry("Swamp", 17), new DeckEntry("Limping Corpse", 3), new DeckEntry("Famished Crow", 3),
-                    new DeckEntry("Rotting Dragon", 1), new DeckEntry("Undea Army", 1), new DeckEntry("Giant Rat", 3),
-                    new DeckEntry("Bog Mosquito", 2), new DeckEntry("Forget", 1), new DeckEntry("Possessed Innocent", 1),
+                    new DeckEntry("Swamp", 16), new DeckEntry("Maggot Carrier", 3), new DeckEntry("Bog Imp", 3),
+                    new DeckEntry("Cyclopean Mummy", 3), new DeckEntry("Frozen Shade", 3), new DeckEntry("Giant Cockroach", 2),
+                    new DeckEntry("Scavenging Scarab", 2), new DeckEntry("Nightmare", 1), new DeckEntry("Phyrexian Hulk", 1),
                     new DeckEntry("Filth Discharge", 2), new DeckEntry("Sickness", 1), new DeckEntry("Lights Out", 1),
                     new DeckEntry("Mirror Break", 1), new DeckEntry("Potion of Health", 1)
                 };
