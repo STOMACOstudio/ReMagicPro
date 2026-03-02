@@ -1148,7 +1148,10 @@ public class TurnSystem : MonoBehaviour
 
                         Player ai = GameManager.Instance.aiPlayer;
                         Player human = GameManager.Instance.humanPlayer;
-                        var attackers = GameManager.Instance.currentAttackers.OrderByDescending(a => a.power).ToList();
+                        var attackers = GameManager.Instance.currentAttackers
+                            .OrderByDescending(GetAttackerThreatScore)
+                            .ThenByDescending(a => a.power)
+                            .ToList();
                         var availableBlockers = new List<CreatureCard>();
                         int remainingDamage = attackers.Sum(a => a.power);
                         int projectedLife = ai.Life;
@@ -1416,116 +1419,59 @@ public class TurnSystem : MonoBehaviour
                 return true;
             }
 
-        private CreatureCard ChooseBestBlocker(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
-            {
-                var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer)).ToList();
-                if (possible.Count == 0) return null;
-
-                // Prefer blocker that kills attacker and survives
-                var killSurvive = possible
-                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
-                                b.power >= attacker.toughness &&
-                                (b.toughness > attacker.power || b.keywordAbilities.Contains(KeywordAbility.Indestructible)))
-                    .OrderBy(b => b.power)
-                    .FirstOrDefault();
-                if (killSurvive != null) return killSurvive;
-
-                // Safe block that survives damage
-                var safe = possible
-                    .Where(b => b.keywordAbilities.Contains(KeywordAbility.Indestructible) || b.toughness > attacker.power)
-                    .OrderBy(b => b.toughness)
-                    .FirstOrDefault();
-                if (safe != null) return safe;
-
-                // Trade if it can kill attacker
-                var trade = possible
-                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) && b.power >= attacker.toughness)
-                    .OrderBy(b => b.power + b.baseToughness)
-                    .FirstOrDefault();
-                if (trade != null)
-                {
-                    int blockerValue = trade.power + trade.baseToughness;
-                    int attackerValue = attacker.power + attacker.baseToughness;
-                    if (attackerValue >= blockerValue || remainingDamage >= remainingLife)
-                        return trade;
-                }
-
-                // Block anything to avoid lethal damage
-                if (remainingDamage >= remainingLife)
-                    return possible.OrderByDescending(b => b.toughness).First();
-
-                return null;
-            }
-
         private List<CreatureCard> ChooseBestBlockers(CreatureCard attacker, List<CreatureCard> candidates, int remainingLife, int remainingDamage)
             {
                 var possible = candidates.Where(b => BlockerCanBlockAttacker(b, attacker, GameManager.Instance.aiPlayer)).ToList();
                 if (possible.Count == 0)
                     return null;
 
-                // Prefer a single blocker that kills and survives
-                var singleKill = possible
-                    .Where(b => !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
-                                b.power >= attacker.toughness &&
-                                (b.toughness > attacker.power || b.keywordAbilities.Contains(KeywordAbility.Indestructible)))
-                    .OrderBy(b => b.power + b.baseToughness)
-                    .FirstOrDefault();
-                if (singleKill != null)
-                    return new List<CreatureCard> { singleKill };
+                var allCombos = new List<List<CreatureCard>>();
+                allCombos.AddRange(possible.Select(b => new List<CreatureCard> { b }));
+                allCombos.AddRange(GenerateBlockerCombinations(possible, 3));
 
-                // Look for multi-blocking groups that kill attacker without losing blockers
-                var combos = GenerateBlockerCombinations(possible, 3);
-                List<CreatureCard> bestNoLoss = null;
-                int bestNoLossValue = int.MaxValue;
-                foreach (var combo in combos)
+                List<CreatureCard> bestCombo = null;
+                int bestScore = int.MinValue;
+                int attackerValue = GetCreatureValue(attacker);
+
+                foreach (var combo in allCombos)
                 {
                     var (kills, casualties, valueLost) = EvaluateBlockerCombo(attacker, combo);
-                    if (kills && casualties == 0)
+                    int preventedDamage = EstimateDamagePrevented(attacker, combo);
+                    bool preventsLethal = remainingDamage >= remainingLife && preventedDamage > 0;
+                    bool cleanKill = kills && casualties == 0;
+                    int boardValueCommitted = combo.Sum(GetCreatureValue);
+
+                    int score = 0;
+                    score += preventedDamage * 10;
+                    if (preventsLethal)
+                        score += 200;
+                    if (kills)
+                        score += 45;
+                    if (cleanKill)
+                        score += 40;
+                    if (kills && valueLost <= attackerValue)
+                        score += 25;
+                    if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink) && preventedDamage > 0)
+                        score += 20;
+
+                    score -= valueLost * 6;
+                    score -= boardValueCommitted;
+                    score -= casualties * 5;
+
+                    if (score > bestScore)
                     {
-                        int val = combo.Sum(b => b.power + b.baseToughness);
-                        if (val < bestNoLossValue)
-                        {
-                            bestNoLossValue = val;
-                            bestNoLoss = combo;
-                        }
+                        bestScore = score;
+                        bestCombo = combo;
                     }
                 }
-                if (bestNoLoss != null)
-                    return bestNoLoss;
 
-                // Fall back to single blocker heuristics (may be safe block or trade)
-                var single = ChooseBestBlocker(attacker, possible, remainingLife, remainingDamage);
-                if (single != null && single.power >= attacker.toughness &&
-                    !attacker.keywordAbilities.Contains(KeywordAbility.Indestructible))
-                    return new List<CreatureCard> { single };
-                if (single != null && (single.toughness > attacker.power ||
-                                       single.keywordAbilities.Contains(KeywordAbility.Indestructible)))
-                    return new List<CreatureCard> { single };
-
-                // Try to kill with multiple blockers even if some may die
-                List<CreatureCard> bestTrade = null;
-                int bestTradeValue = int.MaxValue;
-                int attackerValue = attacker.power + attacker.baseToughness;
-                foreach (var combo in combos)
+                if (bestCombo != null)
                 {
-                    var (kills, casualties, valueLost) = EvaluateBlockerCombo(attacker, combo);
-                    if (!kills)
-                        continue;
-
-                    if (valueLost <= attackerValue || remainingDamage >= remainingLife)
-                    {
-                        if (valueLost < bestTradeValue)
-                        {
-                            bestTradeValue = valueLost;
-                            bestTrade = combo;
-                        }
-                    }
+                    bool meaningful = bestScore > 0 || remainingDamage >= remainingLife;
+                    if (meaningful)
+                        return bestCombo;
                 }
-                if (bestTrade != null)
-                    return bestTrade;
 
-                // Non-lethal chump block: preserve life against high-impact attackers
-                // when we can sacrifice a clearly less valuable creature.
                 if (remainingDamage < remainingLife &&
                     ShouldChumpBlockBigAttacker(attacker, possible, remainingLife, remainingDamage))
                 {
@@ -1538,11 +1484,31 @@ public class TurnSystem : MonoBehaviour
                         return new List<CreatureCard> { sacrificialBlocker };
                 }
 
-                // Chump block to avoid lethal damage
                 if (remainingDamage >= remainingLife)
-                    return new List<CreatureCard> { possible.OrderByDescending(b => b.toughness).First() };
+                {
+                    return new List<CreatureCard>
+                    {
+                        possible.OrderBy(GetCreatureValue).ThenByDescending(b => b.toughness).First()
+                    };
+                }
 
                 return null;
+            }
+
+        private int EstimateDamagePrevented(CreatureCard attacker, List<CreatureCard> blockers)
+            {
+                if (blockers == null || blockers.Count == 0)
+                    return 0;
+
+                int prevented = attacker.power;
+                if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
+                {
+                    int totalBlockerToughness = blockers.Sum(b => Mathf.Max(1, b.toughness));
+                    int trampleThrough = Mathf.Max(0, attacker.power - totalBlockerToughness);
+                    prevented = attacker.power - trampleThrough;
+                }
+
+                return Mathf.Max(0, prevented);
             }
 
         private (bool killsAttacker, int casualties, int valueLost) EvaluateBlockerCombo(CreatureCard attacker, List<CreatureCard> blockers)
@@ -1571,7 +1537,7 @@ public class TurnSystem : MonoBehaviour
                         damage = Mathf.Min(remainingDamage, b.toughness);
 
                     if (attackerHasDeathtouch && remainingDamage > 0)
-                        damage = b.toughness;
+                        damage = 1;
 
                     bool blockerDies = damage >= b.toughness && !b.keywordAbilities.Contains(KeywordAbility.Indestructible);
                     if (blockerDies)
@@ -1660,14 +1626,51 @@ public class TurnSystem : MonoBehaviour
             return attackerDies && blockerSurvives;
         }
 
+        private int GetAttackerThreatScore(CreatureCard attacker)
+        {
+            int score = attacker.power * 3 + attacker.baseToughness;
+
+            if (attacker.keywordAbilities.Contains(KeywordAbility.Trample))
+                score += 4;
+            if (attacker.keywordAbilities.Contains(KeywordAbility.Flying))
+                score += 3;
+            if (attacker.keywordAbilities.Contains(KeywordAbility.Deathtouch))
+                score += 3;
+            if (attacker.keywordAbilities.Contains(KeywordAbility.Lifelink))
+                score += 2;
+
+            return score;
+        }
+
+        private int EstimateCrackbackDamage(Player attacker)
+        {
+            return attacker.Battlefield
+                .OfType<CreatureCard>()
+                .Where(c => !c.hasSummoningSickness &&
+                            !c.keywordAbilities.Contains(KeywordAbility.Defender) &&
+                            !c.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage) &&
+                            c.power > 0)
+                .Sum(c => c.power);
+        }
+
         private bool ShouldAIAttackCreature(CreatureCard creature, Player ai, Player human, bool goForLethal, bool lowLifeNeedsDefense)
         {
             // Avoid attacking with creatures that cannot deal damage
-            if (creature.power <= 0)
+            if (creature.power <= 0 || creature.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
                 return false;
 
             if (goForLethal)
                 return true;
+
+            bool hasVigilance = creature.keywordAbilities.Contains(KeywordAbility.Vigilance);
+
+            if (!hasVigilance)
+            {
+                int crackback = EstimateCrackbackDamage(human);
+                int safeLifeAfterAttack = ai.Life - crackback;
+                if (safeLifeAfterAttack <= 0)
+                    return false;
+            }
 
             var possibleBlockers = human.Battlefield
                 .OfType<CreatureCard>()
@@ -1691,7 +1694,7 @@ public class TurnSystem : MonoBehaviour
                 return !blockerKillsAndSurvivesCantBlock;
             }
 
-            if (lowLifeNeedsDefense && !creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
+            if (lowLifeNeedsDefense && !hasVigilance)
                 return false;
 
             bool isLikelyUnblockable = CanReliablyDealFaceDamage(creature, human);
@@ -1709,6 +1712,10 @@ public class TurnSystem : MonoBehaviour
             if (blockerKillsAndSurvives && !goForLethal)
                 return false;
 
+            bool bestHasDeathtouch = best.keywordAbilities.Contains(KeywordAbility.Deathtouch);
+            if (bestHasDeathtouch && !creature.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                return false;
+
             if (IsVeryBadAttackIntoBlocker(creature, best) && ai.Life <= human.Life)
                 return false;
 
@@ -1718,8 +1725,10 @@ public class TurnSystem : MonoBehaviour
                            !best.keywordAbilities.Contains(KeywordAbility.Indestructible);
             bool aggressive = ai.Life >= human.Life;
             bool chipPressure = ai.Life > 8 && human.Life <= 10;
+            bool tramplePush = creature.keywordAbilities.Contains(KeywordAbility.Trample) && creature.power >= 3;
+            bool lifelinkRace = creature.keywordAbilities.Contains(KeywordAbility.Lifelink) && ai.Life <= 12;
 
-            return tradeUp || goForLethal || isLikelyUnblockable || chipPressure || (aggressive && creatureValue >= blockerValue);
+            return tradeUp || goForLethal || isLikelyUnblockable || chipPressure || tramplePush || lifelinkRace || (aggressive && creatureValue >= blockerValue);
         }
         
         public void ContinueAIAfterStack()
