@@ -1150,7 +1150,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         valid = true;
                 }
 
-                if (spell.requiredTargetType == SorceryCard.TargetType.Artifact && card is ArtifactCard)
+                if (spell.requiredTargetType == SorceryCard.TargetType.Artifact && spell.IsValidArtifactTarget(card))
                 {
                     if (GameManager.Instance.GetOwnerOfCard(card).Battlefield.Contains(card))
                         valid = true;
@@ -2309,7 +2309,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 {
                     SorceryCard.TargetType.Creature => "creature",
                     SorceryCard.TargetType.Land => "land",
-                    SorceryCard.TargetType.Artifact => "non-creature artifact",
+                    SorceryCard.TargetType.Artifact => sorcery.canTargetArtifactCreatures ? "artifact" : "non-creature artifact",
                     SorceryCard.TargetType.Enchantment => "enchantment",
                     _ => "permanent"
                 };

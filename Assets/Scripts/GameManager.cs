@@ -2774,7 +2774,7 @@ public class GameManager : MonoBehaviour
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Creature && target is CreatureCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.TappedCreature && target is CreatureCard tc && tc.isTapped) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Land && target is LandCard) ||
-                    (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && target is ArtifactCard) ||
+                    (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact && sorcery.IsValidArtifactTarget(target)) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && target is EnchantmentCard) ||
                     (sorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && target is CreatureCard);
 
@@ -3136,7 +3136,7 @@ public class GameManager : MonoBehaviour
                         !(targetingSorcery.excludeArtifactCreatures && creatureT.color.Contains("Artifact")) &&
                         !(targetingSorcery.requireNonTokenTarget && creatureT.isToken)) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Land && chosen is LandCard) ||
-                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Artifact && chosen is ArtifactCard) ||
+                    (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Artifact && targetingSorcery.IsValidArtifactTarget(chosen)) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.Enchantment && chosen is EnchantmentCard) ||
                     (targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer && chosen is CreatureCard creatureOrPlayer &&
                         !(targetingSorcery.requireNonTokenTarget && creatureOrPlayer.isToken));

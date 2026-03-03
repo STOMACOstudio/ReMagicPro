@@ -38,6 +38,7 @@ public class SorceryCard : Card
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public string requiredTargetColor = null;
     public string excludedTargetColor = null;
+    public bool canTargetArtifactCreatures = false;
     public bool excludeArtifactCreatures = false;
     public bool requireNonTokenTarget = false;
     public Player chosenPlayerTarget = null;
@@ -70,6 +71,12 @@ public class SorceryCard : Card
             Enchantment,
             // Add more as needed later (Artifacts, Enchantments, etc.)
         }
+
+    public bool IsValidArtifactTarget(Card target)
+    {
+        return target is ArtifactCard ||
+               (canTargetArtifactCreatures && target is CreatureCard creature && creature.color.Contains("Artifact"));
+    }
 
     public virtual void ResolveEffect(Player caster)
         {
@@ -476,7 +483,7 @@ public class SorceryCard : Card
                         (requiredTargetType == TargetType.Creature && target is CreatureCard targetCreature &&
                             !(excludeArtifactCreatures && targetCreature.color.Contains("Artifact"))) ||
                         (requiredTargetType == TargetType.Land && target is LandCard) ||
-                        (requiredTargetType == TargetType.Artifact && target is ArtifactCard) ||
+                        (requiredTargetType == TargetType.Artifact && IsValidArtifactTarget(target)) ||
                         (requiredTargetType == TargetType.Enchantment && target is EnchantmentCard);
 
                     bool colorMatches = true;

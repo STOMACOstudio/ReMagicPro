@@ -80,6 +80,7 @@ public class CardData
     public int maxManaCostForReturn = 0;
     public bool requiresTarget = false;
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.None;
+    public bool canTargetArtifactCreatures = false;
     public bool requireNonTokenTarget = false;
     public bool excludeArtifactCreatures = false;
     public int damageToTarget = 0;
