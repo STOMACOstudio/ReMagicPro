@@ -203,6 +203,8 @@ public class Card
                     lines.Add("This creature doesn't untap during its controller's untap step.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
                     lines.Add("This creature can't deal combat damage.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.MustAttackEachTurnIfAble))
+                    lines.Add("This creature attacks each turn if able.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromWhite))
                     lines.Add("Protection from White");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlue))

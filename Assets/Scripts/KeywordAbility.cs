@@ -33,6 +33,7 @@ public enum KeywordAbility
     CantUntap,
     CantDealCombatDamage,
     HasteCreaturesOnlyBlockedByHaste,
+    MustAttackEachTurnIfAble,
 }
 
 public enum ActivatedAbility

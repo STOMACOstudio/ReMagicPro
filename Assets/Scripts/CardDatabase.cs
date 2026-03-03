@@ -1871,6 +1871,23 @@ public static class CardDatabase
                     },
                     artwork = Resources.Load<Sprite>("Art/rabid_dog")
                     });
+                Add(new CardData //Crazed Goblin
+                    {
+                    cardName = "Crazed Goblin",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Goblin", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.MustAttackEachTurnIfAble
+                    },
+                    artwork = Resources.Load<Sprite>("Art/goblin_puncher")
+                    });
                 Add(new CardData //Fireborn dragon
                     {
                     cardName = "Fireborn Dragon",
