@@ -3935,14 +3935,15 @@ public static class CardDatabase
                     });
                 Add(new CardData { //Rampant Growth
                     cardName = "Rampant Growth",
-                    artist = "Sora AI",
+                    artist = "Scott M. Fischer",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 2,
                     color = new List<string> { "Green" },
                     searchRandomBasicLandToBattlefieldTapped = true,
                     rulesText = "Search your library for a random basic land card and put it onto the battlefield tapped. Then shuffle.",
-                    artwork = Resources.Load<Sprite>("Art/touch_grass"),
+                    flavorText = "Nature grows solutions to her problems.",
+                    artwork = Resources.Load<Sprite>("Art/rampant_growth"),
                     });
                 Add(new CardData { //Rolling Energy
                     cardName = "Rolling Energy",
@@ -4095,7 +4096,7 @@ public static class CardDatabase
             Add(new CardData // Fountain of Youth
                 {
                     cardName = "Fountain of Youth",
-                    artist = "Sora AI",
+                    artist = "Daniel Gelon",
                     rarity = "Uncommon",
                     manaCost = 0,
                     color = new List<string>(),
@@ -4106,7 +4107,8 @@ public static class CardDatabase
                         ActivatedAbility.TapToGainLife
                     },
                     rulesText = "2, TAP: Gain 1 life.",
-                    artwork = Resources.Load<Sprite>("Art/bonfire")
+                    flavorText = "The Fountain had stood in the town square fr centuries, but only the pigeons knew its secret.",
+                    artwork = Resources.Load<Sprite>("Art/fountain_of_youth")
                 });
             Add(new CardData // Pressure Sphere
                 {
@@ -4352,11 +4354,11 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/icy_manipulator")
                     });
 
-                Add(new CardData // Jayamdae Tome
+                Add(new CardData // Jayemdae Tome
                     {
-                        cardName = "Jayamdae Tome",
+                        cardName = "Jayemdae Tome",
                         artist = "Mark Tedin",
-                        rarity = "Rare",
+                        rarity = "Uncommon",
                         manaCost = 4,
                         color = new List<string>(),
                         cardType = CardType.Artifact,
@@ -4368,7 +4370,7 @@ public static class CardDatabase
                         },
                         rulesText = "4, TAP: Draw a card.",
                         flavorText = "Knowledge is power.\n-Sir Francis Bacon,\nMeditationes Sacrae",
-                        artwork = Resources.Load<Sprite>("Art/jayamdae_tome")
+                        artwork = Resources.Load<Sprite>("Art/jayemdae_tome")
                     });
 
                 Add(new CardData // Morning Star
@@ -4985,7 +4987,7 @@ public static class CardDatabase
                         keywordBuff = KeywordAbility.Defender,
                         artwork = Resources.Load<Sprite>("Art/pacifism"),
                         rulesText = "Enchanted creature cannot attack or block.",
-                        flavorText = "Even those born to battle could only lay their blades at Akroma's feet",
+                        flavorText = "Even those born to battle could only lay their blades at Akroma's juicy feet",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
