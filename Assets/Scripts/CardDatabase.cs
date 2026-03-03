@@ -1958,6 +1958,24 @@ public static class CardDatabase
                     flavorText = "I swear, the street was empty yesterday.",
                     artwork = Resources.Load<Sprite>("Art/great_boulder")
                     });
+                Add(new CardData //Wall of earth
+                    {
+                    cardName = "Wall of Earth",
+                    artist = "Richard Thomas",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 6,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                    },
+                    flavorText = "The ground shuddered violently and the earth seemed to come to life. The elemental force contained in the vast wall of earth was trapped, bent to its controller's will.",
+                    artwork = Resources.Load<Sprite>("Art/wall_of_earth")
+                    });
                 Add(new CardData //Flying pig
                     {
                     cardName = "Flying Pig",
@@ -1974,6 +1992,24 @@ public static class CardDatabase
                         KeywordAbility.Flying
                     },
                     artwork = Resources.Load<Sprite>("Art/flying_pig")
+                    });
+                Add(new CardData //Goblin sky raider
+                    {
+                    cardName = "Goblin Sky Rider",
+                    artist = "Daren Bader",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 2,
+                    subtypes = new List<string> { "Goblin", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "The goblin word for 'flying' is more accurately translated as 'falling slowly'.",
+                    artwork = Resources.Load<Sprite>("Art/goblin_sky_rider")
                     });
                 Add(new CardData //Goblin puncher
                     {
@@ -1992,6 +2028,39 @@ public static class CardDatabase
                     },
                     flavorText = "Goblins are raised as bullies from youth, trained to charge into battle without a single thought in their heads.",
                     artwork = Resources.Load<Sprite>("Art/goblin_puncher")
+                    });
+                Add(new CardData //Hill giant
+                    {
+                    cardName = "Hill Giant",
+                    artist = "Orizio Daniele",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Giant" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Fortunately, hill giants have large blind spots in which a human can easily hide. Unfortunately, these blind spots are beneath the bottoms of their feet.",
+                    artwork = Resources.Load<Sprite>("Art/hill_giant")
+                    });
+                Add(new CardData //Goblin raider
+                    {
+                    cardName = "Goblin Raider",
+                    artist = "Arnie Swekel",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Goblin", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.CantBlock
+                    },
+                    flavorText = "He's smart for a goblin. Ge can do two things: hit and run.",
+                    artwork = Resources.Load<Sprite>("Art/goblin_raider")
                     });
                 Add(new CardData //Scarred Wildboar
                     {
@@ -2155,6 +2224,31 @@ public static class CardDatabase
                         ActivatedAbility.PayToBuffSelf
                     },
                     artwork = Resources.Load<Sprite>("Art/spitfire_cobrox")
+                    });
+                Add(new CardData //Shivan dragon
+                    {
+                    cardName = "Shivan Dragon",
+                    artist = "Melissa Benson",
+                    rarity = "Rare",
+                    manaCost = 6,
+                    color = new List<string> { "Red", "Red" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 5,
+                    subtypes = new List<string> { "Dragon" },
+                    manaToPayToActivate = 1,
+                    powerBuff = 1,
+                    toughnessBuff = 1,
+                    flavorText = "While it's true most dragons are cruel, the Shivan dragon seems to take particular glee in the misery of others, often tormenting its victims much like a cat plays wih a mouse before delivering the final blow.",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.PayToBuffSelf
+                    },
+                    artwork = Resources.Load<Sprite>("Art/shivan_dragon")
                     });
                 Add(new CardData // Dragon Token
                     {
