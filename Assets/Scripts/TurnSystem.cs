@@ -639,7 +639,7 @@ public class TurnSystem : MonoBehaviour
                                             Player opponent = GameManager.Instance.GetOpponentOf(ai);
 
                                             var target = opponent.Battlefield
-                                                .OfType<ArtifactCard>()
+                                                .Where(c => sorcery.IsValidArtifactTarget(c))
                                                 .OrderByDescending(c =>
                                                 {
                                                     var data = CardDatabase.GetCardData(c.cardName);

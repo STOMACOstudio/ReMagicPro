@@ -3678,6 +3678,7 @@ public static class CardDatabase
                             color = new List<string> { "Red" },
                             requiresTarget = true,
                             requiredTargetType = SorceryCard.TargetType.Artifact,
+                            canTargetArtifactCreatures = true,
                             destroyTargetIfTypeMatches = true,
                             flavorText = "Days of planning. Weeks of building. Months of perfecting. Seconds of smashing.",
                             artwork = Resources.Load<Sprite>("Art/shatter"),
