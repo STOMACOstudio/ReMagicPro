@@ -9,10 +9,12 @@ public class PlayerTargetVisual : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GameManager.Instance.targetingSorcery != null &&
-            GameManager.Instance.targetingSorcery.requiresTarget &&
-            (GameManager.Instance.targetingSorcery.requiredTargetType == SorceryCard.TargetType.Player ||
-             GameManager.Instance.targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer))
+        if ((GameManager.Instance.targetingSorcery != null &&
+             GameManager.Instance.targetingSorcery.requiresTarget &&
+             (GameManager.Instance.targetingSorcery.requiredTargetType == SorceryCard.TargetType.Player ||
+              GameManager.Instance.targetingSorcery.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer)) ||
+            (GameManager.Instance.targetingCreatureActivated != null &&
+             GameManager.Instance.targetingCreatureActivated.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget)))
         {
             Debug.Log($"Player target clicked: {(isHuman ? "Human" : "AI")}");
 
