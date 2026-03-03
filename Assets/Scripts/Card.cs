@@ -305,6 +305,9 @@ public class Card
                             case ActivatedAbility.TapToPlayRandomPotion:
                                 lines.Add($"{FormatColoredManaNumber(manaToPayToActivate, GetActivationColor())}TAP: Search your library for a random Potion and put it onto the battlefield, then shuffle.");
                                 break;
+                            case ActivatedAbility.TapToDrawCards:
+                                lines.Add($"{manaToPayToActivate}, TAP: Draw {cardsToDraw} card(s).");
+                                break;
                             case ActivatedAbility.Equip:
                                 lines.Add($"Equip {FormatColoredManaNumber(manaToPayToActivate, GetActivationColor())}");
                                 break;

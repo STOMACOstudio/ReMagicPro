@@ -1692,6 +1692,50 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     return;
                 }
 
+            // TAP-TO-DRAW-CARDS
+                if (linkedCard.activatedAbilities != null &&
+                    linkedCard.activatedAbilities.Contains(ActivatedAbility.TapToDrawCards) &&
+                    !linkedCard.isTapped &&
+                    GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
+                    canActivateArtifact)
+                {
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+                    Player player = GameManager.Instance.humanPlayer;
+                    int cost = artifact.manaToPayToActivate;
+
+                    if (player.ColoredMana.Total() >= cost)
+                    {
+                        int remaining = cost;
+
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.Log("Not enough mana for ability.");
+                            return;
+                        }
+
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToDrawCards, player);
+                        GameManager.Instance.UpdateUI();
+                        UpdateVisual();
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate ability.");
+                    }
+
+                    return;
+                }
+
             // Blocking phase
                 if (TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.ChooseBlockers &&
                     TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI)

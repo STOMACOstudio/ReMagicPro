@@ -52,6 +52,7 @@ public enum ActivatedAbility
     DealDamageToCreature,
     BuffTargetCreature,
     TapToPlayRandomPotion,
+    TapToDrawCards,
     PayToBuffSelf,
     Equip,
     TapTargetArtifactCreatureOrLand,
