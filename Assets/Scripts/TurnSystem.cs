@@ -265,6 +265,21 @@ public class TurnSystem : MonoBehaviour
         }
     }
 
+    private bool IsAbleToAttackThisTurn(CreatureCard creature)
+        {
+            return creature != null &&
+                   !creature.isTapped &&
+                   (!creature.hasSummoningSickness || creature.keywordAbilities.Contains(KeywordAbility.Haste)) &&
+                   !creature.keywordAbilities.Contains(KeywordAbility.Defender);
+        }
+
+    private bool MustAttackThisTurn(CreatureCard creature)
+        {
+            return creature != null &&
+                   creature.keywordAbilities.Contains(KeywordAbility.MustAttackEachTurnIfAble) &&
+                   IsAbleToAttackThisTurn(creature);
+        }
+
     public void ConfirmAttackers()
         {
             if (GameManager.Instance.graveyardViewActive)
@@ -276,7 +291,22 @@ public class TurnSystem : MonoBehaviour
                 waitingForPlayerInput = false;
                 SetCombatUIState(CombatUIState.Idle);
 
-                // Use only manually selected attackers
+                // Use manually selected attackers, plus any creatures that must attack if able
+                var requiredAttackers = GameManager.Instance.humanPlayer.Battlefield
+                    .OfType<CreatureCard>()
+                    .Where(MustAttackThisTurn)
+                    .ToList();
+
+                foreach (var required in requiredAttackers)
+                {
+                    if (!GameManager.Instance.selectedAttackers.Contains(required))
+                    {
+                        GameManager.Instance.selectedAttackers.Add(required);
+                        if (!required.keywordAbilities.Contains(KeywordAbility.Vigilance))
+                            required.isTapped = true;
+                    }
+                }
+
                 GameManager.Instance.currentAttackers.Clear();
                 GameManager.Instance.currentAttackers.AddRange(GameManager.Instance.selectedAttackers);
                 GameManager.Instance.selectedAttackers.Clear();
@@ -1068,10 +1098,7 @@ public class TurnSystem : MonoBehaviour
 
                         foreach (var card in ai.Battlefield)
                         {
-                            if (card is CreatureCard creature &&
-                                !creature.isTapped &&
-                                !creature.hasSummoningSickness &&
-                                !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                            if (card is CreatureCard creature && IsAbleToAttackThisTurn(creature))
                             {
                                 potentialAttackers.Add(creature);
                             }
@@ -1087,7 +1114,8 @@ public class TurnSystem : MonoBehaviour
 
                         foreach (var creature in potentialAttackers)
                         {
-                            bool attack = ShouldAIAttackCreature(creature, ai, human, goForLethal, lowLifeNeedsDefense);
+                            bool attack = MustAttackThisTurn(creature) ||
+                                          ShouldAIAttackCreature(creature, ai, human, goForLethal, lowLifeNeedsDefense);
 
                             if (attack)
                             {
@@ -2019,10 +2047,7 @@ public class TurnSystem : MonoBehaviour
 
                 foreach (var card in GameManager.Instance.humanPlayer.Battlefield)
                 {
-                    if (card is CreatureCard creature &&
-                        !creature.isTapped &&
-                        (!creature.hasSummoningSickness || creature.keywordAbilities.Contains(KeywordAbility.Haste)) &&
-                        !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                    if (card is CreatureCard creature && IsAbleToAttackThisTurn(creature))
                     {
                         GameManager.Instance.selectedAttackers.Add(creature);
                         anyDeclared = true;
