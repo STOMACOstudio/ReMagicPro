@@ -1874,7 +1874,7 @@ public static class CardDatabase
                 Add(new CardData //Crazed Goblin
                     {
                     cardName = "Crazed Goblin",
-                    artist = "Sora AI",
+                    artist = "Darrell Riche",
                     rarity = "Common",
                     manaCost = 1,
                     color = new List<string> { "Red" },
@@ -1882,11 +1882,12 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     subtypes = new List<string> { "Goblin", "Warrior" },
+                    flavorText = "Because fighting is easier than figuiring out what else to do.",
                     keywordAbilities = new List<KeywordAbility>
                     {
                         KeywordAbility.MustAttackEachTurnIfAble
                     },
-                    artwork = Resources.Load<Sprite>("Art/goblin_puncher")
+                    artwork = Resources.Load<Sprite>("Art/crazed_goblin")
                     });
                 Add(new CardData //Fireborn dragon
                     {
@@ -2032,7 +2033,7 @@ public static class CardDatabase
                 Add(new CardData //Anaba Shaman
                     {
                     cardName = "Anaba Shaman",
-                    artist = "Sora AI",
+                    artist = "Simon Bisley",
                     rarity = "Common",
                     manaCost = 4,
                     color = new List<string> { "Red" },
@@ -2040,13 +2041,14 @@ public static class CardDatabase
                     power = 2,
                     toughness = 2,
                     subtypes = new List<string> { "Minotaur", "Shaman" },
+                    flavorText = "The shamans? Ha! They are craven cows not capable of true magic.\n-Irini Sengir",
                     activatedAbilities = new List<ActivatedAbility>
                     {
                         ActivatedAbility.TapToDealDamageAnyTarget
                     },
                     manaToPayToActivate = 1,
                     damageToCreature = 1,
-                    artwork = Resources.Load<Sprite>("Art/hill_giant")
+                    artwork = Resources.Load<Sprite>("Art/anaba_shaman")
                     });
                 Add(new CardData //Hill giant
                     {
