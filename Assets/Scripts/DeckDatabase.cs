@@ -97,7 +97,7 @@ public static class DeckDatabase
                 {
                     new DeckEntry("Forest", 16), new DeckEntry("Argothian Swine", 2), new DeckEntry("Wall of Wood", 3),
                     new DeckEntry("Canopy Spider", 3), new DeckEntry("Trained Armodon", 3), new DeckEntry("Grizzly Bears", 3),
-                    new DeckEntry("Rampant Growth", 2), new DeckEntry("Oakenform", 1), new DeckEntry("Might of the Oaks", 1),
+                    new DeckEntry("Rampant Growth", 2), new DeckEntry("Oakenform", 1), new DeckEntry("Might of Oaks", 1),
                     new DeckEntry("Fountain of Youth", 1), new DeckEntry("Giant Spider", 2), new DeckEntry("Giant Growth", 3)
                 };
             default:

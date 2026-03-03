@@ -2348,7 +2348,7 @@ public static class CardDatabase
                     });
                 Add(new CardData //Wall of wood
                     {
-                    cardName = "Wall o Wood",
+                    cardName = "Wall of Wood",
                     artist = "Mark Tedin",
                     rarity = "Common",
                     manaCost = 1,
