@@ -1455,11 +1455,34 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     GameManager.Instance.humanPlayer.Battlefield.Contains(linkedCard) &&
                     canActivateArtifact)
                 {
-                    linkedCard.isTapped = true;
-                    GameManager.Instance.QueueArtifactActivatedAbility(linkedCard as ArtifactCard, ActivatedAbility.TapToGainLife, GameManager.Instance.humanPlayer);
-                    UpdateVisual();
-                    GameManager.Instance.UpdateUI();
-                    return;
+                    ArtifactCard artifact = linkedCard as ArtifactCard;
+                    Player player = GameManager.Instance.humanPlayer;
+                    int remaining = artifact.manaToPayToActivate;
+
+                    if (player.ColoredMana.Total() >= remaining)
+                    {
+                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                        player.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.LogWarning("TapToGainLife activation failed: not enough mana after payment logic.");
+                            return;
+                        }
+
+                        linkedCard.isTapped = true;
+                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToGainLife, player);
+                        UpdateVisual();
+                        GameManager.Instance.UpdateUI();
+                        return;
+                    }
                 }
 
             // SACRIFICE-FOR-LIFE
