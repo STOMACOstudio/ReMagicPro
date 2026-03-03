@@ -183,6 +183,7 @@ public class Card
                         keyword == KeywordAbility.CanOnlyBlockFlying ||
                         keyword == KeywordAbility.CantBlockWithoutForest ||
                         keyword == KeywordAbility.CantDealCombatDamage ||
+                        keyword == KeywordAbility.MustAttackEachTurnIfAble ||
                         keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
                         keyword == KeywordAbility.PotionSpellsCostOneLess ||
                         keyword.ToString().StartsWith("ProtectionFrom"))
