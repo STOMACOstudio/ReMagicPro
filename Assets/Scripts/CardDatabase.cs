@@ -2010,7 +2010,7 @@ public static class CardDatabase
                         KeywordAbility.Flying
                     },
                     flavorText = "The goblin word for 'flying' is more accurately translated as 'falling slowly'.",
-                    artwork = Resources.Load<Sprite>("Art/goblin_sky_rider")
+                    artwork = Resources.Load<Sprite>("Art/goblin_sky_raider")
                     });
                 Add(new CardData //Goblin puncher
                     {
