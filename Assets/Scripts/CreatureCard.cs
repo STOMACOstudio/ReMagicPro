@@ -107,6 +107,7 @@ public class CreatureCard : Card
             keywordAbilities.Remove(ability);
     }
     public int damageTaken = 0;
+    public bool isDead => toughness <= 0;
     public int tapLifeLossAmount;
     public bool hasSummoningSickness = true;
     public KeywordAbility abilityToGain = KeywordAbility.Flying;
