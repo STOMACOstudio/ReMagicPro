@@ -3258,16 +3258,16 @@ public class GameManager : MonoBehaviour
             }
 
             string color = targetingCreatureActivated.GetActivationColor();
-            int cost = targetingCreatureActivated.manaToPayToActivate;
+            int activationCost = targetingCreatureActivated.manaToPayToActivate;
 
-            if (!targetingPlayer.ColoredMana.HasEnough(color, cost))
+            if (!targetingPlayer.ColoredMana.HasEnough(color, activationCost))
             {
                 Debug.LogWarning("Not enough mana to activate creature ability.");
                 CancelTargeting();
                 return;
             }
 
-            targetingPlayer.ColoredMana.SpendColor(color, cost);
+            targetingPlayer.ColoredMana.SpendColor(color, activationCost);
             QueueCreatureActivatedAbility(targetingCreatureActivated, ActivatedAbility.TapToDealDamageAnyTarget, targetingPlayer, null, targetPlayer);
 
             if (targetingVisual != null)
