@@ -1996,7 +1996,7 @@ public static class CardDatabase
                     });
                 Add(new CardData //Goblin sky raider
                     {
-                    cardName = "Goblin Sky Rider",
+                    cardName = "Goblin Sky Raider",
                     artist = "Daren Bader",
                     rarity = "Common",
                     manaCost = 3,
@@ -2040,14 +2040,14 @@ public static class CardDatabase
                     cardType = CardType.Creature,
                     power = 2,
                     toughness = 2,
+                    manaToPayToActivate = 1,
+                    damageToCreature = 1,
                     subtypes = new List<string> { "Minotaur", "Shaman" },
                     flavorText = "The shamans? Ha! They are craven cows not capable of true magic.\n-Irini Sengir",
                     activatedAbilities = new List<ActivatedAbility>
                     {
                         ActivatedAbility.TapToDealDamageAnyTarget
                     },
-                    manaToPayToActivate = 1,
-                    damageToCreature = 1,
                     artwork = Resources.Load<Sprite>("Art/anaba_shaman")
                     });
                 Add(new CardData //Hill giant
@@ -2259,7 +2259,6 @@ public static class CardDatabase
                     subtypes = new List<string> { "Dragon" },
                     manaToPayToActivate = 1,
                     powerBuff = 1,
-                    toughnessBuff = 1,
                     flavorText = "While it's true most dragons are cruel, the Shivan dragon seems to take particular glee in the misery of others, often tormenting its victims much like a cat plays wih a mouse before delivering the final blow.",
                     keywordAbilities = new List<KeywordAbility>
                     {
@@ -4961,7 +4960,7 @@ public static class CardDatabase
                         artist = "Mike Raabe",
                         rarity = "Common",
                         manaCost = 3,
-                        color = new List<string> { "Red", "Red" },
+                        color = new List<string> { "Red" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         artwork = Resources.Load<Sprite>("Art/granite_grip"),
