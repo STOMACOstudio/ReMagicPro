@@ -3933,6 +3933,17 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/touch_grass"),
                     abilities = new List<CardAbility>(),
                     });
+                Add(new CardData { //Rampant Growth
+                    cardName = "Rampant Growth",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 2,
+                    color = new List<string> { "Green" },
+                    searchRandomBasicLandToBattlefieldTapped = true,
+                    rulesText = "Search your library for a random basic land card and put it onto the battlefield tapped. Then shuffle.",
+                    artwork = Resources.Load<Sprite>("Art/touch_grass"),
+                    });
                 Add(new CardData { //Rolling Energy
                     cardName = "Rolling Energy",
                     artist = "Sora AI",
