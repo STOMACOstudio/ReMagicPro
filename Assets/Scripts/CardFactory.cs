@@ -67,6 +67,7 @@ public static class CardFactory
                 sorcery.swapGraveyardAndLibrary = data.swapGraveyardAndLibrary;
                 sorcery.revealUntilCreature = data.revealUntilCreature;
                 sorcery.revealUntilLand = data.revealUntilLand;
+                sorcery.searchRandomBasicLandToBattlefieldTapped = data.searchRandomBasicLandToBattlefieldTapped;
                 sorcery.returnRandomCreatureFromGraveyard = data.returnRandomCreatureFromGraveyard;
                 sorcery.returnRandomCheapCreatureToBattlefield = data.returnRandomCheapCreatureToBattlefield;
                 sorcery.returnTargetCreatureToOwnerHand = data.returnTargetCreatureToOwnerHand;

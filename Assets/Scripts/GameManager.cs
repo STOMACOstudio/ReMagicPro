@@ -1837,6 +1837,48 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void SearchLibraryForRandomBasicLandToBattlefieldTapped(Player player)
+    {
+        var basicLands = player.Deck
+            .Where(card =>
+            {
+                CardData data = CardDatabase.GetCardData(card.cardName);
+                return CardData.IsBasicLand(data);
+            })
+            .ToList();
+
+        if (basicLands.Count == 0)
+        {
+            ShuffleDeck(player);
+            UpdateUI();
+            return;
+        }
+
+        Card chosen = basicLands[Random.Range(0, basicLands.Count)];
+        player.Deck.Remove(chosen);
+        player.Battlefield.Add(chosen);
+
+        if (chosen is LandCard land)
+            land.isTapped = true;
+
+        Transform parent = player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+        GameObject obj = Instantiate(cardPrefab, parent);
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData chosenData = CardDatabase.GetCardData(chosen.cardName);
+        visual.Setup(chosen, this, chosenData);
+        visual.isInBattlefield = true;
+        activeCardVisuals.Add(visual);
+        visual.UpdateVisual();
+
+        chosen.OnEnterPlay(player);
+        NotifyLandEntered(chosen, player);
+
+        Debug.Log($"{player} searches for a random basic land ({chosen.cardName}) and puts it onto the battlefield tapped.");
+
+        ShuffleDeck(player);
+        UpdateUI();
+    }
+
     public void SearchLibraryForRandomPotion(Player player)
     {
         var potions = player.Deck

@@ -74,6 +74,7 @@ public class CardData
     public bool swapGraveyardAndLibrary = false;
     public bool revealUntilCreature = false;
     public bool revealUntilLand = false;
+    public bool searchRandomBasicLandToBattlefieldTapped = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
     public bool returnTargetCreatureToOwnerHand = false;

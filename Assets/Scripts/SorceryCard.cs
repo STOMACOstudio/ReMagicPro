@@ -21,6 +21,7 @@ public class SorceryCard : Card
     public bool swapGraveyardAndLibrary = false;
     public bool revealUntilCreature = false;
     public bool revealUntilLand = false;
+    public bool searchRandomBasicLandToBattlefieldTapped = false;
     public bool returnRandomCreatureFromGraveyard = false;
     public bool returnRandomCheapCreatureToBattlefield = false;
     public bool returnTargetCreatureToOwnerHand = false;
@@ -90,6 +91,11 @@ public class SorceryCard : Card
             {
                 GameManager.Instance.pendingStackEffects++;
                 GameManager.Instance.StartCoroutine(GameManager.Instance.RevealUntilLand(caster));
+            }
+
+            if (searchRandomBasicLandToBattlefieldTapped)
+            {
+                GameManager.Instance.SearchLibraryForRandomBasicLandToBattlefieldTapped(caster);
             }
 
             if (!string.IsNullOrEmpty(tokenToCreate) && numberOfTokensMax > 0)
