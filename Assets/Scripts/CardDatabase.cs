@@ -4092,6 +4092,22 @@ public static class CardDatabase
                     });
 
         // Artifacts
+            Add(new CardData // Fountain of Youth
+                {
+                    cardName = "Fountain of Youth",
+                    artist = "Sora AI",
+                    rarity = "Uncommon",
+                    manaCost = 0,
+                    color = new List<string>(),
+                    cardType = CardType.Artifact,
+                    manaToPayToActivate = 2,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapToGainLife
+                    },
+                    rulesText = "2, TAP: Gain 1 life.",
+                    artwork = Resources.Load<Sprite>("Art/bonfire")
+                });
             Add(new CardData // Pressure Sphere
                 {
                     cardName = "Pressure Sphere",

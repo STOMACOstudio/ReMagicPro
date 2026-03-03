@@ -1004,11 +1004,15 @@ public class TurnSystem : MonoBehaviour
                             {
                                 if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToGainLife))
                                 {
-                                    artifact.isTapped = true;
-                                    GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToGainLife, ai);
-                                    Debug.Log($"AI taps {artifact.cardName} to gain 1 life.");
-                                    GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
-                                    GameManager.Instance.UpdateUI();
+                                    var abilityCost = new Dictionary<string, int> { {"Colorless", artifact.manaToPayToActivate} };
+                                    if (EnsureManaForCost(ai, abilityCost))
+                                    {
+                                        artifact.isTapped = true;
+                                        GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToGainLife, ai);
+                                        Debug.Log($"AI pays {artifact.manaToPayToActivate} and taps {artifact.cardName} to gain 1 life.");
+                                        GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
+                                        GameManager.Instance.UpdateUI();
+                                    }
                                 }
                                 else if (artifact.activatedAbilities.Contains(ActivatedAbility.TapToPlague))
                                 {

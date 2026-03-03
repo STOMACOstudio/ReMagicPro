@@ -19,7 +19,32 @@ public class ArtifactCard : Card
                     break;
 
                 case ActivatedAbility.TapToGainLife:
-                    GameManager.Instance.TryGainLife(owner, 1);
+                    if (owner.ColoredMana.Total() >= manaToPayToActivate)
+                    {
+                        int remaining = manaToPayToActivate;
+
+                        int useColorless = Mathf.Min(owner.ColoredMana.Colorless, remaining);
+                        owner.ColoredMana.Colorless -= useColorless;
+                        remaining -= useColorless;
+
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.White, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Blue, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Black, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Red, remaining);
+                        remaining -= Player.ManaPool.SpendFromPool(ref owner.ColoredMana.Green, remaining);
+
+                        if (remaining > 0)
+                        {
+                            Debug.LogWarning("TapToGainLife: Somehow not enough mana despite CanPay check.");
+                            return;
+                        }
+
+                        GameManager.Instance.TryGainLife(owner, 1);
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough mana to activate TapToGainLife.");
+                    }
                     break;
 
                 case ActivatedAbility.TapAndSacrificeForMana:
