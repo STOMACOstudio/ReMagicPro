@@ -4908,6 +4908,125 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets +4/-2.",
                     });
 
+                Add(new CardData // Granite Grip
+                    {
+                        cardName = "Granite Grip",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string> { "Red", "Red" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        artwork = Resources.Load<Sprite>("Art/granite_grip"),
+                        rulesText = "Enchanted creature gets +1/+0 for each mountain you control.",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is AuraCard aura && selfCard is EnchantmentCard enchantment && aura.attachedTo is CreatureCard creature)
+                                    {
+                                        if (enchantment.brotherhoodBuffs.TryGetValue(creature, out int oldBuff) && oldBuff != 0)
+                                            creature.RemoveAuraBuff(oldBuff, 0);
+
+                                        int mountainCount = owner.Battlefield.Count(c => c.cardName == "Mountain");
+                                        if (mountainCount > 0)
+                                        {
+                                            creature.AddAuraBuff(mountainCount, 0);
+                                            enchantment.brotherhoodBuffs[creature] = mountainCount;
+                                        }
+                                        else
+                                        {
+                                            enchantment.brotherhoodBuffs.Remove(creature);
+                                        }
+
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                        GameManager.Instance.CheckDeaths(owner);
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnLandEnter,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is AuraCard aura && selfCard is EnchantmentCard enchantment && aura.attachedTo is CreatureCard creature)
+                                    {
+                                        if (enchantment.brotherhoodBuffs.TryGetValue(creature, out int oldBuff) && oldBuff != 0)
+                                            creature.RemoveAuraBuff(oldBuff, 0);
+
+                                        int mountainCount = owner.Battlefield.Count(c => c.cardName == "Mountain");
+                                        if (mountainCount > 0)
+                                        {
+                                            creature.AddAuraBuff(mountainCount, 0);
+                                            enchantment.brotherhoodBuffs[creature] = mountainCount;
+                                        }
+                                        else
+                                        {
+                                            enchantment.brotherhoodBuffs.Remove(creature);
+                                        }
+
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                        GameManager.Instance.CheckDeaths(owner);
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnLandLeave,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is AuraCard aura && selfCard is EnchantmentCard enchantment && aura.attachedTo is CreatureCard creature)
+                                    {
+                                        if (enchantment.brotherhoodBuffs.TryGetValue(creature, out int oldBuff) && oldBuff != 0)
+                                            creature.RemoveAuraBuff(oldBuff, 0);
+
+                                        int mountainCount = owner.Battlefield.Count(c => c.cardName == "Mountain");
+                                        if (mountainCount > 0)
+                                        {
+                                            creature.AddAuraBuff(mountainCount, 0);
+                                            enchantment.brotherhoodBuffs[creature] = mountainCount;
+                                        }
+                                        else
+                                        {
+                                            enchantment.brotherhoodBuffs.Remove(creature);
+                                        }
+
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                        GameManager.Instance.CheckDeaths(owner);
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnDeath,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    if (selfCard is AuraCard aura && selfCard is EnchantmentCard enchantment && aura.attachedTo is CreatureCard creature)
+                                    {
+                                        if (enchantment.brotherhoodBuffs.TryGetValue(creature, out int oldBuff) && oldBuff != 0)
+                                        {
+                                            creature.RemoveAuraBuff(oldBuff, 0);
+                                            enchantment.brotherhoodBuffs.Remove(creature);
+                                            GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                            GameManager.Instance.CheckDeaths(owner);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Woodskin
                     {
                         cardName = "Woodskin",
