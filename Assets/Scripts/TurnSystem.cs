@@ -968,6 +968,46 @@ public class TurnSystem : MonoBehaviour
                                     }
                                 }
 
+                                // PAY + TAP: deal damage to any target
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
+                                {
+                                    int activationCost = creature.manaToPayToActivate;
+                                    string activationColor = creature.GetActivationColor();
+
+                                    if (ai.ColoredMana.HasEnough(activationColor, activationCost))
+                                    {
+                                        CreatureCard bestCreatureTarget = GameManager.Instance.humanPlayer.Battlefield
+                                            .OfType<CreatureCard>()
+                                            .Where(target => !target.isDead)
+                                            .OrderByDescending(target => target.currentPower)
+                                            .FirstOrDefault();
+
+                                        ai.ColoredMana.SpendColor(activationColor, activationCost);
+                                        creature.isTapped = true;
+
+                                        if (bestCreatureTarget != null)
+                                        {
+                                            GameManager.Instance.QueueCreatureActivatedAbility(
+                                                creature,
+                                                ActivatedAbility.TapToDealDamageAnyTarget,
+                                                ai,
+                                                bestCreatureTarget);
+                                        }
+                                        else
+                                        {
+                                            GameManager.Instance.QueueCreatureActivatedAbility(
+                                                creature,
+                                                ActivatedAbility.TapToDealDamageAnyTarget,
+                                                ai,
+                                                null,
+                                                GameManager.Instance.humanPlayer);
+                                        }
+
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+
                                 if (creature.activatedAbilities.Contains(ActivatedAbility.PayToGainAbility) &&
                                     !creature.keywordAbilities.Contains(creature.abilityToGain))
                                 {
