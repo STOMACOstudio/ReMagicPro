@@ -2346,6 +2346,24 @@ public static class CardDatabase
                         ActivatedAbility.TapForMana
                     }
                     });
+                Add(new CardData //Wall of wood
+                    {
+                    cardName = "Wall o Wood",
+                    artist = "Mark Tedin",
+                    rarity = "Common",
+                    manaCost = 1,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 3,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                    },
+                    flavorText = "Everybody knows that to ward off trouble, you knock on wood. But usually it's better to make a wall out of the wood and let trouble do the knocking.",
+                    artwork = Resources.Load<Sprite>("Art/wall_of_wood")
+                    });
                 Add(new CardData //Spinewall Cactus
                     {
                     cardName = "Spinewall Cactus",
@@ -2400,6 +2418,23 @@ public static class CardDatabase
                     },
                     flavorText = "One day, a mad wizard crossed ancient bones with a cactus. He was eaten by his own creation shortly after.",
                     artwork = Resources.Load<Sprite>("Art/cactusaurus")
+                    });
+                Add(new CardData //Argothian swine
+                    {
+                    cardName = "Argothian Swine",
+                    artist = "Randy Elliot",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Boar" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Trample
+                    },
+                    flavorText = "In Argoth, the shortest path between two points is the one the swine make.",
+                    artwork = Resources.Load<Sprite>("Art/argothian_swine")
                     });
                 Add(new CardData //Realms crasher
                     {
@@ -2505,6 +2540,42 @@ public static class CardDatabase
                     flavorText = "Cats are just tiny tigers living in your home.",
                     artwork = Resources.Load<Sprite>("Art/domestic_cat")
                     });
+                Add(new CardData //Canopy spider
+                    {
+                    cardName = "Canopy Spider",
+                    artist = "Mike Raabe",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 3,
+                    subtypes = new List<string> { "Spider" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Reach
+                    },
+                    flavorText = "It keeps the upper reaches of the forest free of every menace... except for the spider itself.",
+                    artwork = Resources.Load<Sprite>("Art/canopy_spider")
+                    });
+                Add(new CardData //Giant spider
+                    {
+                    cardName = "Giant Spider",
+                    artist = "Randy Gallegos",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 4,
+                    subtypes = new List<string> { "Spider" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Reach
+                    },
+                    flavorText = "Watching the spider's web.\nLlanowar expression meaning 'focusing on the wrong thing'",
+                    artwork = Resources.Load<Sprite>("Art/giant_spider")
+                    });
                 Add(new CardData //Deepwood monkeys
                     {
                     cardName = "Deepwood Monkeys",
@@ -2520,7 +2591,22 @@ public static class CardDatabase
                     flavorText = "Beneath the fur and teeth lies a mind that knows the forest better than any map ever could.",
                     artwork = Resources.Load<Sprite>("Art/deepwood_monkeys")
                     });
-                Add(new CardData //Violent Monkey
+                Add(new CardData //Grizzly bears
+                    {
+                    cardName = "Grizzly Bears",
+                    artist = "D. J. Cleland-Hura",
+                    rarity = "Common",
+                    manaCost = 2,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Bear" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "They've got claws as long as your arm. And they're grouchy. Really, really grouchy.",
+                    artwork = Resources.Load<Sprite>("Art/grizzly_bears")
+                    });
+                Add(new CardData //Violent ape
                     {
                     cardName = "Violent Ape",
                     artist = "Sora AI",
@@ -2532,8 +2618,23 @@ public static class CardDatabase
                     toughness = 3,
                     subtypes = new List<string> { "Monkey" },
                     keywordAbilities = new List<KeywordAbility> { },
-                    flavorText = "They’ve learned which bones snap easiest. And they enjoy the sound.",
+                    flavorText = "They've learned which bones snap easiest. And they enjoy the sound.",
                     artwork = Resources.Load<Sprite>("Art/violent_ape")
+                    });
+                Add(new CardData //Trained armodon
+                    {
+                    cardName = "Trained Armodon",
+                    artist = "Gary Leach",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Green", "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Elephant" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Armodons are trained to step on things. Enemy things.",
+                    artwork = Resources.Load<Sprite>("Art/trained_armodon")
                     });
                 Add(new CardData //Gorilla Chief
                     {
@@ -3857,6 +3958,36 @@ public static class CardDatabase
                     toughnessBuff = 6,
                     artwork = Resources.Load<Sprite>("Art/muscle_blast"),
                     });
+                Add(new CardData { //Giant growth
+                    cardName = "Giant Growth",
+                    artist = "Terese Nielsen",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 1,
+                    color = new List<string> { "Green" },
+                    requiresTarget = true,
+                    rulesText = "Target creature gets +3/+3 until the end of turn.",
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    powerBuff = 3,
+                    toughnessBuff = 3,
+                    flavorText = "Only the most effective tactics stand the test of time.\n-Gamelen, Citanul elder",
+                    artwork = Resources.Load<Sprite>("Art/giant_growth"),
+                    });
+                Add(new CardData { //Might of oaks
+                    cardName = "Might of Oaks",
+                    artist = "Greg Staples",
+                    rarity = "Rare",
+                    cardType = CardType.Instant,
+                    manaCost = 4,
+                    color = new List<string> { "Green" },
+                    requiresTarget = true,
+                    rulesText = "Target creature gets +7/+7 until the end of turn.",
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    powerBuff = 7,
+                    toughnessBuff = 7,
+                    flavorText = "Guess where I'm going to plant this!",
+                    artwork = Resources.Load<Sprite>("Art/might_of_oaks"),
+                    });
                 Add(new CardData //Empowering Charge
                     {
                         cardName = "Empowering Charge",
@@ -5088,6 +5219,21 @@ public static class CardDatabase
                         toughnessBuff = 2,
                         artwork = Resources.Load<Sprite>("Art/woodskin"),
                         rulesText = "Enchanted creature gets +2/+2.",
+                    });
+                Add(new CardData // Oakenform
+                    {
+                        cardName = "Oakenform",
+                        artist = "Wayne Reynolds",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string> { "Green" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 3,
+                        toughnessBuff = 3,
+                        artwork = Resources.Load<Sprite>("Art/oakenform"),
+                        flavorText = "When the beast cloaks itself in the mighty oak, what good is a bow? When the oak wraps itself around the snarling beast, what good is s hatchet?\n-Dionus, elvish archdruid",
+                        rulesText = "Enchanted creature gets +3/+3.",
                     });
 
                 Add(new CardData // Sleep

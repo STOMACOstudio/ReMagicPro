@@ -95,11 +95,10 @@ public static class DeckDatabase
             case "green":
                 return new[]
                 {
-                    new DeckEntry("Forest", 17), new DeckEntry("Cactusaurus", 2), new DeckEntry("Domestic Cat", 3),
-                    new DeckEntry("Deepwood Monkeys", 3), new DeckEntry("Violent Ape", 3), new DeckEntry("Crazy Cat Lady", 1),
-                    new DeckEntry("Flying Donkey", 2), new DeckEntry("Realms Crasher", 1), new DeckEntry("Mana Rock", 1),
-                    new DeckEntry("Gorilla Chief", 1), new DeckEntry("Touch Grass", 2), new DeckEntry("Whip of Thorns", 1),
-                    new DeckEntry("Woodskin", 1), new DeckEntry("Muscle Blast", 1), new DeckEntry("Potion of Strength", 1)
+                    new DeckEntry("Forest", 16), new DeckEntry("Argothian Swine", 2), new DeckEntry("Wall of Wood", 3),
+                    new DeckEntry("Canopy Spider", 3), new DeckEntry("Trained Armodon", 3), new DeckEntry("Grizzly Bears", 3),
+                    new DeckEntry("Rampant Growth", 2), new DeckEntry("Oakenform", 1), new DeckEntry("Might of the Oaks", 1),
+                    new DeckEntry("Fountain of Youth", 1), new DeckEntry("Giant Spider", 2), new DeckEntry("Giant Growth", 3)
                 };
             default:
                 Debug.LogWarning($"Unknown starter color '{color}'. Falling back to Red beginner deck.");
