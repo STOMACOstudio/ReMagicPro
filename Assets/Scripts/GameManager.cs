@@ -1472,6 +1472,9 @@ public class GameManager : MonoBehaviour
                 case ActivatedAbility.TapToPlayRandomPotion:
                     SearchLibraryForRandomPotionToBattlefield(controller);
                     break;
+                case ActivatedAbility.TapToDrawCards:
+                    DrawCards(controller, artifact.cardsToDraw);
+                    break;
                 case ActivatedAbility.DealDamageToCreature:
                     if (target is CreatureCard targetCreature)
                     {

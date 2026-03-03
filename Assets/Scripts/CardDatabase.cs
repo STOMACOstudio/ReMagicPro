@@ -4166,6 +4166,25 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/icy_manipulator")
                     });
 
+                Add(new CardData // Jayamdae Tome
+                    {
+                        cardName = "Jayamdae Tome",
+                        artist = "Mark Zug",
+                        rarity = "Rare",
+                        manaCost = 4,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        manaToPayToActivate = 4,
+                        cardsToDraw = 1,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapToDrawCards
+                        },
+                        rulesText = "4, TAP: Draw a card.",
+                        flavorText = "A volume of forgotten wisdom, opened one page at a time.",
+                        artwork = Resources.Load<Sprite>("Art/jayamdae_tome")
+                    });
+
                 Add(new CardData // Morning Star
                     {
                         cardName = "Morning Star",
