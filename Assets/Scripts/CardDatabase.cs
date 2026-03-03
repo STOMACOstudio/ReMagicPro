@@ -2029,6 +2029,25 @@ public static class CardDatabase
                     flavorText = "Goblins are raised as bullies from youth, trained to charge into battle without a single thought in their heads.",
                     artwork = Resources.Load<Sprite>("Art/goblin_puncher")
                     });
+                Add(new CardData //Anaba Shaman
+                    {
+                    cardName = "Anaba Shaman",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 4,
+                    color = new List<string> { "Red" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Minotaur", "Shaman" },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapToDealDamageAnyTarget
+                    },
+                    manaToPayToActivate = 1,
+                    damageToCreature = 1,
+                    artwork = Resources.Load<Sprite>("Art/hill_giant")
+                    });
                 Add(new CardData //Hill giant
                     {
                     cardName = "Hill Giant",

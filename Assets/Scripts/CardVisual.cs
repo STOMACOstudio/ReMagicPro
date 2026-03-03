@@ -1328,6 +1328,33 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 return;
             }
+            // PAY + TAP: deal damage to any target
+            if (linkedCard is CreatureCard pingCreature &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(pingCreature) &&
+                canHumanActivateCreatureAbilities &&
+                pingCreature.activatedAbilities != null &&
+                pingCreature.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget) &&
+                !pingCreature.isTapped &&
+                (!pingCreature.hasSummoningSickness || pingCreature.keywordAbilities.Contains(KeywordAbility.Haste)))
+            {
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = pingCreature.manaToPayToActivate;
+                string color = pingCreature.GetActivationColor();
+
+                if (player.ColoredMana.HasEnough(color, cost))
+                {
+                    GameManager.Instance.BeginTargetingWithCreatureDamageAnyTarget(pingCreature, player, this);
+                }
+                else
+                {
+                    if (ManaColorUtility.NormalizeColor(color) == "Colorless")
+                        Debug.Log($"Not enough mana to activate {pingCreature.cardName}'s ability.");
+                    else
+                        Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(color)} mana to activate {pingCreature.cardName}'s ability.");
+                }
+                return;
+            }
+
             // TAP-TO-LOSE-LIFE ability during Main Phase or combat confirmation
             if (linkedCard is CreatureCard creatureForDrain &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&

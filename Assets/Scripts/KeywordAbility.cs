@@ -47,6 +47,7 @@ public enum ActivatedAbility
     TapToPlague,
     SacrificeToDrawCards,
     TapToCreateToken,
+    TapToDealDamageAnyTarget,
     PayToGainAbility,
     DealDamageToCreature,
     BuffTargetCreature,

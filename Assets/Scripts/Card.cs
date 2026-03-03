@@ -236,6 +236,9 @@ public class Card
                                 case ActivatedAbility.TapToCreateToken:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}TAP: Create a {tokenToCreate} token.");
                                     break;
+                                case ActivatedAbility.TapToDealDamageAnyTarget:
+                                    lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}, TAP: Deal {creature.damageToCreature} damage to any target.");
+                                    break;
                                 case ActivatedAbility.PayToGainAbility:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Gains {creature.abilityToGain} until end of turn.");
                                     break;

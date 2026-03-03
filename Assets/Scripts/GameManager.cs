@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
 
     public ArtifactCard targetingArtifact;
     public EquipmentCard targetingEquipment;
+    public CreatureCard targetingCreatureActivated;
 
     public Sprite blueIcon, whiteIcon, blackIcon, redIcon, greenIcon;
 
@@ -1526,13 +1527,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void QueueCreatureActivatedAbility(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    public void QueueCreatureActivatedAbility(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null, Player playerTarget = null)
     {
         pendingStackEffects++;
-        StartCoroutine(ResolveCreatureActivatedAbilityOnStack(creature, ability, controller, target));
+        StartCoroutine(ResolveCreatureActivatedAbilityOnStack(creature, ability, controller, target, playerTarget));
     }
 
-    public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null)
+    public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null, Player playerTarget = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
         isStackBusy = true;
@@ -1575,6 +1576,20 @@ public class GameManager : MonoBehaviour
                     ShowFloatingDamage(creature.tapLifeLossAmount, playerLifeContainer);
                 SoundManager.Instance.PlaySound(SoundManager.Instance.plague);
                 ShowBloodSplatVFX(creature);
+                break;
+            case ActivatedAbility.TapToDealDamageAnyTarget:
+                if (target is CreatureCard targetCreature)
+                {
+                    targetCreature.TakeDamage(creature.damageToCreature);
+                    if (creature.keywordAbilities.Contains(KeywordAbility.Deathtouch) && creature.damageToCreature > 0)
+                        targetCreature.Kill();
+                }
+                else if (playerTarget != null)
+                {
+                    playerTarget.Life -= creature.damageToCreature;
+                    ShowFloatingDamage(creature.damageToCreature,
+                        playerTarget == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+                }
                 break;
             case ActivatedAbility.TapToCreateToken:
                 string tokenName = creature.tokenToCreate;
@@ -2811,6 +2826,41 @@ public class GameManager : MonoBehaviour
     {
             Card chosen = targetVisual.linkedCard;
 
+            // Creature ping ability (any target)
+            if (targetingCreatureActivated != null &&
+                targetingCreatureActivated.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
+            {
+                if (chosen is CreatureCard targetCreature &&
+                    GetOwnerOfCard(targetCreature)?.Battlefield.Contains(targetCreature) == true)
+                {
+                    Player controller = targetingPlayer;
+                    string color = targetingCreatureActivated.GetActivationColor();
+                    int cost = targetingCreatureActivated.manaToPayToActivate;
+
+                    if (!controller.ColoredMana.HasEnough(color, cost))
+                    {
+                        Debug.LogWarning("Not enough mana to activate creature ability.");
+                        CancelTargeting();
+                        return;
+                    }
+
+                    controller.ColoredMana.SpendColor(color, cost);
+                    QueueCreatureActivatedAbility(targetingCreatureActivated, ActivatedAbility.TapToDealDamageAnyTarget, controller, targetCreature);
+                    UpdateUI();
+                }
+                else
+                {
+                    Debug.Log("Invalid target. Creature effect canceled.");
+                    targetingCreatureActivated.isTapped = false;
+                }
+
+                targetingCreatureActivated = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                return;
+            }
+
             // Artifact damage ability
             if (targetingArtifact != null &&
                 targetingArtifact.activatedAbilities.Contains(ActivatedAbility.DealDamageToCreature))
@@ -3169,7 +3219,14 @@ public class GameManager : MonoBehaviour
                 FindCardVisual(targetingArtifact)?.UpdateVisual();
             }
 
+            if (targetingCreatureActivated != null)
+            {
+                targetingCreatureActivated.isTapped = false;
+                FindCardVisual(targetingCreatureActivated)?.UpdateVisual();
+            }
+
             targetingArtifact = null;
+            targetingCreatureActivated = null;
             targetingEquipment = null;
             targetingSorcery = null;
             targetingAura = null;
@@ -3187,6 +3244,40 @@ public class GameManager : MonoBehaviour
 
     public void CompletePlayerTargetSelection(Player targetPlayer)
     {
+        if (targetingCreatureActivated != null &&
+            targetingCreatureActivated.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
+        {
+            if (targetingPlayer == null)
+            {
+                Debug.LogWarning("CompletePlayerTargetSelection called without a controlling player.");
+                CancelTargeting();
+                return;
+            }
+
+            string color = targetingCreatureActivated.GetActivationColor();
+            int cost = targetingCreatureActivated.manaToPayToActivate;
+
+            if (!targetingPlayer.ColoredMana.HasEnough(color, cost))
+            {
+                Debug.LogWarning("Not enough mana to activate creature ability.");
+                CancelTargeting();
+                return;
+            }
+
+            targetingPlayer.ColoredMana.SpendColor(color, cost);
+            QueueCreatureActivatedAbility(targetingCreatureActivated, ActivatedAbility.TapToDealDamageAnyTarget, targetingPlayer, null, targetPlayer);
+
+            if (targetingVisual != null)
+                targetingVisual.EnableTargetingHighlight(false);
+
+            targetingCreatureActivated = null;
+            targetingPlayer = null;
+            targetingVisual = null;
+            isTargetingMode = false;
+            UpdateUI();
+            return;
+        }
+
         // Edge case: accidentally triggered for non-sorcery
         if (targetingSorcery == null)
         {
@@ -3366,6 +3457,23 @@ public class GameManager : MonoBehaviour
         FindCardVisual(artifact)?.UpdateVisual();
 
         Debug.Log("Targeting artifact, creature, or land to tap with artifact.");
+    }
+
+    public void BeginTargetingWithCreatureDamageAnyTarget(CreatureCard creature, Player player, CardVisual visual)
+    {
+        targetingCreatureActivated = creature;
+        targetingArtifact = null;
+        targetingSorcery = null;
+        targetingAura = null;
+        targetingEquipment = null;
+        targetingPlayer = player;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        creature.isTapped = true;
+        FindCardVisual(creature)?.UpdateVisual();
+
+        Debug.Log("Targeting any target for creature ability.");
     }
 
     public void BeginAuraTargetSelection(AuraCard aura, Player caster, CardVisual visual)
