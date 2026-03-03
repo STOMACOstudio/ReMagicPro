@@ -20910,39 +20910,9 @@ MonoBehaviour:
   acceleration: 3
   deceleration: 8
   mouseSensitivity: 0.5
-  startY: 45
-  targetY: 0.6
-  descentSpeed: 0.8
-  initialLookDownAngle: 90
-  subtitleManager: {fileID: 1833829486}
-  introLines:
-  - text: Welcome, Planeswalker
-    displayDuration: 3
-  - text: This place has been here for a long time
-    displayDuration: 4
-  - text: It lives within you
-    displayDuration: 2
-  - text: And I've been waiting for you down here
-    displayDuration: 4
-  - text: For a long time as well
-    displayDuration: 2
-  - text: You are finally ready to make
-    displayDuration: 4
-  - text: The one true choice
-    displayDuration: 2
-  - text: Which Mana color thrives within you?
-    displayDuration: 4
-  - text: But beware
-    displayDuration: 2
-  - text: As for each ally you choose...
-    displayDuration: 3
-  - text: ...an equally powerful enemy will rise against you
-    displayDuration: 5
-  - text: Now make your choice
-    displayDuration: 2
-  - text: Walk inside the mana circles
-    displayDuration: 3
+  constrainToBoundary: 0
   platformRadius: 12.5
+  boundaryCenter: {x: 0, y: 0, z: 0}
 --- !u!82 &864357918
 AudioSource:
   m_ObjectHideFlags: 0
@@ -31757,6 +31727,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1598223902}
+  - component: {fileID: 1598223903}
   m_Layer: 0
   m_Name: TutorialCinematicManager
   m_TagString: Untagged
@@ -31773,12 +31744,63 @@ Transform:
   m_GameObject: {fileID: 1598223901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 610.27814, y: -0.00001, z: 2797.5967}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1598223903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1598223901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d3df5f5928a43f69ab7e81c4d8a1f47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialCinematicManager
+  playerMovement: {fileID: 864357917}
+  subtitleManager: {fileID: 1833829486}
+  playEntranceCinematic: 1
+  startY: 40
+  targetY: 0.6
+  descentSpeed: 0.8
+  initialLookDownAngle: 90
+  movementUnlockFootstepDelay: 0.2
+  enforceBoundary: 1
+  boundaryRadius: 12.5
+  boundaryCenter: {fileID: 1150134283}
+  playSubtitlesOnStart: 1
+  subtitleLines:
+  - text: Welcome, Planeswalker
+    displayDuration: 3
+  - text: This place has been here for a long time
+    displayDuration: 5
+  - text: It lives within you
+    displayDuration: 2
+  - text: And I've been waiting for you down here...
+    displayDuration: 5
+  - text: ...for a long time as well
+    displayDuration: 2
+  - text: You are finally ready to make
+    displayDuration: 3
+  - text: The one true choice
+    displayDuration: 2
+  - text: Which Mana color thrives withing you?
+    displayDuration: 5
+  - text: But beware
+    displayDuration: 2
+  - text: As for each ally you choose...
+    displayDuration: 3
+  - text: ...an equally powerful enemy will rise against you
+    displayDuration: 5
+  - text: Now, make your choice
+    displayDuration: 2
+  - text: Walk inside the mana circles
+    displayDuration: 4
 --- !u!1 &1661188501
 GameObject:
   m_ObjectHideFlags: 0
