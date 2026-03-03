@@ -3669,6 +3669,20 @@ public static class CardDatabase
                             destroyTargetIfTypeMatches = true,
                             artwork = Resources.Load<Sprite>("Art/melt"),
                         });
+                    Add(new CardData //Shatter
+                        {
+                            cardName = "Shatter",
+                            artist = "Michael Koelsch",
+                            rarity = "Common",
+                            cardType = CardType.Instant,
+                            manaCost = 2,
+                            color = new List<string> { "Red" },
+                            requiresTarget = true,
+                            requiredTargetType = SorceryCard.TargetType.Artifact,
+                            destroyTargetIfTypeMatches = true,
+                            flavorText = "Days of planning. Weeks of building. Months of perfecting. Seconds of smashing.",
+                            artwork = Resources.Load<Sprite>("Art/shatter"),
+                        });
                 Add(new CardData //Dash
                     {
                         cardName = "Dash",
@@ -3721,6 +3735,20 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
                         damageToTarget = 3,
                         artwork = Resources.Load<Sprite>("Art/explosion"),
+                    });
+                Add(new CardData
+                    {
+                        cardName = "Shock",
+                        artist = "Mike Sass",
+                        rarity = "Common",
+                        cardType = CardType.Instant,
+                        manaCost = 1,
+                        color = new List<string> { "Red" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                        damageToTarget = 2,
+                        flavorText = "I'm shocked. SHOCKED! Well, not that shocked.\nPhilip J. Fry",
+                        artwork = Resources.Load<Sprite>("Art/shock"),
                     });
                 Add(new CardData //Moonfall
                     {
@@ -4169,7 +4197,7 @@ public static class CardDatabase
                 Add(new CardData // Jayamdae Tome
                     {
                         cardName = "Jayamdae Tome",
-                        artist = "Mark Zug",
+                        artist = "Mark Tedin",
                         rarity = "Rare",
                         manaCost = 4,
                         color = new List<string>(),
@@ -4181,7 +4209,7 @@ public static class CardDatabase
                             ActivatedAbility.TapToDrawCards
                         },
                         rulesText = "4, TAP: Draw a card.",
-                        flavorText = "A volume of forgotten wisdom, opened one page at a time.",
+                        flavorText = "Knowledge is power.\n-Sir Francis Bacon,\nMeditationes Sacrae",
                         artwork = Resources.Load<Sprite>("Art/jayamdae_tome")
                     });
 
@@ -4930,13 +4958,14 @@ public static class CardDatabase
                 Add(new CardData // Granite Grip
                     {
                         cardName = "Granite Grip",
-                        artist = "Sora AI",
+                        artist = "Mike Raabe",
                         rarity = "Common",
                         manaCost = 3,
                         color = new List<string> { "Red", "Red" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         artwork = Resources.Load<Sprite>("Art/granite_grip"),
+                        flavorText = "Let me introduce you to Rocky.",
                         rulesText = "Enchanted creature gets +1/+0 for each mountain you control.",
                         abilities = new List<CardAbility>
                         {
