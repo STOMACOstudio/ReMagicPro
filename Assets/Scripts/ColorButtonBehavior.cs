@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
-using System.Collections;
 using System.Collections.Generic;
 
 public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
@@ -54,163 +53,173 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
     public float fadeSpeed = 5f;
 
     void Start()
+    {
+        Image img = GetComponent<Image>();
+        if (img != null && img.sprite != null)
         {
-            Image img = GetComponent<Image>();
-            if (img != null && img.sprite != null)
+            var tex = img.sprite.texture;
+            if (tex != null && tex.isReadable)
             {
-                var tex = img.sprite.texture;
-                if (tex != null && tex.isReadable)
-                {
-                    img.alphaHitTestMinimumThreshold = 0.1f;
-                }
-                else
-                {
-                    Debug.LogWarning($"Texture for {img.name} is not readable; alpha hit testing disabled.");
-                }
+                img.alphaHitTestMinimumThreshold = 0.1f;
             }
-
-            if (hoverGlow != null)
-                hoverGlow.raycastTarget = false;
-            if (selectionGlow != null)
-                selectionGlow.raycastTarget = false;
-
-            SetAlpha(hoverGlow, 0f);
-            SetAlpha(selectionGlow, 0f);
-
-            if (backgroundPanelStatic == null && backgroundPanel != null)
+            else
             {
-                backgroundPanelStatic = backgroundPanel;
-                targetBGColor = backgroundPanel.color;
-                startingBGColor = backgroundPanel.color;
+                Debug.LogWarning($"Texture for {img.name} is not readable; alpha hit testing disabled.");
             }
-
-            if (descriptionGroup != null)
-                descriptionGroup.alpha = 0f;
-
-            if (colorNameGroup != null)
-                colorNameGroup.alpha = 0f;
         }
+
+        if (hoverGlow != null)
+            hoverGlow.raycastTarget = false;
+        if (selectionGlow != null)
+            selectionGlow.raycastTarget = false;
+
+        SetAlpha(hoverGlow, 0f);
+        SetAlpha(selectionGlow, 0f);
+
+        if (backgroundPanelStatic == null && backgroundPanel != null)
+        {
+            backgroundPanelStatic = backgroundPanel;
+            targetBGColor = backgroundPanel.color;
+            startingBGColor = backgroundPanel.color;
+        }
+
+        if (descriptionGroup != null)
+            descriptionGroup.alpha = 0f;
+
+        if (colorNameGroup != null)
+            colorNameGroup.alpha = 0f;
+    }
+
+    private void OnDestroy()
+    {
+        selectedColors.Remove(this);
+    }
 
     void Update()
+    {
+        // Smooth hover glow
+        if (!isSelected && hoverGlow != null)
         {
-            // Smooth hover glow
-            if (!isSelected && hoverGlow != null)
-            {
-                float currentAlpha = hoverGlow.color.a;
-                float newAlpha = Mathf.Lerp(currentAlpha, hoverAlphaTarget, Time.deltaTime * fadeSpeed);
-                SetAlpha(hoverGlow, newAlpha);
-            }
-
-            // Smooth background fade
-            if (backgroundPanelStatic != null)
-            {
-                Color currentColor = backgroundPanelStatic.color;
-                backgroundPanelStatic.color = Color.Lerp(currentColor, targetBGColor, Time.deltaTime * bgFadeSpeed);
-            }
+            float currentAlpha = hoverGlow.color.a;
+            float newAlpha = Mathf.Lerp(currentAlpha, hoverAlphaTarget, Time.deltaTime * fadeSpeed);
+            SetAlpha(hoverGlow, newAlpha);
         }
+
+        // Smooth background fade
+        if (backgroundPanelStatic != null)
+        {
+            Color currentColor = backgroundPanelStatic.color;
+            backgroundPanelStatic.color = Color.Lerp(currentColor, targetBGColor, Time.deltaTime * bgFadeSpeed);
+        }
+    }
+
+    private static void PruneDestroyedSelections()
+    {
+        selectedColors.RemoveAll(selection => selection == null);
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
-        {
-            if (!isSelected)
-                hoverAlphaTarget = 1f;
+    {
+        if (!isSelected)
+            hoverAlphaTarget = 1f;
 
-            if (audioSource != null && hoverSound != null)
-                audioSource.PlayOneShot(hoverSound);
-        }
+        if (audioSource != null && hoverSound != null)
+            audioSource.PlayOneShot(hoverSound);
+    }
 
     public void OnPointerExit(PointerEventData eventData)
-        {
-            if (!isSelected)
-                hoverAlphaTarget = 0f;
-        }
+    {
+        if (!isSelected)
+            hoverAlphaTarget = 0f;
+    }
 
     public void OnPointerClick(PointerEventData eventData)
+    {
+        PruneDestroyedSelections();
+
+        if (selectedColors.Contains(this))
         {
-            if (selectedColors.Contains(this))
-            {
-                selectedColors.Remove(this);
-                isSelected = false;
-                SetAlpha(selectionGlow, 0f);
-                hoverAlphaTarget = 0f;
+            selectedColors.Remove(this);
+            isSelected = false;
+            SetAlpha(selectionGlow, 0f);
+            hoverAlphaTarget = 0f;
 
-                if (audioSource != null && unclickSound != null)
-                    audioSource.PlayOneShot(unclickSound);
-            }
-            else
-            {
-                if (selectedColors.Count >= 2)
-                {
-                    var first = selectedColors[0];
-                    first.isSelected = false;
-                    first.SetAlpha(first.selectionGlow, 0f);
-                    first.hoverAlphaTarget = 0f;
-                    selectedColors.RemoveAt(0);
-                }
-
-                selectedColors.Add(this);
-                isSelected = true;
-
-                targetBGColor = backgroundColor;
-                hoverAlphaTarget = 1f;
-                SetAlpha(hoverGlow, 1f);
-                SetAlpha(selectionGlow, 1f);
-
-                if (audioSource != null && clickSound != null)
-                    audioSource.PlayOneShot(clickSound);
-            }
-
-            if (startButton != null)
-                startButton.SetActive(selectedColors.Count >= 1);
-
-            UpdateColorInfoDisplay();
-            SaveSelectedColors();
+            if (audioSource != null && unclickSound != null)
+                audioSource.PlayOneShot(unclickSound);
         }
+        else
+        {
+            if (selectedColors.Count >= 2)
+            {
+                var first = selectedColors[0];
+                first.isSelected = false;
+                first.SetAlpha(first.selectionGlow, 0f);
+                first.hoverAlphaTarget = 0f;
+                selectedColors.RemoveAt(0);
+            }
+
+            selectedColors.Add(this);
+            isSelected = true;
+
+            targetBGColor = backgroundColor;
+            hoverAlphaTarget = 1f;
+            SetAlpha(hoverGlow, 1f);
+            SetAlpha(selectionGlow, 1f);
+
+            if (audioSource != null && clickSound != null)
+                audioSource.PlayOneShot(clickSound);
+        }
+
+        if (startButton != null)
+            startButton.SetActive(selectedColors.Count >= 1);
+
+        UpdateColorInfoDisplay();
+        SaveSelectedColors();
+    }
 
     private void SetAlpha(Image img, float a)
-        {
-            if (img == null) return;
-            Color c = img.color;
-            c.a = a;
-            img.color = c;
-        }
+    {
+        if (img == null) return;
+        Color c = img.color;
+        c.a = a;
+        img.color = c;
+    }
 
-    private IEnumerator FadeCanvasGroup(CanvasGroup group, float targetAlpha, float speed = 5f)
-        {
-            while (!Mathf.Approximately(group.alpha, targetAlpha))
-            {
-                group.alpha = Mathf.MoveTowards(group.alpha, targetAlpha, Time.deltaTime * speed);
-                yield return null;
-            }
-        }
-    
     private void SaveSelectedColors()
+    {
+        PruneDestroyedSelections();
+
+        if (selectedColors.Count == 0)
         {
-            if (selectedColors.Count == 0)
-            {
-                PlayerPrefs.DeleteKey("PlayerColors");
-            }
-            else
-            {
-                var names = string.Join(",", selectedColors.ConvertAll(c => c.colorName));
-                PlayerPrefs.SetString("PlayerColors", names);
-            }
+            PlayerPrefs.DeleteKey("PlayerColors");
         }
+        else
+        {
+            var names = string.Join(",", selectedColors.ConvertAll(c => c.colorName));
+            PlayerPrefs.SetString("PlayerColors", names);
+        }
+    }
     
     private void UpdateColorInfoDisplay()
-        {
-            if (selectedColors.Count == 0)
-            {
-                colorNameTextTMP.text = "";
-                descriptionTextTMP.text = "";
-                colorNameGroup.alpha = 0f;
-                descriptionGroup.alpha = 0f;
-                return;
-            }
+    {
+        PruneDestroyedSelections();
 
-            ColorButtonBehavior primary = selectedColors[selectedColors.Count - 1];
-            string labels = string.Join(" & ", selectedColors.ConvertAll(c => c.colorLabel));
+        if (selectedColors.Count == 0)
+        {
+            if (colorNameTextTMP != null) colorNameTextTMP.text = "";
+            if (descriptionTextTMP != null) descriptionTextTMP.text = "";
+            if (colorNameGroup != null) colorNameGroup.alpha = 0f;
+            if (descriptionGroup != null) descriptionGroup.alpha = 0f;
+            return;
+        }
+
+        ColorButtonBehavior primary = selectedColors[selectedColors.Count - 1];
+        string labels = string.Join(" & ", selectedColors.ConvertAll(c => c.colorLabel));
+        if (colorNameTextTMP != null)
             colorNameTextTMP.text = $"<color=#{ColorUtility.ToHtmlStringRGB(primary.displayColor)}>{labels}</color>";
 
+        if (descriptionTextTMP != null)
+        {
             if (selectedColors.Count == 1)
             {
                 descriptionTextTMP.text = primary.description;
@@ -220,8 +229,9 @@ public class ColorButtonBehavior : MonoBehaviour, IPointerEnterHandler, IPointer
                 var descriptions = string.Join("\n", selectedColors.ConvertAll(c => c.description));
                 descriptionTextTMP.text = descriptions;
             }
-
-            colorNameGroup.alpha = 1f;
-            descriptionGroup.alpha = 1f;
         }
+
+        if (colorNameGroup != null) colorNameGroup.alpha = 1f;
+        if (descriptionGroup != null) descriptionGroup.alpha = 1f;
+    }
 }
