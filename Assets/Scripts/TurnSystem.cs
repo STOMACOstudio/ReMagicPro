@@ -979,7 +979,7 @@ public class TurnSystem : MonoBehaviour
                                         CreatureCard bestCreatureTarget = GameManager.Instance.humanPlayer.Battlefield
                                             .OfType<CreatureCard>()
                                             .Where(target => !target.isDead)
-                                            .OrderByDescending(target => target.currentPower)
+                                            .OrderByDescending(target => target.power)
                                             .FirstOrDefault();
 
                                         ai.ColoredMana.SpendColor(activationColor, activationCost);
