@@ -6,6 +6,8 @@ public static class DeckHolder
     public static string FavouriteCardName;
     public static bool IsStarterDeckRewardCollected;
     public static string DeckEditorReturnSceneName;
+    public static bool IsDeckEditorOpenedAdditively;
+    public static bool RestoreGameplayCursorOnDeckEditorClose;
 
     public static string GetDeckEditorReturnScene(string fallbackSceneName = "MapScene")
     {

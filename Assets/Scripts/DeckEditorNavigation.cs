@@ -4,11 +4,14 @@ using UnityEngine.SceneManagement;
 
 public class DeckEditorNavigation : MonoBehaviour
 {
+    private const string DeckEditorSceneName = "DeckEditorScene";
+
     void Start()
     {
         // Deck display is handled by DeckEditorManager.
         // Calling DeckViewer.ShowDeck here would rebuild the deck
         // without click handlers, so we omit that call.
+        SceneManager.SetActiveScene(gameObject.scene);
     }
 
     void Update()
@@ -20,7 +23,9 @@ public class DeckEditorNavigation : MonoBehaviour
     public void GoToDeckEditor()
     {
         DeckHolder.DeckEditorReturnSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene("DeckEditorScene");
+        DeckHolder.IsDeckEditorOpenedAdditively = false;
+        DeckHolder.RestoreGameplayCursorOnDeckEditorClose = false;
+        SceneManager.LoadScene(DeckEditorSceneName);
     }
 
     public void ConfirmDeck()
@@ -35,6 +40,28 @@ public class DeckEditorNavigation : MonoBehaviour
 
     private void ReturnToPreviousScene()
     {
-        SceneManager.LoadScene(DeckHolder.GetDeckEditorReturnScene());
+        string returnSceneName = DeckHolder.GetDeckEditorReturnScene();
+
+        if (DeckHolder.IsDeckEditorOpenedAdditively)
+        {
+            Scene returnScene = SceneManager.GetSceneByName(returnSceneName);
+            if (returnScene.IsValid() && returnScene.isLoaded)
+            {
+                SceneManager.SetActiveScene(returnScene);
+                SceneManager.UnloadSceneAsync(DeckEditorSceneName);
+
+                DeckHolder.IsDeckEditorOpenedAdditively = false;
+                if (DeckHolder.RestoreGameplayCursorOnDeckEditorClose)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+
+                DeckHolder.RestoreGameplayCursorOnDeckEditorClose = false;
+                return;
+            }
+        }
+
+        SceneManager.LoadScene(returnSceneName);
     }
 }

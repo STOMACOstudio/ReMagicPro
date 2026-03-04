@@ -56,6 +56,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (DeckHolder.IsDeckEditorOpenedAdditively)
+            return;
+
         Look();
 
         if (!isIntroFinished)
@@ -79,9 +82,15 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         DeckHolder.DeckEditorReturnSceneName = SceneManager.GetActiveScene().name;
+        DeckHolder.IsDeckEditorOpenedAdditively = true;
+        DeckHolder.RestoreGameplayCursorOnDeckEditorClose = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        SceneManager.LoadScene(DeckEditorSceneName);
+
+        SceneManager.LoadScene(DeckEditorSceneName, LoadSceneMode.Additive);
+        Scene deckEditorScene = SceneManager.GetSceneByName(DeckEditorSceneName);
+        if (deckEditorScene.IsValid())
+            SceneManager.SetActiveScene(deckEditorScene);
     }
 
     void HandleIntro()
