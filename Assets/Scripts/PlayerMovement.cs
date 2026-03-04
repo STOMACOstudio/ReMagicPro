@@ -78,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
         if (!DeckHolder.IsStarterDeckRewardCollected || DeckHolder.SelectedDeck == null || DeckHolder.SelectedDeck.Count == 0)
             return;
 
+        DeckHolder.DeckEditorReturnSceneName = SceneManager.GetActiveScene().name;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         SceneManager.LoadScene(DeckEditorSceneName);

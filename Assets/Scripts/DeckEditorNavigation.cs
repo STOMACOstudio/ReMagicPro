@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class DeckEditorNavigation : MonoBehaviour
@@ -9,8 +10,16 @@ public class DeckEditorNavigation : MonoBehaviour
         // Calling DeckViewer.ShowDeck here would rebuild the deck
         // without click handlers, so we omit that call.
     }
+
+    void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+            ReturnToPreviousScene();
+    }
+
     public void GoToDeckEditor()
     {
+        DeckHolder.DeckEditorReturnSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene("DeckEditorScene");
     }
 
@@ -20,7 +29,12 @@ public class DeckEditorNavigation : MonoBehaviour
         if (manager != null && manager.IsDeckComplete)
         {
             manager.ConfirmDeck();
-            SceneManager.LoadScene("MapScene");
+            ReturnToPreviousScene();
         }
+    }
+
+    private void ReturnToPreviousScene()
+    {
+        SceneManager.LoadScene(DeckHolder.GetDeckEditorReturnScene());
     }
 }
