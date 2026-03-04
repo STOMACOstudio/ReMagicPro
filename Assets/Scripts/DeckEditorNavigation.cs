@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class DeckEditorNavigation : MonoBehaviour
 {
     private const string DeckEditorSceneName = "DeckEditorScene";
+    private bool isReturningToPreviousScene;
 
     void Start()
     {
@@ -17,7 +18,7 @@ public class DeckEditorNavigation : MonoBehaviour
     void Update()
     {
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-            ReturnToPreviousScene();
+            ConfirmDeck();
     }
 
     public void GoToDeckEditor()
@@ -30,6 +31,9 @@ public class DeckEditorNavigation : MonoBehaviour
 
     public void ConfirmDeck()
     {
+        if (isReturningToPreviousScene)
+            return;
+
         var manager = UnityEngine.Object.FindFirstObjectByType<DeckEditorManager>();
         if (manager != null && manager.IsDeckComplete)
         {
@@ -40,6 +44,10 @@ public class DeckEditorNavigation : MonoBehaviour
 
     private void ReturnToPreviousScene()
     {
+        if (isReturningToPreviousScene)
+            return;
+
+        isReturningToPreviousScene = true;
         string returnSceneName = DeckHolder.GetDeckEditorReturnScene();
 
         if (DeckHolder.IsDeckEditorOpenedAdditively)
