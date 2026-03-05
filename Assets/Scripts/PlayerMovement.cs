@@ -43,6 +43,19 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        if (playerCamera == null && Camera.main != null)
+            playerCamera = Camera.main.transform;
+
+        if (controller == null || playerCamera == null)
+        {
+            Debug.LogError($"[{nameof(PlayerMovement)}] Missing required references on {gameObject.name}.", this);
+            enabled = false;
+            return;
+        }
         
         // Setup initial camera and position
         xRotation = initialLookDownAngle;
@@ -148,6 +161,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Look()
     {
+        if (Mouse.current == null)
+            return;
+
         Vector2 mouseDelta = Mouse.current.delta.ReadValue() * mouseSensitivity * 0.1f;
         
         xRotation -= mouseDelta.y;
@@ -159,6 +175,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Move()
     {
+        if (Keyboard.current == null)
+            return;
+
         // Calculate input
         float x = (Keyboard.current.dKey.isPressed ? 1 : 0) - (Keyboard.current.aKey.isPressed ? 1 : 0);
         float z = (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0);
