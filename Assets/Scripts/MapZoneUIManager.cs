@@ -97,6 +97,8 @@ public class MapZoneUIManager : MonoBehaviour
         Scene battleScene = SceneManager.GetSceneByName("GameScene");
         if (battleScene.IsValid() && battleScene.isLoaded)
         {
+            EventSystemUtility.EnableOnlyForScene(battleScene);
+            EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
         }
     }

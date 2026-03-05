@@ -2639,6 +2639,8 @@ public class GameManager : MonoBehaviour
             if (returnScene.IsValid() && returnScene.isLoaded)
             {
                 BattleData.ResumeReturnScene();
+                EventSystemUtility.EnableOnlyForScene(returnScene);
+                EventSystemUtility.EnsureSingleAudioListener(returnScene);
                 SceneManager.SetActiveScene(returnScene);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;

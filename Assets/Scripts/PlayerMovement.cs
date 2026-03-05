@@ -114,6 +114,7 @@ public class PlayerMovement : MonoBehaviour
         if (deckEditorScene.IsValid() && deckEditorScene.isLoaded)
         {
             EventSystemUtility.EnableOnlyForScene(deckEditorScene);
+            EventSystemUtility.EnsureSingleAudioListener(deckEditorScene);
             SceneManager.SetActiveScene(deckEditorScene);
         }
     }

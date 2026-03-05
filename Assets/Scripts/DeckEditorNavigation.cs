@@ -13,6 +13,7 @@ public class DeckEditorNavigation : MonoBehaviour
         // Calling DeckViewer.ShowDeck here would rebuild the deck
         // without click handlers, so we omit that call.
         EventSystemUtility.EnableOnlyForScene(gameObject.scene);
+        EventSystemUtility.EnsureSingleAudioListener(gameObject.scene);
         SceneManager.SetActiveScene(gameObject.scene);
     }
 
@@ -57,6 +58,7 @@ public class DeckEditorNavigation : MonoBehaviour
             if (returnScene.IsValid() && returnScene.isLoaded)
             {
                 EventSystemUtility.EnableOnlyForScene(returnScene);
+                EventSystemUtility.EnsureSingleAudioListener(returnScene);
                 SceneManager.SetActiveScene(returnScene);
                 SceneManager.UnloadSceneAsync(DeckEditorSceneName);
 

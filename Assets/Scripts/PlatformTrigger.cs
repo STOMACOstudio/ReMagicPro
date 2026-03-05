@@ -123,6 +123,8 @@ public class PlatformTrigger : MonoBehaviour
         Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);
         if (battleScene.IsValid() && battleScene.isLoaded)
         {
+            EventSystemUtility.EnableOnlyForScene(battleScene);
+            EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
         }
     }
