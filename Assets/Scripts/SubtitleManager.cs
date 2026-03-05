@@ -7,6 +7,7 @@ public class SubtitleManager : MonoBehaviour
 {
     public TextMeshProUGUI subtitleText;
     private CanvasGroup canvasGroup;
+    private bool isSequencePlaying;
 
     [System.Serializable]
     public class SubtitleLine {
@@ -26,12 +27,28 @@ public class SubtitleManager : MonoBehaviour
 
     public void DisplaySequence(List<SubtitleLine> lines)
     {
-        StopAllCoroutines();
+        StopSequence();
+
+        if (lines == null || lines.Count == 0)
+            return;
+
         StartCoroutine(SequenceRoutine(lines));
+    }
+
+    public IEnumerator DisplaySequenceAndWait(List<SubtitleLine> lines)
+    {
+        DisplaySequence(lines);
+
+        while (isSequencePlaying)
+        {
+            yield return null;
+        }
     }
 
     IEnumerator SequenceRoutine(List<SubtitleLine> lines)
     {
+        isSequencePlaying = true;
+
         foreach (SubtitleLine line in lines)
         {
             subtitleText.text = line.text;
@@ -46,6 +63,8 @@ public class SubtitleManager : MonoBehaviour
             
             subtitleText.text = ""; 
         }
+
+        isSequencePlaying = false;
     }
 
     IEnumerator Fade(float start, float end, float duration)
@@ -62,6 +81,7 @@ public class SubtitleManager : MonoBehaviour
     public void StopSequence()
     {
         StopAllCoroutines();
+        isSequencePlaying = false;
         subtitleText.text = "";
         if (canvasGroup != null) canvasGroup.alpha = 0;
     }
