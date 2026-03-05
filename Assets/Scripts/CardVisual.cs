@@ -1062,6 +1062,29 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            if (GameManager.Instance.targetingCreatureActivated != null)
+            {
+                Card clicked = linkedCard;
+                CreatureCard targetingCreature = GameManager.Instance.targetingCreatureActivated;
+
+                bool validForAnyTargetDamage =
+                    targetingCreature.activatedAbilities != null &&
+                    targetingCreature.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget) &&
+                    clicked is CreatureCard;
+
+                if (validForAnyTargetDamage)
+                {
+                    GameManager.Instance.CompleteTargetSelection(this);
+                }
+                else
+                {
+                    Debug.Log("Clicked invalid target during creature ability targeting — cancelling.");
+                    GameManager.Instance.CancelTargeting();
+                }
+
+                return;
+            }
+
             if (GameManager.Instance.targetingEquipment != null)
             {
                 if (linkedCard is CreatureCard equippedCreature &&
