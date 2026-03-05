@@ -10,7 +10,12 @@ public class PlatformTrigger : MonoBehaviour
     public string playerTag = "Player";
     public Material activeMaterial;
     public Material lockedMaterial; 
+    public Material crippledMaterial;
     public float lockTimeRequirement = 15f;
+
+    [Header("Crippled State")]
+    [Tooltip("Optional particle system to stop and disable after the battle is won.")]
+    public ParticleSystem manaParticleSystem;
     
     [Header("Audio")]
     public AudioClip lockSound;
@@ -117,6 +122,7 @@ public class PlatformTrigger : MonoBehaviour
         BattleData.CurrentDeckKey = deckKey;
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         BattleData.IsBattleOpenedAdditively = true;
+        BattleData.TriggeringPlatform = this;
         BattleData.PauseReturnScene();
 
         SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Additive);
@@ -126,6 +132,18 @@ public class PlatformTrigger : MonoBehaviour
             EventSystemUtility.EnableOnlyForScene(battleScene);
             EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
+        }
+    }
+
+    public void ApplyCrippledState()
+    {
+        if (crippledMaterial != null && rend != null)
+            rend.material = crippledMaterial;
+
+        if (manaParticleSystem != null)
+        {
+            manaParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            manaParticleSystem.gameObject.SetActive(false);
         }
     }
 
