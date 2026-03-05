@@ -2638,6 +2638,8 @@ public class GameManager : MonoBehaviour
             {
                 BattleData.ResumeReturnScene();
                 SceneManager.SetActiveScene(returnScene);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
                 BattleData.IsBattleOpenedAdditively = false;
                 BattleData.ReturnSceneName = null;
                 SceneManager.UnloadSceneAsync("GameScene");
@@ -2646,6 +2648,8 @@ public class GameManager : MonoBehaviour
         }
 
         BattleData.ResumeReturnScene();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         BattleData.IsBattleOpenedAdditively = false;
         BattleData.ReturnSceneName = null;
         SceneManager.LoadScene(returnSceneName);
