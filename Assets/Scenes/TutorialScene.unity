@@ -20674,7 +20674,7 @@ MonoBehaviour:
   beginnerBattleLines:
   - text: To fully commit your heart to the power of White Mana
     displayDuration: 4
-  - text: You must defeat the Black Mana that's left inside
+  - text: You must defeat the Black Mana that's left inside you
     displayDuration: 4
   - text: Embrace light, defeat darkness
     displayDuration: 2
