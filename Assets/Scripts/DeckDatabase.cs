@@ -138,6 +138,27 @@ public static class DeckDatabase
         }
     }
 
+
+    private static void BuildDeckFromEntries(Player player, DeckEntry[] entries)
+    {
+        if (player == null)
+        {
+            Debug.LogError("Cannot build deck because player is null.");
+            return;
+        }
+
+        player.Deck.Clear();
+
+        foreach (DeckEntry entry in entries)
+            AddCards(player, entry.CardName, entry.Count);
+    }
+
+    public static void BuildBeginnerDeck(Player player, string color)
+    {
+        string normalized = string.IsNullOrWhiteSpace(color) ? "red" : color.Trim();
+        BuildDeckFromEntries(player, GetBeginnerDeckEntries(normalized));
+    }
+
     public static List<CardData> BuildPlayerStarterDeck(string color)
     {
         string normalized = string.IsNullOrWhiteSpace(color) ? "Red" : color.Trim();
@@ -163,21 +184,9 @@ public static class DeckDatabase
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Plains", 16);
-            AddCards(ai, "Angry Farmer", 3);
-            AddCards(ai, "Waterbearer", 3);
-            AddCards(ai, "Iconoclast Monk", 2);
-            AddCards(ai, "Gallant Lord", 2);
-            AddCards(ai, "Gentle Giant", 2);
-            AddCards(ai, "Hamlet Recruiter", 2);
-            AddCards(ai, "Skyhunter Unicorn", 2);
-            AddCards(ai, "Solid Prayer", 2);
-            AddCards(ai, "Beasthunter", 2);
-            AddCards(ai, "Sacred Horn Nectar", 2);
-            AddCards(ai, "Bonfire", 2);
-        }
+    {
+        BuildBeginnerDeck(ai, "white");
+    }
 
     public static void BuildWhiteAdvancedDeck(Player ai)
         {
@@ -198,19 +207,9 @@ public static class DeckDatabase
         }
 
     public static void BuildBlueBeginnerDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Island", 16);
-            AddCards(ai, "Lucky Fisherman", 4);
-            AddCards(ai, "Giant Crab", 3);
-            AddCards(ai, "Wandering Squid", 3);
-            AddCards(ai, "Wandering Cloud", 3);
-            AddCards(ai, "Sharkmen Tribe", 3);
-            AddCards(ai, "Colossal Octopus", 2);
-            AddCards(ai, "Mana Rock", 2);
-            AddCards(ai, "Crystallium", 2);
-            AddCards(ai, "Blast of Knowledge", 2);
-        }
+    {
+        BuildBeginnerDeck(ai, "blue");
+    }
 
     public static void BuildBlueAdvancedDeck(Player ai)
         {
@@ -230,19 +229,9 @@ public static class DeckDatabase
         }
 
     public static void BuildBlackBeginnerDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Swamp", 16);
-            AddCards(ai, "Limping Corpse", 3);
-            AddCards(ai, "Famished Crow", 3);
-            AddCards(ai, "Ratbat", 3);
-            AddCards(ai, "Forced Mummification", 2);
-            AddCards(ai, "Giant Rat", 3);
-            AddCards(ai, "Bog Mosquito", 2);
-            AddCards(ai, "Forget", 3);
-            AddCards(ai, "Rotting Whale", 2);
-            AddCards(ai, "Flayed Deer", 3);
-        }
+    {
+        BuildBeginnerDeck(ai, "black");
+    }
 
     public static void BuildBlackAdvancedDeck(Player ai)
         {
@@ -262,21 +251,9 @@ public static class DeckDatabase
         }
 
     public static void BuildRedBeginnerDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Mountain", 16);
-            AddCards(ai, "Village Idiot", 3);
-            AddCards(ai, "Rabid Dog", 3);
-            AddCards(ai, "Fire Hatchet", 2);
-            AddCards(ai, "Great Boulder", 2);
-            AddCards(ai, "Explosion", 2);
-            AddCards(ai, "Goblin Puncher", 2);
-            AddCards(ai, "Melt", 2);
-            AddCards(ai, "Flying Pig", 3);
-            AddCards(ai, "To Dig a Hole", 1);
-            AddCards(ai, "Crystallium", 2);
-            AddCards(ai, "Wild Ostrich", 2);
-        }
+    {
+        BuildBeginnerDeck(ai, "red");
+    }
 
     public static void BuildRedAdvancedDeck(Player ai)
         {
@@ -297,18 +274,9 @@ public static class DeckDatabase
         }
 
     public static void BuildGreenBeginnerDeck(Player ai)
-        {
-            ai.Deck.Clear();
-            AddCards(ai, "Forest", 16);
-            AddCards(ai, "Wall of Roots", 3);
-            AddCards(ai, "Domestic Cat", 3);
-            AddCards(ai, "Deepwood Monkeys", 3);
-            AddCards(ai, "Violent Ape", 3);
-            AddCards(ai, "Living Tree", 3);
-            AddCards(ai, "Flying Donkey", 3);
-            AddCards(ai, "Feast", 3);
-            AddCards(ai, "Mana Rock", 3);
-        }
+    {
+        BuildBeginnerDeck(ai, "green");
+    }
 
     public static void BuildGreenAdvancedDeck(Player ai)
         {
