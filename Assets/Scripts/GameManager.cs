@@ -2629,7 +2629,30 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("RefreshMerchant", 1);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("MapScene");
+        string returnSceneName = BattleData.GetReturnScene();
+
+        if (BattleData.IsBattleOpenedAdditively)
+        {
+            Scene returnScene = SceneManager.GetSceneByName(returnSceneName);
+            if (returnScene.IsValid() && returnScene.isLoaded)
+            {
+                BattleData.ResumeReturnScene();
+                SceneManager.SetActiveScene(returnScene);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                BattleData.IsBattleOpenedAdditively = false;
+                BattleData.ReturnSceneName = null;
+                SceneManager.UnloadSceneAsync("GameScene");
+                return;
+            }
+        }
+
+        BattleData.ResumeReturnScene();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        BattleData.IsBattleOpenedAdditively = false;
+        BattleData.ReturnSceneName = null;
+        SceneManager.LoadScene(returnSceneName);
     }
 
     void PickRandomBeginnerDeck(Player ai)

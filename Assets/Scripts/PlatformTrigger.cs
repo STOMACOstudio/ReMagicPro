@@ -107,7 +107,16 @@ public class PlatformTrigger : MonoBehaviour
 
         BattleData.CurrentZoneId = null;
         BattleData.CurrentDeckKey = deckKey;
-        SceneManager.LoadScene(BattleSceneName);
+        BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
+        BattleData.IsBattleOpenedAdditively = true;
+        BattleData.PauseReturnScene();
+
+        SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Additive);
+        Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);
+        if (battleScene.IsValid() && battleScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(battleScene);
+        }
     }
 
     private float GetSequenceDuration(List<SubtitleManager.SubtitleLine> lines)
