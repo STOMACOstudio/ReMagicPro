@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlatformTrigger : MonoBehaviour
 {
+    private const string BattleSceneName = "GameScene";
+
     public string playerTag = "Player";
     public Material activeMaterial;
     public Material lockedMaterial; 
@@ -41,7 +44,13 @@ public class PlatformTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (isAnyPlatformLocked || !other.CompareTag(playerTag)) return;
+        if (!other.CompareTag(playerTag)) return;
+
+        if (isAnyPlatformLocked)
+        {
+            TryStartBeginnerBattle();
+            return;
+        }
 
         playerCount++;
 
@@ -56,6 +65,42 @@ public class PlatformTrigger : MonoBehaviour
             }
 
             lockCoroutine = StartCoroutine(LockTimer());
+        }
+    }
+
+    private void TryStartBeginnerBattle()
+    {
+        if (!DeckHolder.IsStarterDeckRewardCollected)
+            return;
+
+        string deckKey = ResolveBeginnerDeckKeyForPlatform();
+        if (string.IsNullOrEmpty(deckKey))
+            return;
+
+        BattleData.CurrentZoneId = null;
+        BattleData.CurrentDeckKey = deckKey;
+        SceneManager.LoadScene(BattleSceneName);
+    }
+
+    private string ResolveBeginnerDeckKeyForPlatform()
+    {
+        if (rewardPrefab == null)
+            return null;
+
+        Collectible collectible = rewardPrefab.GetComponent<Collectible>();
+        if (collectible == null)
+            return null;
+
+        switch (collectible.starterColor.ToLowerInvariant())
+        {
+            case "white": return "Deck_Village";
+            case "blue": return "Deck_Shore";
+            case "black": return "Deck_Graveyard";
+            case "red": return "Deck_Camp";
+            case "green": return "Deck_Thicket";
+            default:
+                Debug.LogWarning($"[PlatformTrigger] Unknown starter color '{collectible.starterColor}' on {gameObject.name}.");
+                return null;
         }
     }
 
