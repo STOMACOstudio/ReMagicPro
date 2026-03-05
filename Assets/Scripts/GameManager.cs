@@ -1864,7 +1864,7 @@ public class GameManager : MonoBehaviour
         if (chosen is LandCard land)
             land.isTapped = true;
 
-        Transform parent = player == humanPlayer ? playerBattlefieldArea : aiBattlefieldArea;
+        Transform parent = player == humanPlayer ? playerLandArea : aiLandArea;
         GameObject obj = Instantiate(cardPrefab, parent);
         CardVisual visual = obj.GetComponent<CardVisual>();
         CardData chosenData = CardDatabase.GetCardData(chosen.cardName);
