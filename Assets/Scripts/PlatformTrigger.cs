@@ -19,6 +19,7 @@ public class PlatformTrigger : MonoBehaviour
     public SubtitleManager subtitleManager;
     public List<SubtitleManager.SubtitleLine> interactionLines; 
     public List<SubtitleManager.SubtitleLine> postLockLines; 
+    public List<SubtitleManager.SubtitleLine> beginnerBattleLines; 
 
     [Header("Spawning")]
     [Tooltip("Assign the specific Prefab for this platform here.")]
@@ -90,10 +91,10 @@ public class PlatformTrigger : MonoBehaviour
 
     private IEnumerator BeginnerBattleAfterSubtitles(string deckKey)
     {
-        if (subtitleManager != null && interactionLines != null && interactionLines.Count > 0)
+        if (subtitleManager != null && beginnerBattleLines != null && beginnerBattleLines.Count > 0)
         {
-            subtitleManager.DisplaySequence(interactionLines);
-            yield return new WaitForSeconds(GetSequenceDuration(interactionLines));
+            subtitleManager.DisplaySequence(beginnerBattleLines);
+            yield return new WaitForSeconds(GetSequenceDuration(beginnerBattleLines));
         }
 
         beginnerBattleCoroutine = null;
