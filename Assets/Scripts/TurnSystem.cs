@@ -14,6 +14,8 @@ public class TurnSystem : MonoBehaviour
 {
     public static TurnSystem Instance { get; private set; }
 
+    private TMP_Text nextPhaseButtonLabel;
+
     public bool autoStart = false;
 
     public enum TurnPhase
@@ -80,15 +82,28 @@ public class TurnSystem : MonoBehaviour
 
     private Coroutine damageCoroutine;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
     void Start()
     {
-        Instance = this;
-
         if (!ValidateUIReferences())
         {
             enabled = false;
             return;
         }
+
+        nextPhaseButtonLabel = nextPhaseButton.GetComponentInChildren<TMP_Text>();
 
         nextPhaseButton.onClick.AddListener(NextPhaseButton);
         confirmAttackersButton.onClick.AddListener(ConfirmAttackers);
@@ -187,10 +202,9 @@ public class TurnSystem : MonoBehaviour
 
                 nextPhaseButton.interactable = allowNext;
 
-                TMP_Text label = nextPhaseButton.GetComponentInChildren<TMP_Text>();
-                if (label != null)
+                if (nextPhaseButtonLabel != null)
                 {
-                    label.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
+                    nextPhaseButtonLabel.text = (currentPhase == TurnPhase.Main2) ? "END TURN" : "NEXT PHASE";
                 }
             }
 
@@ -236,6 +250,23 @@ public class TurnSystem : MonoBehaviour
 #endif
     }
 
+    private static void PlaySoundIfAvailable(System.Func<SoundManager, AudioClip> clipSelector)
+    {
+        SoundManager soundManager = SoundManager.Instance;
+        if (soundManager == null)
+            return;
+
+        AudioClip clip = clipSelector?.Invoke(soundManager);
+        if (clip != null)
+            soundManager.PlaySound(clip);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     public void NextPhaseButton()
     {
         if (GameManager.Instance.gameOver)
@@ -246,7 +277,7 @@ public class TurnSystem : MonoBehaviour
 
         if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
         {
-            SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
+            PlaySoundIfAvailable(sound => sound.buttonClick);
 
             if (GameManager.Instance.isTargetingMode)
             {
@@ -287,7 +318,7 @@ public class TurnSystem : MonoBehaviour
 
             if (waitingForPlayerInput)
             {
-                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
+                PlaySoundIfAvailable(sound => sound.buttonClick);
                 waitingForPlayerInput = false;
                 SetCombatUIState(CombatUIState.Idle);
 
@@ -327,7 +358,7 @@ public class TurnSystem : MonoBehaviour
 
             if (waitingForPlayerInput)
             {
-                SoundManager.Instance.PlaySound(SoundManager.Instance.buttonClick);
+                PlaySoundIfAvailable(sound => sound.buttonClick);
                 waitingForPlayerInput = false;
                 SetCombatUIState(CombatUIState.Idle);
                 AdvancePhase();
@@ -368,7 +399,7 @@ public class TurnSystem : MonoBehaviour
                     turnBanner.SetActive(false);
 
                 turnBanner.SetActive(true);
-                SoundManager.Instance.PlaySound(SoundManager.Instance.turnChange);
+                PlaySoundIfAvailable(sound => sound.turnChange);
                 StartCoroutine(WaitForBannerAndStart());
             }
             else
