@@ -15,6 +15,7 @@ public static class BattleData
     public static string CurrentDeckKey = null;
     public static string ReturnSceneName = null;
     public static bool IsBattleOpenedAdditively = false;
+    public static PlatformTrigger TriggeringPlatform = null;
 
     public static readonly List<GameObject> PausedSceneRoots = new List<GameObject>();
 

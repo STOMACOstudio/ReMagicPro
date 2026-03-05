@@ -2644,6 +2644,8 @@ public class GameManager : MonoBehaviour
                 SceneManager.SetActiveScene(returnScene);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                BattleData.TriggeringPlatform?.ApplyCrippledState();
+                BattleData.TriggeringPlatform = null;
                 BattleData.IsBattleOpenedAdditively = false;
                 BattleData.ReturnSceneName = null;
                 SceneManager.UnloadSceneAsync("GameScene");
@@ -2654,6 +2656,8 @@ public class GameManager : MonoBehaviour
         BattleData.ResumeReturnScene();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        BattleData.TriggeringPlatform?.ApplyCrippledState();
+        BattleData.TriggeringPlatform = null;
         BattleData.IsBattleOpenedAdditively = false;
         BattleData.ReturnSceneName = null;
         SceneManager.LoadScene(returnSceneName);
