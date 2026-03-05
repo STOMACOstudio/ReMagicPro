@@ -101,8 +101,8 @@ public class PlatformTrigger : MonoBehaviour
     {
         if (subtitleManager != null && beginnerBattleLines != null && beginnerBattleLines.Count > 0)
         {
-            subtitleManager.DisplaySequence(beginnerBattleLines);
-            yield return new WaitForSeconds(GetSequenceDuration(beginnerBattleLines));
+            yield return subtitleManager.DisplaySequenceAndWait(beginnerBattleLines);
+            subtitleManager.StopSequence();
         }
 
         beginnerBattleCoroutine = null;
@@ -125,19 +125,6 @@ public class PlatformTrigger : MonoBehaviour
         {
             SceneManager.SetActiveScene(battleScene);
         }
-    }
-
-    private float GetSequenceDuration(List<SubtitleManager.SubtitleLine> lines)
-    {
-        const float FadeDuration = 0.5f;
-
-        float total = 0f;
-        foreach (SubtitleManager.SubtitleLine line in lines)
-        {
-            total += line.displayDuration + (FadeDuration * 2f);
-        }
-
-        return total;
     }
 
     private string ResolveBeginnerDeckKeyForPlatform()
