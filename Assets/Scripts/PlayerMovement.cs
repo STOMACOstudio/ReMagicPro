@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
@@ -93,6 +94,10 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator OpenDeckEditorScene()
     {
+        EventSystem currentEventSystem = EventSystem.current;
+        if (currentEventSystem != null)
+            currentEventSystem.enabled = false;
+
         Scene deckEditorScene = SceneManager.GetSceneByName(DeckEditorSceneName);
 
         if (!deckEditorScene.IsValid() || !deckEditorScene.isLoaded)
@@ -107,7 +112,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (deckEditorScene.IsValid() && deckEditorScene.isLoaded)
+        {
+            EventSystemUtility.EnableOnlyForScene(deckEditorScene);
             SceneManager.SetActiveScene(deckEditorScene);
+        }
     }
 
     void HandleIntro()
