@@ -63,6 +63,36 @@ public static class CardDatabase
 
         // Creatures
             //WHITE
+            Add(new CardData // Holy strength
+                    {
+                        cardName = "Holy Strength",
+                        artist = "Scott M. Fisher",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 1,
+                        toughnessBuff = 2,
+                        artwork = Resources.Load<Sprite>("Art/holy_strength"),
+                        flavorText = "Such power protects the body with the strength of the soul.",
+                        rulesText = "Enchanted creature gets +1/+2."
+                    });
+                Add(new CardData // Divine transformation
+                    {
+                        cardName = "Divine Transformation",
+                        artist = "NèNè Thomas",
+                        rarity = "Uncommon",
+                        manaCost = 4,
+                        color = new List<string> { "White", "White" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 3,
+                        toughnessBuff = 3,
+                        artwork = Resources.Load<Sprite>("Art/divine_transformation"),
+                        flavorText = "Glory surged through her and radiance surrounded her. All things were possible with the blessing of the Divine.",
+                        rulesText = "Enchanted creature gets +3/+3."
+                    });
                 Add(new CardData //Iconoclast monk
                     {
                         cardName = "Iconoclast Monk",
@@ -155,6 +185,21 @@ public static class CardDatabase
                     flavorText = "The turning of the tide always begins with one soldier's decision to head back into the fray.",
                     artwork = Resources.Load<Sprite>("Art/glory_seeker")
                     });
+                Add(new CardData // Alaborn trooper
+                    {
+                    cardName = "Alaborn Trooper",
+                    artist = "Lubov",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 3,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "I dedicate my body to my country\nAnd my life to the King.\nAlaborn Soldier's Oath",
+                    artwork = Resources.Load<Sprite>("Art/alaborn_trooper")
+                    });
                 Add(new CardData // Foot soldiers
                     {
                     cardName = "Foot Soldiers",
@@ -183,11 +228,30 @@ public static class CardDatabase
                     subtypes = new List<string> { "Wall" },
                     keywordAbilities = new List<KeywordAbility>
                     {
-                        KeywordAbility.Flying,
-                        KeywordAbility.Defender
+                        KeywordAbility.Defender,
+                        KeywordAbility.Flying
                     },
                     flavorText = "The ancestor protects us in ways we only begin to comprehend.\n-Mystic Elder",
                     artwork = Resources.Load<Sprite>("Art/angelic_wall")
+                    });
+                Add(new CardData //Wall of swords
+                    {
+                    cardName = "Wall of Swords",
+                    artist = "Zoltan Boros & Gabor Szikszai",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 5,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "The air hummed with the scissoring sound of uncounted blades that hovered in front of the invaders as though wielded by a phalanx of unseen hands.",
+                    artwork = Resources.Load<Sprite>("Art/wall_of_swords")
                     });
                 Add(new CardData // Abbey griffin
                     {
@@ -222,8 +286,26 @@ public static class CardDatabase
                         KeywordAbility.Flying,
                         KeywordAbility.Vigilance
                     },
-                    flavorText = "Her sword sings more beautifully than any choir",
+                    flavorText = "Her sword sings more beautifully than any choir.",
                     artwork = Resources.Load<Sprite>("Art/serra_angel")
+                    });
+                Add(new CardData // Archangel
+                    {
+                    cardName = "Archangel",
+                    artist = "Quinton Hoover",
+                    rarity = "Uncommon",
+                    manaCost = 7,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 5,
+                    subtypes = new List<string> { "Angel" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Flying,
+                        KeywordAbility.Vigilance
+                    },
+                    flavorText = "The sky rang with the cries of armored seraphs, and the darkness made a tactical retreat.",
+                    artwork = Resources.Load<Sprite>("Art/archangel")
                     });
                 Add(new CardData //Trinkets Collector
                     {
@@ -350,6 +432,90 @@ public static class CardDatabase
                         },
                     }
                     });
+                Add(new CardData //Angel of mercy
+                    {
+                    cardName = "Angel of Mercy",
+                    artist = "Melissa A. Benson",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Angel" },
+                    flavorText = "A song of life soars over fields of blood",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/angel_of_mercy"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Gain 3 life.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.TryGainLife(owner, 3, false);
+                            }
+                        },
+                    }
+                    });
+                Add(new CardData //Venerable monk
+                    {
+                    cardName = "Venerable Monk",
+                    artist = "D. Alexander Gregory",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Cleric" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    artwork = Resources.Load<Sprite>("Art/venerable_monk"),
+                    flavorText = "His presence brings not only a strong arm but also renewed hope.",
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Gain 2 life.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.TryGainLife(owner, 2, false);
+                            }
+                        },
+                    }
+                    });
+                Add(new CardData //Staunch defenders
+                    {
+                    cardName = "Staunch Defenders",
+                    artist = "Tristan Elwall",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 4,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    artwork = Resources.Load<Sprite>("Art/staunch_defenders"),
+                    flavorText = "The key to winning any fight is simply staying alive.\n-The Southern Paladin",
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnEnter,
+                            description = "Gain 4 life.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                GameManager.Instance.TryGainLife(owner, 4, false);
+                            }
+                        },
+                    }
+                    });
                 Add(new CardData //Realm protector
                     {
                     cardName = "Realm Protector",
@@ -366,6 +532,24 @@ public static class CardDatabase
                         KeywordAbility.Vigilance
                     },
                     artwork = Resources.Load<Sprite>("Art/realm_protector")
+                    });
+                Add(new CardData //Iron tusk elephant
+                    {
+                    cardName = "Iron Tusk Elephant",
+                    artist = "Tony Roberts",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Elephant" },
+                    flavorText = "The fury in the lion's eye;\nthe patience in the hippo's yawn:\nthe pride within the griffin's cry;\nare one within the iron tusk's stride.\n-'Iron Tusk', Femeref song",
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Trample
+                    },
+                    artwork = Resources.Load<Sprite>("Art/iron_tusk_elephant")
                     });
                 Add(new CardData //Hamlet Recruiter
                     {
