@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -87,9 +88,25 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        SceneManager.LoadScene(DeckEditorSceneName, LoadSceneMode.Additive);
+        StartCoroutine(OpenDeckEditorScene());
+    }
+
+    IEnumerator OpenDeckEditorScene()
+    {
         Scene deckEditorScene = SceneManager.GetSceneByName(DeckEditorSceneName);
-        if (deckEditorScene.IsValid())
+
+        if (!deckEditorScene.IsValid() || !deckEditorScene.isLoaded)
+        {
+            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(DeckEditorSceneName, LoadSceneMode.Additive);
+            if (loadOperation != null)
+            {
+                yield return loadOperation;
+            }
+
+            deckEditorScene = SceneManager.GetSceneByName(DeckEditorSceneName);
+        }
+
+        if (deckEditorScene.IsValid() && deckEditorScene.isLoaded)
             SceneManager.SetActiveScene(deckEditorScene);
     }
 
