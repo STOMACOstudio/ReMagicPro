@@ -90,7 +90,13 @@ public class MapZoneUIManager : MonoBehaviour
         BattleData.CurrentZoneId = selectedZone.zoneId;
         BattleData.CurrentDeckKey = selectedZone.deckKey;
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
+        BattleData.IsBattleOpenedAdditively = true;
 
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GameScene", LoadSceneMode.Additive);
+        Scene battleScene = SceneManager.GetSceneByName("GameScene");
+        if (battleScene.IsValid() && battleScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(battleScene);
+        }
     }
 }

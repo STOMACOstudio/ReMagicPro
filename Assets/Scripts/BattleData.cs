@@ -10,6 +10,7 @@ public static class BattleData
 
     public static string CurrentDeckKey = null;
     public static string ReturnSceneName = null;
+    public static bool IsBattleOpenedAdditively = false;
 
     public static string GetReturnScene(string fallbackSceneName = DefaultReturnSceneName)
     {
