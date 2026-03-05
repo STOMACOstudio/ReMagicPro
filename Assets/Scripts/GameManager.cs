@@ -2629,7 +2629,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("RefreshMerchant", 1);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("MapScene");
+        SceneManager.LoadScene(BattleData.GetReturnScene());
     }
 
     void PickRandomBeginnerDeck(Player ai)

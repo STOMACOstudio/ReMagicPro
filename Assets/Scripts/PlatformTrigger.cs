@@ -107,6 +107,7 @@ public class PlatformTrigger : MonoBehaviour
 
         BattleData.CurrentZoneId = null;
         BattleData.CurrentDeckKey = deckKey;
+        BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(BattleSceneName);
     }
 
