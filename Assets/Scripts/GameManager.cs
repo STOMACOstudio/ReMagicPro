@@ -2614,16 +2614,18 @@ public class GameManager : MonoBehaviour
 
     public void WinBattle()
     {
-        if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
-        {
-            Debug.Log("Player won battle at zone ID: " + BattleData.CurrentZoneId);
-            PlayerPrefs.SetString("LastCompletedZone", BattleData.CurrentZoneId);
-            PlayerPrefs.Save();
-        }
-        else
-        {
-            Debug.LogWarning("No zone ID found when trying to WinBattle.");
-        }
+        // 2D map zone unlock flow is deprecated while we transition to the 3D world.
+        // Keep this logic disabled to avoid warning spam when battles no longer map to a zone ID.
+        // if (!string.IsNullOrEmpty(BattleData.CurrentZoneId))
+        // {
+        //     Debug.Log("Player won battle at zone ID: " + BattleData.CurrentZoneId);
+        //     PlayerPrefs.SetString("LastCompletedZone", BattleData.CurrentZoneId);
+        //     PlayerPrefs.Save();
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("No zone ID found when trying to WinBattle.");
+        // }
 
         // Flag the merchant inventory to refresh on the next visit
         PlayerPrefs.SetInt("RefreshMerchant", 1);
