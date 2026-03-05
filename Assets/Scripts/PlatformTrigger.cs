@@ -79,8 +79,16 @@ public class PlatformTrigger : MonoBehaviour
         if (!DeckHolder.IsStarterDeckRewardCollected)
             return;
 
+        string playerColor = PlayerPrefs.GetString("PlayerColors", string.Empty);
         string deckKey = ResolveBeginnerDeckKeyForPlatform();
         if (string.IsNullOrEmpty(deckKey))
+            return;
+
+        string expectedDeckKey = ResolveOppositeBeginnerDeckKeyForPlayerColor(playerColor);
+        if (string.IsNullOrEmpty(expectedDeckKey))
+            return;
+
+        if (!string.Equals(deckKey, expectedDeckKey, System.StringComparison.Ordinal))
             return;
 
         if (beginnerBattleCoroutine != null)
@@ -150,6 +158,21 @@ public class PlatformTrigger : MonoBehaviour
             case "green": return "Deck_Thicket";
             default:
                 Debug.LogWarning($"[PlatformTrigger] Unknown starter color '{collectible.starterColor}' on {gameObject.name}.");
+                return null;
+        }
+    }
+
+    private string ResolveOppositeBeginnerDeckKeyForPlayerColor(string playerColor)
+    {
+        switch (playerColor.ToLowerInvariant())
+        {
+            case "white": return "Deck_Graveyard"; // Opponent black
+            case "blue": return "Deck_Camp"; // Opponent red
+            case "black": return "Deck_Thicket"; // Opponent green
+            case "red": return "Deck_Village"; // Opponent white
+            case "green": return "Deck_Shore"; // Opponent blue
+            default:
+                Debug.LogWarning($"[PlatformTrigger] Unknown player color '{playerColor}'.");
                 return null;
         }
     }
