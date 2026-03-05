@@ -109,6 +109,7 @@ public class PlatformTrigger : MonoBehaviour
         BattleData.CurrentDeckKey = deckKey;
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         BattleData.IsBattleOpenedAdditively = true;
+        BattleData.PauseReturnScene();
 
         SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Additive);
         Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);

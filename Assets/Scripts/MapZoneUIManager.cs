@@ -91,6 +91,7 @@ public class MapZoneUIManager : MonoBehaviour
         BattleData.CurrentDeckKey = selectedZone.deckKey;
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         BattleData.IsBattleOpenedAdditively = true;
+        BattleData.PauseReturnScene();
 
         SceneManager.LoadScene("GameScene", LoadSceneMode.Additive);
         Scene battleScene = SceneManager.GetSceneByName("GameScene");

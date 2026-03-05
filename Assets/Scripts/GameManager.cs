@@ -2636,6 +2636,7 @@ public class GameManager : MonoBehaviour
             Scene returnScene = SceneManager.GetSceneByName(returnSceneName);
             if (returnScene.IsValid() && returnScene.isLoaded)
             {
+                BattleData.ResumeReturnScene();
                 SceneManager.SetActiveScene(returnScene);
                 BattleData.IsBattleOpenedAdditively = false;
                 BattleData.ReturnSceneName = null;
@@ -2644,6 +2645,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        BattleData.ResumeReturnScene();
         BattleData.IsBattleOpenedAdditively = false;
         BattleData.ReturnSceneName = null;
         SceneManager.LoadScene(returnSceneName);
