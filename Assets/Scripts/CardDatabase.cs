@@ -5292,7 +5292,7 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.Artifact,
                         keywordBuff = KeywordAbility.CantUntap,
                         artwork = Resources.Load<Sprite>("Art/inertia_bubble"),
-                        rulesText = "Enchant Artifact. Enchanted artifact doesn't untap during its controller's untap step.",
+                        rulesText = "Enchanted artifact doesn't untap during its controller's untap step.",
                         flavorText = "I wouldn't want you to hurt yourself.\nBruenna, Neurok leader",
                     });
 

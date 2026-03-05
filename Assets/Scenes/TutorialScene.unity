@@ -10249,10 +10249,10 @@ MonoBehaviour:
   - text: Now come and take me
     displayDuration: 2
   beginnerBattleLines:
-  - text: To fully commit you heart to the power of Red Mana
-    displayDuration: 3
-  - text: You must defeat the White Mana that's left in your soul
-    displayDuration: 3
+  - text: To fully commit your heart to the power of Red Mana
+    displayDuration: 4
+  - text: You must defeat the White Mana that's left inside you
+    displayDuration: 4
   - text: Embrace chaos, defeat order
     displayDuration: 2
   - text: Become the Red Planeswalker!
@@ -15343,10 +15343,10 @@ MonoBehaviour:
   - text: Now come and take me
     displayDuration: 2
   beginnerBattleLines:
-  - text: To fully commit you heart to the power of Blue Mana
-    displayDuration: 3
-  - text: You must defeat the Red Mana that's left in your soul
-    displayDuration: 3
+  - text: To fully commit your heart to the power of Blue Mana
+    displayDuration: 4
+  - text: You must defeat the Red Mana that's left inside you
+    displayDuration: 4
   - text: 'Embrace strategy, defeat violence '
     displayDuration: 2
   - text: Be the Blue Planeswalker!
@@ -20666,10 +20666,10 @@ MonoBehaviour:
   - text: Now come and take me
     displayDuration: 2
   beginnerBattleLines:
-  - text: To fully commit you heart to the power of White Mana
-    displayDuration: 3
-  - text: You must defeat the Black Mana that's left in your soul
-    displayDuration: 3
+  - text: To fully commit your heart to the power of White Mana
+    displayDuration: 4
+  - text: You must defeat the Black Mana that's left inside
+    displayDuration: 4
   - text: Embrace light, defeat darkness
     displayDuration: 2
   - text: Become the White Planeswalker!
@@ -21254,10 +21254,10 @@ MonoBehaviour:
   - text: Now come and take me
     displayDuration: 2
   beginnerBattleLines:
-  - text: To fully commit you heart to the power of Green Mana
-    displayDuration: 3
-  - text: You must defeat the Blue Mana that's left in your soul
-    displayDuration: 3
+  - text: To fully commit your heart to the power of Green Mana
+    displayDuration: 4
+  - text: You must defeat the Blue Mana that's left inside you
+    displayDuration: 4
   - text: Embrace nature, defeat artifice
     displayDuration: 2
   - text: Become the Green Planeswalker!
@@ -32080,10 +32080,10 @@ MonoBehaviour:
   - text: Now come and take me
     displayDuration: 2
   beginnerBattleLines:
-  - text: To fully commit you heart to the power of Black Mana
-    displayDuration: 3
-  - text: You must defeat the Green Mana that's left in your soul
-    displayDuration: 3
+  - text: To fully commit your heart to the power of Black Mana
+    displayDuration: 4
+  - text: You must defeat the Green Mana that's left inside you
+    displayDuration: 4
   - text: Embrace death, defeat life
     displayDuration: 2
   - text: Become the Black Planeswalker!
