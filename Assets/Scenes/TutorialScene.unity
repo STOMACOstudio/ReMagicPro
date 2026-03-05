@@ -10248,6 +10248,15 @@ MonoBehaviour:
     displayDuration: 3
   - text: Now come and take me
     displayDuration: 2
+  beginnerBattleLines:
+  - text: To fully commit you heart to the power of Red Mana
+    displayDuration: 3
+  - text: You must defeat the White Mana that's left in your soul
+    displayDuration: 3
+  - text: Embrace chaos, defeat order
+    displayDuration: 2
+  - text: Become the Red Planeswalker!
+    displayDuration: 2
   rewardPrefab: {fileID: 6534971374858432288, guid: b290169ec40e59741a737235030fe4ae, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &417361485
@@ -15332,6 +15341,15 @@ MonoBehaviour:
   - text: You can now manipulate Red Mana
     displayDuration: 3
   - text: Now come and take me
+    displayDuration: 2
+  beginnerBattleLines:
+  - text: To fully commit you heart to the power of Blue Mana
+    displayDuration: 3
+  - text: You must defeat the Red Mana that's left in your soul
+    displayDuration: 3
+  - text: 'Embrace strategy, defeat violence '
+    displayDuration: 2
+  - text: Be the Blue Planeswalker!
     displayDuration: 2
   rewardPrefab: {fileID: 1889863161958709174, guid: 558e0d305254e654385705e7775b8f14, type: 3}
   spawnPoint: {fileID: 1370593355}
@@ -20647,6 +20665,15 @@ MonoBehaviour:
     displayDuration: 3
   - text: Now come and take me
     displayDuration: 2
+  beginnerBattleLines:
+  - text: To fully commit you heart to the power of White Mana
+    displayDuration: 3
+  - text: You must defeat the Black Mana that's left in your soul
+    displayDuration: 3
+  - text: Embrace light, defeat darkness
+    displayDuration: 2
+  - text: Become the White Planeswalker!
+    displayDuration: 2
   rewardPrefab: {fileID: 4766727113529985076, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &793363000
@@ -21225,6 +21252,15 @@ MonoBehaviour:
   - text: You can now manipulate Blue Mana
     displayDuration: 3
   - text: Now come and take me
+    displayDuration: 2
+  beginnerBattleLines:
+  - text: To fully commit you heart to the power of Green Mana
+    displayDuration: 3
+  - text: You must defeat the Blue Mana that's left in your soul
+    displayDuration: 3
+  - text: Embrace nature, defeat artifice
+    displayDuration: 2
+  - text: Become the Green Planeswalker!
     displayDuration: 2
   rewardPrefab: {fileID: 1601507365291559033, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
   spawnPoint: {fileID: 1370593355}
@@ -32042,6 +32078,15 @@ MonoBehaviour:
   - text: You can now manipulate Green Mana
     displayDuration: 3
   - text: Now come and take me
+    displayDuration: 2
+  beginnerBattleLines:
+  - text: To fully commit you heart to the power of Black Mana
+    displayDuration: 3
+  - text: You must defeat the Green Mana that's left in your soul
+    displayDuration: 3
+  - text: Embrace death, defeat life
+    displayDuration: 2
+  - text: Become the Black Planeswalker!
     displayDuration: 2
   rewardPrefab: {fileID: 1596541806755776429, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
   spawnPoint: {fileID: 1370593355}

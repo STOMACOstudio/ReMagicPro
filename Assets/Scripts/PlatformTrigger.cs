@@ -19,6 +19,7 @@ public class PlatformTrigger : MonoBehaviour
     public SubtitleManager subtitleManager;
     public List<SubtitleManager.SubtitleLine> interactionLines; 
     public List<SubtitleManager.SubtitleLine> postLockLines; 
+    public List<SubtitleManager.SubtitleLine> beginnerBattleLines; 
 
     [Header("Spawning")]
     [Tooltip("Assign the specific Prefab for this platform here.")]
@@ -32,6 +33,7 @@ public class PlatformTrigger : MonoBehaviour
     private AudioSource audioSource;
     private int playerCount = 0;
     private Coroutine lockCoroutine;
+    private Coroutine beginnerBattleCoroutine;
     private bool isThisPlatformLocked = false;
 
     void Awake()
@@ -48,7 +50,11 @@ public class PlatformTrigger : MonoBehaviour
 
         if (isAnyPlatformLocked)
         {
-            TryStartBeginnerBattle();
+            playerCount++;
+            if (playerCount == 1)
+            {
+                TryStartBeginnerBattle();
+            }
             return;
         }
 
@@ -77,9 +83,44 @@ public class PlatformTrigger : MonoBehaviour
         if (string.IsNullOrEmpty(deckKey))
             return;
 
+        if (beginnerBattleCoroutine != null)
+            StopCoroutine(beginnerBattleCoroutine);
+
+        beginnerBattleCoroutine = StartCoroutine(BeginnerBattleAfterSubtitles(deckKey));
+    }
+
+    private IEnumerator BeginnerBattleAfterSubtitles(string deckKey)
+    {
+        if (subtitleManager != null && beginnerBattleLines != null && beginnerBattleLines.Count > 0)
+        {
+            subtitleManager.DisplaySequence(beginnerBattleLines);
+            yield return new WaitForSeconds(GetSequenceDuration(beginnerBattleLines));
+        }
+
+        beginnerBattleCoroutine = null;
+
+        if (playerCount <= 0)
+            yield break;
+
+        if (!DeckHolder.IsStarterDeckRewardCollected)
+            yield break;
+
         BattleData.CurrentZoneId = null;
         BattleData.CurrentDeckKey = deckKey;
         SceneManager.LoadScene(BattleSceneName);
+    }
+
+    private float GetSequenceDuration(List<SubtitleManager.SubtitleLine> lines)
+    {
+        const float FadeDuration = 0.5f;
+
+        float total = 0f;
+        foreach (SubtitleManager.SubtitleLine line in lines)
+        {
+            total += line.displayDuration + (FadeDuration * 2f);
+        }
+
+        return total;
     }
 
     private string ResolveBeginnerDeckKeyForPlatform()
@@ -138,19 +179,35 @@ public class PlatformTrigger : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
-        if (isThisPlatformLocked) return;
 
         playerCount--;
-
         if (playerCount <= 0)
         {
             playerCount = 0;
+
+            if (isAnyPlatformLocked)
+            {
+                if (beginnerBattleCoroutine != null)
+                {
+                    StopCoroutine(beginnerBattleCoroutine);
+                    beginnerBattleCoroutine = null;
+                }
+
+                if (subtitleManager != null)
+                {
+                    subtitleManager.StopSequence();
+                }
+                return;
+            }
+
+            if (isThisPlatformLocked) return;
+
             if (lockCoroutine != null) StopCoroutine(lockCoroutine);
             rend.material = originalMaterial;
-            
+
             if (subtitleManager != null)
             {
-                subtitleManager.StopSequence(); 
+                subtitleManager.StopSequence();
             }
         }
     }
