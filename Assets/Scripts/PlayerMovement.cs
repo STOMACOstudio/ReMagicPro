@@ -59,7 +59,10 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         if (DeckHolder.IsDeckEditorOpenedAdditively)
+        {
+            StopFootsteps();
             return;
+        }
 
         Look();
 
@@ -202,5 +205,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (footstepAudio.isPlaying) footstepAudio.Pause();
         }
+    }
+
+    void StopFootsteps()
+    {
+        if (footstepAudio != null && footstepAudio.isPlaying)
+            footstepAudio.Stop();
     }
 }
