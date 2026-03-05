@@ -8,6 +8,7 @@ public class SubtitleManager : MonoBehaviour
     public TextMeshProUGUI subtitleText;
     private CanvasGroup canvasGroup;
     private bool isSequencePlaying;
+    private bool isInitialized;
 
     [System.Serializable]
     public class SubtitleLine {
@@ -17,16 +18,27 @@ public class SubtitleManager : MonoBehaviour
 
     void Awake()
     {
+        if (subtitleText == null)
+        {
+            Debug.LogError($"[{nameof(SubtitleManager)}] Missing subtitleText reference on {gameObject.name}.", this);
+            enabled = false;
+            return;
+        }
+
         // Ensure we have a CanvasGroup for fading
         canvasGroup = subtitleText.GetComponent<CanvasGroup>();
         if (canvasGroup == null) canvasGroup = subtitleText.gameObject.AddComponent<CanvasGroup>();
         
         subtitleText.text = "";
         canvasGroup.alpha = 0;
+        isInitialized = true;
     }
 
     public void DisplaySequence(List<SubtitleLine> lines)
     {
+        if (!isInitialized)
+            return;
+
         StopSequence();
 
         if (lines == null || lines.Count == 0)
@@ -82,7 +94,8 @@ public class SubtitleManager : MonoBehaviour
     {
         StopAllCoroutines();
         isSequencePlaying = false;
-        subtitleText.text = "";
+        if (subtitleText != null)
+            subtitleText.text = "";
         if (canvasGroup != null) canvasGroup.alpha = 0;
     }
 }

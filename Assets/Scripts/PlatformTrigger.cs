@@ -45,8 +45,18 @@ public class PlatformTrigger : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         audioSource = GetComponent<AudioSource>();
+
+        if (rend == null)
+        {
+            Debug.LogError($"[{nameof(PlatformTrigger)}] Renderer is missing on {gameObject.name}.", this);
+            enabled = false;
+            return;
+        }
+
         originalMaterial = rend.material;
-        if (subtitleManager == null) subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
+
+        if (subtitleManager == null)
+            subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
     }
 
     void OnTriggerEnter(Collider other)
@@ -201,7 +211,7 @@ public class PlatformTrigger : MonoBehaviour
         // --- NEW ACTIONS ON LOCK ---
         
         // 1. Play the "Success" Subtitles
-        if (subtitleManager != null && postLockLines.Count > 0)
+        if (subtitleManager != null && postLockLines != null && postLockLines.Count > 0)
         {
             subtitleManager.DisplaySequence(postLockLines);
         }
