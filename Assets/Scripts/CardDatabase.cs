@@ -4368,7 +4368,7 @@ public static class CardDatabase
                         {
                             ActivatedAbility.TapToDrawCards
                         },
-                        rulesText = "4, TAP: Draw a card.",
+                        //rulesText = "4, TAP: Draw a card.",
                         flavorText = "Knowledge is power.\n-Sir Francis Bacon,\nMeditationes Sacrae",
                         artwork = Resources.Load<Sprite>("Art/jayemdae_tome")
                     });
