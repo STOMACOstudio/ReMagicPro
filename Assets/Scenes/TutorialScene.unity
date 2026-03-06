@@ -10259,6 +10259,9 @@ MonoBehaviour:
     displayDuration: 2
   - text: Become the Red Planeswalker!
     displayDuration: 2
+  wrongPlatformLines:
+  - text: This is not your main enemy Mana color
+    displayDuration: 3
   rewardPrefab: {fileID: 6534971374858432288, guid: b290169ec40e59741a737235030fe4ae, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &417361485
@@ -15355,6 +15358,9 @@ MonoBehaviour:
     displayDuration: 2
   - text: Be the Blue Planeswalker!
     displayDuration: 2
+  wrongPlatformLines:
+  - text: This is not your main enemy Mana color
+    displayDuration: 3
   rewardPrefab: {fileID: 1889863161958709174, guid: 558e0d305254e654385705e7775b8f14, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &537337816
@@ -20680,6 +20686,9 @@ MonoBehaviour:
     displayDuration: 2
   - text: Become the White Planeswalker!
     displayDuration: 2
+  wrongPlatformLines:
+  - text: This is not your main enemy Mana color
+    displayDuration: 3
   rewardPrefab: {fileID: 4766727113529985076, guid: 7ae9724d48bf12d4abc66251597facb6, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &793363000
@@ -21270,6 +21279,9 @@ MonoBehaviour:
     displayDuration: 2
   - text: Become the Green Planeswalker!
     displayDuration: 2
+  wrongPlatformLines:
+  - text: This is not your main enemy Mana color
+    displayDuration: 3
   rewardPrefab: {fileID: 1601507365291559033, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &916973403
@@ -32098,6 +32110,9 @@ MonoBehaviour:
     displayDuration: 2
   - text: Become the Black Planeswalker!
     displayDuration: 2
+  wrongPlatformLines:
+  - text: This is not your main enemy Mana color
+    displayDuration: 3
   rewardPrefab: {fileID: 1596541806755776429, guid: 457dd3fca523f9844902b3db539708ad, type: 3}
   spawnPoint: {fileID: 1370593355}
 --- !u!82 &1767433766
