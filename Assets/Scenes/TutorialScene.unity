@@ -10232,6 +10232,7 @@ MonoBehaviour:
   crippledMaterial: {fileID: 2100000, guid: 54c6c99793bb43a4eac0fcdb32925a54, type: 2}
   lockTimeRequirement: 22
   manaParticleSystem: {fileID: 281663044}
+  postBeginnerBattleWinObject: {fileID: 642465857}
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -15340,6 +15341,7 @@ MonoBehaviour:
   crippledMaterial: {fileID: 2100000, guid: 35a59f6bd05cb174a89de41ae118898e, type: 2}
   lockTimeRequirement: 22
   manaParticleSystem: {fileID: 245555178}
+  postBeginnerBattleWinObject: {fileID: 642465857}
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -20793,6 +20795,7 @@ MonoBehaviour:
   crippledMaterial: {fileID: 2100000, guid: 720a2fa5b7ae53e44883ce71d9ef6800, type: 2}
   lockTimeRequirement: 22
   manaParticleSystem: {fileID: 1084944022}
+  postBeginnerBattleWinObject: {fileID: 642465857}
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -21395,6 +21398,7 @@ MonoBehaviour:
   crippledMaterial: {fileID: 2100000, guid: acdb48c8e1e3832439e7107ff77da6b7, type: 2}
   lockTimeRequirement: 22
   manaParticleSystem: {fileID: 1100415062}
+  postBeginnerBattleWinObject: {fileID: 642465857}
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
@@ -32362,6 +32366,7 @@ MonoBehaviour:
   crippledMaterial: {fileID: 2100000, guid: 4523ae1e8b908674fbd9723363c8e2e2, type: 2}
   lockTimeRequirement: 22
   manaParticleSystem: {fileID: 592437785}
+  postBeginnerBattleWinObject: {fileID: 642465857}
   lockSound: {fileID: 8300000, guid: ad8e4c164b877c341b117ed1be4bedc8, type: 3}
   subtitleManager: {fileID: 1833829486}
   interactionLines:
