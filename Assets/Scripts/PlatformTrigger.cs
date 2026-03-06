@@ -242,7 +242,10 @@ public class PlatformTrigger : MonoBehaviour
                     beginnerBattleCoroutine = null;
                 }
 
-                if (subtitleManager != null)
+                // Keep post-lock subtitles playing on the selected mana platform,
+                // but still stop every other subtitle sequence when leaving.
+                bool shouldKeepPlayingSubtitles = isThisPlatformLocked;
+                if (subtitleManager != null && !shouldKeepPlayingSubtitles)
                 {
                     subtitleManager.StopSequence();
                 }
