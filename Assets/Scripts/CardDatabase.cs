@@ -3810,6 +3810,18 @@ public static class CardDatabase
                     rulesText = "Prevent all combat damage that would be dealt this turn.",
                     artwork = Resources.Load<Sprite>("Art/holy_day"),
                     });
+                Add(new CardData //Blessed Reversal
+                    {
+                    cardName = "Blessed Reversal",
+                    artist = "Sora AI",
+                    rarity = "Rare",
+                    cardType = CardType.Instant,
+                    manaCost = 2,
+                    color = new List<string> { "White", "White" },
+                    lifeToGainPerCreatureAttackingYou = 3,
+                    rulesText = "You gain 3 life for each creature attacking you.",
+                    artwork = Resources.Load<Sprite>("Art/sacred_nectar"),
+                    });
                 Add(new CardData //Charge
                     {
                     cardName = "Charge",
