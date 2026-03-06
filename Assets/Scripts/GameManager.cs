@@ -2654,6 +2654,7 @@ public class GameManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 BattleData.TriggeringPlatform?.ApplyCrippledState();
+                BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
                 BattleData.TriggeringPlatform = null;
                 BattleData.IsBattleOpenedAdditively = false;
                 BattleData.ReturnSceneName = null;
@@ -2666,6 +2667,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         BattleData.TriggeringPlatform?.ApplyCrippledState();
+        BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
         BattleData.TriggeringPlatform = null;
         BattleData.IsBattleOpenedAdditively = false;
         BattleData.ReturnSceneName = null;
