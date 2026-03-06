@@ -2343,6 +2343,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     SorceryCard.PermanentTypeToDestroy.Creature => "creatures",
                     SorceryCard.PermanentTypeToDestroy.Artifact => "artifacts",
                     SorceryCard.PermanentTypeToDestroy.Enchantment => "enchantments",
+                    SorceryCard.PermanentTypeToDestroy.ArtifactAndEnchantment => "artifacts and enchantments",
                     _ => "permanents"
                 };
                 rules += $"Destroy all {typeStr}.\n";
