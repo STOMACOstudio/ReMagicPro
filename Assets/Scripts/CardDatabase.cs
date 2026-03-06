@@ -3793,6 +3793,19 @@ public static class CardDatabase
                     flavorText = "Honor rides before us. All we have to do is catch up.\n-Danitha Capashen",
                     artwork = Resources.Load<Sprite>("Art/charge"),
                     });
+                Add(new CardData //Resupply
+                    {
+                    cardName = "Resupply",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 6,
+                    color = new List<string> { "White" },
+                    lifeToGain = 6,
+                    cardsToDraw = 1,
+                    rulesText = "You gain 6 life. Draw a card.",
+                    artwork = Resources.Load<Sprite>("Art/resupply"),
+                    });
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",
