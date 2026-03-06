@@ -72,6 +72,8 @@ public class CardData
     public bool eachPlayerGainLifeEqualToLands;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
+    public int lifeToGainPerCardInOwnGraveyard = 0;
+    public bool shuffleOwnGraveyardIntoLibrary = false;
     public bool revealUntilCreature = false;
     public bool revealUntilLand = false;
     public bool searchRandomBasicLandToBattlefieldTapped = false;

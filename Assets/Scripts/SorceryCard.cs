@@ -19,6 +19,8 @@ public class SorceryCard : Card
     public bool eachPlayerGainLifeEqualToLands = false;
     public bool exileAllCreaturesFromGraveyards = false;
     public bool swapGraveyardAndLibrary = false;
+    public int lifeToGainPerCardInOwnGraveyard = 0;
+    public bool shuffleOwnGraveyardIntoLibrary = false;
     public bool revealUntilCreature = false;
     public bool revealUntilLand = false;
     public bool searchRandomBasicLandToBattlefieldTapped = false;
@@ -431,7 +433,41 @@ public class SorceryCard : Card
 
                     Debug.Log("Graveyards and libraries swapped and shuffled.");
                 }
+            if (lifeToGainPerCardInOwnGraveyard > 0)
+                {
+                    int cardsInGraveyard = caster.Graveyard.Count;
+                    int lifeToGainTotal = cardsInGraveyard * lifeToGainPerCardInOwnGraveyard;
+                    if (lifeToGainTotal > 0)
+                    {
+                        GameManager.Instance.TryGainLife(caster, lifeToGainTotal);
+                        Debug.Log($"{caster} gains {lifeToGainTotal} life from {cardName} ({cardsInGraveyard} card(s) in graveyard).");
+                    }
+                }
+            if (shuffleOwnGraveyardIntoLibrary)
+                {
+                    ShuffleOwnGraveyardIntoLibrary(caster);
+                }
                 GameManager.Instance.UpdateUI();
+        }
+
+        private void ShuffleOwnGraveyardIntoLibrary(Player player)
+        {
+            if (player == null || player.Graveyard == null || player.Graveyard.Count == 0)
+                return;
+
+            player.Deck.AddRange(player.Graveyard);
+            player.Graveyard.Clear();
+
+            for (int i = 0; i < player.Deck.Count; i++)
+            {
+                Card temp = player.Deck[i];
+                int rand = Random.Range(i, player.Deck.Count);
+                player.Deck[i] = player.Deck[rand];
+                player.Deck[rand] = temp;
+            }
+
+            GameManager.Instance.RefreshGraveyardVisuals(player);
+            Debug.Log($"{player}'s graveyard was shuffled into their library.");
         }
 
         public virtual void ResolveEffect(Player caster, Card target)
