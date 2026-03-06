@@ -4,6 +4,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class GameSceneBackgroundDetail : MonoBehaviour
 {
+    private const int NoiseTextureSize = 128;
+    private const int VignetteTextureSize = 512;
+
     [SerializeField] private Color baseTint = new Color(0.94f, 0.91f, 0.84f, 1f);
     [SerializeField] private Color pulseTint = new Color(0.9f, 0.88f, 0.83f, 1f);
     [SerializeField] private float pulseSpeed = 0.25f;
@@ -18,6 +21,9 @@ public class GameSceneBackgroundDetail : MonoBehaviour
     private Image baseImage;
     private RawImage noiseLayer;
     private RawImage vignetteLayer;
+
+    private static Texture2D sharedNoiseTexture;
+    private static Texture2D sharedVignetteTexture;
 
     private void Awake()
     {
@@ -41,11 +47,28 @@ public class GameSceneBackgroundDetail : MonoBehaviour
 
     private void BuildLayers()
     {
-        noiseLayer = BuildRawLayer("AmbientNoise", MakeNoiseTexture(128, 128), noiseColor);
+        EnsureSharedTextures();
+
+        noiseLayer = BuildRawLayer("AmbientNoise", sharedNoiseTexture, noiseColor);
         noiseLayer.uvRect = new Rect(0f, 0f, 5.5f, 5.5f);
 
-        vignetteLayer = BuildRawLayer("Vignette", MakeVignetteTexture(512, 512), vignetteColor);
+        vignetteLayer = BuildRawLayer("Vignette", sharedVignetteTexture, vignetteColor);
         vignetteLayer.uvRect = new Rect(0f, 0f, 1f, 1f);
+    }
+
+    private static void EnsureSharedTextures()
+    {
+        if (sharedNoiseTexture == null)
+        {
+            sharedNoiseTexture = MakeNoiseTexture(NoiseTextureSize, NoiseTextureSize);
+            sharedNoiseTexture.name = "GameSceneBackgroundDetail_Noise";
+        }
+
+        if (sharedVignetteTexture == null)
+        {
+            sharedVignetteTexture = MakeVignetteTexture(VignetteTextureSize, VignetteTextureSize);
+            sharedVignetteTexture.name = "GameSceneBackgroundDetail_Vignette";
+        }
     }
 
     private RawImage BuildRawLayer(string layerName, Texture2D texture, Color tint)
@@ -68,7 +91,7 @@ public class GameSceneBackgroundDetail : MonoBehaviour
         return rawImage;
     }
 
-    private Texture2D MakeNoiseTexture(int width, int height)
+    private static Texture2D MakeNoiseTexture(int width, int height)
     {
         Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
@@ -91,7 +114,7 @@ public class GameSceneBackgroundDetail : MonoBehaviour
         return texture;
     }
 
-    private Texture2D MakeVignetteTexture(int width, int height)
+    private static Texture2D MakeVignetteTexture(int width, int height)
     {
         Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
