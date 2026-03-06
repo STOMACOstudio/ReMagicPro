@@ -65,6 +65,8 @@ public static class CardFactory
                 sorcery.manaToGainMin = data.manaToGainMin;
                 sorcery.manaToGainMax = data.manaToGainMax;
                 sorcery.swapGraveyardAndLibrary = data.swapGraveyardAndLibrary;
+                sorcery.lifeToGainPerCardInOwnGraveyard = data.lifeToGainPerCardInOwnGraveyard;
+                sorcery.shuffleOwnGraveyardIntoLibrary = data.shuffleOwnGraveyardIntoLibrary;
                 sorcery.revealUntilCreature = data.revealUntilCreature;
                 sorcery.revealUntilLand = data.revealUntilLand;
                 sorcery.searchRandomBasicLandToBattlefieldTapped = data.searchRandomBasicLandToBattlefieldTapped;

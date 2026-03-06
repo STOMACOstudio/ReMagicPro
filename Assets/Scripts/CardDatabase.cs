@@ -3773,6 +3773,19 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/deny_the_afterlife"),
                         exileAllCreaturesFromGraveyards = true
                     });
+                Add(new CardData // Archangel's Light
+                    {
+                        cardName = "Archangel's Light",
+                        artist = "Sora AI",
+                        rarity = "Mythic",
+                        cardType = CardType.Sorcery,
+                        manaCost = 8,
+                        color = new List<string> { "White" },
+                        lifeToGainPerCardInOwnGraveyard = 2,
+                        shuffleOwnGraveyardIntoLibrary = true,
+                        artwork = Resources.Load<Sprite>("Art/archangels_light"),
+                        rulesText = "Gain 2 life for each card in your graveyard, then shuffle your graveyard into your library."
+                    });
                 Add(new CardData { //Bell Call
                     cardName = "Bell Call",
                     artist = "Sora AI",
