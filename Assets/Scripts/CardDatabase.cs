@@ -203,7 +203,7 @@ public static class CardDatabase
                 Add(new CardData // Intrepid Hero
                     {
                     cardName = "Intrepid Hero",
-                    artist = "Heather Hudson",
+                    artist = "Mike Ploog",
                     rarity = "Rare",
                     manaCost = 3,
                     color = new List<string> { "White" },
@@ -211,6 +211,7 @@ public static class CardDatabase
                     power = 1,
                     toughness = 1,
                     subtypes = new List<string> { "Human", "Soldier" },
+                    flavorText = "A fool knows no fear. A hero shows no fear.",
                     activatedAbilities = new List<ActivatedAbility>
                     {
                         ActivatedAbility.TapToDestroyPower4OrGreater
@@ -3826,7 +3827,7 @@ public static class CardDatabase
                 Add(new CardData //Resupply
                     {
                     cardName = "Resupply",
-                    artist = "Sora AI",
+                    artist = "Filip Burburan",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 6,
@@ -3834,18 +3835,20 @@ public static class CardDatabase
                     lifeToGain = 6,
                     cardsToDraw = 1,
                     rulesText = "You gain 6 life. Draw a card.",
+                    flavorText = "If the scalelords are the brains of Dromoka's army, the supply caravans are its beating heart.\n-Baihir, Dromaka mage",
                     artwork = Resources.Load<Sprite>("Art/resupply"),
                     });
                 Add(new CardData //Purify
                     {
                     cardName = "Purify",
-                    artist = "Sora AI",
+                    artist = "Doug Chaffee",
                     rarity = "Rare",
                     cardType = CardType.Sorcery,
                     manaCost = 5,
                     color = new List<string> { "White", "White" },
                     typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.ArtifactAndEnchantment,
                     rulesText = "Destroy all artifacts and enchantments.",
+                    flavorText = "We have no need for these trinkets, we need only the strength of our swords and the virtue of our hearts.\n-The Northern Paladin",
                     artwork = Resources.Load<Sprite>("Art/demystify"),
                     });
             //BLUE
@@ -5308,13 +5311,14 @@ public static class CardDatabase
                 Add(new CardData // Glorious Anthem
                     {
                         cardName = "Glorious Anthem",
-                        artist = "Greg Staples",
+                        artist = "Kev Walker",
                         rarity = "Rare",
                         manaCost = 3,
                         color = new List<string> { "White", "White" },
                         cardType = CardType.Enchantment,
                         artwork = Resources.Load<Sprite>("Art/glorious_anthem"),
                         rulesText = "Creatures you control get +1/+1.",
+                        flavorText = "Once heard, the battle song of an angel becomes part of the listener forever.",
                         abilities = new List<CardAbility>
                         {
                             new CardAbility
