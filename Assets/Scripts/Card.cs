@@ -240,6 +240,9 @@ public class Card
                                 case ActivatedAbility.TapToDealDamageAnyTarget:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}, TAP: Deal {creature.damageToCreature} damage to any target.");
                                     break;
+                                case ActivatedAbility.TapToDestroyPower4OrGreater:
+                                    lines.Add("Tap: Destroy target creature with power 4 or greater.");
+                                    break;
                                 case ActivatedAbility.PayToGainAbility:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Gains {creature.abilityToGain} until end of turn.");
                                     break;

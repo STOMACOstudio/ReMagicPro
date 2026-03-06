@@ -200,6 +200,24 @@ public static class CardDatabase
                     flavorText = "I dedicate my body to my country\nAnd my life to the King.\nAlaborn Soldier's Oath",
                     artwork = Resources.Load<Sprite>("Art/alaborn_trooper")
                     });
+                Add(new CardData // Intrepid Hero
+                    {
+                    cardName = "Intrepid Hero",
+                    artist = "Heather Hudson",
+                    rarity = "Rare",
+                    manaCost = 3,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Soldier" },
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapToDestroyPower4OrGreater
+                    },
+                    artwork = Resources.Load<Sprite>("Art/intrepid_hero")
+                    });
+                
                 Add(new CardData //Capashen templar
                     {
                     cardName = "Capashen Templar",

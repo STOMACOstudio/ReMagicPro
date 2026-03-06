@@ -1378,6 +1378,19 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return;
             }
 
+            // TAP: destroy target creature with power 4 or greater
+            if (linkedCard is CreatureCard destroyerCreature &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(destroyerCreature) &&
+                canHumanActivateCreatureAbilities &&
+                destroyerCreature.activatedAbilities != null &&
+                destroyerCreature.activatedAbilities.Contains(ActivatedAbility.TapToDestroyPower4OrGreater) &&
+                !destroyerCreature.isTapped &&
+                (!destroyerCreature.hasSummoningSickness || destroyerCreature.keywordAbilities.Contains(KeywordAbility.Haste)))
+            {
+                GameManager.Instance.BeginTargetingWithCreatureDestroyPower4OrGreater(destroyerCreature, GameManager.Instance.humanPlayer, this);
+                return;
+            }
+
             // TAP-TO-LOSE-LIFE ability during Main Phase or combat confirmation
             if (linkedCard is CreatureCard creatureForDrain &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(creatureForDrain) &&
