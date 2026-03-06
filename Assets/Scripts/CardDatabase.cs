@@ -3776,7 +3776,7 @@ public static class CardDatabase
                 Add(new CardData // Archangel's Light
                     {
                         cardName = "Archangel's Light",
-                        artist = "Sora AI",
+                        artist = "Volkan Baga",
                         rarity = "Mythic",
                         cardType = CardType.Sorcery,
                         manaCost = 8,
@@ -3784,6 +3784,7 @@ public static class CardDatabase
                         lifeToGainPerCardInOwnGraveyard = 2,
                         shuffleOwnGraveyardIntoLibrary = true,
                         artwork = Resources.Load<Sprite>("Art/archangels_light"),
+                        flavorText = "This is the light of Avacyn. Even in her absence she offers us hope.\n-Radulf, priest of Avacyn",
                         rulesText = "Gain 2 life for each card in your graveyard, then shuffle your graveyard into your library."
                     });
                 Add(new CardData { //Bell Call
@@ -3814,26 +3815,28 @@ public static class CardDatabase
                 Add(new CardData //Holy day
                     {
                     cardName = "Holy Day",
-                    artist = "Quinton Hoover",
+                    artist = "Pete Venters",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 1,
                     color = new List<string> { "White" },
                     preventAllCombatDamageThisTurn = true,
                     rulesText = "Prevent all combat damage that would be dealt this turn.",
+                    flavorText = "The day of Spirits; my soul's calm retreat\nWhich none disturb!\n-Henry Vaughan, 'The Night'",
                     artwork = Resources.Load<Sprite>("Art/holy_day"),
                     });
                 Add(new CardData //Blessed Reversal
                     {
                     cardName = "Blessed Reversal",
-                    artist = "Sora AI",
+                    artist = "Cristopher Moeller",
                     rarity = "Rare",
                     cardType = CardType.Instant,
                     manaCost = 2,
                     color = new List<string> { "White", "White" },
                     lifeToGainPerCreatureAttackingYou = 3,
                     rulesText = "You gain 3 life for each creature attacking you.",
-                    artwork = Resources.Load<Sprite>("Art/sacred_nectar"),
+                    flavorText = "A battle's outcome is never certain.\n-The Southern Paladin",
+                    artwork = Resources.Load<Sprite>("Art/blessed_reversal"),
                     });
                 Add(new CardData //Charge
                     {
