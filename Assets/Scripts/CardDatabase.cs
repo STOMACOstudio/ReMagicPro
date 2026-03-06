@@ -3824,6 +3824,18 @@ public static class CardDatabase
                     rulesText = "You gain 6 life. Draw a card.",
                     artwork = Resources.Load<Sprite>("Art/resupply"),
                     });
+                Add(new CardData //Purify
+                    {
+                    cardName = "Purify",
+                    artist = "Sora AI",
+                    rarity = "Rare",
+                    cardType = CardType.Sorcery,
+                    manaCost = 5,
+                    color = new List<string> { "White", "White" },
+                    typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.ArtifactAndEnchantment,
+                    rulesText = "Destroy all artifacts and enchantments.",
+                    artwork = Resources.Load<Sprite>("Art/demystify"),
+                    });
             //BLUE
                 Add(new CardData { //Blast of knowledge
                     cardName = "Blast of Knowledge",

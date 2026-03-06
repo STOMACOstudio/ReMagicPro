@@ -70,6 +70,7 @@ public class SorceryCard : Card
             Creature,
             Artifact,
             Enchantment,
+            ArtifactAndEnchantment,
             // Add more as needed later (Artifacts, Enchantments, etc.)
         }
 
@@ -299,6 +300,19 @@ public class SorceryCard : Card
 
                                 if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.Enchantment && card is EnchantmentCard)
                                     return true;
+
+                                if (typeOfPermanentToDestroyAll == PermanentTypeToDestroy.ArtifactAndEnchantment)
+                                {
+                                    if (card is ArtifactCard || card is EnchantmentCard)
+                                        return true;
+
+                                    if (card is CreatureCard)
+                                    {
+                                        var data = CardDatabase.GetCardData(card.cardName);
+                                        if (data != null && data.color.Contains("Artifact"))
+                                            return true;
+                                    }
+                                }
 
                                 return false;
                             })
