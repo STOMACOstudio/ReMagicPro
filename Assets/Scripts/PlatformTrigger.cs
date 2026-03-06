@@ -25,6 +25,7 @@ public class PlatformTrigger : MonoBehaviour
     public List<SubtitleManager.SubtitleLine> interactionLines; 
     public List<SubtitleManager.SubtitleLine> postLockLines; 
     public List<SubtitleManager.SubtitleLine> beginnerBattleLines; 
+    public List<SubtitleManager.SubtitleLine> wrongPlatformLines;
 
     [Header("Spawning")]
     [Tooltip("Assign the specific Prefab for this platform here.")]
@@ -104,7 +105,13 @@ public class PlatformTrigger : MonoBehaviour
             return;
 
         if (!string.Equals(deckKey, expectedDeckKey, System.StringComparison.Ordinal))
+        {
+            if (subtitleManager != null && wrongPlatformLines != null && wrongPlatformLines.Count > 0)
+            {
+                subtitleManager.DisplaySequence(wrongPlatformLines);
+            }
             return;
+        }
 
         if (beginnerBattleCoroutine != null)
             StopCoroutine(beginnerBattleCoroutine);
