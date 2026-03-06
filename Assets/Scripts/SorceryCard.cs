@@ -47,6 +47,7 @@ public class SorceryCard : Card
     public bool addXMinusOneCounters = false;
     public int controlledCreaturesPowerBuff = 0;
     public int controlledCreaturesToughnessBuff = 0;
+    public bool preventAllCombatDamageThisTurn = false;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -225,6 +226,12 @@ public class SorceryCard : Card
                 }
 
                 Debug.Log($"{cardName} gives your creatures +{controlledCreaturesPowerBuff}/+{controlledCreaturesToughnessBuff} until end of turn.");
+            }
+
+            if (preventAllCombatDamageThisTurn)
+            {
+                GameManager.Instance.preventAllCombatDamageThisTurn = true;
+                Debug.Log($"{cardName} prevents all combat damage this turn.");
             }
 
             if (creaturesToSacrificeEachPlayerMax > 0)

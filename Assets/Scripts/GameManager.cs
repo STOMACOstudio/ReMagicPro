@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour
     public int pendingGraveyardAnimations = 0;
     public bool graveyardViewActive = false;
     public GraveyardUIManager graveyardUIManager;
+    public bool preventAllCombatDamageThisTurn = false;
 
     private bool skipStackWait = false;
 
@@ -851,7 +852,7 @@ public class GameManager : MonoBehaviour
         foreach (var attacker in currentAttackers)
         {
             // Clamp negative power to zero when dealing damage and handle damage prevention
-            int attackerDamage = attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
+            int attackerDamage = preventAllCombatDamageThisTurn || attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
                 ? 0
                 : Mathf.Max(attacker.power, 0);
             var blockers = attacker.blockedByThisBlocker;
@@ -883,7 +884,7 @@ public class GameManager : MonoBehaviour
                         remainingDamage -= damageToBlocker;
                     }
 
-                    int damageFromBlocker = (attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
+                    int damageFromBlocker = (preventAllCombatDamageThisTurn || attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
                         ? 0
                         : Mathf.Max(blocker.power, 0);
                     if (!attackerProtected)
@@ -4119,7 +4120,7 @@ public class GameManager : MonoBehaviour
                 int aiDamage = 0;
 
                 // Clamp negative power to zero when dealing damage and respect damage prevention
-                int attackerDamage = attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
+                int attackerDamage = preventAllCombatDamageThisTurn || attacker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage)
                     ? 0
                     : Mathf.Max(attacker.power, 0);
 
@@ -4152,7 +4153,7 @@ public class GameManager : MonoBehaviour
                             remainingDamage -= damageToBlocker;
                         }
 
-                        int damageFromBlocker = (attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
+                        int damageFromBlocker = (preventAllCombatDamageThisTurn || attackerProtected || blocker.keywordAbilities.Contains(KeywordAbility.CantDealCombatDamage))
                             ? 0
                             : Mathf.Max(blocker.power, 0);
                         if (!attackerProtected)

@@ -3797,6 +3797,18 @@ public static class CardDatabase
                     rulesText = "Prevent all combat damage that target creature would deal this turn.",
                     artwork = Resources.Load<Sprite>("Art/blinding_light"),
                     });
+                Add(new CardData //Holy day
+                    {
+                    cardName = "Holy Day",
+                    artist = "Quinton Hoover",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 1,
+                    color = new List<string> { "White" },
+                    preventAllCombatDamageThisTurn = true,
+                    rulesText = "Prevent all combat damage that would be dealt this turn.",
+                    artwork = Resources.Load<Sprite>("Art/holy_day"),
+                    });
                 Add(new CardData //Charge
                     {
                     cardName = "Charge",
