@@ -16,6 +16,8 @@ public class PlatformTrigger : MonoBehaviour
     [Header("Crippled State")]
     [Tooltip("Optional particle system to stop and disable after the battle is won.")]
     public ParticleSystem manaParticleSystem;
+    [Tooltip("Optional object (for example, a light tube) to activate after the player wins the beginner battle and returns to this scene.")]
+    public GameObject postBeginnerBattleWinObject;
     
     [Header("Audio")]
     public AudioClip lockSound;
@@ -168,6 +170,11 @@ public class PlatformTrigger : MonoBehaviour
 
     public void PlayPostBeginnerBattleWinSubtitlesIfNeeded()
     {
+        if (postBeginnerBattleWinObject != null)
+        {
+            postBeginnerBattleWinObject.SetActive(true);
+        }
+
         if (hasPlayedPostBeginnerBattleWinSubtitles)
             return;
 
