@@ -999,6 +999,28 @@ public class TurnSystem : MonoBehaviour
                                     }
                                 }
 
+                                // TAP: destroy target creature with power 4 or greater
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.TapToDestroyPower4OrGreater))
+                                {
+                                    CreatureCard bestLargeTarget = GameManager.Instance.humanPlayer.Battlefield
+                                        .OfType<CreatureCard>()
+                                        .Where(target => !target.isDead && target.power >= 4)
+                                        .OrderByDescending(target => target.power)
+                                        .FirstOrDefault();
+
+                                    if (bestLargeTarget != null)
+                                    {
+                                        creature.isTapped = true;
+                                        GameManager.Instance.QueueCreatureActivatedAbility(
+                                            creature,
+                                            ActivatedAbility.TapToDestroyPower4OrGreater,
+                                            ai,
+                                            bestLargeTarget);
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                        GameManager.Instance.UpdateUI();
+                                    }
+                                }
+
                                 // PAY + TAP: deal damage to any target
                                 if (creature.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
                                 {

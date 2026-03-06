@@ -1597,6 +1597,14 @@ public class GameManager : MonoBehaviour
                         playerTarget == humanPlayer ? playerLifeContainer : enemyLifeContainer);
                 }
                 break;
+            case ActivatedAbility.TapToDestroyPower4OrGreater:
+                if (target is CreatureCard powerCreature && powerCreature.power >= 4)
+                {
+                    Player targetOwner = GetOwnerOfCard(powerCreature);
+                    if (targetOwner != null && !powerCreature.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                        SendToGraveyard(powerCreature, targetOwner);
+                }
+                break;
             case ActivatedAbility.TapToCreateToken:
                 string tokenName = creature.tokenToCreate;
                 Card token = CardFactory.Create(tokenName);
@@ -2905,6 +2913,31 @@ public class GameManager : MonoBehaviour
     {
             Card chosen = targetVisual.linkedCard;
 
+            // Creature destroy ability (power 4 or greater)
+            if (targetingCreatureActivated != null &&
+                targetingCreatureActivated.activatedAbilities.Contains(ActivatedAbility.TapToDestroyPower4OrGreater))
+            {
+                if (chosen is CreatureCard targetCreature &&
+                    targetCreature.power >= 4 &&
+                    GetOwnerOfCard(targetCreature)?.Battlefield.Contains(targetCreature) == true)
+                {
+                    Player controller = targetingPlayer;
+                    QueueCreatureActivatedAbility(targetingCreatureActivated, ActivatedAbility.TapToDestroyPower4OrGreater, controller, targetCreature);
+                    UpdateUI();
+                }
+                else
+                {
+                    Debug.Log("Invalid target. Must target a creature with power 4 or greater.");
+                    targetingCreatureActivated.isTapped = false;
+                }
+
+                targetingCreatureActivated = null;
+                targetingPlayer = null;
+                targetingVisual = null;
+                isTargetingMode = false;
+                return;
+            }
+
             // Creature ping ability (any target)
             if (targetingCreatureActivated != null &&
                 targetingCreatureActivated.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
@@ -3536,6 +3569,23 @@ public class GameManager : MonoBehaviour
         FindCardVisual(artifact)?.UpdateVisual();
 
         Debug.Log("Targeting artifact, creature, or land to tap with artifact.");
+    }
+
+    public void BeginTargetingWithCreatureDestroyPower4OrGreater(CreatureCard creature, Player player, CardVisual visual)
+    {
+        targetingCreatureActivated = creature;
+        targetingArtifact = null;
+        targetingSorcery = null;
+        targetingAura = null;
+        targetingEquipment = null;
+        targetingPlayer = player;
+        targetingVisual = visual;
+        isTargetingMode = true;
+
+        creature.isTapped = true;
+        FindCardVisual(creature)?.UpdateVisual();
+
+        Debug.Log("Targeting a creature with power 4 or greater for creature ability.");
     }
 
     public void BeginTargetingWithCreatureDamageAnyTarget(CreatureCard creature, Player player, CardVisual visual)
