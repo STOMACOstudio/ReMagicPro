@@ -5250,6 +5250,64 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets +0/+4.",
                     });
 
+                Add(new CardData // Glorious Anthem
+                    {
+                        cardName = "Glorious Anthem",
+                        artist = "Greg Staples",
+                        rarity = "Rare",
+                        manaCost = 3,
+                        color = new List<string> { "White", "White" },
+                        cardType = CardType.Enchantment,
+                        artwork = Resources.Load<Sprite>("Art/glorious_anthem"),
+                        rulesText = "Creatures you control get +1/+1.",
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    foreach (var c in owner.Battlefield.OfType<CreatureCard>())
+                                    {
+                                        c.AddAuraBuff(1, 1);
+                                        GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnCreatureEnter,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    Card entering = GameManager.Instance.lastEnteredCreature;
+                                    if (entering is CreatureCard creature && entering != selfCard &&
+                                        GameManager.Instance.GetOwnerOfCard(entering) == owner)
+                                    {
+                                        creature.AddAuraBuff(1, 1);
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    }
+                                }
+                            },
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnDeath,
+                                usesStack = false,
+                                description = string.Empty,
+                                effect = (Player owner, Card selfCard) =>
+                                {
+                                    foreach (var c in owner.Battlefield.OfType<CreatureCard>())
+                                    {
+                                        c.RemoveAuraBuff(1, 1);
+                                        GameManager.Instance.FindCardVisual(c)?.UpdateVisual();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 Add(new CardData // Sacred Horn
                     {
                         cardName = "Sacred Horn",
