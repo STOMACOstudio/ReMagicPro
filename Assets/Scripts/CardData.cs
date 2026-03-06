@@ -91,6 +91,7 @@ public class CardData
     public int toughnessBuff = 0;
     public int controlledCreaturesPowerBuff = 0;
     public int controlledCreaturesToughnessBuff = 0;
+    public bool preventAllCombatDamageThisTurn = false;
     public KeywordAbility keywordBuff = KeywordAbility.None;
     public bool targetMustBeControlledCreature = false;
     public bool gainControlOfCreature = false;

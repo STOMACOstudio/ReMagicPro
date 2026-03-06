@@ -1374,6 +1374,7 @@ public class TurnSystem : MonoBehaviour
                     // Heal all creatures
                     GameManager.Instance.ResetDamage(GameManager.Instance.humanPlayer);
                     GameManager.Instance.ResetDamage(GameManager.Instance.aiPlayer);
+                    GameManager.Instance.preventAllCombatDamageThisTurn = false;
 
                     // Reference the correct player before swapping turn
                     Player endingPlayer = currentPlayer == PlayerType.Human
