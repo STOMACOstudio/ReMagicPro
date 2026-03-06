@@ -25,6 +25,7 @@ public class PlatformTrigger : MonoBehaviour
     public List<SubtitleManager.SubtitleLine> interactionLines; 
     public List<SubtitleManager.SubtitleLine> postLockLines; 
     public List<SubtitleManager.SubtitleLine> beginnerBattleLines; 
+    public List<SubtitleManager.SubtitleLine> postBeginnerBattleWinLines;
     public List<SubtitleManager.SubtitleLine> wrongPlatformLines;
 
     [Header("Spawning")]
@@ -41,6 +42,7 @@ public class PlatformTrigger : MonoBehaviour
     private Coroutine lockCoroutine;
     private Coroutine beginnerBattleCoroutine;
     private bool isThisPlatformLocked = false;
+    private bool hasPlayedPostBeginnerBattleWinSubtitles = false;
 
     void Awake()
     {
@@ -162,6 +164,24 @@ public class PlatformTrigger : MonoBehaviour
             manaParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             manaParticleSystem.gameObject.SetActive(false);
         }
+    }
+
+    public void PlayPostBeginnerBattleWinSubtitlesIfNeeded()
+    {
+        if (hasPlayedPostBeginnerBattleWinSubtitles)
+            return;
+
+        if (postBeginnerBattleWinLines == null || postBeginnerBattleWinLines.Count == 0)
+            return;
+
+        if (subtitleManager == null)
+            subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
+
+        if (subtitleManager == null)
+            return;
+
+        subtitleManager.DisplaySequence(postBeginnerBattleWinLines);
+        hasPlayedPostBeginnerBattleWinSubtitles = true;
     }
 
     private string ResolveBeginnerDeckKeyForPlatform()
