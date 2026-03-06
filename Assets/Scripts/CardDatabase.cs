@@ -200,6 +200,26 @@ public static class CardDatabase
                     flavorText = "I dedicate my body to my country\nAnd my life to the King.\nAlaborn Soldier's Oath",
                     artwork = Resources.Load<Sprite>("Art/alaborn_trooper")
                     });
+                Add(new CardData //Capashen templar
+                    {
+                    cardName = "Capashen Templar",
+                    artist = "Todd Lockwood",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "White" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Knight" },
+                    manaToPayToActivate = 1,
+                    toughnessBuff = 1,
+                    flavorText = "Their shields are Benalia's outermost battlements.",
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.PayToBuffSelf
+                    },
+                    artwork = Resources.Load<Sprite>("Art/capashen_templar")
+                    });
                 Add(new CardData // Foot soldiers
                     {
                     cardName = "Foot Soldiers",
@@ -580,6 +600,42 @@ public static class CardDatabase
                                 }
 
                                 GameManager.Instance.SummonToken(humanSoldier, owner);
+                            }
+                        }
+                        
+                    }
+                    });
+                Add(new CardData //Luminous angel
+                    {
+                    cardName = "Luminous Angel",
+                    artist = "Matthew D. Wilson",
+                    rarity = "Rare",
+                    manaCost = 7,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 4,
+                    toughness = 4,
+                    subtypes = new List<string> { "Angel" },
+                    keywordAbilities = new List<KeywordAbility> { 
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/luminous_angel"),
+                    abilities = new List<CardAbility>
+                    {
+                        new CardAbility
+                        {
+                            timing = TriggerTiming.OnUpkeep,
+                            description = "create a 1/1 white Spirit creature token with flying.",
+                            effect = (Player owner, Card unused) =>
+                            {
+                                Card spirit = CardFactory.Create("Spirit");
+                                if (spirit == null)
+                                {
+                                    Debug.LogError("Failed to spawn Human Spirit Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(spirit, owner);
                             }
                         }
                         
@@ -2706,6 +2762,45 @@ public static class CardDatabase
                     }
                     }
                     });
+                Add(new CardData //Voice of the provinces
+                    {
+                    cardName = "Voice of the Provinces",
+                    artist = "Igor Kieryluk",
+                    rarity = "Common",
+                    manaCost = 6,
+                    color = new List<string> { "White", "White" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 3,
+                    subtypes = new List<string> { "Angel" },
+                    keywordAbilities = new List<KeywordAbility> {
+                        KeywordAbility.Flying
+                    },
+                    artwork = Resources.Load<Sprite>("Art/voice_of_the_provinces"),
+                    flavorText = "Her horn is heard across Innistrad, lifing the hearts of the righteous",
+                    abilities = new List<CardAbility>
+                    {
+                    new CardAbility
+                    {
+                        timing = TriggerTiming.OnEnter,
+                        description = "create a white 1/1 Human token.",
+                        effect = (Player owner, Card unused) =>
+                        {
+                            for (int i = 0; i < 1; i++)
+                            {
+                                Card human = CardFactory.Create("Human");
+                                if (human == null)
+                                {
+                                    Debug.LogError("Failed to spawn Human Token — check card database!");
+                                    return;
+                                }
+
+                                GameManager.Instance.SummonToken(human, owner);
+                            }
+                        }
+                    }
+                    }
+                    });
                 Add(new CardData //Domestic cat
                     {
                     cardName = "Domestic Cat",
@@ -2962,6 +3057,21 @@ public static class CardDatabase
                         subtypes = new List<string> { "Cat" },
                         keywordAbilities = new List<KeywordAbility> { KeywordAbility.Reach },
                         artwork = Resources.Load<Sprite>("Art/cat_token")
+                    });
+                Add(new CardData // Human Token
+                    {
+                        cardName = "Human",
+                        artist = "Sora AI",
+                        rarity = "Token",
+                        manaCost = 0,
+                        isToken = true,
+                        color = new List<string> { "White" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Human" },
+                        keywordAbilities = new List<KeywordAbility> { },
+                        artwork = Resources.Load<Sprite>("Art/human_soldier_token")
                     });
                 Add(new CardData // Monkey Token
                     {
@@ -3844,6 +3954,17 @@ public static class CardDatabase
                         manaCost = 4,
                         color = new List<string> { "Black", "Black" },
                         artwork = Resources.Load<Sprite>("Art/massacre"),
+                        typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
+                    });
+                Add(new CardData //Wrath of God
+                    {
+                        cardName = "Wrath of God",
+                        artist = "Kev Walker",
+                        rarity = "Rare",
+                        cardType = CardType.Sorcery,
+                        manaCost = 4,
+                        color = new List<string> { "White", "White" },
+                        artwork = Resources.Load<Sprite>("Art/wrath_of_god"),
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Creature
                     });
                 Add(new CardData //Mirrorbreak
