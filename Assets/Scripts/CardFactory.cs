@@ -95,6 +95,7 @@ public static class CardFactory
                 sorcery.controlledCreaturesPowerBuff = data.controlledCreaturesPowerBuff;
                 sorcery.controlledCreaturesToughnessBuff = data.controlledCreaturesToughnessBuff;
                 sorcery.preventAllCombatDamageThisTurn = data.preventAllCombatDamageThisTurn;
+                sorcery.lifeToGainPerCreatureAttackingYou = data.lifeToGainPerCreatureAttackingYou;
                 sorcery.addXPlusOneCounters = data.addXPlusOneCounters;
                 sorcery.addXMinusOneCounters = data.addXMinusOneCounters;
                 sorcery.creaturesToSacrificeEachPlayerMin = data.creaturesToSacrificeEachPlayerMin;

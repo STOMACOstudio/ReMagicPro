@@ -48,6 +48,7 @@ public class SorceryCard : Card
     public int controlledCreaturesPowerBuff = 0;
     public int controlledCreaturesToughnessBuff = 0;
     public bool preventAllCombatDamageThisTurn = false;
+    public int lifeToGainPerCreatureAttackingYou = 0;
 
     public TargetType requiredTargetType = TargetType.None;
     public PermanentTypeToDestroy typeOfPermanentToDestroyAll = PermanentTypeToDestroy.None;
@@ -232,6 +233,19 @@ public class SorceryCard : Card
             {
                 GameManager.Instance.preventAllCombatDamageThisTurn = true;
                 Debug.Log($"{cardName} prevents all combat damage this turn.");
+            }
+
+            if (lifeToGainPerCreatureAttackingYou > 0)
+            {
+                int attackersOnYou = GameManager.Instance.currentAttackers
+                    .Count(attacker => GameManager.Instance.GetControllerOfCard(attacker) == GameManager.Instance.GetOpponentOf(caster));
+
+                int lifeToGainTotal = attackersOnYou * lifeToGainPerCreatureAttackingYou;
+                if (lifeToGainTotal > 0)
+                {
+                    GameManager.Instance.TryGainLife(caster, lifeToGainTotal);
+                    Debug.Log($"{caster} gains {lifeToGainTotal} life from {cardName} ({attackersOnYou} attacker(s)).");
+                }
             }
 
             if (creaturesToSacrificeEachPlayerMax > 0)
