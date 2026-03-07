@@ -1135,6 +1135,17 @@ public class GameManager : MonoBehaviour
                                     CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
     }
 
+    private SorceryCard GetAIGiantGrowthInHand()
+    {
+        if (aiPlayer == null)
+            return null;
+
+        return aiPlayer.Hand
+            .OfType<SorceryCard>()
+            .FirstOrDefault(card => card.cardName == "Giant Growth" &&
+                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+    }
+
     private bool IsLikelyCreatureRemovalSpell(SorceryCard spell, CreatureCard target)
     {
         if (spell == null || target == null)
@@ -1191,6 +1202,144 @@ public class GameManager : MonoBehaviour
         AwardFavouriteCardCoins(unsummon, aiPlayer);
         UpdateUI();
         return true;
+    }
+
+    private bool TryAICastGiantGrowth(CreatureCard target, string reason)
+    {
+        if (target == null || aiPlayer == null)
+            return false;
+
+        if (GetOwnerOfCard(target) != aiPlayer || !aiPlayer.Battlefield.Contains(target))
+            return false;
+
+        SorceryCard giantGrowth = GetAIGiantGrowthInHand();
+        if (giantGrowth == null)
+            return false;
+
+        var cost = GetManaCostBreakdown(giantGrowth.manaCost, giantGrowth.color);
+        int tax = GetOpponentSpellTax(aiPlayer);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+
+        bool canPay = TurnSystem.Instance != null
+            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
+            : aiPlayer.ColoredMana.CanPay(cost);
+
+        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
+            return false;
+
+        aiPlayer.ColoredMana.Pay(cost);
+        aiPlayer.Hand.Remove(giantGrowth);
+        giantGrowth.owner = aiPlayer;
+
+        Debug.Log($"[AI] Casts Giant Growth targeting {target.cardName} ({reason}).");
+
+        giantGrowth.ResolveEffect(aiPlayer, target);
+        SendToGraveyard(giantGrowth, aiPlayer, fromStack: true);
+        AwardFavouriteCardCoins(giantGrowth, aiPlayer);
+        UpdateUI();
+        return true;
+    }
+
+    public bool TryAICastGiantGrowthForCombat(bool aiIsAttacker)
+    {
+        if (aiPlayer == null || currentAttackers == null || currentAttackers.Count == 0)
+            return false;
+
+        CreatureCard bestTarget = null;
+        CreatureCard bestEnemy = null;
+        int bestScore = int.MinValue;
+
+        if (aiIsAttacker)
+        {
+            foreach (var attacker in currentAttackers)
+            {
+                if (attacker == null || GetOwnerOfCard(attacker) != aiPlayer)
+                    continue;
+
+                foreach (var blocker in attacker.blockedByThisBlocker ?? new List<CreatureCard>())
+                {
+                    if (blocker == null || GetOwnerOfCard(blocker) != humanPlayer)
+                        continue;
+
+                    bool attackerKillsNow = attacker.power >= blocker.toughness;
+                    bool attackerKillsWithGrowth = attacker.power + 3 >= blocker.toughness;
+                    bool blockerKillsNow = blocker.power >= attacker.toughness;
+                    bool blockerKillsAfterGrowth = blocker.power >= attacker.toughness + 3;
+
+                    if (!attackerKillsNow && attackerKillsWithGrowth)
+                    {
+                        int score = 10;
+                        if (blockerKillsNow && !blockerKillsAfterGrowth)
+                            score += 5;
+                        score += CardDatabase.GetCardData(blocker.cardName)?.manaCost ?? 0;
+
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestTarget = attacker;
+                            bestEnemy = blocker;
+                        }
+                    }
+                }
+            }
+
+            if (bestTarget != null)
+                return TryAICastGiantGrowth(bestTarget, $"winning combat versus {bestEnemy.cardName}");
+
+            var unblockedAttacker = currentAttackers
+                .Where(a => a != null && GetOwnerOfCard(a) == aiPlayer && (a.blockedByThisBlocker == null || a.blockedByThisBlocker.Count == 0))
+                .OrderByDescending(a => a.power)
+                .ThenByDescending(a => a.toughness)
+                .ThenByDescending(a => CardDatabase.GetCardData(a.cardName)?.manaCost ?? 0)
+                .FirstOrDefault();
+
+            if (unblockedAttacker != null)
+                return TryAICastGiantGrowth(unblockedAttacker, "pushing extra unblocked combat damage");
+
+            return false;
+        }
+
+        foreach (var attacker in currentAttackers)
+        {
+            if (attacker == null || GetOwnerOfCard(attacker) != humanPlayer)
+                continue;
+
+            foreach (var blocker in attacker.blockedByThisBlocker ?? new List<CreatureCard>())
+            {
+                if (blocker == null || GetOwnerOfCard(blocker) != aiPlayer)
+                    continue;
+
+                bool blockerKillsNow = blocker.power >= attacker.toughness;
+                bool blockerKillsWithGrowth = blocker.power + 3 >= attacker.toughness;
+                bool attackerKillsNow = attacker.power >= blocker.toughness;
+                bool attackerKillsAfterGrowth = attacker.power >= blocker.toughness + 3;
+
+                if (!blockerKillsNow && blockerKillsWithGrowth)
+                {
+                    int score = 10;
+                    if (attackerKillsNow && !attackerKillsAfterGrowth)
+                        score += 5;
+                    score += CardDatabase.GetCardData(attacker.cardName)?.manaCost ?? 0;
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestTarget = blocker;
+                        bestEnemy = attacker;
+                    }
+                }
+            }
+        }
+
+        if (bestTarget == null)
+            return false;
+
+        return TryAICastGiantGrowth(bestTarget, $"winning block versus {bestEnemy.cardName}");
     }
 
     public bool TryAICastUnsummonOnStrongestAttacker()
