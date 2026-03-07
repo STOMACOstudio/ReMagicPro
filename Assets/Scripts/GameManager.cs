@@ -1089,6 +1089,165 @@ public class GameManager : MonoBehaviour
             return activeCardVisuals.Find(cv => cv.linkedCard == card);
         }
 
+    public void RemoveCreatureFromCombatIfNeeded(CreatureCard creature)
+    {
+        if (creature == null)
+            return;
+
+        currentAttackers.Remove(creature);
+        selectedAttackers.Remove(creature);
+
+        if (selectedBlockerForBlocking == creature)
+            selectedBlockerForBlocking = null;
+
+        blockingAssignments.Remove(creature);
+
+        foreach (var assignment in blockingAssignments.Values)
+            assignment.Remove(creature);
+
+        foreach (var other in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield).OfType<CreatureCard>())
+        {
+            other.blockedByThisBlocker.Remove(creature);
+            if (other.blockingThisAttacker == creature)
+                other.blockingThisAttacker = null;
+
+            var otherVisual = FindCardVisual(other);
+            if (otherVisual != null)
+                otherVisual.UpdateVisual();
+        }
+
+        creature.blockingThisAttacker = null;
+        creature.blockedByThisBlocker.Clear();
+
+        var visual = FindCardVisual(creature);
+        if (visual != null)
+            visual.UpdateVisual();
+    }
+
+    private SorceryCard GetAIUnsummonInHand()
+    {
+        if (aiPlayer == null)
+            return null;
+
+        return aiPlayer.Hand
+            .OfType<SorceryCard>()
+            .FirstOrDefault(card => card.cardName == "Unsummon" &&
+                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+    }
+
+    private bool IsLikelyCreatureRemovalSpell(SorceryCard spell, CreatureCard target)
+    {
+        if (spell == null || target == null)
+            return false;
+
+        bool directDestroy = spell.destroyTargetIfTypeMatches &&
+                             (spell.requiredTargetType == SorceryCard.TargetType.Creature ||
+                              spell.requiredTargetType == SorceryCard.TargetType.CreatureOrPlayer);
+
+        int maxDamage = spell.damageToTargetMax > 0 ? spell.damageToTargetMax : spell.damageToTarget;
+        bool damageCouldKill = maxDamage > 0;
+
+        bool appliesNegativeCounters = spell.addXMinusOneCounters;
+
+        return directDestroy || damageCouldKill || appliesNegativeCounters;
+    }
+
+    public bool TryAICastUnsummon(CreatureCard target, string reason)
+    {
+        if (target == null || aiPlayer == null)
+            return false;
+
+        if (GetOwnerOfCard(target) == null || GetOwnerOfCard(target).Battlefield.Contains(target) == false)
+            return false;
+
+        SorceryCard unsummon = GetAIUnsummonInHand();
+        if (unsummon == null)
+            return false;
+
+        var cost = GetManaCostBreakdown(unsummon.manaCost, unsummon.color);
+        int tax = GetOpponentSpellTax(aiPlayer);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+
+        bool canPay = TurnSystem.Instance != null
+            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
+            : aiPlayer.ColoredMana.CanPay(cost);
+
+        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
+            return false;
+
+        aiPlayer.ColoredMana.Pay(cost);
+        aiPlayer.Hand.Remove(unsummon);
+        unsummon.owner = aiPlayer;
+
+        Debug.Log($"[AI] Casts Unsummon targeting {target.cardName} ({reason}).");
+
+        unsummon.ResolveEffect(aiPlayer, target);
+        SendToGraveyard(unsummon, aiPlayer, fromStack: true);
+        AwardFavouriteCardCoins(unsummon, aiPlayer);
+        UpdateUI();
+        return true;
+    }
+
+    public bool TryAICastUnsummonOnStrongestAttacker()
+    {
+        if (TurnSystem.Instance == null || TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.Human)
+            return false;
+
+        var target = currentAttackers
+            .Where(attacker => attacker != null && GetOwnerOfCard(attacker) == humanPlayer)
+            .OrderByDescending(attacker => attacker.power)
+            .ThenByDescending(attacker => attacker.toughness)
+            .ThenByDescending(attacker => CardDatabase.GetCardData(attacker.cardName)?.manaCost ?? 0)
+            .FirstOrDefault();
+
+        if (target == null)
+            return false;
+
+        return TryAICastUnsummon(target, "opponent declared attackers");
+    }
+
+    public bool TryAICastUnsummonOnStrongestBlocker()
+    {
+        if (TurnSystem.Instance == null || TurnSystem.Instance.currentPlayer != TurnSystem.PlayerType.AI)
+            return false;
+
+        var target = currentAttackers
+            .Where(attacker => attacker != null && GetOwnerOfCard(attacker) == aiPlayer)
+            .SelectMany(attacker => attacker.blockedByThisBlocker ?? new List<CreatureCard>())
+            .Where(blocker => blocker != null && GetOwnerOfCard(blocker) == humanPlayer)
+            .OrderByDescending(blocker => blocker.toughness)
+            .ThenByDescending(blocker => blocker.power)
+            .ThenByDescending(blocker => CardDatabase.GetCardData(blocker.cardName)?.manaCost ?? 0)
+            .FirstOrDefault();
+
+        if (target == null)
+            return false;
+
+        return TryAICastUnsummon(target, "clearing a blocker before damage");
+    }
+
+    public void TryAIDefensiveUnsummonResponse(SorceryCard incomingSpell, Card target, Player caster)
+    {
+        if (caster == aiPlayer || incomingSpell == null)
+            return;
+
+        if (!(target is CreatureCard creature))
+            return;
+
+        if (GetOwnerOfCard(creature) != aiPlayer)
+            return;
+
+        if (!IsLikelyCreatureRemovalSpell(incomingSpell, creature))
+            return;
+
+        TryAICastUnsummon(creature, $"responding to {incomingSpell.cardName}");
+    }
+
     public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
         {
             yield return WaitForStackOrSkip(2f);
@@ -1111,6 +1270,7 @@ public class GameManager : MonoBehaviour
 
             if (sorcery.chosenTarget != null)
             {
+                TryAIDefensiveUnsummonResponse(sorcery, sorcery.chosenTarget, caster);
                 sorcery.ResolveEffect(caster, sorcery.chosenTarget);
             }
             else if (sorcery.chosenPlayerTarget != null)
@@ -2895,6 +3055,9 @@ public class GameManager : MonoBehaviour
     private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
     {
         yield return WaitForStackOrSkip(2f);
+
+        // Give AI a chance to protect a threatened creature with Unsummon.
+        TryAIDefensiveUnsummonResponse(sorcery, target, caster);
 
         // The card-specific ResolveEffect(target) already invokes the general
         // ResolveEffect method internally. Calling it again here caused cards
