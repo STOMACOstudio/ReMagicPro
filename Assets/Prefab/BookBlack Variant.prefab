@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.size
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[0].text
@@ -30,15 +30,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[2].text
-      value: Press "E" to check me out
+      value: Now, find your enemy color and defeat it
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[3].text
-      value: Press "E" to check me out
+      value: But before doing so
+      objectReference: {fileID: 0}
+    - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[4].text
+      value: Press "E" to check your library
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[0].displayDuration
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[1].displayDuration
@@ -46,10 +50,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[2].displayDuration
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
       propertyPath: postDeckGeneratedSubtitles.Array.data[3].displayDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 298504507269182675, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
+      propertyPath: postDeckGeneratedSubtitles.Array.data[4].displayDuration
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 952878586456418732, guid: 5202641534bad2c4f984ac829d620f65, type: 3}
