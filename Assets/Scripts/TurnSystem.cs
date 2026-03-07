@@ -184,19 +184,18 @@ public class TurnSystem : MonoBehaviour
 
     void Update()
         {
-            if (GameManager.Instance.gameOver)
+            GameManager gameManager = GameManager.Instance;
+            if (gameManager == null || gameManager.gameOver)
                 return;
 
-            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !waitingForAIAction && !GameManager.Instance.IsStackActive())
+            if (currentPlayer == PlayerType.AI && !waitingForPlayerInput && !waitingForAIAction && !gameManager.IsStackActive())
             {
                 RunCurrentPhase();
             }
 
             if (nextPhaseButton != null)
             {
-                bool allowNext = CanHumanPassPriorityThisPhase() &&
-                                (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
-                                !GameManager.Instance.graveyardViewActive &&
+                bool allowNext = CanAdvanceTurnInput(gameManager) &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
                                 currentPhase != TurnPhase.ChooseAttackers;
 
@@ -215,9 +214,7 @@ public class TurnSystem : MonoBehaviour
                 if (EventSystem.current != null)
                     EventSystem.current.SetSelectedGameObject(null);
 
-                if (CanHumanPassPriorityThisPhase() &&
-                    !GameManager.Instance.graveyardViewActive &&
-                    (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode))
+                if (CanAdvanceTurnInput(gameManager))
                 {
                     switch (currentPhase)
                     {
@@ -258,6 +255,9 @@ public class TurnSystem : MonoBehaviour
 
     private static void PlaySoundIfAvailable(System.Func<SoundManager, AudioClip> clipSelector)
     {
+        if (clipSelector == null)
+            return;
+
         SoundManager soundManager = SoundManager.Instance;
         if (soundManager == null)
             return;
@@ -267,39 +267,59 @@ public class TurnSystem : MonoBehaviour
             soundManager.PlaySound(clip);
     }
 
+    private bool CanAdvanceTurnInput(GameManager gameManager)
+    {
+        return CanHumanPassPriorityThisPhase() &&
+               !gameManager.graveyardViewActive &&
+               (!gameManager.IsStackActive() || gameManager.isTargetingMode);
+    }
+
     private void OnDestroy()
     {
+        if (nextPhaseButton != null)
+            nextPhaseButton.onClick.RemoveListener(NextPhaseButton);
+
+        if (confirmAttackersButton != null)
+            confirmAttackersButton.onClick.RemoveListener(ConfirmAttackers);
+
+        if (confirmBlockersButton != null)
+            confirmBlockersButton.onClick.RemoveListener(ConfirmBlockers);
+
+        if (attackAllButton != null)
+            attackAllButton.onClick.RemoveListener(SelectAllEligibleAttackers);
+
+        if (clearAttackersButton != null)
+            clearAttackersButton.onClick.RemoveListener(ClearAllSelectedAttackers);
+
         if (Instance == this)
             Instance = null;
     }
 
     public void NextPhaseButton()
     {
-        if (GameManager.Instance.gameOver)
+        GameManager gameManager = GameManager.Instance;
+        if (gameManager == null || gameManager.gameOver)
             return;
 
-        if (GameManager.Instance.graveyardViewActive)
+        if (!CanAdvanceTurnInput(gameManager))
             return;
 
-        if (CanHumanPassPriorityThisPhase())
+        PlaySoundIfAvailable(sound => sound.buttonClick);
+
+        if (gameManager.isTargetingMode)
         {
-            PlaySoundIfAvailable(sound => sound.buttonClick);
-
-            if (GameManager.Instance.isTargetingMode)
-            {
-                Debug.Log("Canceled targeting because player pressed Next Phase.");
-                GameManager.Instance.CancelTargeting();
-            }
-            if (GameManager.Instance.targetingCreatureOptional != null)
-            {
-                Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
-                GameManager.Instance.CancelOptionalTargeting();
-            }
-
-            waitingForPlayerInput = false;
-            HideAllConfirmButtons();
-            AdvancePhase();
+            Debug.Log("Canceled targeting because player pressed Next Phase.");
+            gameManager.CancelTargeting();
         }
+        if (gameManager.targetingCreatureOptional != null)
+        {
+            Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
+            gameManager.CancelOptionalTargeting();
+        }
+
+        waitingForPlayerInput = false;
+        HideAllConfirmButtons();
+        AdvancePhase();
     }
 
     private bool IsAbleToAttackThisTurn(CreatureCard creature)
