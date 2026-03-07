@@ -525,11 +525,13 @@ public class SorceryCard : Card
                     return;
                 }
 
-                if (returnTargetCreatureToOwnerHand && target is CreatureCard)
+                if (returnTargetCreatureToOwnerHand && target is CreatureCard returnedCreature)
                 {
                     Player owner = GameManager.Instance.GetOwnerOfCard(target);
                     if (owner != null && owner.Battlefield.Remove(target))
                     {
+                        returnedCreature.OnLeavePlay(owner);
+                        GameManager.Instance.RemoveCreatureFromCombatIfNeeded(returnedCreature);
                         owner.Hand.Add(target);
 
                         CardVisual targetVisual = GameManager.Instance.FindCardVisual(target);

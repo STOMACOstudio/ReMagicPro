@@ -1277,6 +1277,15 @@ public class TurnSystem : MonoBehaviour
                     {
                         Debug.Log("→ AI is assigning blockers as defender.");
 
+                        // If the opponent attacked, fire Unsummon at the most threatening attacker first.
+                        GameManager.Instance.TryAICastUnsummonOnStrongestAttacker();
+                        if (GameManager.Instance.currentAttackers.Count == 0)
+                        {
+                            Debug.Log("→ AI bounced the only attacker with Unsummon. Skipping blockers.");
+                            AdvancePhase();
+                            break;
+                        }
+
                         Player ai = GameManager.Instance.aiPlayer;
                         Player human = GameManager.Instance.humanPlayer;
                         var attackers = GameManager.Instance.currentAttackers
@@ -1353,6 +1362,7 @@ public class TurnSystem : MonoBehaviour
                         waitingForPlayerInput = true;
                         if (currentPlayer == PlayerType.AI)
                         {
+                            GameManager.Instance.TryAICastUnsummonOnStrongestBlocker();
                             SetCombatUIState(CombatUIState.ConfirmingBlockers);
                             TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
                             if (blkLabel != null)
@@ -2141,6 +2151,14 @@ public class TurnSystem : MonoBehaviour
 
                 return ai.ColoredMana.CanPay(cost);
             }
+
+        public bool TryEnsureAIManaForCost(Dictionary<string, int> cost)
+        {
+            if (GameManager.Instance == null || GameManager.Instance.aiPlayer == null)
+                return false;
+
+            return EnsureManaForCost(GameManager.Instance.aiPlayer, cost);
+        }
         
         public void SelectAllEligibleAttackers()
             {
