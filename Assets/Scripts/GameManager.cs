@@ -277,9 +277,10 @@ public class GameManager : MonoBehaviour
             if (player == aiPlayer)
             {
                 Debug.Log("AI tried to draw from an empty deck — player wins by mill.");
-                CardData reward = PlayerCollection.AddRandomCard();
+                // Card reward logic temporarily disabled.
+                // CardData reward = PlayerCollection.AddRandomCard();
                 gameOver = true;
-                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(reward);
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(null);
             }
             else if (player == humanPlayer)
             {
@@ -4761,11 +4762,12 @@ public class GameManager : MonoBehaviour
             else if (aiPlayer.Life <= 0)
             {
                 Debug.Log("AI defeated — player wins!");
-                CardData reward = PlayerCollection.AddRandomCard();
+                // Card reward logic temporarily disabled.
+                // CardData reward = PlayerCollection.AddRandomCard();
                 gameOver = true;
                 if (TurnSystem.Instance != null)
                     TurnSystem.Instance.StopAllCoroutines();
-                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(reward);
+                UnityEngine.Object.FindFirstObjectByType<WinScreenUI>().ShowWinScreen(null);
             }
             else if (humanPlayer.Life <= 0)
             {
