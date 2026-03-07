@@ -4724,84 +4724,64 @@ public class GameManager : MonoBehaviour
                 UpdateUI();
             }
 
-        public void NotifyArtifactEntered(Card artifact, Player controller)
+
+        private void ForEachTriggeredAbilityOnBattlefield(TriggerTiming timing, System.Action<Player, Card, CardAbility> action)
         {
-            lastEnteredArtifact = artifact;
             foreach (var player in new[] { humanPlayer, aiPlayer })
             {
                 foreach (var card in player.Battlefield.ToList())
                 {
                     foreach (var ability in card.abilities)
                     {
-                        if (ability.timing == TriggerTiming.OnArtifactEnter && ability.effect != null)
-                        {
-                            if (card == artifact)
-                                continue;
-
-                            int oldLife = player.Life;
-                            ability.effect.Invoke(player, card);
-                            int gained = player.Life - oldLife;
-                            if (gained > 0)
-                            {
-                                ShowFloatingHeal(gained,
-                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-                            }
-                        }
+                        if (ability.timing == timing && ability.effect != null)
+                            action(player, card, ability);
                     }
                 }
             }
+        }
+
+        private void ExecuteAbilityWithHealFeedback(Player player, Card source, CardAbility ability)
+        {
+            int oldLife = player.Life;
+            ability.effect.Invoke(player, source);
+            int gained = player.Life - oldLife;
+            if (gained > 0)
+            {
+                ShowFloatingHeal(gained,
+                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
+            }
+        }
+
+        public void NotifyArtifactEntered(Card artifact, Player controller)
+        {
+            lastEnteredArtifact = artifact;
+            ForEachTriggeredAbilityOnBattlefield(TriggerTiming.OnArtifactEnter, (player, card, ability) =>
+            {
+                if (card == artifact)
+                    return;
+
+                ExecuteAbilityWithHealFeedback(player, card, ability);
+            });
             lastEnteredArtifact = null;
         }
 
         public void NotifyEnchantmentEntered(Card enchantment, Player controller)
         {
-            foreach (var player in new[] { humanPlayer, aiPlayer })
+            ForEachTriggeredAbilityOnBattlefield(TriggerTiming.OnEnchantmentEnter, (player, card, ability) =>
             {
-                foreach (var card in player.Battlefield.ToList())
-                {
-                    foreach (var ability in card.abilities)
-                    {
-                        if (ability.timing == TriggerTiming.OnEnchantmentEnter && ability.effect != null)
-                        {
-                            if (card == enchantment)
-                                continue;
+                if (card == enchantment)
+                    return;
 
-                            int oldLife = player.Life;
-                            ability.effect.Invoke(player, card);
-                            int gained = player.Life - oldLife;
-                            if (gained > 0)
-                            {
-                                ShowFloatingHeal(gained,
-                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-                            }
-                        }
-                    }
-                }
-            }
+                ExecuteAbilityWithHealFeedback(player, card, ability);
+            });
         }
 
         public void NotifyLandEntered(Card land, Player controller)
         {
-            foreach (var player in new[] { humanPlayer, aiPlayer })
+            ForEachTriggeredAbilityOnBattlefield(TriggerTiming.OnLandEnter, (player, card, ability) =>
             {
-                foreach (var card in player.Battlefield.ToList())
-                {
-                    foreach (var ability in card.abilities)
-                    {
-                        if (ability.timing == TriggerTiming.OnLandEnter && ability.effect != null)
-                        {
-                            int oldLife = player.Life;
-                            ability.effect.Invoke(player, card);
-                            int gained = player.Life - oldLife;
-                            if (gained > 0)
-                            {
-                                ShowFloatingHeal(gained,
-                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-                            }
-                        }
-                    }
-                }
-            }
+                ExecuteAbilityWithHealFeedback(player, card, ability);
+            });
         }
 
         public void NotifyCreatureEntered(Card creature, Player controller)
@@ -4810,44 +4790,19 @@ public class GameManager : MonoBehaviour
                 return;
 
             lastEnteredCreature = creature;
-            foreach (var player in new[] { humanPlayer, aiPlayer })
+            ForEachTriggeredAbilityOnBattlefield(TriggerTiming.OnCreatureEnter, (player, card, ability) =>
             {
-                foreach (var card in player.Battlefield.ToList())
-                {
-                    foreach (var ability in card.abilities)
-                    {
-                        if (ability.timing == TriggerTiming.OnCreatureEnter && ability.effect != null)
-                        {
-                            ability.effect.Invoke(player, card);
-                        }
-                    }
-                }
-            }
+                ability.effect.Invoke(player, card);
+            });
             lastEnteredCreature = null;
         }
 
         public void NotifyLandLeft(Card land, Player controller)
         {
-            foreach (var player in new[] { humanPlayer, aiPlayer })
+            ForEachTriggeredAbilityOnBattlefield(TriggerTiming.OnLandLeave, (player, card, ability) =>
             {
-                foreach (var card in player.Battlefield.ToList())
-                {
-                    foreach (var ability in card.abilities)
-                    {
-                        if (ability.timing == TriggerTiming.OnLandLeave && ability.effect != null)
-                        {
-                            int oldLife = player.Life;
-                            ability.effect.Invoke(player, card);
-                            int gained = player.Life - oldLife;
-                            if (gained > 0)
-                            {
-                                ShowFloatingHeal(gained,
-                                    player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-                            }
-                        }
-                    }
-                }
-            }
+                ExecuteAbilityWithHealFeedback(player, card, ability);
+            });
         }
 
         public int lastLifeGainedAmount = 0;
@@ -4860,16 +4815,7 @@ public class GameManager : MonoBehaviour
                 foreach (var ability in card.abilities)
                 {
                     if (ability.timing == TriggerTiming.OnLifeGain && ability.effect != null)
-                    {
-                        int oldLife = player.Life;
-                        ability.effect.Invoke(player, card);
-                        int gained = player.Life - oldLife;
-                        if (gained > 0)
-                        {
-                            ShowFloatingHeal(gained,
-                                player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
-                        }
-                    }
+                        ExecuteAbilityWithHealFeedback(player, card, ability);
                 }
             }
             lastLifeGainedAmount = 0;
