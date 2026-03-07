@@ -5,6 +5,24 @@ using System.Linq;
 
 public class Card
 {
+    private static readonly Dictionary<TriggerTiming, string> TriggerTextPrefixByTiming =
+        new Dictionary<TriggerTiming, string>
+        {
+            { TriggerTiming.OnUpkeep, "At the beginning of your upkeep," },
+            { TriggerTiming.OnArtifactEnter, "Whenever an artifact enters the battlefield," },
+            { TriggerTiming.OnEnchantmentEnter, "Whenever an enchantment enters the battlefield," },
+            { TriggerTiming.OnLandEnter, "Whenever a land enters the battlefield," },
+            { TriggerTiming.OnCreatureEnter, "Whenever a creature enters the battlefield," },
+            { TriggerTiming.OnLandLeave, "Whenever a land leaves the battlefield," },
+            { TriggerTiming.OnLifeGain, "Whenever you gain life," },
+            { TriggerTiming.OnCardDraw, "Whenever you draw a card," },
+            { TriggerTiming.OnOpponentDraw, "Whenever an opponent draws a card," },
+            { TriggerTiming.OnCreatureDiesOrDiscarded, "Whenever a creature dies or is discarded," },
+            { TriggerTiming.OnPlayerDiscard, "Whenever a player discards a card," },
+            { TriggerTiming.OnCombatDamageToPlayer, "Whenever a creature deals combat damage to a player," },
+            { TriggerTiming.OnOpponentDiscard, "Whenever an opponent discards a card," },
+        };
+
     public string cardName;
     public string rarity;
     public int manaCost;
@@ -322,48 +340,12 @@ public class Card
             // Triggered abilities — shared across all cards
             foreach (var ability in abilities)
             {
-                if (string.IsNullOrEmpty(ability.description))
+                if (string.IsNullOrWhiteSpace(ability.description))
                     continue;
 
-                if (ability.timing == TriggerTiming.OnEnter)
-                    lines.Add("When this creature enters, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnDeath)
-                    lines.Add("When this creature dies, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnUpkeep)
-                    lines.Add("At the beginning of your upkeep, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnArtifactEnter)
-                    lines.Add("Whenever an artifact enters the battlefield, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnEnchantmentEnter)
-                    lines.Add("Whenever an enchantment enters the battlefield, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnLandEnter)
-                    lines.Add("Whenever a land enters the battlefield, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnCreatureEnter)
-                    lines.Add("Whenever a creature enters the battlefield, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnLandLeave)
-                    lines.Add("Whenever a land leaves the battlefield, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnLifeGain)
-                    lines.Add("Whenever you gain life, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnCardDraw)
-                    lines.Add("Whenever you draw a card, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnOpponentDraw)
-                    lines.Add("Whenever an opponent draws a card, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnCreatureDies)
-                {
-                    if (ability.triggerOnlyOnAttachedCreatureDeath && this is AuraCard)
-                        lines.Add("When enchanted creature dies, " + ability.description);
-                    else
-                        lines.Add("Whenever a creature dies, " + ability.description);
-                }
-                else if (ability.timing == TriggerTiming.OnCreatureDiesOrDiscarded)
-                    lines.Add("Whenever a creature dies or is discarded, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnPlayerDiscard)
-                    lines.Add("Whenever a player discards a card, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnBlock)
-                    lines.Add("When this creature blocks, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnCombatDamageToPlayer)
-                    lines.Add("Whenever a creature deals combat damage to a player, " + ability.description);
-                else if (ability.timing == TriggerTiming.OnOpponentDiscard)
-                    lines.Add("Whenever an opponent discards a card, " + ability.description);
+                string line = BuildTriggeredAbilityLine(ability);
+                if (!string.IsNullOrEmpty(line))
+                    lines.Add(line);
             }
 
             if (keywordAbilities != null)
@@ -389,4 +371,36 @@ public class Card
 
             return string.Join("\n", lines);
         }
+
+    private string BuildTriggeredAbilityLine(CardAbility ability)
+    {
+        string trimmedDescription = ability.description.TrimStart();
+
+        if (ability.timing == TriggerTiming.OnEnter)
+            return $"When {GetThisObjectLabel()} enters, {trimmedDescription}";
+
+        if (ability.timing == TriggerTiming.OnDeath)
+            return $"When {GetThisObjectLabel()} dies, {trimmedDescription}";
+
+        if (ability.timing == TriggerTiming.OnCreatureDies)
+        {
+            if (ability.triggerOnlyOnAttachedCreatureDeath && this is AuraCard)
+                return $"When enchanted creature dies, {trimmedDescription}";
+
+            return $"Whenever a creature dies, {trimmedDescription}";
+        }
+
+        if (ability.timing == TriggerTiming.OnBlock)
+            return $"When {GetThisObjectLabel()} blocks, {trimmedDescription}";
+
+        if (TriggerTextPrefixByTiming.TryGetValue(ability.timing, out string prefix))
+            return $"{prefix} {trimmedDescription}";
+
+        return trimmedDescription;
+    }
+
+    private string GetThisObjectLabel()
+    {
+        return this is CreatureCard ? "this creature" : "this permanent";
+    }
 }

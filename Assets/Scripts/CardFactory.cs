@@ -150,14 +150,14 @@ public static class CardFactory
                 enchantment.buffToughness = data.toughnessBuff;
                 enchantment.keywordBuff = data.keywordBuff;
                 if (enchantment is AuraCard aura)
+                {
                     aura.requiredTargetType =
                         data.requiredTargetType == SorceryCard.TargetType.None
                             ? SorceryCard.TargetType.Creature
                             : data.requiredTargetType;
-                if (enchantment is AuraCard aura2)
-                    aura2.targetMustBeControlledCreature = data.targetMustBeControlledCreature;
-                if (enchantment is AuraCard aura3)
-                    aura3.gainControlOfCreature = data.gainControlOfCreature;
+                    aura.targetMustBeControlledCreature = data.targetMustBeControlledCreature;
+                    aura.gainControlOfCreature = data.gainControlOfCreature;
+                }
                 newCard = enchantment;
                 break;
 
