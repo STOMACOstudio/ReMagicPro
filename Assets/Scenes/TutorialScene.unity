@@ -20573,6 +20573,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f72b4386445c649b7d7ebe63ca02db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EndTutorialScene
+  playerTag: Player
+  liftSpeed: 0.8
+  liftHeight: 100
+  subtitleManager: {fileID: 1833829486}
+  endingLines:
+  - text: Well done, Planeswalker
+    displayDuration: 2
+  - text: It is time for you to wake up...
+    displayDuration: 4
+  - text: ...and face your destiny
+    displayDuration: 3
 --- !u!1 &653449769
 GameObject:
   m_ObjectHideFlags: 0
