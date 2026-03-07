@@ -25,6 +25,7 @@ public class TurnSystem : MonoBehaviour
         Upkeep,
         Draw,
         Main1,
+        PreCombat,
         EnterCombat,
         ChooseAttackers,
         ConfirmAttackers,
@@ -193,8 +194,7 @@ public class TurnSystem : MonoBehaviour
 
             if (nextPhaseButton != null)
             {
-                bool allowNext = currentPlayer == PlayerType.Human &&
-                                waitingForPlayerInput &&
+                bool allowNext = CanHumanPassPriorityThisPhase() &&
                                 (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode) &&
                                 !GameManager.Instance.graveyardViewActive &&
                                 currentPhase != TurnPhase.ConfirmAttackers &&
@@ -215,8 +215,7 @@ public class TurnSystem : MonoBehaviour
                 if (EventSystem.current != null)
                     EventSystem.current.SetSelectedGameObject(null);
 
-                if (currentPlayer == PlayerType.Human &&
-                    waitingForPlayerInput &&
+                if (CanHumanPassPriorityThisPhase() &&
                     !GameManager.Instance.graveyardViewActive &&
                     (!GameManager.Instance.IsStackActive() || GameManager.Instance.isTargetingMode))
                 {
@@ -240,6 +239,13 @@ public class TurnSystem : MonoBehaviour
                 }
             }
         }
+
+    private bool CanHumanPassPriorityThisPhase()
+    {
+        return waitingForPlayerInput &&
+               (currentPlayer == PlayerType.Human ||
+                (currentPlayer == PlayerType.AI && currentPhase == TurnPhase.PreCombat));
+    }
 
     private static bool IsAdvanceShortcutPressedThisFrame()
     {
@@ -275,7 +281,7 @@ public class TurnSystem : MonoBehaviour
         if (GameManager.Instance.graveyardViewActive)
             return;
 
-        if (currentPlayer == PlayerType.Human && waitingForPlayerInput)
+        if (CanHumanPassPriorityThisPhase())
         {
             PlaySoundIfAvailable(sound => sound.buttonClick);
 
@@ -1177,6 +1183,18 @@ public class TurnSystem : MonoBehaviour
                         waitingForAIAction = true;
                         StartCoroutine(WaitForAIActionAndAdvance(aiPhaseAdvanceDelaySeconds));
                         break;
+                    }
+                    break;
+
+                case TurnPhase.PreCombat:
+                    if (currentPlayer == PlayerType.AI)
+                    {
+                        Debug.Log("→ AI precombat priority. Waiting for human response before attackers.");
+                        waitingForPlayerInput = true;
+                    }
+                    else
+                    {
+                        AdvancePhase();
                     }
                     break;
 
