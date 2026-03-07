@@ -1203,6 +1203,8 @@ public class TurnSystem : MonoBehaviour
                         Player ai = GameManager.Instance.aiPlayer;
                         Player human = GameManager.Instance.humanPlayer;
 
+                        TryAIUseIcyManipulatorBeforeAttacks(ai, human);
+
                         var potentialAttackers = new List<CreatureCard>();
 
                         foreach (var card in ai.Battlefield)
@@ -2158,6 +2160,47 @@ public class TurnSystem : MonoBehaviour
                 return false;
 
             return EnsureManaForCost(GameManager.Instance.aiPlayer, cost);
+        }
+
+        private void TryAIUseIcyManipulatorBeforeAttacks(Player ai, Player human)
+        {
+            var manipulators = ai.Battlefield
+                .OfType<ArtifactCard>()
+                .Where(artifact => !artifact.isTapped &&
+                                   artifact.cardName == "Icy Manipulator" &&
+                                   artifact.activatedAbilities.Contains(ActivatedAbility.TapTargetArtifactCreatureOrLand))
+                .ToList();
+
+            foreach (var manipulator in manipulators)
+            {
+                CreatureCard strongestBlocker = human.Battlefield
+                    .OfType<CreatureCard>()
+                    .Where(creature => !creature.isTapped &&
+                                       !creature.isDead &&
+                                       !creature.keywordAbilities.Contains(KeywordAbility.CantBlock))
+                    .OrderByDescending(creature => creature.power)
+                    .ThenByDescending(creature => creature.toughness)
+                    .FirstOrDefault();
+
+                if (strongestBlocker == null)
+                    return;
+
+                var abilityCost = new Dictionary<string, int> { { "Colorless", manipulator.manaToPayToActivate } };
+                if (!EnsureManaForCost(ai, abilityCost))
+                    return;
+
+                ai.ColoredMana.Pay(abilityCost);
+                manipulator.isTapped = true;
+                GameManager.Instance.QueueArtifactActivatedAbility(
+                    manipulator,
+                    ActivatedAbility.TapTargetArtifactCreatureOrLand,
+                    ai,
+                    strongestBlocker);
+
+                GameManager.Instance.FindCardVisual(manipulator)?.UpdateVisual();
+                GameManager.Instance.UpdateUI();
+                Debug.Log($"AI taps Icy Manipulator to tap blocker {strongestBlocker.cardName} before attacks.");
+            }
         }
         
         public void SelectAllEligibleAttackers()
