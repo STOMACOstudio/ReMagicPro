@@ -1337,6 +1337,7 @@ public class TurnSystem : MonoBehaviour
                             }
                         }
 
+                        GameManager.Instance.TryAICastGiantGrowthForCombat(aiIsAttacker: false);
                         AdvancePhase(); // Proceed to ConfirmBlockers (or Damage)
                     }
                     else
@@ -1365,6 +1366,7 @@ public class TurnSystem : MonoBehaviour
                         if (currentPlayer == PlayerType.AI)
                         {
                             GameManager.Instance.TryAICastUnsummonOnStrongestBlocker();
+                            GameManager.Instance.TryAICastGiantGrowthForCombat(aiIsAttacker: true);
                             SetCombatUIState(CombatUIState.ConfirmingBlockers);
                             TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
                             if (blkLabel != null)
