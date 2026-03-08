@@ -22,11 +22,12 @@ public class EndTutorialScene : MonoBehaviour
 
     private PlayerMovement cachedPlayerMovement;
     private CharacterController cachedCharacterController;
+    private Transform cachedPlayerTransform;
     private bool hasTriggered;
     private bool hasReachedLiftTarget;
     private bool hasCompletedEndingSequence;
     private bool hasLoadedNextScene;
-    private float targetY;
+    private float playerTargetY;
 
     void Awake()
     {
@@ -41,10 +42,18 @@ public class EndTutorialScene : MonoBehaviour
 
         if (!hasReachedLiftTarget)
         {
-            Vector3 currentPosition = transform.position;
-            float newY = Mathf.MoveTowards(currentPosition.y, targetY, liftSpeed * Time.deltaTime);
-            transform.position = new Vector3(currentPosition.x, newY, currentPosition.z);
-            hasReachedLiftTarget = Mathf.Approximately(newY, targetY);
+            if (cachedPlayerTransform == null)
+            {
+                Debug.LogWarning($"[{nameof(EndTutorialScene)}] Player transform missing during lift.", this);
+                hasReachedLiftTarget = true;
+            }
+            else
+            {
+                Vector3 currentPlayerPosition = cachedPlayerTransform.position;
+                float newY = Mathf.MoveTowards(currentPlayerPosition.y, playerTargetY, liftSpeed * Time.deltaTime);
+                cachedPlayerTransform.position = new Vector3(currentPlayerPosition.x, newY, currentPlayerPosition.z);
+                hasReachedLiftTarget = Mathf.Approximately(newY, playerTargetY);
+            }
         }
 
         TryLoadNextScene();
@@ -56,7 +65,9 @@ public class EndTutorialScene : MonoBehaviour
             return;
 
         hasTriggered = true;
-        targetY = transform.position.y + liftHeight;
+
+        cachedPlayerTransform = other.transform;
+        playerTargetY = cachedPlayerTransform.position.y + liftHeight;
 
         cachedPlayerMovement = other.GetComponent<PlayerMovement>();
         if (cachedPlayerMovement != null)
