@@ -141,6 +141,7 @@ public class PlatformTrigger : MonoBehaviour
 
         BattleData.CurrentZoneId = null;
         BattleData.CurrentDeckKey = deckKey;
+        BattleData.ClearRewardCards();
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         BattleData.IsBattleOpenedAdditively = true;
         BattleData.TriggeringPlatform = this;

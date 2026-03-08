@@ -89,6 +89,7 @@ public class MapZoneUIManager : MonoBehaviour
         //BattleData.CurrentZone = selectedZone;
         BattleData.CurrentZoneId = selectedZone.zoneId;
         BattleData.CurrentDeckKey = selectedZone.deckKey;
+        BattleData.ClearRewardCards();
         BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
         BattleData.IsBattleOpenedAdditively = true;
         BattleData.PauseReturnScene();
