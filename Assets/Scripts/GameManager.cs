@@ -3091,6 +3091,9 @@ public class GameManager : MonoBehaviour
             case "Deck_Farmer":
                 DeckDatabase.BuildFarmerDeck(ai);
                 break;
+            case "Deck_Guard":
+                DeckDatabase.BuildGuardDeck(ai);
+                break;
             case "Deck_Boss":
                 DeckDatabase.BuildBossDeck(ai);
                 break;
