@@ -19,6 +19,9 @@ public class PlayerMovement : MonoBehaviour
     public float acceleration = 12f;
     public float deceleration = 10f;
     public float mouseSensitivity = 1f;
+    public float gravity = -20f;
+    public float groundedVerticalSpeed = -2f;
+    public float maxFallSpeed = -50f;
 
     [Header("Intro Settings")]
     public string tutorialSceneName = "TutorialScene";
@@ -41,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     private bool subtitlesStarted = false;
     private float landingTimer = 0f;
     private bool isTutorialScene = false;
+    private float verticalVelocity = 0f;
 
     void Start()
     {
@@ -201,9 +205,9 @@ public class PlayerMovement : MonoBehaviour
         currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity, lerpSpeed * Time.deltaTime);
 
         // Keep tutorial-specific boundaries and fixed Y only in the tutorial scene
-        Vector3 nextPos = transform.position + (currentVelocity * Time.deltaTime);
         if (isTutorialScene)
         {
+            Vector3 nextPos = transform.position + (currentVelocity * Time.deltaTime);
             Vector2 flatPos = new Vector2(nextPos.x, nextPos.z);
             float maxAllowedRadius = platformRadius - controller.radius;
 
@@ -215,11 +219,25 @@ public class PlayerMovement : MonoBehaviour
             }
 
             nextPos.y = fixedY;
+
+            // Move the controller
+            Vector3 finalMove = nextPos - transform.position;
+            controller.Move(finalMove);
+            return;
         }
 
-        // Move the controller
-        Vector3 finalMove = nextPos - transform.position;
-        controller.Move(finalMove);
+        // Non-tutorial scenes: keep horizontal input movement, but use grounded gravity
+        // so the player follows uneven terrain instead of staying at a fixed altitude.
+        if (controller.isGrounded && verticalVelocity < 0f)
+            verticalVelocity = groundedVerticalSpeed;
+
+        verticalVelocity += gravity * Time.deltaTime;
+        if (verticalVelocity < maxFallSpeed)
+            verticalVelocity = maxFallSpeed;
+
+        Vector3 velocity = currentVelocity;
+        velocity.y = verticalVelocity;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     void HandleFootsteps()
