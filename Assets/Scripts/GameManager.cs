@@ -315,262 +315,238 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayCard(Player player, CardVisual visual)
+    {
+        if (IsStackActive())
         {
-            if (IsStackActive())
+            Debug.Log("A spell is already on the stack. Please wait.");
+            return;
+        }
+
+        Card card = visual.linkedCard;
+        if (!CanPlayCardNow(player, card))
+            return;
+
+        if (card is LandCard land)
+        {
+            TryPlayLand(player, visual, land);
+            return;
+        }
+
+        if (card is CreatureCard creature)
+        {
+            TryCastCreature(player, visual, card, creature);
+            return;
+        }
+
+        if (card is SorceryCard sorcery)
+        {
+            TryCastSorcery(player, visual, card, sorcery);
+            return;
+        }
+
+        if (card is ArtifactCard artifact)
+        {
+            TryCastArtifact(player, visual, card, artifact);
+            return;
+        }
+
+        if (card is AuraCard aura)
+        {
+            Debug.Log("Aura requires target — entering targeting mode.");
+            BeginAuraTargetSelection(aura, player, visual);
+            return;
+        }
+
+        if (card is EnchantmentCard enchantment)
+        {
+            TryCastEnchantment(player, visual, card, enchantment);
+            return;
+        }
+
+        Debug.LogWarning("Unhandled card type played: " + card.cardName);
+    }
+
+    private bool CanPlayCardNow(Player player, Card card)
+    {
+        // MTG timing guard for non-instant card types in this project:
+        // lands and permanent/sorcery spells can only be played on your own main phase.
+        if (TurnSystem.Instance != null)
+        {
+            bool isPlayersTurn = (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human && player == humanPlayer) ||
+                                 (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI && player == aiPlayer);
+            bool isMainPhase = TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 ||
+                               TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2;
+            CardData cardData = CardDatabase.GetCardData(card.cardName);
+            bool isInstantSpell = cardData != null && cardData.cardType == CardType.Instant;
+            bool requiresMainPhaseTiming = card is LandCard ||
+                                          card is CreatureCard ||
+                                          (card is SorceryCard && !isInstantSpell) ||
+                                          card is ArtifactCard ||
+                                          card is EnchantmentCard ||
+                                          card is AuraCard;
+
+            if (requiresMainPhaseTiming && (!isPlayersTurn || !isMainPhase))
             {
-                Debug.Log("A spell is already on the stack. Please wait.");
-                return;
-            }
-
-            Card card = visual.linkedCard;
-
-            // MTG timing guard for non-instant card types in this project:
-            // lands and permanent/sorcery spells can only be played on your own main phase.
-            if (TurnSystem.Instance != null)
-            {
-                bool isPlayersTurn = (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human && player == humanPlayer) ||
-                                     (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI && player == aiPlayer);
-                bool isMainPhase = TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 ||
-                                   TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2;
-                CardData cardData = CardDatabase.GetCardData(card.cardName);
-                bool isInstantSpell = cardData != null && cardData.cardType == CardType.Instant;
-                bool requiresMainPhaseTiming = card is LandCard ||
-                                              card is CreatureCard ||
-                                              (card is SorceryCard && !isInstantSpell) ||
-                                              card is ArtifactCard ||
-                                              card is EnchantmentCard ||
-                                              card is AuraCard;
-
-                if (requiresMainPhaseTiming && (!isPlayersTurn || !isMainPhase))
-                {
-                    Debug.Log("This card can only be played during its controller's own main phase.");
-                    return;
-                }
-            }
-
-            if (IsOnlyCastCreatureSpellsActive() && !(card is CreatureCard) && !(card is LandCard))
-            {
-                Debug.Log("Anti-Magic Grid prevents casting non-creature spells.");
-                return;
-            }
-
-            if (card is LandCard)
-            {
-                if (player.hasPlayedLandThisTurn)
-                {
-                    Debug.Log("You already played a land this turn!");
-                    return;
-                }
-
-                player.Battlefield.Add(card);
-                player.Hand.Remove(card);
-                player.hasPlayedLandThisTurn = true;
-
-                if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
-                {
-                    card.isTapped = true;
-                    Debug.Log($"{card.cardName} enters tapped (static effect or base).");
-                }
-
-                card.OnEnterPlay(player);
-                NotifyLandEntered(card, player);
-
-                visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
-                visual.isInBattlefield = true;
-                visual.UpdateVisual();
-                SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                AwardFavouriteCardCoins(card, player);
-
-            }
-
-            else if (card is CreatureCard creature)
-            {
-                var cost = GetManaCostBreakdown(card.manaCost, card.color);
-                int tax = GetOpponentSpellTax(player);
-                if (tax > 0)
-                {
-                    if (!cost.ContainsKey("Colorless"))
-                        cost["Colorless"] = 0;
-                    cost["Colorless"] += tax;
-                }
-                int reduction = GetCreatureCostReduction(player);
-                CardData data = CardDatabase.GetCardData(card.cardName);
-                if (data != null && data.subtypes.Contains("Beast"))
-                    reduction += GetBeastCreatureCostReduction(player);
-                if (reduction > 0 && cost.ContainsKey("Colorless"))
-                    cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
-                if (player.ColoredMana.CanPay(cost))
-                {
-                    isStackBusy = true; // block other actions while creature is on stack
-                    player.ColoredMana.Pay(cost);
-                    if (card.hasXCost)
-                    {
-                        card.xValue = player.ColoredMana.Total();
-                        if (card.xValue > 0)
-                            player.ColoredMana.SpendGeneric(card.xValue);
-                    }
-                    card.owner = player;
-                    if (player == humanPlayer) UpdateUI();
-                    player.Hand.Remove(card);
-
-                    // Move visual to the stack zone
-                    visual.transform.SetParent(stackZone, false);
-                    visual.isInStack = true;
-                    visual.transform.localPosition = Vector3.zero;
-                    visual.transform.localRotation = Quaternion.identity;
-                    visual.transform.localScale = Vector3.one;
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                    StartCoroutine(ResolveCreatureAfterDelay(creature, visual, player));
-                }
-                else
-                {
-                    Debug.Log("Not enough colored mana to cast this creature.");
-                }
-            }
-
-            else if (card is SorceryCard sorcery)
-            {
-                if (sorcery.requiresTarget)
-                {
-                    Debug.Log("This sorcery requires a target — entering targeting mode.");
-                    BeginTargetSelection(sorcery, player, visual);
-                    return;
-                }
-
-                var cost = GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
-                int tax = GetOpponentSpellTax(player);
-                if (tax > 0)
-                {
-                    if (!cost.ContainsKey("Colorless"))
-                        cost["Colorless"] = 0;
-                    cost["Colorless"] += tax;
-                }
-                if (player.ColoredMana.CanPay(cost))
-                {
-                    isStackBusy = true; // BLOCK OTHER ACTIONS WHILE SORCERY IS ON STACK
-                    player.ColoredMana.Pay(cost);
-                    if (card.hasXCost)
-                    {
-                        card.xValue = player.ColoredMana.Total();
-                        if (card.xValue > 0)
-                            player.ColoredMana.SpendGeneric(card.xValue);
-                    }
-                    card.owner = player;
-                    player.Hand.Remove(card);
-                    UpdateUI();
-
-                    // Move visual to the stack zone
-                    visual.transform.SetParent(stackZone, false);
-                    visual.isInStack = true;
-                    visual.transform.localPosition = Vector3.zero;
-                    visual.transform.localRotation = Quaternion.identity;
-                    visual.transform.localScale = Vector3.one;
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-                    StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
-                }
-                else
-                {
-                    Debug.Log("Not enough colored mana to cast this sorcery.");
-                }
-            }
-            else if (card is ArtifactCard artifact)
-            {
-                var cost = GetManaCostBreakdown(artifact.manaCost, artifact.color);
-                int tax = GetOpponentSpellTax(player);
-                if (tax > 0)
-                {
-                    if (!cost.ContainsKey("Colorless"))
-                        cost["Colorless"] = 0;
-                    cost["Colorless"] += tax;
-                }
-                CardData artData = CardDatabase.GetCardData(card.cardName);
-                int reduction = (artData != null && artData.subtypes.Contains("Potion"))
-                    ? GetPotionCostReduction(player) : 0;
-                if (reduction > 0 && cost.ContainsKey("Colorless"))
-                    cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
-                if (player.ColoredMana.CanPay(cost))
-                {
-                    isStackBusy = true;
-                    player.ColoredMana.Pay(cost);
-                    if (card.hasXCost)
-                    {
-                        card.xValue = player.ColoredMana.Total();
-                        if (card.xValue > 0)
-                            player.ColoredMana.SpendGeneric(card.xValue);
-                    }
-                    card.owner = player;
-                    if (player == humanPlayer) UpdateUI();
-
-                    player.Hand.Remove(card);
-
-                    // Move visual to stack
-                    visual.transform.SetParent(stackZone, false);
-                    visual.isInStack = true;
-                    visual.transform.localPosition = Vector3.zero;
-                    visual.transform.localRotation = Quaternion.identity;
-                    visual.transform.localScale = Vector3.one;
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                    StartCoroutine(ResolveArtifactAfterDelay(artifact, visual, player));
-                }
-                else
-                {
-                    Debug.Log("Not enough colored mana to play this artifact.");
-                }
-            }
-            else if (card is AuraCard aura)
-            {
-                Debug.Log("Aura requires target — entering targeting mode.");
-                BeginAuraTargetSelection(aura, player, visual);
-                return;
-            }
-            else if (card is EnchantmentCard enchantment)
-            {
-                var cost = GetManaCostBreakdown(enchantment.manaCost, enchantment.color);
-                int tax = GetOpponentSpellTax(player);
-                if (tax > 0)
-                {
-                    if (!cost.ContainsKey("Colorless"))
-                        cost["Colorless"] = 0;
-                    cost["Colorless"] += tax;
-                }
-                if (player.ColoredMana.CanPay(cost))
-                {
-                    isStackBusy = true;
-                    player.ColoredMana.Pay(cost);
-                    if (card.hasXCost)
-                    {
-                        card.xValue = player.ColoredMana.Total();
-                        if (card.xValue > 0)
-                            player.ColoredMana.SpendGeneric(card.xValue);
-                    }
-                    card.owner = player;
-                    if (player == humanPlayer) UpdateUI();
-
-                    player.Hand.Remove(card);
-
-                    // Move visual to stack
-                    visual.transform.SetParent(stackZone, false);
-                    visual.isInStack = true;
-                    visual.transform.localPosition = Vector3.zero;
-                    visual.transform.localRotation = Quaternion.identity;
-                    visual.transform.localScale = Vector3.one;
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
-
-                    StartCoroutine(ResolveEnchantmentAfterDelay(enchantment, visual, player));
-                }
-                else
-                {
-                    Debug.Log("Not enough colored mana to play this enchantment.");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Unhandled card type played: " + card.cardName);
+                Debug.Log("This card can only be played during its controller's own main phase.");
+                return false;
             }
         }
+
+        if (IsOnlyCastCreatureSpellsActive() && !(card is CreatureCard) && !(card is LandCard))
+        {
+            Debug.Log("Anti-Magic Grid prevents casting non-creature spells.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void TryPlayLand(Player player, CardVisual visual, LandCard land)
+    {
+        if (player.hasPlayedLandThisTurn)
+        {
+            Debug.Log("You already played a land this turn!");
+            return;
+        }
+
+        player.Battlefield.Add(land);
+        player.Hand.Remove(land);
+        player.hasPlayedLandThisTurn = true;
+
+        if (land.entersTapped || IsAllPermanentsEnterTappedActive())
+        {
+            land.isTapped = true;
+            Debug.Log($"{land.cardName} enters tapped (static effect or base).");
+        }
+
+        land.OnEnterPlay(player);
+        NotifyLandEntered(land, player);
+
+        visual.transform.SetParent(player == humanPlayer ? playerLandArea : aiLandArea, false);
+        visual.isInBattlefield = true;
+        visual.UpdateVisual();
+        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+        AwardFavouriteCardCoins(land, player);
+    }
+
+    private void TryCastCreature(Player player, CardVisual visual, Card card, CreatureCard creature)
+    {
+        var cost = BuildSpellCost(card, player);
+        int reduction = GetCreatureCostReduction(player);
+
+        CardData data = CardDatabase.GetCardData(card.cardName);
+        if (data != null && data.subtypes.Contains("Beast"))
+            reduction += GetBeastCreatureCostReduction(player);
+
+        ApplyColorlessReduction(cost, reduction);
+
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        {
+            Debug.Log("Not enough colored mana to cast this creature.");
+            return;
+        }
+
+        StartCoroutine(ResolveCreatureAfterDelay(creature, visual, player));
+    }
+
+    private void TryCastSorcery(Player player, CardVisual visual, Card card, SorceryCard sorcery)
+    {
+        if (sorcery.requiresTarget)
+        {
+            Debug.Log("This sorcery requires a target — entering targeting mode.");
+            BeginTargetSelection(sorcery, player, visual);
+            return;
+        }
+
+        var cost = BuildSpellCost(sorcery, player);
+        if (!TryMoveSpellToStack(player, visual, card, cost, true))
+        {
+            Debug.Log("Not enough colored mana to cast this sorcery.");
+            return;
+        }
+
+        StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
+    }
+
+    private void TryCastArtifact(Player player, CardVisual visual, Card card, ArtifactCard artifact)
+    {
+        var cost = BuildSpellCost(artifact, player);
+        CardData artData = CardDatabase.GetCardData(card.cardName);
+        int reduction = (artData != null && artData.subtypes.Contains("Potion")) ? GetPotionCostReduction(player) : 0;
+        ApplyColorlessReduction(cost, reduction);
+
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        {
+            Debug.Log("Not enough colored mana to play this artifact.");
+            return;
+        }
+
+        StartCoroutine(ResolveArtifactAfterDelay(artifact, visual, player));
+    }
+
+    private void TryCastEnchantment(Player player, CardVisual visual, Card card, EnchantmentCard enchantment)
+    {
+        var cost = BuildSpellCost(enchantment, player);
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        {
+            Debug.Log("Not enough colored mana to play this enchantment.");
+            return;
+        }
+
+        StartCoroutine(ResolveEnchantmentAfterDelay(enchantment, visual, player));
+    }
+
+    private Dictionary<string, int> BuildSpellCost(Card card, Player player)
+    {
+        var cost = GetManaCostBreakdown(card.manaCost, card.color);
+        int tax = GetOpponentSpellTax(player);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+
+            cost["Colorless"] += tax;
+        }
+
+        return cost;
+    }
+
+    private void ApplyColorlessReduction(Dictionary<string, int> cost, int reduction)
+    {
+        if (reduction > 0 && cost.ContainsKey("Colorless"))
+            cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
+    }
+
+    private bool TryMoveSpellToStack(Player player, CardVisual visual, Card card, Dictionary<string, int> cost, bool shouldUpdateUi)
+    {
+        if (!player.ColoredMana.CanPay(cost))
+            return false;
+
+        isStackBusy = true;
+        player.ColoredMana.Pay(cost);
+
+        if (card.hasXCost)
+        {
+            card.xValue = player.ColoredMana.Total();
+            if (card.xValue > 0)
+                player.ColoredMana.SpendGeneric(card.xValue);
+        }
+
+        card.owner = player;
+        player.Hand.Remove(card);
+
+        if (shouldUpdateUi)
+            UpdateUI();
+
+        visual.transform.SetParent(stackZone, false);
+        visual.isInStack = true;
+        visual.transform.localPosition = Vector3.zero;
+        visual.transform.localRotation = Quaternion.identity;
+        visual.transform.localScale = Vector3.one;
+        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+        return true;
+    }
 
     public void TapLandForMana(LandCard land, Player player)
         {
