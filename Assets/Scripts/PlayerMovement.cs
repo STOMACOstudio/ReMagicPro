@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 1f;
 
     [Header("Intro Settings")]
+    public string tutorialSceneName = "TutorialScene";
     public float startY = 10f;
     public float targetY = 0.6f;
     public float descentSpeed = 2f;
@@ -39,10 +40,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isIntroFinished = false;
     private bool subtitlesStarted = false;
     private float landingTimer = 0f;
+    private bool isTutorialScene = false;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        isTutorialScene = SceneManager.GetActiveScene().name == tutorialSceneName;
 
         if (controller == null)
             controller = GetComponent<CharacterController>();
@@ -60,12 +63,20 @@ public class PlayerMovement : MonoBehaviour
         // Setup initial camera and position
         xRotation = initialLookDownAngle;
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.position = new Vector3(transform.position.x, startY, transform.position.z);
-        
-        fixedY = targetY;
+
+        if (isTutorialScene)
+        {
+            transform.position = new Vector3(transform.position.x, startY, transform.position.z);
+            fixedY = targetY;
+        }
+        else
+        {
+            isIntroFinished = true;
+            fixedY = transform.position.y;
+        }
 
         // Auto-hook SubtitleManager if not assigned
-        if (subtitleManager == null)
+        if (isTutorialScene && subtitleManager == null)
             subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
     }
 
@@ -79,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
 
         Look();
 
-        if (!isIntroFinished)
+        if (isTutorialScene && !isIntroFinished)
         {
             HandleIntro();
         }
@@ -189,19 +200,22 @@ public class PlayerMovement : MonoBehaviour
         float lerpSpeed = (inputDir.magnitude > 0) ? acceleration : deceleration;
         currentVelocity = Vector3.MoveTowards(currentVelocity, targetVelocity, lerpSpeed * Time.deltaTime);
 
-        // Circular Boundary Constraint
+        // Keep tutorial-specific boundaries and fixed Y only in the tutorial scene
         Vector3 nextPos = transform.position + (currentVelocity * Time.deltaTime);
-        Vector2 flatPos = new Vector2(nextPos.x, nextPos.z);
-        float maxAllowedRadius = platformRadius - controller.radius;
-
-        if (flatPos.magnitude > maxAllowedRadius)
+        if (isTutorialScene)
         {
-            flatPos = flatPos.normalized * maxAllowedRadius;
-            nextPos.x = flatPos.x;
-            nextPos.z = flatPos.y;
-        }
+            Vector2 flatPos = new Vector2(nextPos.x, nextPos.z);
+            float maxAllowedRadius = platformRadius - controller.radius;
 
-        nextPos.y = fixedY;
+            if (flatPos.magnitude > maxAllowedRadius)
+            {
+                flatPos = flatPos.normalized * maxAllowedRadius;
+                nextPos.x = flatPos.x;
+                nextPos.z = flatPos.y;
+            }
+
+            nextPos.y = fixedY;
+        }
 
         // Move the controller
         Vector3 finalMove = nextPos - transform.position;
