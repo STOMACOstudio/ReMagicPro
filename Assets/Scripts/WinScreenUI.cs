@@ -3,28 +3,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
-
-// For spawning card visuals
 using System.Collections.Generic;
 
 public class WinScreenUI : MonoBehaviour
 {
-    public GameObject winPanel; // Assign in Inspector
-    public Button winImageButton; // Assign in Inspector
-    public Image winIconImage; // Optional: assign to dynamically change sprite
+    public GameObject winPanel;
+    public Button winImageButton;
+    public Image winIconImage;
     public Sprite winSprite;
     public Sprite loseSprite;
-    public Image wonCardImage; // Legacy image slot (unused)
-    public TMP_Text coinsWonText; // Displays coins earned
-    public Transform wonCardContainer; // Where to spawn the won card prefab
-    public GameObject cardVisualPrefab; // Card visual prefab
+    public Image wonCardImage;
+    public TMP_Text coinsWonText;
+    public Transform wonCardContainer;
+    public GameObject cardVisualPrefab;
 
-    private GameObject spawnedCardVisual;
-
+    private readonly List<GameObject> spawnedRewardVisuals = new List<GameObject>();
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
-
     private bool isWin;
+    private bool hasRewardChoices;
+    private CardData selectedRewardCard;
 
     void Start()
     {
@@ -35,23 +33,7 @@ public class WinScreenUI : MonoBehaviour
         if (wonCardImage != null)
             wonCardImage.sprite = null;
 
-        if (spawnedCardVisual != null)
-        {
-            Destroy(spawnedCardVisual);
-            spawnedCardVisual = null;
-        }
-
-        if (spawnedCardVisual != null)
-        {
-            Destroy(spawnedCardVisual);
-            spawnedCardVisual = null;
-        }
-
-        if (wonCardContainer != null)
-        {
-            foreach (Transform child in wonCardContainer)
-                Destroy(child.gameObject);
-        }
+        ClearRewardVisuals();
 
         if (coinsWonText != null)
             coinsWonText.text = string.Empty;
@@ -62,33 +44,19 @@ public class WinScreenUI : MonoBehaviour
     public void ShowWinScreen(CardData wonCard, int coinsAward = 25)
     {
         isWin = true;
+
         if (winIconImage != null && winSprite != null)
             winIconImage.sprite = winSprite;
 
-        if (wonCardContainer != null && cardVisualPrefab != null && wonCard != null)
-        {
-            if (spawnedCardVisual != null)
-                Destroy(spawnedCardVisual);
-
-            spawnedCardVisual = Instantiate(cardVisualPrefab, wonCardContainer);
-            Card cardObj = CardFactory.Create(wonCard.cardName);
-            var visual = spawnedCardVisual.GetComponent<CardVisual>();
-            visual.Setup(cardObj, null, wonCard);
-            visual.disableHoverEffects = true;
-            spawnedCardVisual.transform.localScale = Vector3.one * 2f;
-
-            if (wonCardImage != null)
-                wonCardImage.sprite = null;
-        }
+        SetupRewardChoices(wonCard);
 
         if (coinsWonText != null)
-            coinsWonText.text = "+" + coinsAward.ToString();
+            coinsWonText.text = "+" + coinsAward;
 
         if (GameManager.Instance != null)
             GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
-
         CoinsManager.AddCoins(coinsAward);
 
         StartCoroutine(FadeIn());
@@ -97,16 +65,16 @@ public class WinScreenUI : MonoBehaviour
     public void ShowLoseScreen()
     {
         isWin = false;
+
         if (winIconImage != null && loseSprite != null)
             winIconImage.sprite = loseSprite;
 
         if (wonCardImage != null)
             wonCardImage.sprite = null;
-        if (spawnedCardVisual != null)
-        {
-            Destroy(spawnedCardVisual);
-            spawnedCardVisual = null;
-        }
+
+        ClearRewardVisuals();
+        selectedRewardCard = null;
+        hasRewardChoices = false;
 
         if (coinsWonText != null)
             coinsWonText.text = string.Empty;
@@ -115,20 +83,138 @@ public class WinScreenUI : MonoBehaviour
             GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.defeat);
-
         StartCoroutine(FadeIn());
+    }
+
+    private void SetupRewardChoices(CardData fallbackCard)
+    {
+        ClearRewardVisuals();
+        selectedRewardCard = null;
+
+        List<CardData> rewardCards = ResolveRewardCards();
+        hasRewardChoices = rewardCards.Count > 0;
+
+        if (!hasRewardChoices)
+        {
+            winImageButton.interactable = true;
+            SpawnCardDisplay(fallbackCard, false);
+            return;
+        }
+
+        winImageButton.interactable = false;
+        for (int i = 0; i < rewardCards.Count; i++)
+        {
+            CardData rewardCard = rewardCards[i];
+            GameObject rewardVisual = SpawnCardDisplay(rewardCard, true);
+            if (rewardVisual != null)
+            {
+                rewardVisual.transform.localScale = Vector3.one * 1.4f;
+            }
+        }
+    }
+
+    private List<CardData> ResolveRewardCards()
+    {
+        List<CardData> rewards = new List<CardData>();
+
+        for (int i = 0; i < BattleData.CurrentRewardCardNames.Count; i++)
+        {
+            string rewardName = BattleData.CurrentRewardCardNames[i];
+            CardData data = CardDatabase.GetCardData(rewardName);
+            if (data == null)
+            {
+                Debug.LogWarning($"[{nameof(WinScreenUI)}] Reward card '{rewardName}' does not exist in CardDatabase.");
+                continue;
+            }
+
+            rewards.Add(data);
+        }
+
+        return rewards;
+    }
+
+    private GameObject SpawnCardDisplay(CardData cardData, bool clickable)
+    {
+        if (wonCardContainer == null || cardVisualPrefab == null || cardData == null)
+            return null;
+
+        GameObject visualObject = Instantiate(cardVisualPrefab, wonCardContainer);
+        Card cardObj = CardFactory.Create(cardData.cardName);
+        CardVisual visual = visualObject.GetComponent<CardVisual>();
+        if (visual != null)
+        {
+            visual.Setup(cardObj, null, cardData);
+            visual.disableHoverEffects = true;
+        }
+
+        if (clickable)
+        {
+            Button button = visualObject.GetComponent<Button>();
+            if (button == null)
+                button = visualObject.AddComponent<Button>();
+
+            Image image = visualObject.GetComponent<Image>();
+            if (image == null)
+            {
+                image = visualObject.AddComponent<Image>();
+                image.color = new Color(1f, 1f, 1f, 0.001f);
+            }
+
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => OnRewardCardSelected(cardData));
+        }
+
+        spawnedRewardVisuals.Add(visualObject);
+        return visualObject;
+    }
+
+    private void OnRewardCardSelected(CardData cardData)
+    {
+        selectedRewardCard = cardData;
+        winImageButton.interactable = true;
+    }
+
+    private void ClaimSelectedRewardIfNeeded()
+    {
+        if (!isWin || !hasRewardChoices || selectedRewardCard == null)
+            return;
+
+        PlayerCollection.OwnedCards.Add(selectedRewardCard);
+        Debug.Log($"[{nameof(WinScreenUI)}] Added selected reward card '{selectedRewardCard.cardName}' to player collection.");
     }
 
     private void OnWinLoseClick()
     {
         if (isWin)
         {
-            gameManager.WinBattle(); // Go to map scene
+            if (hasRewardChoices && selectedRewardCard == null)
+                return;
+
+            ClaimSelectedRewardIfNeeded();
+            BattleData.ClearRewardCards();
+            gameManager.WinBattle();
+            return;
         }
-        else
+
+        BattleData.ClearRewardCards();
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    private void ClearRewardVisuals()
+    {
+        for (int i = 0; i < spawnedRewardVisuals.Count; i++)
         {
-            SceneManager.LoadScene("MainMenu"); // Restart game
+            if (spawnedRewardVisuals[i] != null)
+                Destroy(spawnedRewardVisuals[i]);
         }
+
+        spawnedRewardVisuals.Clear();
+
+        if (wonCardContainer == null)
+            return;
+
+        foreach (Transform child in wonCardContainer)
+            Destroy(child.gameObject);
     }
 
     private IEnumerator FadeIn()

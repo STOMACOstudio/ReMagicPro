@@ -13,11 +13,35 @@ public static class BattleData
     public static bool ZoneJustCompleted = false;
 
     public static string CurrentDeckKey = null;
+    public static readonly List<string> CurrentRewardCardNames = new List<string>();
     public static string ReturnSceneName = null;
     public static bool IsBattleOpenedAdditively = false;
     public static PlatformTrigger TriggeringPlatform = null;
 
     public static readonly List<GameObject> PausedSceneRoots = new List<GameObject>();
+
+    public static void SetRewardCards(IEnumerable<string> cardNames)
+    {
+        CurrentRewardCardNames.Clear();
+
+        if (cardNames == null)
+            return;
+
+        foreach (string cardName in cardNames)
+        {
+            if (string.IsNullOrWhiteSpace(cardName))
+                continue;
+
+            string trimmedName = cardName.Trim();
+            if (!CurrentRewardCardNames.Contains(trimmedName))
+                CurrentRewardCardNames.Add(trimmedName);
+        }
+    }
+
+    public static void ClearRewardCards()
+    {
+        CurrentRewardCardNames.Clear();
+    }
 
     public static void PauseReturnScene()
     {
