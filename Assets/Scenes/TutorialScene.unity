@@ -20575,7 +20575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EndTutorialScene
   playerTag: Player
   liftSpeed: 0.8
-  liftHeight: 100
+  liftHeight: 40
   subtitleManager: {fileID: 1833829486}
   endingLines:
   - text: Well done, Planeswalker
@@ -20584,6 +20584,8 @@ MonoBehaviour:
     displayDuration: 4
   - text: ...and face your destiny
     displayDuration: 3
+  nextSceneName: FarmScene
+  waitForSubtitlesBeforeLoad: 1
 --- !u!1 &653449769
 GameObject:
   m_ObjectHideFlags: 0
@@ -31645,37 +31647,6 @@ Transform:
   - {fileID: 793362995}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
---- !u!1 &1598223901
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1598223902}
-  m_Layer: 0
-  m_Name: TutorialCinematicManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1598223902
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1598223901}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 610.27814, y: -0.00001, z: 2797.5967}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1661188501
 GameObject:
   m_ObjectHideFlags: 0
@@ -32159,7 +32130,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5000001
   m_Height: 2
@@ -42401,5 +42372,4 @@ SceneRoots:
   - {fileID: 972068805}
   - {fileID: 222053487}
   - {fileID: 1833829487}
-  - {fileID: 1598223902}
   - {fileID: 642465861}
