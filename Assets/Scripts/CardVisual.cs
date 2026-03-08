@@ -1212,8 +1212,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             bool humanCombatPriorityWindow =
                 (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
-                    (phase == TurnSystem.TurnPhase.ConfirmAttackers ||
+                    (phase == TurnSystem.TurnPhase.PreCombat ||
+                     phase == TurnSystem.TurnPhase.ConfirmAttackers ||
                      phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
+                (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
+                    phase == TurnSystem.TurnPhase.PreCombat) ||
                 // During AI ChooseBlockers, clicks must be reserved for assigning blockers,
                 // not activating creature abilities.
                 (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
@@ -1228,10 +1231,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human &&
                         (phase == TurnSystem.TurnPhase.Main1 ||
                          phase == TurnSystem.TurnPhase.Main2 ||
+                         phase == TurnSystem.TurnPhase.PreCombat ||
                          phase == TurnSystem.TurnPhase.ConfirmAttackers ||
                          phase == TurnSystem.TurnPhase.ConfirmBlockers)) ||
                     (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI &&
-                        (phase == TurnSystem.TurnPhase.ChooseBlockers ||
+                        (phase == TurnSystem.TurnPhase.PreCombat ||
+                         phase == TurnSystem.TurnPhase.ChooseBlockers ||
                          phase == TurnSystem.TurnPhase.ConfirmBlockers))
                 ) && !GameManager.Instance.IsStackActive();
 
@@ -1946,6 +1951,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     var currentPhase = TurnSystem.Instance.currentPhase;
                     bool mainPhase = currentPhase == TurnSystem.TurnPhase.Main1 || currentPhase == TurnSystem.TurnPhase.Main2;
                     bool combatPhase = currentPhase == TurnSystem.TurnPhase.ConfirmAttackers || currentPhase == TurnSystem.TurnPhase.ConfirmBlockers;
+                    bool preCombatPhase = currentPhase == TurnSystem.TurnPhase.PreCombat;
                     bool humansTurn = TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.Human;
 
                     if (!isInstant)
@@ -1958,10 +1964,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                     else
                     {
-                        bool validTime = (humansTurn && (mainPhase || combatPhase)) || (!humansTurn && combatPhase);
+                        bool validTime = (humansTurn && (mainPhase || preCombatPhase || combatPhase)) ||
+                                         (!humansTurn && (preCombatPhase || combatPhase));
                         if (GameManager.Instance.IsStackActive() || !validTime)
                         {
-                            Debug.Log("Instants can only be cast during your main phases or any combat when the stack is empty.");
+                            Debug.Log("Instants can only be cast during your main phases, pre-combat priority, or combat priority when the stack is empty.");
                             return;
                         }
                     }
