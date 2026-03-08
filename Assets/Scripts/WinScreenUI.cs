@@ -20,6 +20,7 @@ public class WinScreenUI : MonoBehaviour
     private readonly List<GameObject> spawnedRewardVisuals = new List<GameObject>();
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
+    private Coroutine fadeCoroutine;
     private bool isWin;
     private bool hasRewardChoices;
     private CardData selectedRewardCard;
@@ -28,6 +29,9 @@ public class WinScreenUI : MonoBehaviour
     {
         winPanel.SetActive(false);
         canvasGroup = winPanel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = winPanel.AddComponent<CanvasGroup>();
+
         gameManager = UnityEngine.Object.FindFirstObjectByType<GameManager>();
 
         if (wonCardImage != null)
@@ -59,7 +63,7 @@ public class WinScreenUI : MonoBehaviour
         SoundManager.Instance.PlaySound(SoundManager.Instance.victory);
         CoinsManager.AddCoins(coinsAward);
 
-        StartCoroutine(FadeIn());
+        StartFadeIn();
     }
 
     public void ShowLoseScreen()
@@ -83,7 +87,15 @@ public class WinScreenUI : MonoBehaviour
             GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.defeat);
-        StartCoroutine(FadeIn());
+        StartFadeIn();
+    }
+
+    private void StartFadeIn()
+    {
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+
+        fadeCoroutine = StartCoroutine(FadeIn());
     }
 
     private void SetupRewardChoices(CardData fallbackCard)
@@ -98,6 +110,14 @@ public class WinScreenUI : MonoBehaviour
         {
             winImageButton.interactable = true;
             SpawnCardDisplay(fallbackCard, false);
+            return;
+        }
+
+        if (rewardCards.Count == 1)
+        {
+            selectedRewardCard = rewardCards[0];
+            winImageButton.interactable = true;
+            SpawnCardDisplay(rewardCards[0], false);
             return;
         }
 
@@ -221,18 +241,22 @@ public class WinScreenUI : MonoBehaviour
     {
         winPanel.SetActive(true);
         canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
 
         float duration = 1f;
         float timer = 0f;
 
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             canvasGroup.alpha = Mathf.Clamp01(timer / duration);
             yield return null;
         }
 
+        canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
+        fadeCoroutine = null;
     }
 }
