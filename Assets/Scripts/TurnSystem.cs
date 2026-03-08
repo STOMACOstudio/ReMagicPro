@@ -1404,6 +1404,7 @@ public class TurnSystem : MonoBehaviour
                         if (currentPlayer == PlayerType.AI)
                         {
                             GameManager.Instance.TryAICastUnsummonOnStrongestBlocker();
+                            GameManager.Instance.TryAICastChargeForCombat(aiIsAttacker: true);
                             GameManager.Instance.TryAICastGiantGrowthForCombat(aiIsAttacker: true);
                             SetCombatUIState(CombatUIState.ConfirmingBlockers);
                             TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();

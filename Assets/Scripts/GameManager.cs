@@ -1146,6 +1146,17 @@ public class GameManager : MonoBehaviour
                                     CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
     }
 
+    private SorceryCard GetAIChargeInHand()
+    {
+        if (aiPlayer == null)
+            return null;
+
+        return aiPlayer.Hand
+            .OfType<SorceryCard>()
+            .FirstOrDefault(card => card.cardName == "Charge" &&
+                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+    }
+
     private bool IsLikelyCreatureRemovalSpell(SorceryCard spell, CreatureCard target)
     {
         if (spell == null || target == null)
@@ -1340,6 +1351,86 @@ public class GameManager : MonoBehaviour
             return false;
 
         return TryAICastGiantGrowth(bestTarget, $"winning block versus {bestEnemy.cardName}");
+    }
+
+    private bool TryAICastCharge(string reason)
+    {
+        if (aiPlayer == null)
+            return false;
+
+        SorceryCard charge = GetAIChargeInHand();
+        if (charge == null)
+            return false;
+
+        var cost = GetManaCostBreakdown(charge.manaCost, charge.color);
+        int tax = GetOpponentSpellTax(aiPlayer);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+
+        bool canPay = TurnSystem.Instance != null
+            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
+            : aiPlayer.ColoredMana.CanPay(cost);
+
+        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
+            return false;
+
+        aiPlayer.ColoredMana.Pay(cost);
+        aiPlayer.Hand.Remove(charge);
+        charge.owner = aiPlayer;
+
+        Debug.Log($"[AI] Casts Charge ({reason}).");
+
+        charge.ResolveEffect(aiPlayer, null);
+        SendToGraveyard(charge, aiPlayer, fromStack: true);
+        AwardFavouriteCardCoins(charge, aiPlayer);
+        UpdateUI();
+        return true;
+    }
+
+    public bool TryAICastChargeForCombat(bool aiIsAttacker)
+    {
+        if (aiPlayer == null || currentAttackers == null || currentAttackers.Count == 0)
+            return false;
+
+        if (!aiIsAttacker)
+            return false;
+
+        var aiAttackers = currentAttackers
+            .Where(attacker => attacker != null && GetOwnerOfCard(attacker) == aiPlayer)
+            .ToList();
+
+        if (aiAttackers.Count == 0)
+            return false;
+
+        bool hasUnblockedAttacker = aiAttackers.Any(attacker => attacker.blockedByThisBlocker == null || attacker.blockedByThisBlocker.Count == 0);
+        if (hasUnblockedAttacker)
+            return TryAICastCharge("pushing extra combat damage after blockers were confirmed");
+
+        foreach (var attacker in aiAttackers)
+        {
+            foreach (var blocker in attacker.blockedByThisBlocker ?? new List<CreatureCard>())
+            {
+                if (blocker == null || GetOwnerOfCard(blocker) != humanPlayer)
+                    continue;
+
+                bool attackerKillsWithCharge = attacker.power + 1 >= blocker.toughness;
+                bool attackerKillsWithoutCharge = attacker.power >= blocker.toughness;
+                bool blockerKillsAttacker = blocker.power >= attacker.toughness;
+                bool blockerKillsAttackerAfterCharge = blocker.power >= attacker.toughness + 1;
+
+                if ((!attackerKillsWithoutCharge && attackerKillsWithCharge) ||
+                    (blockerKillsAttacker && !blockerKillsAttackerAfterCharge))
+                {
+                    return TryAICastCharge($"improving combat outcome versus {blocker.cardName}");
+                }
+            }
+        }
+
+        return false;
     }
 
     public bool TryAICastUnsummonOnStrongestAttacker()
