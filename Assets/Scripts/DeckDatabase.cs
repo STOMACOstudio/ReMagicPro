@@ -171,7 +171,7 @@ public static class DeckDatabase
     public static void BuildStarterDeck(Player ai)
         {
             ai.Deck.Clear();
-            AddCards(ai, "Plains", 16);
+            AddCards(ai, "Plains", 17);
             AddCards(ai, "Obstacle", 3);
             AddCards(ai, "Angry Farmer", 3);
             AddCards(ai, "Waterbearer", 3);
@@ -181,6 +181,18 @@ public static class DeckDatabase
             AddCards(ai, "Skyhunter Unicorn", 2);
             AddCards(ai, "Crystallium", 3);
             AddCards(ai, "Mana Rock", 2);
+        }
+
+    public static void BuildFarmerDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Plains", 17);
+            AddCards(ai, "Eager Cadet", 4);
+            AddCards(ai, "Charge", 4);
+            AddCards(ai, "Resupply", 4);
+            AddCards(ai, "Sacred Nectar", 4);
+            AddCards(ai, "Glory Seeker", 4);
+            AddCards(ai, "Voice of the Provinces", 3);
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
