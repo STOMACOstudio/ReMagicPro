@@ -657,6 +657,14 @@ public class TurnSystem : MonoBehaviour
                                     if (!potential.CanPay(cost))
                                         continue;
 
+                                    bool needsCreatureInOwnGraveyard = sorcery.returnRandomCreatureFromGraveyard ||
+                                                                       sorcery.returnRandomCheapCreatureToBattlefield;
+                                    if (needsCreatureInOwnGraveyard && !ai.Graveyard.OfType<CreatureCard>().Any())
+                                    {
+                                        Debug.Log($"[AI] Skipping {sorcery.cardName} — no creature cards in own graveyard.");
+                                        continue;
+                                    }
+
                                     if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
                                         sorcery.destroyTargetIfTypeMatches)
                                     {
