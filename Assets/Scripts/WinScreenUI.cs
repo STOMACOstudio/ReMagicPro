@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections.Generic;
 
@@ -25,6 +24,9 @@ public class WinScreenUI : MonoBehaviour
     private bool hasRewardChoices;
     private CardData selectedRewardCard;
 
+    private const int WinCoinAmount = 25;
+    private const int LoseCoinPenalty = 25;
+
     void Start()
     {
         winPanel.SetActive(false);
@@ -40,12 +42,14 @@ public class WinScreenUI : MonoBehaviour
         ClearRewardVisuals();
 
         if (coinsWonText != null)
+        {
             coinsWonText.text = string.Empty;
+        }
 
         winImageButton.onClick.AddListener(OnWinLoseClick);
     }
 
-    public void ShowWinScreen(CardData wonCard, int coinsAward = 25)
+    public void ShowWinScreen(CardData wonCard, int coinsAward = WinCoinAmount)
     {
         isWin = true;
 
@@ -55,7 +59,10 @@ public class WinScreenUI : MonoBehaviour
         SetupRewardChoices(wonCard);
 
         if (coinsWonText != null)
+        {
             coinsWonText.text = "+" + coinsAward;
+            coinsWonText.color = Color.green;
+        }
 
         if (GameManager.Instance != null)
             GameManager.Instance.gameOver = true;
@@ -81,12 +88,16 @@ public class WinScreenUI : MonoBehaviour
         hasRewardChoices = false;
 
         if (coinsWonText != null)
-            coinsWonText.text = string.Empty;
+        {
+            coinsWonText.text = "-" + LoseCoinPenalty;
+            coinsWonText.color = Color.red;
+        }
 
         if (GameManager.Instance != null)
             GameManager.Instance.gameOver = true;
 
         SoundManager.Instance.PlaySound(SoundManager.Instance.defeat);
+        CoinsManager.AddCoins(-LoseCoinPenalty);
         StartFadeIn();
     }
 
@@ -217,7 +228,7 @@ public class WinScreenUI : MonoBehaviour
         }
 
         BattleData.ClearRewardCards();
-        SceneManager.LoadScene("MainMenu");
+        gameManager.ReturnToPreviousScene(applyWinEffects: false);
     }
 
     private void ClearRewardVisuals()
