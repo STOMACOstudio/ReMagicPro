@@ -324,10 +324,28 @@ public class TurnSystem : MonoBehaviour
 
     private bool IsAbleToAttackThisTurn(CreatureCard creature)
         {
+            GameManager gameManager = GameManager.Instance;
+            if (gameManager == null)
+                return false;
+
+            Player defender = currentPlayer == PlayerType.Human ? gameManager.aiPlayer : gameManager.humanPlayer;
+
             return creature != null &&
                    !creature.isTapped &&
                    (!creature.hasSummoningSickness || creature.keywordAbilities.Contains(KeywordAbility.Haste)) &&
-                   !creature.keywordAbilities.Contains(KeywordAbility.Defender);
+                   !creature.keywordAbilities.Contains(KeywordAbility.Defender) &&
+                   CanCreatureAttackDefendingPlayer(creature, defender);
+        }
+
+    public bool CanCreatureAttackDefendingPlayer(CreatureCard creature, Player defender)
+        {
+            if (creature == null || defender == null)
+                return false;
+
+            if (creature.cardName == "Sea Monster")
+                return defender.Battlefield.Any(card => card.cardName == "Island");
+
+            return true;
         }
 
     private bool MustAttackThisTurn(CreatureCard creature)

@@ -859,6 +859,21 @@ public static class CardDatabase
                     flavorText = "Before my eyes was a horrible monster, worthy to figure in the legends of the marvellous... Its eight arms, or rather feet, fixed to its head... were twice as long as its body, and were twisted like the furies' hair.\n-Jules Verne, Twenty Thousands Leagues under the Sea",
                     artwork = Resources.Load<Sprite>("Art/giant_octopus")
                     });
+                Add(new CardData // Sea Monster
+                    {
+                    cardName = "Sea Monster",
+                    artist = "Sora AI",
+                    rarity = "Common",
+                    manaCost = 6,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 6,
+                    toughness = 6,
+                    subtypes = new List<string> { "Serpent" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    rulesText = "Thsi creature cannot attack unless defending player controls an island",
+                    artwork = Resources.Load<Sprite>("Art/sea_monster")
+                    });
                 Add(new CardData //Sea eagle
                     {
                     cardName = "Sea Eagle",

@@ -1916,11 +1916,17 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.Log($"{creature.cardName} removed from attackers.");
                         }
                     }
-                    else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                else if (!creature.hasSummoningSickness && !creature.keywordAbilities.Contains(KeywordAbility.Defender))
+                {
+                    if (!TurnSystem.Instance.CanCreatureAttackDefendingPlayer(creature, GameManager.Instance.aiPlayer))
                     {
-                        // Adding to combat
-                        GameManager.Instance.selectedAttackers.Add(creature);
-                        SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack);
+                        Debug.Log($"{creature.cardName} can't attack unless defending player controls an Island.");
+                        return;
+                    }
+
+                    // Adding to combat
+                    GameManager.Instance.selectedAttackers.Add(creature);
+                    SoundManager.Instance.PlaySound(SoundManager.Instance.declareAttack);
                         if (!creature.keywordAbilities.Contains(KeywordAbility.Vigilance))
                             creature.isTapped = true;
 
