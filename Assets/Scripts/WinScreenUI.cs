@@ -17,6 +17,7 @@ public class WinScreenUI : MonoBehaviour
     public GameObject cardVisualPrefab;
 
     private readonly List<GameObject> spawnedRewardVisuals = new List<GameObject>();
+    private readonly List<CardData> availableRewardCards = new List<CardData>();
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
     private Coroutine fadeCoroutine;
@@ -85,6 +86,7 @@ public class WinScreenUI : MonoBehaviour
 
         ClearRewardVisuals();
         selectedRewardCard = null;
+        availableRewardCards.Clear();
         hasRewardChoices = false;
 
         if (coinsWonText != null)
@@ -115,6 +117,8 @@ public class WinScreenUI : MonoBehaviour
         selectedRewardCard = null;
 
         List<CardData> rewardCards = ResolveRewardCards();
+        availableRewardCards.Clear();
+        availableRewardCards.AddRange(rewardCards);
         hasRewardChoices = rewardCards.Count > 0;
 
         if (!hasRewardChoices)
@@ -132,7 +136,7 @@ public class WinScreenUI : MonoBehaviour
             return;
         }
 
-        winImageButton.interactable = false;
+        winImageButton.interactable = true;
         for (int i = 0; i < rewardCards.Count; i++)
         {
             CardData rewardCard = rewardCards[i];
@@ -207,20 +211,24 @@ public class WinScreenUI : MonoBehaviour
 
     private void ClaimSelectedRewardIfNeeded()
     {
-        if (!isWin || !hasRewardChoices || selectedRewardCard == null)
+        if (!isWin || !hasRewardChoices)
             return;
 
-        PlayerCollection.OwnedCards.Add(selectedRewardCard);
-        Debug.Log($"[{nameof(WinScreenUI)}] Added selected reward card '{selectedRewardCard.cardName}' to player collection.");
+        CardData rewardToClaim = selectedRewardCard;
+        if (rewardToClaim == null && availableRewardCards.Count > 0)
+            rewardToClaim = availableRewardCards[0];
+
+        if (rewardToClaim == null)
+            return;
+
+        PlayerCollection.OwnedCards.Add(rewardToClaim);
+        Debug.Log($"[{nameof(WinScreenUI)}] Added reward card '{rewardToClaim.cardName}' to player collection.");
     }
 
     private void OnWinLoseClick()
     {
         if (isWin)
         {
-            if (hasRewardChoices && selectedRewardCard == null)
-                return;
-
             ClaimSelectedRewardIfNeeded();
             BattleData.ClearRewardCards();
             gameManager.WinBattle();
