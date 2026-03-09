@@ -564,6 +564,9 @@ public class TurnSystem : MonoBehaviour
                         
 
 
+                        // Use equip abilities on free equipment before casting from hand.
+                        TryEquipFreeAIEquipment(ai);
+
                         // Play as many cards as AI can afford
                         bool playedCard = true;
 
@@ -2095,6 +2098,46 @@ public class TurnSystem : MonoBehaviour
                 }
 
                 return pool;
+            }
+
+        private void TryEquipFreeAIEquipment(Player ai)
+            {
+                var creatures = ai.Battlefield
+                    .OfType<CreatureCard>()
+                    .Where(c => c != null && !c.isDead)
+                    .OrderByDescending(c => c.power)
+                    .ThenByDescending(c => c.toughness)
+                    .ToList();
+
+                if (!creatures.Any())
+                    return;
+
+                foreach (EquipmentCard equipment in ai.Battlefield.OfType<EquipmentCard>())
+                {
+                    if (equipment == null)
+                        continue;
+
+                    if (!equipment.activatedAbilities.Contains(ActivatedAbility.Equip))
+                        continue;
+
+                    if (equipment.equippedTo != null && ai.Battlefield.Contains(equipment.equippedTo))
+                        continue;
+
+                    var equipCost = new Dictionary<string, int> { { "Colorless", equipment.EquipCost } };
+                    if (!EnsureManaForCost(ai, equipCost))
+                        continue;
+
+                    CreatureCard target = creatures.FirstOrDefault();
+                    if (target == null)
+                        continue;
+
+                    ai.ColoredMana.Pay(equipCost);
+                    equipment.Equip(target);
+                    GameManager.Instance.FindCardVisual(equipment)?.UpdateVisual();
+                    GameManager.Instance.FindCardVisual(target)?.UpdateVisual();
+
+                    Debug.Log($"AI equips {equipment.cardName} to {target.cardName}.");
+                }
             }
 
         private bool TapLandForColor(Player ai, string color)
