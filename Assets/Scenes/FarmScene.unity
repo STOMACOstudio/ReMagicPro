@@ -1478,7 +1478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2328c8a2cf3f66d44a4e7cd2c44f4930, type: 3}
       propertyPath: m_Name
-      value: Meshy_AI_Un_pescatore_di_mezza_0308162808_texture
+      value: Fisherman
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2134,12 +2134,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f4fafaf4f66d7e7438d5e92e94e98530, type: 3}
       propertyPath: m_Name
-      value: Meshy_AI_un_frate_semplice_in__0308160614_texture
+      value: Monk
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f4fafaf4f66d7e7438d5e92e94e98530, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 957417008}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f4fafaf4f66d7e7438d5e92e94e98530, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 957417007}
   m_SourcePrefab: {fileID: 100100000, guid: f4fafaf4f66d7e7438d5e92e94e98530, type: 3}
 --- !u!1 &873600418
 GameObject:
@@ -2575,6 +2581,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 904008811}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &957417003 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f4fafaf4f66d7e7438d5e92e94e98530, type: 3}
+  m_PrefabInstance: {fileID: 857323531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &957417007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957417003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c60a58746ce02c14dbcad83aa4d21321, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardGameTrigger
+  playerTag: Player
+  enemyDeckKey: Deck_Monk
+  cardRewardOptions:
+  - Venerable Monk
+  - Pacifism
+  - Angelic Wall
+  - Holy Day
+  subtitleManager: {fileID: 1730929377}
+  preBattleLines:
+  - text: The chapel is closed, as all believers have left.
+    displayDuration: 3
+  - text: But war is not the solution to defeat Yawgmoth.
+    displayDuration: 3
+  - text: Only faith in Serra and prayers can save us.
+    displayDuration: 3
+  - text: Let me show you the power of pacifism.
+    displayDuration: 3
+--- !u!65 &957417008
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957417003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.009361667, y: 0.01106759, z: 0.024686446}
+  m_Center: {x: -0.0000107900705, y: -0.000004419942, z: -0.000005479904}
 --- !u!1001 &965412749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3819,6 +3880,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2660539970551169275, guid: da3611e50dad74b489cc2670d2e4e935, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3296413282609702941, guid: da3611e50dad74b489cc2670d2e4e935, type: 3}
       propertyPath: m_Name
       value: Player
@@ -4085,7 +4150,7 @@ MonoBehaviour:
   enemyDeckKey: Deck_Corpse
   cardRewardOptions:
   - Maggot Carrier
-  - Scathe Zombie
+  - Scathe Zombies
   - Unholy Strength
   - Raise Dead
   subtitleManager: {fileID: 1730929377}
@@ -4096,7 +4161,7 @@ MonoBehaviour:
     displayDuration: 4
   - text: ...using their bodies as zombies, even from far away.
     displayDuration: 3
-  - text: You see the corpse moving a gand, trying to grab you.
+  - text: You see the corpse moving a hand, trying to grab you.
     displayDuration: 4
 --- !u!65 &1666390188
 BoxCollider:
