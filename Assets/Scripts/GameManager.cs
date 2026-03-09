@@ -3093,6 +3093,8 @@ public class GameManager : MonoBehaviour
                 break;
             case "Deck_Guard":
                 DeckDatabase.BuildGuardDeck(ai);
+            case "Deck_Corpse":
+                DeckDatabase.BuildCorpseDeck(ai);
                 break;
             case "Deck_Boss":
                 DeckDatabase.BuildBossDeck(ai);

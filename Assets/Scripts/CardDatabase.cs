@@ -1292,6 +1292,19 @@ public static class CardDatabase
                     flavorText = "The ritual of plucking out an eye to gain future sight is but a curse that enables the living to see their own deaths.",
                     artwork = Resources.Load<Sprite>("Art/cyclopean_mummy")
                 });
+                Add(new CardData { //Scathe Zombie
+                    cardName = "Scathe Zombie",
+                    artist = "Kev Walker",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Black" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Zombie" },
+                    flavorText = "They groaned, they stirred, they all uprose,\nNor spake, nor moved their eyes;\nIt had been strange, evein a dream,\nTo have seen those dead men rise.\n-Samuel Taylor Coleridge,\n'The Rime of the Ancient Mariner'",
+                    artwork = Resources.Load<Sprite>("Art/scathe_zombie")
+                });
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
                     artist = "Sora AI",
@@ -3862,7 +3875,7 @@ public static class CardDatabase
                     color = new List<string> { "White" },
                     lifeToGain = 6,
                     cardsToDraw = 1,
-                    rulesText = "You gain 6 life. Draw a card.",
+                    //rulesText = "You gain 6 life. Draw a card.",
                     flavorText = "If the scalelords are the brains of Dromoka's army, the supply caravans are its beating heart.\n-Baihir, Dromaka mage",
                     artwork = Resources.Load<Sprite>("Art/resupply"),
                     });
@@ -4781,6 +4794,24 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/morning_star")
                     });
 
+                    Add(new CardData // Short Sword
+                    {
+                        cardName = "Short Sword",
+                        artist = "John Severin Brassell",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 1,
+                        toughnessBuff = 1,
+                        manaToPayToActivate = 1,
+                        flavorText = "Sometimes the only difference between a martyr and a hero is a sword.\n-Captain Sisay, Memoirs",
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +1/+1.",
+                        artwork = Resources.Load<Sprite>("Art/short_sword")
+                    });
+
                 Add(new CardData // Battle Shield
                     {
                         cardName = "Battle Shield",
@@ -5493,7 +5524,7 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets -2/-2",
                     });
                 
-                Add(new CardData // Faith protection
+                Add(new CardData // Feast of the unicorn
                     {
                         cardName = "Feast of the Unicorn",
                         artist = "Dennis Detwiller",
@@ -5508,7 +5539,21 @@ public static class CardDatabase
                         rulesText = "Enchanted creature gets +4/+0.",
                         flavorText = "Could there be a fouler act? No doubt the baron knows of one.\n-Autumn Willow",
                     });
-
+                Add(new CardData // Unholy strength
+                    {
+                        cardName = "Unholy Strength",
+                        artist = "Tom Kyffin",
+                        rarity = "Common",
+                        manaCost = 1,
+                        color = new List<string> { "Black" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        powerBuff = 2,
+                        toughnessBuff = 1,
+                        artwork = Resources.Load<Sprite>("Art/unholy_strength"),
+                        flavorText = "Such power grows the body as it shrinks the soul.",
+                        rulesText = "Enchanted creature gets +2/+1."
+                    });
                 Add(new CardData // Bog Pest
                     {
                         cardName = "Bog Pest",
