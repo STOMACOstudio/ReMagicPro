@@ -1025,6 +1025,42 @@ public static class CardDatabase
                     keywordAbilities = new List<KeywordAbility> { },
                     artwork = Resources.Load<Sprite>("Art/giant_crab")
                     });
+                Add(new CardData //Ancient carp
+                    {
+                    cardName = "Ancient Carp",
+                    artist = "Cristopher Burdett",
+                    rarity = "Common",
+                    manaCost = 5,
+                    color = new List<string> { "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 5,
+                    subtypes = new List<string> { "Fish" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Why eat now what could one day grow into a feast?\n-Ojutai, translated from Draconic",
+                    artwork = Resources.Load<Sprite>("Art/ancient_carp")
+                    });
+                Add(new CardData //Killer whale
+                        {
+                        cardName = "Killer Whale",
+                        artist = "Stephen Daniele",
+                        rarity = "Uncommon",
+                        manaCost = 5,
+                        color = new List<string> { "Blue", "Blue" },
+                        cardType = CardType.Creature,
+                        power = 3,
+                        toughness = 5,
+                        manaToPayToActivate = 1,
+                        subtypes = new List<string> { "Fish" },
+                        abilityToGain = KeywordAbility.Flying,
+                        keywordAbilities = new List<KeywordAbility> { },
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.PayToGainAbility
+                        },
+                        flavorText = "Hunger is like the sea: deep, endless, and unforgiving.",
+                        artwork = Resources.Load<Sprite>("Art/killer_whale")
+                        });
                 Add(new CardData //Wandering cloud
                     {
                     cardName = "Wandering Cloud",
@@ -1069,7 +1105,35 @@ public static class CardDatabase
                                 }
                             }
                         }
-                    });    
+                    });   
+                Add(new CardData //Merchant of secrets
+                    {
+                        cardName = "Merchant of Secrets",
+                        artist = "Greg Hildenbrandt",
+                        rarity = "Common",
+                        manaCost = 3,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Creature,
+                        power = 1,
+                        toughness = 1,
+                        subtypes = new List<string> { "Human", "Wizard" },
+                        keywordAbilities = new List<KeywordAbility> { },
+                        flavorText = "To scrape out a living in Aphetto, wizards are reduced to selling rumors, lies, forgeries, or -if they get desparate enough- the truth.",
+                        artwork = Resources.Load<Sprite>("Art/merchant_of_secrets"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "draw a card.",
+                                effect = (Player owner, Card unused) =>
+                                {
+                                    GameManager.Instance.DrawCard(owner);
+                                    Debug.Log("Merchant of Secrets enters: draw a card.");
+                                }
+                            }
+                        }
+                    });  
                 Add(new CardData //Colossal Octopus
                     {
                     cardName = "Colossal Octopus",
@@ -3918,6 +3982,16 @@ public static class CardDatabase
                     cardsToDraw = 3,
                     artwork = Resources.Load<Sprite>("Art/blast_of_knowledge"),
                     });
+                Add(new CardData { //Inspiration
+                    cardName = "Inspiration",
+                    artist = "Matt Cavotta",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 4,
+                    color = new List<string> { "Blue" },
+                    cardsToDraw = 2,
+                    artwork = Resources.Load<Sprite>("Art/inspiration"),
+                    });
                 Add(new CardData { //Astral Plane
                     cardName = "Astral Plane",
                     artist = "Sora AI",
@@ -4842,6 +4916,40 @@ public static class CardDatabase
                         activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
                         rulesText = "Equipped creature gets +0/+2.",
                         artwork = Resources.Load<Sprite>("Art/battle_shield")
+                    });
+                Add(new CardData // Kite Shield
+                    {
+                        cardName = "Kite Shield",
+                        artist = "Jim Pavelec",
+                        rarity = "Uncommon",
+                        manaCost = 0,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 0,
+                        toughnessBuff = 3,
+                        manaToPayToActivate = 3,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +0/+3.",
+                        flavorText = "To my sword I owe my glory, but to my shield I owe my life.\n-Sarlena, paladine of the Northern Verge",
+                        artwork = Resources.Load<Sprite>("Art/kite_shield")
+                    });
+                Add(new CardData // Marauder axe
+                    {
+                        cardName = "Marauder Axe",
+                        artist = "Mitchell Malloy",
+                        rarity = "Common",
+                        manaCost = 2,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 2,
+                        toughnessBuff = 0,
+                        manaToPayToActivate = 2,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +2/+0.",
+                        flavorText = "A sharp axe solves most problems.",
+                        artwork = Resources.Load<Sprite>("Art/marauder_axe")
                     });
 
                 // Avatar cycle gaining +1/+1 counters
