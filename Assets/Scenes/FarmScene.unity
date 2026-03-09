@@ -4083,7 +4083,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardGameTrigger
   playerTag: Player
   enemyDeckKey: Deck_Corpse
-  cardRewardOptions: []
+  cardRewardOptions:
+  - Maggot Carrier
+  - Scathe Zombie
+  - Unholy Strength
+  - Raise Dead
   subtitleManager: {fileID: 1730929377}
   preBattleLines:
   - text: This corpse seems to be left here purposely.
@@ -4109,7 +4113,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

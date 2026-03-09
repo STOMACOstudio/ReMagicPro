@@ -1292,8 +1292,8 @@ public static class CardDatabase
                     flavorText = "The ritual of plucking out an eye to gain future sight is but a curse that enables the living to see their own deaths.",
                     artwork = Resources.Load<Sprite>("Art/cyclopean_mummy")
                 });
-                Add(new CardData { //Scathe Zombie
-                    cardName = "Scathe Zombie",
+                Add(new CardData { //Scathe zombies
+                    cardName = "Scathe Zombies",
                     artist = "Kev Walker",
                     rarity = "Common",
                     manaCost = 3,
@@ -1303,7 +1303,7 @@ public static class CardDatabase
                     toughness = 2,
                     subtypes = new List<string> { "Zombie" },
                     flavorText = "They groaned, they stirred, they all uprose,\nNor spake, nor moved their eyes;\nIt had been strange, evein a dream,\nTo have seen those dead men rise.\n-Samuel Taylor Coleridge,\n'The Rime of the Ancient Mariner'",
-                    artwork = Resources.Load<Sprite>("Art/scathe_zombie")
+                    artwork = Resources.Load<Sprite>("Art/scathe_zombies")
                 });
                 Add(new CardData { //Hired assassin
                     cardName = "Hired Assassin",
