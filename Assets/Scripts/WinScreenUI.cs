@@ -17,7 +17,6 @@ public class WinScreenUI : MonoBehaviour
     public GameObject cardVisualPrefab;
 
     private readonly List<GameObject> spawnedRewardVisuals = new List<GameObject>();
-    private readonly List<CardData> availableRewardCards = new List<CardData>();
     private CanvasGroup canvasGroup;
     private GameManager gameManager;
     private Coroutine fadeCoroutine;
@@ -86,7 +85,6 @@ public class WinScreenUI : MonoBehaviour
 
         ClearRewardVisuals();
         selectedRewardCard = null;
-        availableRewardCards.Clear();
         hasRewardChoices = false;
 
         if (coinsWonText != null)
@@ -117,35 +115,17 @@ public class WinScreenUI : MonoBehaviour
         selectedRewardCard = null;
 
         List<CardData> rewardCards = ResolveRewardCards();
-        availableRewardCards.Clear();
-        availableRewardCards.AddRange(rewardCards);
         hasRewardChoices = rewardCards.Count > 0;
+        winImageButton.interactable = true;
 
         if (!hasRewardChoices)
         {
-            winImageButton.interactable = true;
-            SpawnCardDisplay(fallbackCard, false);
+            SpawnCardDisplay(fallbackCard);
             return;
         }
 
-        if (rewardCards.Count == 1)
-        {
-            selectedRewardCard = rewardCards[0];
-            winImageButton.interactable = true;
-            SpawnCardDisplay(rewardCards[0], false);
-            return;
-        }
-
-        winImageButton.interactable = true;
-        for (int i = 0; i < rewardCards.Count; i++)
-        {
-            CardData rewardCard = rewardCards[i];
-            GameObject rewardVisual = SpawnCardDisplay(rewardCard, true);
-            if (rewardVisual != null)
-            {
-                rewardVisual.transform.localScale = Vector3.one * 1.4f;
-            }
-        }
+        selectedRewardCard = rewardCards[Random.Range(0, rewardCards.Count)];
+        SpawnCardDisplay(selectedRewardCard);
     }
 
     private List<CardData> ResolveRewardCards()
@@ -168,7 +148,7 @@ public class WinScreenUI : MonoBehaviour
         return rewards;
     }
 
-    private GameObject SpawnCardDisplay(CardData cardData, bool clickable)
+    private GameObject SpawnCardDisplay(CardData cardData)
     {
         if (wonCardContainer == null || cardVisualPrefab == null || cardData == null)
             return null;
@@ -182,31 +162,8 @@ public class WinScreenUI : MonoBehaviour
             visual.disableHoverEffects = true;
         }
 
-        if (clickable)
-        {
-            Button button = visualObject.GetComponent<Button>();
-            if (button == null)
-                button = visualObject.AddComponent<Button>();
-
-            Image image = visualObject.GetComponent<Image>();
-            if (image == null)
-            {
-                image = visualObject.AddComponent<Image>();
-                image.color = new Color(1f, 1f, 1f, 0.001f);
-            }
-
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => OnRewardCardSelected(cardData));
-        }
-
         spawnedRewardVisuals.Add(visualObject);
         return visualObject;
-    }
-
-    private void OnRewardCardSelected(CardData cardData)
-    {
-        selectedRewardCard = cardData;
-        winImageButton.interactable = true;
     }
 
     private void ClaimSelectedRewardIfNeeded()
@@ -215,11 +172,11 @@ public class WinScreenUI : MonoBehaviour
             return;
 
         CardData rewardToClaim = selectedRewardCard;
-        if (rewardToClaim == null && availableRewardCards.Count > 0)
-            rewardToClaim = availableRewardCards[0];
-
         if (rewardToClaim == null)
+        {
+            Debug.LogWarning($"[{nameof(WinScreenUI)}] Win reward could not be resolved. No card will be added.");
             return;
+        }
 
         PlayerCollection.OwnedCards.Add(rewardToClaim);
         Debug.Log($"[{nameof(WinScreenUI)}] Added reward card '{rewardToClaim.cardName}' to player collection.");
