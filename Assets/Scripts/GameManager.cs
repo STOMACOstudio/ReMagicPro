@@ -1133,6 +1133,17 @@ public class GameManager : MonoBehaviour
                                     CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
     }
 
+    private SorceryCard GetAIHolyDayInHand()
+    {
+        if (aiPlayer == null)
+            return null;
+
+        return aiPlayer.Hand
+            .OfType<SorceryCard>()
+            .FirstOrDefault(card => card.cardName == "Holy Day" &&
+                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+    }
+
     private bool IsLikelyCreatureRemovalSpell(SorceryCard spell, CreatureCard target)
     {
         if (spell == null || target == null)
@@ -1363,6 +1374,44 @@ public class GameManager : MonoBehaviour
         charge.ResolveEffect(aiPlayer, null);
         SendToGraveyard(charge, aiPlayer, fromStack: true);
         AwardFavouriteCardCoins(charge, aiPlayer);
+        UpdateUI();
+        return true;
+    }
+
+    public bool TryAICastHolyDay(string reason)
+    {
+        if (aiPlayer == null)
+            return false;
+
+        SorceryCard holyDay = GetAIHolyDayInHand();
+        if (holyDay == null)
+            return false;
+
+        var cost = GetManaCostBreakdown(holyDay.manaCost, holyDay.color);
+        int tax = GetOpponentSpellTax(aiPlayer);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless"))
+                cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+
+        bool canPay = TurnSystem.Instance != null
+            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
+            : aiPlayer.ColoredMana.CanPay(cost);
+
+        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
+            return false;
+
+        aiPlayer.ColoredMana.Pay(cost);
+        aiPlayer.Hand.Remove(holyDay);
+        holyDay.owner = aiPlayer;
+
+        Debug.Log($"[AI] Casts Holy Day ({reason}).");
+
+        holyDay.ResolveEffect(aiPlayer, null);
+        SendToGraveyard(holyDay, aiPlayer, fromStack: true);
+        AwardFavouriteCardCoins(holyDay, aiPlayer);
         UpdateUI();
         return true;
     }
