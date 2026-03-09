@@ -3017,6 +3017,11 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("RefreshMerchant", 1);
         PlayerPrefs.Save();
 
+        ReturnToPreviousScene(applyWinEffects: true);
+    }
+
+    public void ReturnToPreviousScene(bool applyWinEffects)
+    {
         string returnSceneName = BattleData.GetReturnScene();
 
         if (BattleData.IsBattleOpenedAdditively)
@@ -3030,8 +3035,12 @@ public class GameManager : MonoBehaviour
                 SceneManager.SetActiveScene(returnScene);
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                BattleData.TriggeringPlatform?.ApplyCrippledState();
-                BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+                if (applyWinEffects)
+                {
+                    BattleData.TriggeringPlatform?.ApplyCrippledState();
+                    BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+                }
+
                 BattleData.TriggeringPlatform = null;
                 BattleData.IsBattleOpenedAdditively = false;
                 BattleData.ReturnSceneName = null;
@@ -3043,8 +3052,12 @@ public class GameManager : MonoBehaviour
         BattleData.ResumeReturnScene();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        BattleData.TriggeringPlatform?.ApplyCrippledState();
-        BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+        if (applyWinEffects)
+        {
+            BattleData.TriggeringPlatform?.ApplyCrippledState();
+            BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+        }
+
         BattleData.TriggeringPlatform = null;
         BattleData.IsBattleOpenedAdditively = false;
         BattleData.ReturnSceneName = null;
