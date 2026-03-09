@@ -54,13 +54,7 @@ public class CardGameTrigger : MonoBehaviour
             return;
 
         PlayerMovement movement = playerCollider.GetComponent<PlayerMovement>();
-        if (movement != null)
-        {
-            movement.enabled = false;
-
-            if (movement.footstepAudio != null && movement.footstepAudio.isPlaying)
-                movement.footstepAudio.Stop();
-        }
+        BattleData.PausePlayerMovement(movement);
     }
 
     private void StartBattle()
