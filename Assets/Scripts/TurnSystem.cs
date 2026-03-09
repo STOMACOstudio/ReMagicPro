@@ -2033,7 +2033,8 @@ public class TurnSystem : MonoBehaviour
 
         private List<Card> GetValidAuraTargets(Player ai, AuraCard aura)
         {
-            IEnumerable<Card> battlefieldCards = ai.Battlefield.Concat(GameManager.Instance.GetOpponentOf(ai).Battlefield);
+            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+            IEnumerable<Card> battlefieldCards = ai.Battlefield.Concat(opponent.Battlefield);
             List<Card> validTargets = new List<Card>();
 
             foreach (Card candidate in battlefieldCards)
@@ -2052,6 +2053,16 @@ public class TurnSystem : MonoBehaviour
                 Player controller = GameManager.Instance.GetControllerOfCard(candidate);
                 bool validController = !aura.targetMustBeControlledCreature || controller == ai;
                 if (!validController)
+                    continue;
+
+                if (aura.cardName == "Pacifism" && controller == ai)
+                    continue;
+
+                bool alreadyEnchantedBySameAura = ai.Battlefield
+                    .Concat(opponent.Battlefield)
+                    .OfType<AuraCard>()
+                    .Any(existingAura => existingAura.attachedTo == candidate && existingAura.cardName == aura.cardName);
+                if (alreadyEnchantedBySameAura)
                     continue;
 
                 validTargets.Add(candidate);
@@ -2073,9 +2084,9 @@ public class TurnSystem : MonoBehaviour
             int statDelta = aura.buffPower + aura.buffToughness;
             score += onOwnPermanent ? statDelta * 3 : -statDelta * 3;
 
+            bool harmfulKeyword = IsHarmfulAuraKeyword(aura.keywordBuff);
             if (aura.keywordBuff != KeywordAbility.None)
             {
-                bool harmfulKeyword = aura.keywordBuff == KeywordAbility.CantUntap;
                 if (harmfulKeyword)
                     score += onOwnPermanent ? -25 : 25;
                 else
@@ -2086,13 +2097,21 @@ public class TurnSystem : MonoBehaviour
             {
                 int creatureValue = creature.power + creature.toughness;
 
-                bool likelyHarmfulToTarget = statDelta < 0 || aura.keywordBuff == KeywordAbility.CantUntap || aura.gainControlOfCreature;
+                bool likelyHarmfulToTarget = statDelta < 0 || harmfulKeyword || aura.gainControlOfCreature;
                 score += likelyHarmfulToTarget
                     ? (onOwnPermanent ? -creatureValue : creatureValue)
                     : (onOwnPermanent ? creatureValue : -creatureValue);
             }
 
             return score;
+        }
+
+        private bool IsHarmfulAuraKeyword(KeywordAbility keyword)
+        {
+            return keyword == KeywordAbility.CantUntap ||
+                   keyword == KeywordAbility.Defender ||
+                   keyword == KeywordAbility.CantBlock ||
+                   keyword == KeywordAbility.CantDealCombatDamage;
         }
 
         private Player.ManaPool GetPotentialManaPool(Player ai)
