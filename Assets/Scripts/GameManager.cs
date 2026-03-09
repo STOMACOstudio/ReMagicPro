@@ -3110,6 +3110,9 @@ public class GameManager : MonoBehaviour
             case "Deck_Corpse":
                 DeckDatabase.BuildCorpseDeck(ai);
                 break;
+            case "Deck_Fisher":
+                DeckDatabase.BuildFisherDeck(ai);
+                break;
             case "Deck_Boss":
                 DeckDatabase.BuildBossDeck(ai);
                 break;

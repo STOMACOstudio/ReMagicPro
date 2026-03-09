@@ -236,6 +236,18 @@ public static class DeckDatabase
             AddCards(ai, "Unholy Strength", 3);
             ai.StartingPermanents.Add(CardFactory.Create("Scathe Zombies"));
         }
+    
+    public static void BuildFisherDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Island", 17);
+            AddCards(ai, "Coral Eel", 4);
+            AddCards(ai, "Sea Eagle", 4);
+            AddCards(ai, "Giant Octopus", 4);
+            AddCards(ai, "Ancient Carp", 4);
+            AddCards(ai, "Killer Whale", 4);
+            AddCards(ai, "Sea Monster", 3);
+        }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
     {
