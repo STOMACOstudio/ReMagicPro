@@ -38,6 +38,14 @@ public class CardGameTrigger : MonoBehaviour
         StartCoroutine(StartBattleSequence(other));
     }
 
+    void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag(playerTag))
+            return;
+
+        hasTriggered = false;
+    }
+
     private IEnumerator StartBattleSequence(Collider playerCollider)
     {
         LockPlayerMovement(playerCollider);
