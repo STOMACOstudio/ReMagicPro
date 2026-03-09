@@ -9,6 +9,9 @@ public class CollectibleCard : MonoBehaviour
     [SerializeField] private GameObject textObject;
     [SerializeField] private bool destroyOnCollect = true;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip collectSfx;
+
     private TextMeshPro tmpComponent;
     private bool playerInRange;
     private bool hasBeenCollected;
@@ -91,6 +94,8 @@ public class CollectibleCard : MonoBehaviour
         PlayerCollection.OwnedCards.Add(data);
         Debug.Log($"[CollectibleCard] Added '{data.cardName}' to player collection.");
 
+        TryPlayCollectSfx();
+
         if (textObject != null)
             textObject.SetActive(false);
 
@@ -98,5 +103,35 @@ public class CollectibleCard : MonoBehaviour
             Destroy(gameObject);
         else
             gameObject.SetActive(false);
+    }
+
+    private void TryPlayCollectSfx()
+    {
+        if (collectSfx == null)
+            return;
+
+        EnsureAudioListenerExists();
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(collectSfx);
+        else
+            AudioSource.PlayClipAtPoint(collectSfx, transform.position);
+    }
+
+    private void EnsureAudioListenerExists()
+    {
+        if (FindFirstObjectByType<AudioListener>() != null)
+            return;
+
+        if (Camera.main != null)
+        {
+            if (Camera.main.GetComponent<AudioListener>() == null)
+                Camera.main.gameObject.AddComponent<AudioListener>();
+
+            return;
+        }
+
+        GameObject listenerObject = new GameObject("AutoAudioListener");
+        listenerObject.AddComponent<AudioListener>();
     }
 }
