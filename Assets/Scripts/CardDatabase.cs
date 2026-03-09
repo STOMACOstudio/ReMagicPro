@@ -862,7 +862,7 @@ public static class CardDatabase
                 Add(new CardData // Sea Monster
                     {
                     cardName = "Sea Monster",
-                    artist = "Sora AI",
+                    artist = "John Howe",
                     rarity = "Common",
                     manaCost = 6,
                     color = new List<string> { "Blue", "Blue" },
@@ -871,6 +871,7 @@ public static class CardDatabase
                     toughness = 6,
                     subtypes = new List<string> { "Serpent" },
                     keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Abandon ship!",
                     rulesText = "Thsi creature cannot attack unless defending player controls an island",
                     artwork = Resources.Load<Sprite>("Art/sea_monster")
                     });
