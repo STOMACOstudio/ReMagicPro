@@ -113,7 +113,14 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDisable()
     {
+        ResetMovementState();
         StopFootsteps();
+    }
+
+    private void ResetMovementState()
+    {
+        currentVelocity = Vector3.zero;
+        verticalVelocity = 0f;
     }
 
     void HandleDeckEditorShortcut()
