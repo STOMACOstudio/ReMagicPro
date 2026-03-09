@@ -202,7 +202,7 @@ public static class DeckDatabase
             AddCards(ai, "Plains", 17);
             AddCards(ai, "Eager Cadet", 3);
             AddCards(ai, "Charge", 3);
-            AddCards(ai, "Staunch Defenders", 3);
+            AddCards(ai, "Foot Soldiers", 3);
             AddCards(ai, "Short Sword", 3);
             AddCards(ai, "Glory Seeker", 3);
             AddCards(ai, "Alaborn Trooper", 3);
@@ -210,18 +210,31 @@ public static class DeckDatabase
             AddCards(ai, "Wall of Swords", 1);
             ai.StartingPermanents.Add(CardFactory.Create("Short Sword"));
         }
+    
+    public static void BuildMonkDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Plains", 17);
+            AddCards(ai, "Venerable Monk", 3);
+            AddCards(ai, "Pacifism", 4);
+            AddCards(ai, "Angelic Wall", 4);
+            AddCards(ai, "Sacred Nectar", 4);
+            AddCards(ai, "Holy Day", 4);
+            AddCards(ai, "Angel of Mercy", 3);
+            ai.StartingPermanents.Add(CardFactory.Create("Venerable Monk"));
+        }
 
     public static void BuildCorpseDeck(Player ai)
         {
             ai.Deck.Clear();
             AddCards(ai, "Swamp", 17);
             AddCards(ai, "Maggot Carrier", 4);
-            AddCards(ai, "Scathe Zombie", 3);
+            AddCards(ai, "Scathe Zombies", 3);
             AddCards(ai, "Scavenging Scarab", 4);
             AddCards(ai, "Giant Cockroach", 4);
             AddCards(ai, "Raise Dead", 4);
             AddCards(ai, "Unholy Strength", 3);
-            ai.StartingPermanents.Add(CardFactory.Create("Scathe Zombie"));
+            ai.StartingPermanents.Add(CardFactory.Create("Scathe Zombies"));
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
