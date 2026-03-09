@@ -665,6 +665,15 @@ public class TurnSystem : MonoBehaviour
                                 }
                                 else if (card is SorceryCard sorcery)
                                 {
+                                    // Holy Day is purely defensive in this ruleset.
+                                    // Keep it for the opponent's combat step (ChooseBlockers)
+                                    // and never spend it on AI main phases.
+                                    if (sorcery.cardName == "Holy Day")
+                                    {
+                                        Debug.Log("[AI] Holding Holy Day for opponent combat.");
+                                        continue;
+                                    }
+
                                     var cost = GameManager.Instance.GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
                                     int tax = GameManager.Instance.GetOpponentSpellTax(ai);
                                     if (tax > 0)
