@@ -106,6 +106,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        StopFootsteps();
+    }
+
     void HandleDeckEditorShortcut()
     {
         if (Keyboard.current == null || !Keyboard.current.eKey.wasPressedThisFrame)
