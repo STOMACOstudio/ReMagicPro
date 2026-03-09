@@ -37,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Boundary Settings")]
     public float platformRadius = 12.5f;
 
+    [Header("Dev Testing")]
+    public bool autoGrantWhiteStarterDeckOutsideTutorial = true;
+
     private float xRotation = 0f;
     private float fixedY;
     private Vector3 currentVelocity;
@@ -77,6 +80,8 @@ public class PlayerMovement : MonoBehaviour
         {
             isIntroFinished = true;
             fixedY = transform.position.y;
+
+            EnsureStarterDeckForNonTutorialTesting();
         }
 
         // Auto-hook SubtitleManager if not assigned
@@ -126,6 +131,28 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = true;
 
         StartCoroutine(OpenDeckEditorScene());
+    }
+
+    void EnsureStarterDeckForNonTutorialTesting()
+    {
+        if (!autoGrantWhiteStarterDeckOutsideTutorial)
+            return;
+
+        if (DeckHolder.IsStarterDeckRewardCollected && DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0)
+            return;
+
+        DeckHolder.SelectedDeck = DeckDatabase.BuildPlayerStarterDeck("White");
+        DeckHolder.IsStarterDeckRewardCollected = DeckHolder.SelectedDeck != null && DeckHolder.SelectedDeck.Count > 0;
+
+        if (DeckHolder.IsStarterDeckRewardCollected)
+        {
+            PlayerPrefs.SetString("PlayerColors", "White");
+            Debug.Log("[PlayerMovement] Auto-granted White starter deck for non-tutorial scene testing.");
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerMovement] Failed to auto-grant White starter deck for non-tutorial scene testing.");
+        }
     }
 
     IEnumerator OpenDeckEditorScene()
