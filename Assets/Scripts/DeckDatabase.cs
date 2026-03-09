@@ -248,6 +248,18 @@ public static class DeckDatabase
             AddCards(ai, "Killer Whale", 4);
             AddCards(ai, "Sea Monster", 3);
         }
+    
+    public static void BuildGipsyDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Island", 17);
+            AddCards(ai, "Fugitive Wizard", 4);
+            AddCards(ai, "Merchant of Secrets", 4);
+            AddCards(ai, "Wind Drake", 4);
+            AddCards(ai, "Inspiration", 3);
+            AddCards(ai, "Unsummon", 4);
+            AddCards(ai, "Flight", 3);
+        }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
     {
