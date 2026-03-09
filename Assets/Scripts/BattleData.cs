@@ -19,6 +19,7 @@ public static class BattleData
     public static PlatformTrigger TriggeringPlatform = null;
 
     public static readonly List<GameObject> PausedSceneRoots = new List<GameObject>();
+    private static readonly List<PlayerMovement> PausedPlayerMovements = new List<PlayerMovement>();
 
     public static void SetRewardCards(IEnumerable<string> cardNames)
     {
@@ -73,6 +74,33 @@ public static class BattleData
         }
 
         PausedSceneRoots.Clear();
+        ResumePlayerMovement();
+    }
+
+    public static void PausePlayerMovement(PlayerMovement movement)
+    {
+        if (movement == null)
+            return;
+
+        if (!PausedPlayerMovements.Contains(movement))
+            PausedPlayerMovements.Add(movement);
+
+        movement.enabled = false;
+
+        if (movement.footstepAudio != null && movement.footstepAudio.isPlaying)
+            movement.footstepAudio.Stop();
+    }
+
+    public static void ResumePlayerMovement()
+    {
+        for (int i = 0; i < PausedPlayerMovements.Count; i++)
+        {
+            PlayerMovement movement = PausedPlayerMovements[i];
+            if (movement != null)
+                movement.enabled = true;
+        }
+
+        PausedPlayerMovements.Clear();
     }
 
     public static string GetReturnScene(string fallbackSceneName = DefaultReturnSceneName)
