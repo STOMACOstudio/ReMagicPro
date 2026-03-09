@@ -1338,7 +1338,6 @@ public class TurnSystem : MonoBehaviour
                         }
 
                         Player ai = GameManager.Instance.aiPlayer;
-                        Player human = GameManager.Instance.humanPlayer;
                         var attackers = GameManager.Instance.currentAttackers
                             .OrderByDescending(GetAttackerThreatScore)
                             .ThenByDescending(a => a.power)
@@ -1384,6 +1383,18 @@ public class TurnSystem : MonoBehaviour
                                 projectedLife -= attacker.power;
                                 remainingDamage -= attacker.power;
                             }
+                        }
+
+                        int estimatedUnblockedDamage = Mathf.Max(0, ai.Life - projectedLife);
+                        bool lethalThreat = estimatedUnblockedDamage >= ai.Life;
+                        bool heavyDamageThreat = estimatedUnblockedDamage >= Mathf.Max(4, ai.Life / 2);
+
+                        if (lethalThreat || heavyDamageThreat)
+                        {
+                            string reason = lethalThreat
+                                ? $"preventing lethal combat damage ({estimatedUnblockedDamage} incoming)"
+                                : $"preventing heavy combat damage ({estimatedUnblockedDamage} incoming)";
+                            GameManager.Instance.TryAICastHolyDay(reason);
                         }
 
                         GameManager.Instance.TryAICastGiantGrowthForCombat(aiIsAttacker: false);
