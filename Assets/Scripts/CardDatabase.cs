@@ -2449,6 +2449,20 @@ public static class CardDatabase
                     flavorText = "Its fresh wounds do not stop it the charge.",
                     artwork = Resources.Load<Sprite>("Art/scarred_wildboar")
                     });
+                Add(new CardData //Balduvian Barbarians
+                    {
+                    cardName = "Balduvian Barbarians",
+                    artist = "Jim Nelson",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Red", "Red" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 2,
+                    subtypes = new List<string> { "Human", "Barbarian" },
+                    flavorText = "From the snowy slopes of Kaelor,\nTo the canyons of Bandu,\nWe drink and fight and feast and die\nAs we were born to do.\n-Balduvian tavern song",
+                    artwork = Resources.Load<Sprite>("Art/balduvian_barbarian")
+                    });
                 Add(new CardData //Goblin Beastmaster
                     {
                     cardName = "Goblin Beastmaster",
