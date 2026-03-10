@@ -261,6 +261,18 @@ public static class DeckDatabase
             AddCards(ai, "Flight", 3);
         }
 
+    public static void BuildOldWomanDruidDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Forest", 17);
+            AddCards(ai, "Llanowar Elves", 4);
+            AddCards(ai, "Craw Wurm", 4);
+            AddCards(ai, "Fyndhorn Elder", 4);
+            AddCards(ai, "Dosan's Oldest Chant", 3);
+            AddCards(ai, "Rampant Growth", 4);
+            AddCards(ai, "Oakenform", 3);
+        }
+
     public static void BuildWhiteBeginnerDeck(Player ai)
     {
         BuildBeginnerDeck(ai, "white");

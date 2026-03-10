@@ -3168,6 +3168,9 @@ public class GameManager : MonoBehaviour
             case "Deck_Gipsy":
                 DeckDatabase.BuildGipsyDeck(ai);
                 break;
+            case "Deck_OldWomanDruid":
+                DeckDatabase.BuildOldWomanDruidDeck(ai);
+                break;
             case "Deck_Boss":
                 DeckDatabase.BuildBossDeck(ai);
                 break;
