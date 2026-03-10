@@ -54,6 +54,10 @@ public class TurnSystem : MonoBehaviour
 
     public bool waitingForPlayerInput = false;
     private bool waitingForAIAction = false;
+    [Header("Debug")]
+    [SerializeField]
+    private bool enableDebugLogs = true;
+
     [Header("AI Pacing")]
     [SerializeField, Min(0.25f)]
     private float aiActionDelaySeconds = 2f;
@@ -253,6 +257,14 @@ public class TurnSystem : MonoBehaviour
 #endif
     }
 
+    private void Log(string message)
+    {
+        if (!enableDebugLogs)
+            return;
+
+        Debug.Log(message);
+    }
+
     private static void PlaySoundIfAvailable(System.Func<SoundManager, AudioClip> clipSelector)
     {
         if (clipSelector == null)
@@ -308,12 +320,12 @@ public class TurnSystem : MonoBehaviour
 
         if (gameManager.isTargetingMode)
         {
-            Debug.Log("Canceled targeting because player pressed Next Phase.");
+            Log("Canceled targeting because player pressed Next Phase.");
             gameManager.CancelTargeting();
         }
         if (gameManager.targetingCreatureOptional != null)
         {
-            Debug.Log("Canceled optional ETB targeting because player pressed Next Phase.");
+            Log("Canceled optional ETB targeting because player pressed Next Phase.");
             gameManager.CancelOptionalTargeting();
         }
 
@@ -388,7 +400,7 @@ public class TurnSystem : MonoBehaviour
 
                 foreach (var creature in GameManager.Instance.currentAttackers)
                 {
-                    Debug.Log("Attacker declared: " + creature.cardName);
+                    Log("Attacker declared: " + creature.cardName);
                 }
 
                 AdvancePhase();
@@ -433,7 +445,7 @@ public class TurnSystem : MonoBehaviour
 
             currentPlayer = player;
             currentPhase = TurnPhase.StartTurn;
-            Debug.Log($"\n=== {player} TURN START ===");
+            Log($"\n=== {player} TURN START ===");
 
             GameManager.Instance.ResetDeathTracking();
 
@@ -479,11 +491,11 @@ public class TurnSystem : MonoBehaviour
             if (GameManager.Instance.gameOver)
                 return;
 
-            Debug.Log($"[Phase] {currentPlayer} - {currentPhase}");
+            Log($"[Phase] {currentPlayer} - {currentPhase}");
 
             if (GameManager.Instance.IsStackActive())
             {
-                Debug.Log("AI cast a sorcery — stack is busy. Will resume after.");
+                Log("AI cast a sorcery — stack is busy. Will resume after.");
                 lastPhaseBeforeStack = currentPhase;
                 waitingToResumeAI = true;
                 return;
@@ -496,7 +508,7 @@ public class TurnSystem : MonoBehaviour
             switch (currentPhase)
             {
                 case TurnPhase.Untap:
-                    Debug.Log("→ Untapping all permanents.");
+                    Log("→ Untapping all permanents.");
                     var p = (currentPlayer == PlayerType.Human) ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer;
                     p.hasPlayedLandThisTurn = false;
                     GameManager.Instance.ResetPermanents(currentPlayer == PlayerType.Human ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer);
@@ -504,7 +516,7 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.Upkeep:
-                    Debug.Log("→ Upkeep phase.");
+                    Log("→ Upkeep phase.");
                     var player = currentPlayer == PlayerType.Human
                         ? GameManager.Instance.humanPlayer
                         : GameManager.Instance.aiPlayer;
@@ -515,12 +527,12 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.Draw:
                     if (skipDrawThisTurn)
                     {
-                        Debug.Log("→ Skipping draw this turn.");
+                        Log("→ Skipping draw this turn.");
                         skipDrawThisTurn = false;
                     }
                     else
                     {
-                        Debug.Log("→ Drawing a card.");
+                        Log("→ Drawing a card.");
 
                         var drawPlayer = currentPlayer == PlayerType.Human
                             ? GameManager.Instance.humanPlayer
@@ -537,12 +549,12 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.Main2:
                     if (currentPlayer == PlayerType.Human)
                     {
-                        Debug.Log("→ Main Phase: Play land or cast spells.");
+                        Log("→ Main Phase: Play land or cast spells.");
                         waitingForPlayerInput = true;
                     }
                     else
                     {
-                        Debug.Log("→ AI Main Phase: Playing cards.");
+                        Log("→ AI Main Phase: Playing cards.");
 
                         Player ai = GameManager.Instance.aiPlayer;
 
@@ -561,7 +573,7 @@ public class TurnSystem : MonoBehaviour
                                     if (land.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                     {
                                         land.isTapped = true;
-                                        Debug.Log($"{land.cardName} (AI) enters tapped (static effect or base).");
+                                        Log($"{land.cardName} (AI) enters tapped (static effect or base).");
                                     }
 
                                     GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiLandArea);
@@ -570,7 +582,7 @@ public class TurnSystem : MonoBehaviour
                                     visual.isInBattlefield = true;
                                     GameManager.Instance.activeCardVisuals.Add(visual);
 
-                                    Debug.Log("AI played land: " + land.cardName);
+                                    Log("AI played land: " + land.cardName);
                                     ai.hasPlayedLandThisTurn = true;
 
                                     waitingForAIAction = true;
@@ -670,7 +682,7 @@ public class TurnSystem : MonoBehaviour
                                     // and never spend it on AI main phases.
                                     if (sorcery.cardName == "Holy Day")
                                     {
-                                        Debug.Log("[AI] Holding Holy Day for opponent combat.");
+                                        Log("[AI] Holding Holy Day for opponent combat.");
                                         continue;
                                     }
 
@@ -691,7 +703,7 @@ public class TurnSystem : MonoBehaviour
                                                                        sorcery.returnRandomCheapCreatureToBattlefield;
                                     if (needsCreatureInOwnGraveyard && !ai.Graveyard.OfType<CreatureCard>().Any())
                                     {
-                                        Debug.Log($"[AI] Skipping {sorcery.cardName} — no creature cards in own graveyard.");
+                                        Log($"[AI] Skipping {sorcery.cardName} — no creature cards in own graveyard.");
                                         continue;
                                     }
 
@@ -725,7 +737,7 @@ public class TurnSystem : MonoBehaviour
                                                 sorcery.chosenTarget = target;
                                                 sorcery.chosenPlayerTarget = null;
 
-                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost creature).");
+                                                Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost creature).");
                                             }
                                         }
                                         else if (sorcery.requiredTargetType == SorceryCard.TargetType.Artifact &&
@@ -746,7 +758,7 @@ public class TurnSystem : MonoBehaviour
                                             {
                                                 sorcery.chosenTarget = target;
                                                 sorcery.chosenPlayerTarget = null;
-                                            Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost artifact).");
+                                            Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost artifact).");
                                             }
                                         }
                                         else if (sorcery.requiredTargetType == SorceryCard.TargetType.Enchantment &&
@@ -767,7 +779,7 @@ public class TurnSystem : MonoBehaviour
                                             {
                                                 sorcery.chosenTarget = target;
                                                 sorcery.chosenPlayerTarget = null;
-                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost enchantment).");
+                                                Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost enchantment).");
                                             }
                                         }
                                         else if (sorcery.requiredTargetType == SorceryCard.TargetType.Land &&
@@ -788,7 +800,7 @@ public class TurnSystem : MonoBehaviour
                                             {
                                                 sorcery.chosenTarget = target;
                                                 sorcery.chosenPlayerTarget = null;
-                                                Debug.Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost land).");
+                                                Log($"AI targets {target.cardName} with {sorcery.cardName} (highest cost land).");
                                             }
                                         }
 
@@ -831,7 +843,7 @@ public class TurnSystem : MonoBehaviour
 
                                         if (sorcery.requiresTarget && sorcery.chosenTarget == null && sorcery.chosenPlayerTarget == null)
                                         {
-                                            Debug.Log($"[AI] Skipping {sorcery.cardName} — no valid target.");
+                                            Log($"[AI] Skipping {sorcery.cardName} — no valid target.");
                                             continue; // Go to next card
                                         }
 
@@ -965,7 +977,7 @@ public class TurnSystem : MonoBehaviour
                                         if (auraCard.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {
                                             auraCard.isTapped = true;
-                                            Debug.Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
+                                            Log($"{auraCard.cardName} (AI) enters tapped (static effect or base).");
                                         }
 
                                         GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
@@ -975,7 +987,7 @@ public class TurnSystem : MonoBehaviour
                                         GameManager.Instance.activeCardVisuals.Add(visual);
                                     }
 
-                                    Debug.Log($"AI played aura: {card.cardName}");
+                                    Log($"AI played aura: {card.cardName}");
                                     playedCard = true;
 
                                     waitingForAIAction = true;
@@ -1009,7 +1021,7 @@ public class TurnSystem : MonoBehaviour
                                         if (card.entersTapped || GameManager.Instance.IsAllPermanentsEnterTappedActive())
                                         {
                                             card.isTapped = true;
-                                            Debug.Log($"{card.cardName} (AI) enters tapped (static effect or base).");
+                                            Log($"{card.cardName} (AI) enters tapped (static effect or base).");
                                         }
 
                                         GameObject obj = GameObject.Instantiate(GameManager.Instance.cardPrefab, GameManager.Instance.aiEnchantmentArea);
@@ -1018,7 +1030,7 @@ public class TurnSystem : MonoBehaviour
                                         visual.isInBattlefield = true;
                                         GameManager.Instance.activeCardVisuals.Add(visual);
 
-                                        Debug.Log($"AI played enchantment: {card.cardName}");
+                                        Log($"AI played enchantment: {card.cardName}");
                                         playedCard = true;
 
                                         waitingForAIAction = true;
@@ -1059,7 +1071,7 @@ public class TurnSystem : MonoBehaviour
                                     }
                                     else
                                     {
-                                        Debug.Log($"AI can't create token — not enough total mana ({ai.ColoredMana.Total()}/{cost}).");
+                                        Log($"AI can't create token — not enough total mana ({ai.ColoredMana.Total()}/{cost}).");
                                     }
                                 }
 
@@ -1166,7 +1178,7 @@ public class TurnSystem : MonoBehaviour
                                     {
                                         artifact.isTapped = true;
                                         GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToGainLife, ai);
-                                        Debug.Log($"AI pays {artifact.manaToPayToActivate} and taps {artifact.cardName} to gain 1 life.");
+                                        Log($"AI pays {artifact.manaToPayToActivate} and taps {artifact.cardName} to gain 1 life.");
                                         GameManager.Instance.FindCardVisual(artifact)?.UpdateVisual();
                                         GameManager.Instance.UpdateUI();
                                     }
@@ -1234,7 +1246,7 @@ public class TurnSystem : MonoBehaviour
                         GameManager.Instance.UpdateUI(); // update UI after all actions
                         if (GameManager.Instance.IsStackActive())
                         {
-                            Debug.Log("AI cast a sorcery — waiting... will not advance phase until resolved.");
+                            Log("AI cast a sorcery — waiting... will not advance phase until resolved.");
                             return; // just wait
                         }
 
@@ -1247,7 +1259,7 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.PreCombat:
                     if (currentPlayer == PlayerType.AI)
                     {
-                        Debug.Log("→ AI precombat priority. Waiting for human response before attackers.");
+                        Log("→ AI precombat priority. Waiting for human response before attackers.");
                         waitingForPlayerInput = true;
                     }
                     else
@@ -1257,14 +1269,14 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.EnterCombat:
-                    Debug.Log("→ Entering Combat.");
+                    Log("→ Entering Combat.");
                     AdvancePhase();
                     break;
 
                 case TurnPhase.ChooseAttackers:
                     if (currentPlayer == PlayerType.Human)
                     {
-                        Debug.Log("→ Choose attackers.");
+                        Log("→ Choose attackers.");
                         waitingForPlayerInput = true;
                         SetCombatUIState(CombatUIState.ChoosingAttackers);
                         TMP_Text atkLabel = confirmAttackersButton.GetComponentInChildren<TMP_Text>();
@@ -1273,7 +1285,7 @@ public class TurnSystem : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("→ AI chooses attackers.");
+                        Log("→ AI chooses attackers.");
                         GameManager.Instance.currentAttackers.Clear();
 
                         Player ai = GameManager.Instance.aiPlayer;
@@ -1311,7 +1323,7 @@ public class TurnSystem : MonoBehaviour
 
                                 GameManager.Instance.currentAttackers.Add(creature);
                                 GameManager.Instance.FindCardVisual(creature)?.swordIcon?.SetActive(true);
-                                Debug.Log($"AI declares attacker: {creature.cardName}");
+                                Log($"AI declares attacker: {creature.cardName}");
                                 GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                             }
                         }
@@ -1325,7 +1337,7 @@ public class TurnSystem : MonoBehaviour
                     {
                         if (waitingForPlayerInput)
                         {
-                            Debug.Log("→ Confirm attackers.");
+                            Log("→ Confirm attackers.");
                             SetCombatUIState(CombatUIState.ChoosingAttackers);
                         }
                         else
@@ -1335,7 +1347,7 @@ public class TurnSystem : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("→ Skipping attacker confirmation (AI turn).");
+                        Log("→ Skipping attacker confirmation (AI turn).");
                         AdvancePhase();
                     }
                     break;
@@ -1343,7 +1355,7 @@ public class TurnSystem : MonoBehaviour
                 case TurnPhase.ChooseBlockers:
                     if (GameManager.Instance.currentAttackers.Count == 0)
                     {
-                        Debug.Log("→ No attackers. Skipping combat.");
+                        Log("→ No attackers. Skipping combat.");
                         GameManager.Instance.currentAttackers.Clear();
                         waitingForPlayerInput = false;
                         SetCombatUIState(CombatUIState.Idle);
@@ -1353,13 +1365,13 @@ public class TurnSystem : MonoBehaviour
 
                     if (currentPlayer == PlayerType.Human)
                     {
-                        Debug.Log("→ AI is assigning blockers as defender.");
+                        Log("→ AI is assigning blockers as defender.");
 
                         // If the opponent attacked, fire Unsummon at the most threatening attacker first.
                         GameManager.Instance.TryAICastUnsummonOnStrongestAttacker();
                         if (GameManager.Instance.currentAttackers.Count == 0)
                         {
-                            Debug.Log("→ AI bounced the only attacker with Unsummon. Skipping blockers.");
+                            Log("→ AI bounced the only attacker with Unsummon. Skipping blockers.");
                             AdvancePhase();
                             break;
                         }
@@ -1400,7 +1412,7 @@ public class TurnSystem : MonoBehaviour
                                     blocker.blockingThisAttacker = attacker;
                                     attacker.blockedByThisBlocker.Add(blocker);
                                     availableBlockers.Remove(blocker);
-                                    Debug.Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
+                                    Log($"AI blocks {attacker.cardName} with {blocker.cardName}");
                                 }
 
                                 remainingDamage -= attacker.power;
@@ -1429,7 +1441,7 @@ public class TurnSystem : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("→ Player chooses blockers.");
+                        Log("→ Player chooses blockers.");
                         waitingForPlayerInput = true;
                         SetCombatUIState(CombatUIState.ConfirmingBlockers);
                         TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
@@ -1460,18 +1472,18 @@ public class TurnSystem : MonoBehaviour
                             if (blkLabel != null)
                                 blkLabel.text = "TO DAMAGES";
                         }
-                        Debug.Log("→ Blockers declared. Awaiting confirmation.");
+                        Log("→ Blockers declared. Awaiting confirmation.");
                     }
                     break;
 
                 case TurnPhase.Damage:
-                    Debug.Log("→ Resolving combat damage.");
+                    Log("→ Resolving combat damage.");
                     if (damageCoroutine == null)
                         damageCoroutine = StartCoroutine(WaitToShowCombatDamage());
                     break;
 
                 case TurnPhase.EndTurn:
-                    Debug.Log("→ Ending turn.");
+                    Log("→ Ending turn.");
 
                     // Heal all creatures
                     GameManager.Instance.ResetDamage(GameManager.Instance.humanPlayer);
@@ -1500,7 +1512,7 @@ public class TurnSystem : MonoBehaviour
                                         while (creature.keywordAbilities.Contains(temp))
                                         {
                                             creature.keywordAbilities.Remove(temp);
-                                            Debug.Log($"{creature.cardName} loses {temp} at end of turn.");
+                                            Log($"{creature.cardName} loses {temp} at end of turn.");
                                         }
                                     }
 
@@ -1517,7 +1529,7 @@ public class TurnSystem : MonoBehaviour
                                     var visual = GameManager.Instance.FindCardVisual(card);
                                     if (visual != null)
                                         visual.UpdateVisual();
-                                    Debug.Log($"{creature.cardName} loses temporary buff at end of turn.");
+                                    Log($"{creature.cardName} loses temporary buff at end of turn.");
                                 }
                             }
                         }
@@ -1527,7 +1539,7 @@ public class TurnSystem : MonoBehaviour
                     if (endingPlayer.extraTurns > 0)
                     {
                         endingPlayer.extraTurns--;
-                        Debug.Log($"{currentPlayer} gets an extra turn.");
+                        Log($"{currentPlayer} gets an extra turn.");
                         BeginTurn(currentPlayer);
                     }
                     else
@@ -1546,7 +1558,7 @@ public class TurnSystem : MonoBehaviour
                 {
                     if (ability.timing == TriggerTiming.OnUpkeep && ability.effect != null)
                     {
-                        Debug.Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
+                        Log($"[Upkeep Trigger] {card.cardName} triggers OnUpkeep.");
                         GameManager.Instance.pendingStackEffects++;
                         yield return StartCoroutine(GameManager.Instance.ResolveTriggeredAbilityOnStack(ability, player, card, card));
                     }
@@ -1969,7 +1981,7 @@ public class TurnSystem : MonoBehaviour
             {
                 if (currentPlayer == PlayerType.AI)
                 {
-                    Debug.Log("AI stack resolved — resuming AI turn.");
+                    Log("AI stack resolved — resuming AI turn.");
                     RunCurrentPhase();
                 }
             }
@@ -2193,7 +2205,7 @@ public class TurnSystem : MonoBehaviour
                     GameManager.Instance.FindCardVisual(equipment)?.UpdateVisual();
                     GameManager.Instance.FindCardVisual(target)?.UpdateVisual();
 
-                    Debug.Log($"AI equips {equipment.cardName} to {target.cardName}.");
+                    Log($"AI equips {equipment.cardName} to {target.cardName}.");
                 }
             }
 
@@ -2348,7 +2360,7 @@ public class TurnSystem : MonoBehaviour
 
                 GameManager.Instance.FindCardVisual(manipulator)?.UpdateVisual();
                 GameManager.Instance.UpdateUI();
-                Debug.Log($"AI taps Icy Manipulator to tap blocker {strongestBlocker.cardName} before attacks.");
+                Log($"AI taps Icy Manipulator to tap blocker {strongestBlocker.cardName} before attacks.");
             }
         }
         
