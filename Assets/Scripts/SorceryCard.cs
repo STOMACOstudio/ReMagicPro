@@ -532,6 +532,7 @@ public class SorceryCard : Card
                     {
                         returnedCreature.OnLeavePlay(owner);
                         GameManager.Instance.RemoveCreatureFromCombatIfNeeded(returnedCreature);
+                        returnedCreature.isTapped = false;
                         owner.Hand.Add(target);
 
                         CardVisual targetVisual = GameManager.Instance.FindCardVisual(target);
