@@ -511,7 +511,10 @@ public class TurnSystem : MonoBehaviour
                     Log("→ Untapping all permanents.");
                     var p = (currentPlayer == PlayerType.Human) ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer;
                     p.hasPlayedLandThisTurn = false;
-                    GameManager.Instance.ResetPermanents(currentPlayer == PlayerType.Human ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer);
+                    bool clearSummoningSickness = !skipDrawThisTurn || currentPlayer == PlayerType.Human;
+                    GameManager.Instance.ResetPermanents(
+                        currentPlayer == PlayerType.Human ? GameManager.Instance.humanPlayer : GameManager.Instance.aiPlayer,
+                        clearSummoningSickness);
                     AdvancePhase();
                     break;
 

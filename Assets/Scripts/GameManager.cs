@@ -1012,7 +1012,7 @@ public class GameManager : MonoBehaviour
         processedDeaths.Clear();
     }
 
-    public void ResetPermanents(Player player)
+    public void ResetPermanents(Player player, bool clearSummoningSickness = true)
     {
         foreach (var card in player.Battlefield)
         {
@@ -1027,7 +1027,8 @@ public class GameManager : MonoBehaviour
 
             if (card is CreatureCard creature)
             {
-                creature.hasSummoningSickness = false;
+                if (clearSummoningSickness)
+                    creature.hasSummoningSickness = false;
                 creature.RecalculateStats();
                 creature.blockingThisAttacker = null;
                 creature.blockedByThisBlocker.Clear();
