@@ -14,7 +14,7 @@ public class CreatureCard : Card
     public int tempToughnessBonus = 0;
     public int auraPowerBonus = 0;
     public int auraToughnessBonus = 0;
-    public List<KeywordAbility> auraKeywordAbilities = new List<KeywordAbility>();
+    public Dictionary<KeywordAbility, int> auraKeywordAbilityCounts = new Dictionary<KeywordAbility, int>();
 
     public void RecalculateStats()
     {
@@ -86,10 +86,13 @@ public class CreatureCard : Card
 
     public void AddAuraKeyword(KeywordAbility ability)
     {
+        if (auraKeywordAbilityCounts.ContainsKey(ability))
+            auraKeywordAbilityCounts[ability]++;
+        else
+            auraKeywordAbilityCounts[ability] = 1;
+
         if (!keywordAbilities.Contains(ability))
             keywordAbilities.Add(ability);
-        if (!auraKeywordAbilities.Contains(ability))
-            auraKeywordAbilities.Add(ability);
     }
 
     public void RemoveAuraBuff(int powerAmount, int toughnessAmount)
@@ -101,9 +104,22 @@ public class CreatureCard : Card
 
     public void RemoveAuraKeyword(KeywordAbility ability)
     {
-        if (auraKeywordAbilities.Contains(ability))
-            auraKeywordAbilities.Remove(ability);
-        if (keywordAbilities.Contains(ability))
+        if (!auraKeywordAbilityCounts.TryGetValue(ability, out int count))
+            return;
+
+        if (count > 1)
+        {
+            auraKeywordAbilityCounts[ability] = count - 1;
+            return;
+        }
+
+        auraKeywordAbilityCounts.Remove(ability);
+
+        CardData cardData = CardDatabase.GetCardData(cardName);
+        bool isPrintedKeyword = cardData?.keywordAbilities?.Contains(ability) == true;
+        bool isTemporaryKeyword = temporaryKeywordAbilities.Contains(ability);
+
+        if (keywordAbilities.Contains(ability) && !isPrintedKeyword && !isTemporaryKeyword)
             keywordAbilities.Remove(ability);
     }
     public int damageTaken = 0;
