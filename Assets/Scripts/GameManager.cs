@@ -1850,6 +1850,12 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ResolveArtifactActivatedAbilityOnStack(artifact, ability, controller, target));
     }
 
+    public void QueueEquipmentEquipAbility(EquipmentCard equipment, CreatureCard target, Player controller)
+    {
+        pendingStackEffects++;
+        StartCoroutine(ResolveEquipmentEquipAbilityOnStack(equipment, target, controller));
+    }
+
     public IEnumerator ResolveArtifactActivatedAbilityOnStack(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
         yield return new WaitUntil(() => !isStackBusy);
@@ -2071,6 +2077,74 @@ public class GameManager : MonoBehaviour
             Debug.Log("Resuming AI phase after stack.");
             TurnSystem.Instance.waitingToResumeAI = false;
             TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
+
+    public IEnumerator ResolveEquipmentEquipAbilityOnStack(EquipmentCard equipment, CreatureCard target, Player controller)
+    {
+        yield return new WaitUntil(() => !isStackBusy);
+        isStackBusy = true;
+        TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+
+        GameObject stackObj = Instantiate(cardPrefab, stackZone);
+        CardVisual stackVisual = stackObj.GetComponent<CardVisual>();
+        stackVisual.Setup(equipment, this);
+        stackVisual.isInStack = true;
+        stackVisual.UpdateVisual();
+        stackVisual.transform.localPosition = Vector3.zero;
+        stackVisual.transform.localRotation = Quaternion.identity;
+        stackVisual.transform.localScale = Vector3.one;
+
+        GameObject triggerVFX = null;
+        if (triggerVFXPrefab != null)
+        {
+            triggerVFX = Instantiate(triggerVFXPrefab, stackObj.transform);
+            RectTransform rt = triggerVFX.GetComponent<RectTransform>();
+            if (rt != null)
+                rt.anchoredPosition = Vector2.zero;
+        }
+
+        yield return WaitForStackOrSkip(2f);
+
+        try
+        {
+            bool equipmentOnBattlefield = equipment != null && controller != null && controller.Battlefield.Contains(equipment);
+            bool validTarget = target != null &&
+                               controller != null &&
+                               GetOwnerOfCard(target) == controller &&
+                               controller.Battlefield.Contains(target) &&
+                               !target.isDead;
+
+            if (equipmentOnBattlefield && validTarget)
+            {
+                equipment.Equip(target);
+                FindCardVisual(equipment)?.UpdateVisual();
+                FindCardVisual(target)?.UpdateVisual();
+            }
+            else
+            {
+                Debug.Log("Equip ability fizzled due to missing source or invalid target.");
+            }
+
+            CheckDeaths(humanPlayer);
+            CheckDeaths(aiPlayer);
+            UpdateUI();
+        }
+        finally
+        {
+            if (triggerVFX != null)
+                Destroy(triggerVFX);
+            Destroy(stackObj);
+            isStackBusy = false;
+            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+            CheckForGameEnd();
+
+            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            {
+                Debug.Log("Resuming AI phase after stack.");
+                TurnSystem.Instance.waitingToResumeAI = false;
+                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+            }
         }
     }
 
@@ -3592,7 +3666,8 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
-                targetingEquipment.Equip(targetCreature);
+                EquipmentCard equipment = targetingEquipment;
+                QueueEquipmentEquipAbility(equipment, targetCreature, controller);
 
                 UpdateUI();
             }
