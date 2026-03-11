@@ -84,6 +84,7 @@ public class TurnSystem : MonoBehaviour
 
     public TurnPhase lastPhaseBeforeStack;
     public bool waitingToResumeAI = false;
+    private bool aiBlockersConfirmedAwaitingDamage = false;
 
     private Coroutine damageCoroutine;
 
@@ -408,15 +409,27 @@ public class TurnSystem : MonoBehaviour
         }
 
     public void ConfirmBlockers()
-        {
-            if (GameManager.Instance.graveyardViewActive)
-                return;
+    {
+        if (GameManager.Instance.graveyardViewActive)
+            return;
 
             if (waitingForPlayerInput)
             {
                 PlaySoundIfAvailable(sound => sound.buttonClick);
                 waitingForPlayerInput = false;
                 SetCombatUIState(CombatUIState.Idle);
+
+                if (currentPlayer == PlayerType.AI && currentPhase == TurnPhase.ConfirmBlockers)
+                {
+                    bool aiCastCharge = GameManager.Instance.TryAICastChargeForCombat(aiIsAttacker: true);
+                    if (aiCastCharge)
+                    {
+                        aiBlockersConfirmedAwaitingDamage = true;
+                        GameManager.Instance.UpdateUI();
+                        return;
+                    }
+                }
+
                 AdvancePhase();
                 GameManager.Instance.UpdateUI();
             }
@@ -445,6 +458,7 @@ public class TurnSystem : MonoBehaviour
 
             currentPlayer = player;
             currentPhase = TurnPhase.StartTurn;
+            aiBlockersConfirmedAwaitingDamage = false;
             Log($"\n=== {player} TURN START ===");
 
             GameManager.Instance.ResetDeathTracking();
@@ -1454,6 +1468,16 @@ public class TurnSystem : MonoBehaviour
                     break;
 
                 case TurnPhase.ConfirmBlockers:
+                    if (currentPlayer == PlayerType.AI && aiBlockersConfirmedAwaitingDamage)
+                    {
+                        if (GameManager.Instance.IsStackActive())
+                            break;
+
+                        aiBlockersConfirmedAwaitingDamage = false;
+                        AdvancePhase();
+                        break;
+                    }
+
                     foreach (var attacker in GameManager.Instance.currentAttackers)
                     {
                         foreach (var blocker in attacker.blockedByThisBlocker)
@@ -1468,7 +1492,6 @@ public class TurnSystem : MonoBehaviour
                         if (currentPlayer == PlayerType.AI)
                         {
                             GameManager.Instance.TryAICastUnsummonOnStrongestBlocker();
-                            GameManager.Instance.TryAICastChargeForCombat(aiIsAttacker: true);
                             GameManager.Instance.TryAICastGiantGrowthForCombat(aiIsAttacker: true);
                             SetCombatUIState(CombatUIState.ConfirmingBlockers);
                             TMP_Text blkLabel = confirmBlockersButton.GetComponentInChildren<TMP_Text>();
