@@ -2208,7 +2208,7 @@ public class TurnSystem : MonoBehaviour
                         continue;
 
                     ai.ColoredMana.Pay(equipCost);
-                    equipment.Equip(target);
+                    GameManager.Instance.QueueEquipmentEquipAbility(equipment, target, ai);
                     GameManager.Instance.FindCardVisual(equipment)?.UpdateVisual();
                     GameManager.Instance.FindCardVisual(target)?.UpdateVisual();
 
