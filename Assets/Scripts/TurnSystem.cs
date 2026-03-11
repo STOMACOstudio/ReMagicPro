@@ -2070,6 +2070,13 @@ public class TurnSystem : MonoBehaviour
                 if (aura.cardName == "Pacifism" && controller == ai)
                     continue;
 
+                if (aura.keywordBuff == KeywordAbility.Flying &&
+                    candidate is CreatureCard flyingCandidate &&
+                    flyingCandidate.keywordAbilities.Contains(KeywordAbility.Flying))
+                {
+                    continue;
+                }
+
                 bool alreadyEnchantedBySameAura = ai.Battlefield
                     .Concat(opponent.Battlefield)
                     .OfType<AuraCard>()
