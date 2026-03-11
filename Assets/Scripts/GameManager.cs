@@ -1190,16 +1190,50 @@ public class GameManager : MonoBehaviour
         if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
             return false;
 
+        return TryAICastInstantOnStack(
+            unsummon,
+            target,
+            $"[AI] Casts Unsummon targeting {target.cardName} ({reason}).",
+            cost);
+    }
+
+    private bool TryAICastInstantOnStack(SorceryCard instant, Card target, string logMessage, Dictionary<string, int> cost)
+    {
+        if (instant == null || aiPlayer == null)
+            return false;
+
         aiPlayer.ColoredMana.Pay(cost);
-        aiPlayer.Hand.Remove(unsummon);
-        unsummon.owner = aiPlayer;
+        aiPlayer.Hand.Remove(instant);
+        instant.owner = aiPlayer;
+        instant.chosenTarget = target;
+        instant.chosenPlayerTarget = null;
 
-        Debug.Log($"[AI] Casts Unsummon targeting {target.cardName} ({reason}).");
+        if (!string.IsNullOrEmpty(logMessage))
+            Debug.Log(logMessage);
 
-        unsummon.ResolveEffect(aiPlayer, target);
-        SendToGraveyard(unsummon, aiPlayer, fromStack: true);
-        AwardFavouriteCardCoins(unsummon, aiPlayer);
+        GameObject obj = Instantiate(cardPrefab, stackZone);
+        CardVisual visual = obj.GetComponent<CardVisual>();
+        CardData data = CardDatabase.GetCardData(instant.cardName);
+        visual.Setup(instant, this, data);
+
+        visual.transform.localPosition = Vector3.zero;
+        visual.transform.SetParent(stackZone, false);
+        visual.isInStack = true;
+
+        if (!activeCardVisuals.Contains(visual))
+            activeCardVisuals.Add(visual);
+
         UpdateUI();
+        SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
+
+        isStackBusy = true;
+        if (TurnSystem.Instance != null)
+        {
+            TurnSystem.Instance.waitingToResumeAI = true;
+            TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
+        }
+
+        StartCoroutine(ResolveSorceryAfterDelay(instant, visual, aiPlayer));
         return true;
     }
 
@@ -1231,17 +1265,11 @@ public class GameManager : MonoBehaviour
         if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
             return false;
 
-        aiPlayer.ColoredMana.Pay(cost);
-        aiPlayer.Hand.Remove(giantGrowth);
-        giantGrowth.owner = aiPlayer;
-
-        Debug.Log($"[AI] Casts Giant Growth targeting {target.cardName} ({reason}).");
-
-        giantGrowth.ResolveEffect(aiPlayer, target);
-        SendToGraveyard(giantGrowth, aiPlayer, fromStack: true);
-        AwardFavouriteCardCoins(giantGrowth, aiPlayer);
-        UpdateUI();
-        return true;
+        return TryAICastInstantOnStack(
+            giantGrowth,
+            target,
+            $"[AI] Casts Giant Growth targeting {target.cardName} ({reason}).",
+            cost);
     }
 
     public bool TryAICastGiantGrowthForCombat(bool aiIsAttacker)
@@ -1366,17 +1394,11 @@ public class GameManager : MonoBehaviour
         if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
             return false;
 
-        aiPlayer.ColoredMana.Pay(cost);
-        aiPlayer.Hand.Remove(charge);
-        charge.owner = aiPlayer;
-
-        Debug.Log($"[AI] Casts Charge ({reason}).");
-
-        charge.ResolveEffect(aiPlayer, null);
-        SendToGraveyard(charge, aiPlayer, fromStack: true);
-        AwardFavouriteCardCoins(charge, aiPlayer);
-        UpdateUI();
-        return true;
+        return TryAICastInstantOnStack(
+            charge,
+            null,
+            $"[AI] Casts Charge ({reason}).",
+            cost);
     }
 
     public bool TryAICastHolyDay(string reason)
@@ -1404,17 +1426,11 @@ public class GameManager : MonoBehaviour
         if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
             return false;
 
-        aiPlayer.ColoredMana.Pay(cost);
-        aiPlayer.Hand.Remove(holyDay);
-        holyDay.owner = aiPlayer;
-
-        Debug.Log($"[AI] Casts Holy Day ({reason}).");
-
-        holyDay.ResolveEffect(aiPlayer, null);
-        SendToGraveyard(holyDay, aiPlayer, fromStack: true);
-        AwardFavouriteCardCoins(holyDay, aiPlayer);
-        UpdateUI();
-        return true;
+        return TryAICastInstantOnStack(
+            holyDay,
+            null,
+            $"[AI] Casts Holy Day ({reason}).",
+            cost);
     }
 
     public bool TryAICastChargeForCombat(bool aiIsAttacker)
