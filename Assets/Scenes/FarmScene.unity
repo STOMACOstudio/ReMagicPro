@@ -3192,9 +3192,9 @@ MonoBehaviour:
   playerTag: Player
   enemyDeckKey: Deck_OldWomanDruid
   cardRewardOptions:
-  - Llanowar Elves
+  - Grizzly Bears
   - Rampant Growth
-  - Oakenform
+  - Wall of Ice
   - Dosan's Oldest Chant
   subtitleManager: {fileID: 1730929377}
   preBattleLines:

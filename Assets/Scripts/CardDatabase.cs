@@ -3011,6 +3011,53 @@ public static class CardDatabase
                     flavorText = "They've got claws as long as your arm. And they're grouchy. Really, really grouchy.",
                     artwork = Resources.Load<Sprite>("Art/grizzly_bears")
                     });
+                Add(new CardData //Craw wurm
+                    {
+                    cardName = "Craw Wurm",
+                    artist = "Heather Hudson",
+                    rarity = "Common",
+                    manaCost = 6,
+                    color = new List<string> { "Green", "Green" },
+                    cardType = CardType.Creature,
+                    power = 6,
+                    toughness = 4,
+                    subtypes = new List<string> { "Wurm" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "The most terrifying thing about the craw wurm is probably the horrible crashing sound it makes as it speeds though the forest. This noise is so loud it echoes through the trees and seems to come from all directions at once.",
+                    artwork = Resources.Load<Sprite>("Art/craw_wurm")
+                    });
+                Add(new CardData //Wall of ice
+                    {
+                    cardName = "Wall of Ice",
+                    artist = "Richard Thomas",
+                    rarity = "Common",
+                    manaCost = 3,
+                    color = new List<string> { "Green" },
+                    cardType = CardType.Creature,
+                    power = 0,
+                    toughness = 7,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                    },
+                    flavorText = "And through the drifts the snowy cliffs\nDid send a dismal sheen:\nNor shapes of men nor beasts we ken-\nThe ice was all between.\n-Samuel Coleridge, 'The Rime of the Ancient Mariner'",
+                    artwork = Resources.Load<Sprite>("Art/wall_of_ice")
+                    });
+                Add(new CardData //Dosans oldest chant
+                    {
+                    cardName = "Dosan's Oldest Chant",
+                    artist = "Tim Hildebrandt",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 5,
+                    color = new List<string> { "Green" },
+                    lifeToGain = 5,
+                    cardsToDraw = 1,
+                    //rulesText = "You gain 6 life. Draw a card.",
+                    flavorText = "As Dosan's chant grew in volume, a second, deeper voice rose up in harmony behind it, strong enough to shake the earth and yet vibrant enough to fill the spirit.",
+                    artwork = Resources.Load<Sprite>("Art/dosans_oldest_chant"),
+                    });
                 Add(new CardData //Violent ape
                     {
                     cardName = "Violent Ape",

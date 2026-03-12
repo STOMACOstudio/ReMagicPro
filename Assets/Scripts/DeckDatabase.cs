@@ -265,12 +265,14 @@ public static class DeckDatabase
         {
             ai.Deck.Clear();
             AddCards(ai, "Forest", 17);
-            AddCards(ai, "Llanowar Elves", 4);
-            AddCards(ai, "Craw Wurm", 4);
-            AddCards(ai, "Fyndhorn Elder", 4);
+            AddCards(ai, "Grizzly Bear", 3);
+            AddCards(ai, "Canopy Spider", 3);
+            AddCards(ai, "Wall of Ice", 2);
+            AddCards(ai, "Argothian Swine", 3);
             AddCards(ai, "Dosan's Oldest Chant", 3);
             AddCards(ai, "Rampant Growth", 4);
             AddCards(ai, "Oakenform", 3);
+            AddCards(ai, "Craw Wurm", 2);
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
