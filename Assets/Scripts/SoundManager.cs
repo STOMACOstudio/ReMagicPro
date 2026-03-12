@@ -30,6 +30,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip deckEditorClose;
     public AudioClip deckEditorAddCard;
     public AudioClip deckEditorRemoveCard;
+    public AudioClip deckEditorDeniedExit;
 
     private AudioSource audioSource;
 
@@ -71,11 +72,13 @@ public class SoundManager : MonoBehaviour
         if (deckEditorClose == null)  deckEditorClose = Resources.Load<AudioClip>("Audio/SFX/deck_editor_close");
         if (deckEditorAddCard == null) deckEditorAddCard = Resources.Load<AudioClip>("Audio/SFX/deck_editor_add_card");
         if (deckEditorRemoveCard == null) deckEditorRemoveCard = Resources.Load<AudioClip>("Audio/SFX/deck_editor_remove_card");
+        if (deckEditorDeniedExit == null) deckEditorDeniedExit = Resources.Load<AudioClip>("Audio/SFX/deck_editor_denied_exit");
 
         if (deckEditorOpen == null)       deckEditorOpen = buttonClick;
         if (deckEditorClose == null)      deckEditorClose = buttonClick;
         if (deckEditorAddCard == null)    deckEditorAddCard = buyCard != null ? buyCard : buttonClick;
         if (deckEditorRemoveCard == null) deckEditorRemoveCard = buttonClick;
+        if (deckEditorDeniedExit == null) deckEditorDeniedExit = deckEditorClose != null ? deckEditorClose : buttonClick;
     }
 
     public void PlaySound(AudioClip clip)
