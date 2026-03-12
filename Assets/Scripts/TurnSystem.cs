@@ -1118,26 +1118,38 @@ public class TurnSystem : MonoBehaviour
                                 if (creature.activatedAbilities.Contains(ActivatedAbility.TapToDealDamageAnyTarget))
                                 {
                                     int activationCost = creature.manaToPayToActivate;
+                                    int damageAmount = Mathf.Max(0, creature.damageToCreature);
                                     string activationColor = creature.GetActivationColor();
 
                                     if (ai.ColoredMana.HasEnough(activationColor, activationCost))
                                     {
+                                        CreatureCard bestKillableTarget = GameManager.Instance.humanPlayer.Battlefield
+                                            .OfType<CreatureCard>()
+                                            .Where(target => !target.isDead &&
+                                                             !target.keywordAbilities.Contains(KeywordAbility.Indestructible) &&
+                                                             target.toughness <= damageAmount)
+                                            .OrderByDescending(target => target.power)
+                                            .ThenByDescending(target => target.toughness)
+                                            .FirstOrDefault();
+
                                         CreatureCard bestCreatureTarget = GameManager.Instance.humanPlayer.Battlefield
                                             .OfType<CreatureCard>()
                                             .Where(target => !target.isDead)
                                             .OrderByDescending(target => target.power)
                                             .FirstOrDefault();
 
+                                        CreatureCard chosenCreatureTarget = bestKillableTarget ?? bestCreatureTarget;
+
                                         ai.ColoredMana.SpendColor(activationColor, activationCost);
                                         creature.isTapped = true;
 
-                                        if (bestCreatureTarget != null)
+                                        if (chosenCreatureTarget != null)
                                         {
                                             GameManager.Instance.QueueCreatureActivatedAbility(
                                                 creature,
                                                 ActivatedAbility.TapToDealDamageAnyTarget,
                                                 ai,
-                                                bestCreatureTarget);
+                                                chosenCreatureTarget);
                                         }
                                         else
                                         {
