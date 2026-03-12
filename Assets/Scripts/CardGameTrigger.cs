@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class CardGameTrigger : MonoBehaviour
@@ -21,21 +23,39 @@ public class CardGameTrigger : MonoBehaviour
     public SubtitleManager subtitleManager;
     public List<SubtitleManager.SubtitleLine> preBattleLines;
 
+    [Header("Interaction Prompt")]
+    [SerializeField] private GameObject interactionTextObject;
+
     private bool hasTriggered;
+    private bool playerInRange;
+    private TextMeshPro promptText;
+    private Collider playerColliderInRange;
 
     void Awake()
     {
         if (subtitleManager == null)
             subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
+
+        if (interactionTextObject != null)
+        {
+            promptText = interactionTextObject.GetComponent<TextMeshPro>();
+            if (promptText != null)
+                promptText.text = "Press Q to talk";
+
+            interactionTextObject.SetActive(false);
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (hasTriggered || !other.CompareTag(playerTag))
+        if (!other.CompareTag(playerTag))
             return;
 
-        hasTriggered = true;
-        StartCoroutine(StartBattleSequence(other));
+        playerInRange = true;
+        playerColliderInRange = other;
+
+        if (!hasTriggered && interactionTextObject != null)
+            interactionTextObject.SetActive(true);
     }
 
     void OnTriggerExit(Collider other)
@@ -43,7 +63,35 @@ public class CardGameTrigger : MonoBehaviour
         if (!other.CompareTag(playerTag))
             return;
 
+        playerInRange = false;
+        playerColliderInRange = null;
+
+        if (interactionTextObject != null)
+            interactionTextObject.SetActive(false);
+
         hasTriggered = false;
+    }
+
+    void Update()
+    {
+        if (!hasTriggered && playerInRange && playerColliderInRange != null && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+        {
+            hasTriggered = true;
+            playerInRange = false;
+
+            if (interactionTextObject != null)
+                interactionTextObject.SetActive(false);
+
+            StartCoroutine(StartBattleSequence(playerColliderInRange));
+            return;
+        }
+
+        if (interactionTextObject != null && interactionTextObject.activeSelf && Camera.main != null)
+        {
+            interactionTextObject.transform.LookAt(
+                interactionTextObject.transform.position + Camera.main.transform.rotation * Vector3.forward,
+                Camera.main.transform.rotation * Vector3.up);
+        }
     }
 
     private IEnumerator StartBattleSequence(Collider playerCollider)
