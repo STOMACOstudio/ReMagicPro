@@ -137,6 +137,9 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(SoundManager.Instance.deckEditorOpen);
+
         StartCoroutine(OpenDeckEditorScene());
     }
 

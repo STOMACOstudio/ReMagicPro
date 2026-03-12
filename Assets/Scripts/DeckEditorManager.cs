@@ -311,6 +311,9 @@ public class DeckEditorManager : MonoBehaviour
 
         RefreshCollectionDisplay();
         UpdateDeckCardNumber();
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(SoundManager.Instance.deckEditorRemoveCard);
     }
 
     public void OnCollectionEntryClicked(CardData data, GameObject entry)
@@ -366,6 +369,9 @@ public class DeckEditorManager : MonoBehaviour
             RefreshCollectionDisplay();
 
         UpdateDeckCardNumber();
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(SoundManager.Instance.deckEditorAddCard);
     }
 
     private GameObject ResolveCardPrefab()
