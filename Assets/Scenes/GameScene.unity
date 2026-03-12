@@ -2523,70 +2523,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 0
---- !u!1 &632374139
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 632374141}
-  - component: {fileID: 632374140}
-  m_Layer: 0
-  m_Name: SoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &632374140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632374139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f3980994633b544dbb997504d601fd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonClick: {fileID: 8300000, guid: cd3d8b6806110c14f91c7e56e0f3e2f0, type: 3}
-  cardPlay: {fileID: 8300000, guid: a875f1de723afd945a52174c1d955d9c, type: 3}
-  playCreature: {fileID: 8300000, guid: 83cba65ae1cc2bc4da23e6e6e30c93b6, type: 3}
-  playArtifact: {fileID: 8300000, guid: bb63186a3fc81a44b8289c1b3d511690, type: 3}
-  declareAttack: {fileID: 8300000, guid: 3cfd159dd7c4a0243aaa7ea928448deb, type: 3}
-  declareBlock: {fileID: 8300000, guid: ef8bc75062dc38c41b9870a19b494ade, type: 3}
-  break_artifact: {fileID: 8300000, guid: 7081f21eb2a561c4294de26ae02bce26, type: 3}
-  tap_for_mana: {fileID: 8300000, guid: 875212118b46d8f4da07757905e92117, type: 3}
-  plague: {fileID: 8300000, guid: 127b099b8ecb97840ba02e66449d7e1d, type: 3}
-  dealDamage: {fileID: 8300000, guid: 1e5f17914b7c1b6478ff930d88ea2028, type: 3}
-  impact: {fileID: 8300000, guid: ac062084037642646a20a5fe1a35cd55, type: 3}
-  drink: {fileID: 8300000, guid: 55d3a6931e2f23a4bae366c759b2aa9c, type: 3}
-  miner: {fileID: 8300000, guid: e36177dde3eb74e4184484ad48b81327, type: 3}
-  gain_life: {fileID: 8300000, guid: bc50d8721caf7e44c8ef036922f72ad4, type: 3}
-  victory: {fileID: 8300000, guid: b8bf9ae1d6f7cee4588459d28268a8f2, type: 3}
-  defeat: {fileID: 8300000, guid: c89b120bb2d34f641b71689898c37be0, type: 3}
-  drawCard: {fileID: 8300000, guid: fdc89dd0452c2f34183085bed1590d6c, type: 3}
-  turnChange: {fileID: 8300000, guid: 145e09f516398b544a9e0753e1fe4ce3, type: 3}
-  equipArtifact: {fileID: 8300000, guid: 6d73024761ea9ff45a9e511c15102e27, type: 3}
-  buyCard: {fileID: 8300000, guid: f129a9de75dedeb44865a3d28df2bfeb, type: 3}
---- !u!4 &632374141
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632374139}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &639842350
 GameObject:
   m_ObjectHideFlags: 0
@@ -4081,8 +4017,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b8abc9370dc4c90869eba1708a50ca4, type: 3}
-  m_Name: ''
-  m_EditorClassIdentifier: ''
+  m_Name: 
+  m_EditorClassIdentifier: 
   baseTint: {r: 0.94, g: 0.91, b: 0.84, a: 1}
   pulseTint: {r: 0.9, g: 0.88, b: 0.83, a: 1}
   pulseSpeed: 0.25
@@ -5251,7 +5187,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -233.00002}
+  m_AnchoredPosition: {x: 0, y: -233}
   m_SizeDelta: {x: -1518.68, y: -877.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1283668488
@@ -6734,6 +6670,7 @@ MonoBehaviour:
   pendingGraveyardAnimations: 0
   graveyardViewActive: 0
   graveyardUIManager: {fileID: 2200000003}
+  preventAllCombatDamageThisTurn: 0
   targetingVisual: {fileID: 0}
   isTargetingMode: 0
   lastLifeGainedAmount: 0
@@ -7620,6 +7557,7 @@ MonoBehaviour:
   currentPlayer: 0
   currentPhase: 0
   waitingForPlayerInput: 0
+  enableDebugLogs: 1
   aiActionDelaySeconds: 2
   aiPhaseAdvanceDelaySeconds: 0.75
   phaseText: {fileID: 1399332687}
@@ -9528,6 +9466,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerGraveyard: 0
+--- !u!1001 &8392531772984761845
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 105923606245176602, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556035774268507165, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
+      propertyPath: m_Name
+      value: SoundManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2d5071e9f24a66d4188069c7ab70d873, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -9536,5 +9531,5 @@ SceneRoots:
   - {fileID: 1539663350}
   - {fileID: 1732088015}
   - {fileID: 640309175}
-  - {fileID: 632374141}
+  - {fileID: 8392531772984761845}
   - {fileID: 1966136232}
