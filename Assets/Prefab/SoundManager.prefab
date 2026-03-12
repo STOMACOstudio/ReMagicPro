@@ -68,3 +68,4 @@ MonoBehaviour:
   deckEditorClose: {fileID: 8300000, guid: 2fee2d59628b26f428f052c47c28f7e2, type: 3}
   deckEditorAddCard: {fileID: 8300000, guid: 617dbee0a9a043c4589fd2032f9342e4, type: 3}
   deckEditorRemoveCard: {fileID: 8300000, guid: b0c9be1a5a25e5248870cc1e69f63354, type: 3}
+  deckEditorDeniedExit: {fileID: 8300000, guid: 6cf9d3671fbbaaf4db25b8f08b0d10b9, type: 3}
