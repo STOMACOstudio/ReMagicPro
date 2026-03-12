@@ -265,7 +265,7 @@ public static class DeckDatabase
         {
             ai.Deck.Clear();
             AddCards(ai, "Forest", 17);
-            AddCards(ai, "Grizzly Bear", 3);
+            AddCards(ai, "Grizzly Bears", 3);
             AddCards(ai, "Canopy Spider", 3);
             AddCards(ai, "Wall of Ice", 2);
             AddCards(ai, "Argothian Swine", 3);

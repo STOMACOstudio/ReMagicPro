@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 01097ea585a2afa488ba9aa1e291eb26
+guid: 61fba11143f654342992a20e2b67d1ed
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3292905436289463843
-    second: 20260310_2123_Image Generation_simple_compose_01kkcpndwjevrtr7e9r5cchps5_0
+      213: 7760853577795749052
+    second: dosans_oldest_chant_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 20260310_2123_Image Generation_simple_compose_01kkcpndwjevrtr7e9r5cchps5_0
+      name: dosans_oldest_chant_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 549
+        height: 402
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3267cf83c00c2bd20800000000000000
-      internalID: 3292905436289463843
+      spriteID: cb4c552d53714bb60800000000000000
+      internalID: 7760853577795749052
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      20260310_2123_Image Generation_simple_compose_01kkcpndwjevrtr7e9r5cchps5_0: 3292905436289463843
+      dosans_oldest_chant_0: 7760853577795749052
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -21197,7 +21197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EndTutorialScene
   playerTag: Player
   liftSpeed: 0.8
-  liftHeight: 22
+  liftHeight: 18
   subtitleManager: {fileID: 1833829486}
   endingLines:
   - text: Well done, Planeswalker
@@ -43830,6 +43830,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 431359201455265200, guid: da3611e50dad74b489cc2670d2e4e935, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2660539970551169275, guid: da3611e50dad74b489cc2670d2e4e935, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3296413282609702941, guid: da3611e50dad74b489cc2670d2e4e935, type: 3}
       propertyPath: m_Name
       value: Player
