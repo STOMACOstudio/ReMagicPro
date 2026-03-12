@@ -2461,7 +2461,7 @@ public static class CardDatabase
                     toughness = 2,
                     subtypes = new List<string> { "Human", "Barbarian" },
                     flavorText = "From the snowy slopes of Kaelor,\nTo the canyons of Bandu,\nWe drink and fight and feast and die\nAs we were born to do.\n-Balduvian tavern song",
-                    artwork = Resources.Load<Sprite>("Art/balduvian_barbarian")
+                    artwork = Resources.Load<Sprite>("Art/balduvian_barbarians")
                     });
                 Add(new CardData //Goblin Beastmaster
                     {
