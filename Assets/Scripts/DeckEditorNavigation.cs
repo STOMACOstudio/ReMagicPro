@@ -41,7 +41,11 @@ public class DeckEditorNavigation : MonoBehaviour
         {
             manager.ConfirmDeck();
             ReturnToPreviousScene();
+            return;
         }
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(SoundManager.Instance.deckEditorDeniedExit);
     }
 
     private void ReturnToPreviousScene()
