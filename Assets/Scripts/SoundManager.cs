@@ -26,6 +26,10 @@ public class SoundManager : MonoBehaviour
     public AudioClip turnChange;
     public AudioClip equipArtifact;
     public AudioClip buyCard;
+    public AudioClip deckEditorOpen;
+    public AudioClip deckEditorClose;
+    public AudioClip deckEditorAddCard;
+    public AudioClip deckEditorRemoveCard;
 
     private AudioSource audioSource;
 
@@ -63,6 +67,15 @@ public class SoundManager : MonoBehaviour
         if (turnChange == null)       turnChange = Resources.Load<AudioClip>("Audio/SFX/nextturn_sfx");
         if (equipArtifact == null)    equipArtifact = Resources.Load<AudioClip>("Audio/SFX/equip_sfx");
         if (buyCard == null)          buyCard = Resources.Load<AudioClip>("Audio/SFX/buy_sfx");
+        if (deckEditorOpen == null)   deckEditorOpen = Resources.Load<AudioClip>("Audio/SFX/deck_editor_open");
+        if (deckEditorClose == null)  deckEditorClose = Resources.Load<AudioClip>("Audio/SFX/deck_editor_close");
+        if (deckEditorAddCard == null) deckEditorAddCard = Resources.Load<AudioClip>("Audio/SFX/deck_editor_add_card");
+        if (deckEditorRemoveCard == null) deckEditorRemoveCard = Resources.Load<AudioClip>("Audio/SFX/deck_editor_remove_card");
+
+        if (deckEditorOpen == null)       deckEditorOpen = buttonClick;
+        if (deckEditorClose == null)      deckEditorClose = buttonClick;
+        if (deckEditorAddCard == null)    deckEditorAddCard = buyCard != null ? buyCard : buttonClick;
+        if (deckEditorRemoveCard == null) deckEditorRemoveCard = buttonClick;
     }
 
     public void PlaySound(AudioClip clip)

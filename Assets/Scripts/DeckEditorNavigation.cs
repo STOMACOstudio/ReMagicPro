@@ -52,6 +52,9 @@ public class DeckEditorNavigation : MonoBehaviour
         isReturningToPreviousScene = true;
         string returnSceneName = DeckHolder.GetDeckEditorReturnScene();
 
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(SoundManager.Instance.deckEditorClose);
+
         if (DeckHolder.IsDeckEditorOpenedAdditively)
         {
             Scene returnScene = SceneManager.GetSceneByName(returnSceneName);
