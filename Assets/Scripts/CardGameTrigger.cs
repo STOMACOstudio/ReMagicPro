@@ -26,8 +26,9 @@ public class CardGameTrigger : MonoBehaviour
     [Header("Interaction Prompt")]
     [SerializeField] private GameObject interactionTextObject;
 
-    private bool hasTriggered;
     private bool playerInRange;
+    private bool interactionInProgress;
+    private bool wasBattleOpen;
     private TextMeshPro promptText;
     private Collider playerColliderInRange;
 
@@ -54,7 +55,20 @@ public class CardGameTrigger : MonoBehaviour
         playerInRange = true;
         playerColliderInRange = other;
 
-        if (!hasTriggered && interactionTextObject != null)
+        if (interactionTextObject != null && !interactionInProgress)
+            interactionTextObject.SetActive(true);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (!other.CompareTag(playerTag))
+            return;
+
+        playerInRange = true;
+        if (playerColliderInRange == null)
+            playerColliderInRange = other;
+
+        if (interactionTextObject != null && !BattleData.IsBattleOpenedAdditively && !interactionInProgress)
             interactionTextObject.SetActive(true);
     }
 
@@ -68,16 +82,23 @@ public class CardGameTrigger : MonoBehaviour
 
         if (interactionTextObject != null)
             interactionTextObject.SetActive(false);
-
-        hasTriggered = false;
     }
 
     void Update()
     {
-        if (!hasTriggered && playerInRange && playerColliderInRange != null && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+        bool battleIsOpen = BattleData.IsBattleOpenedAdditively;
+        if (wasBattleOpen && !battleIsOpen)
+            interactionInProgress = false;
+        wasBattleOpen = battleIsOpen;
+
+        if (playerInRange &&
+            playerColliderInRange != null &&
+            !battleIsOpen &&
+            !interactionInProgress &&
+            Keyboard.current != null &&
+            Keyboard.current.qKey.wasPressedThisFrame)
         {
-            hasTriggered = true;
-            playerInRange = false;
+            interactionInProgress = true;
 
             if (interactionTextObject != null)
                 interactionTextObject.SetActive(false);
