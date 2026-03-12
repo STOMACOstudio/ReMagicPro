@@ -4,7 +4,30 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance;
+    private static SoundManager instance;
+    private static bool isQuitting;
+
+    public static SoundManager Instance
+    {
+        get
+        {
+            if (isQuitting)
+                return null;
+
+            if (instance == null)
+            {
+                instance = FindFirstObjectByType<SoundManager>();
+
+                if (instance == null)
+                {
+                    GameObject soundManagerObject = new GameObject("SoundManager");
+                    instance = soundManagerObject.AddComponent<SoundManager>();
+                }
+            }
+
+            return instance;
+        }
+    }
 
     public AudioClip buttonClick;
     public AudioClip cardPlay;
@@ -34,10 +57,16 @@ public class SoundManager : MonoBehaviour
 
     private AudioSource audioSource;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void EnsureInstanceExists()
+    {
+        _ = Instance;
+    }
+
     void Awake()
     {
-        if (Instance == null)
-            Instance = this;
+        if (instance == null)
+            instance = this;
         else
         {
             Destroy(gameObject);
@@ -45,7 +74,9 @@ public class SoundManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
 
         // Automatically load clips if they were not assigned in the inspector.
         if (buttonClick == null)      buttonClick = Resources.Load<AudioClip>("Audio/SFX/click");
@@ -83,7 +114,21 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(AudioClip clip)
     {
-        if (clip != null)
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (clip != null && audioSource != null)
             audioSource.PlayOneShot(clip);
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+            instance = null;
+    }
+
+    private void OnApplicationQuit()
+    {
+        isQuitting = true;
     }
 }
