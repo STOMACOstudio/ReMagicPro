@@ -27,6 +27,8 @@ public class CardGameTrigger : MonoBehaviour
     [SerializeField] private GameObject interactionTextObject;
 
     private bool playerInRange;
+    private bool waitingForBattleToEnd;
+    private bool wasBattleOpenLastFrame;
     private TextMeshPro promptText;
     private Collider playerColliderInRange;
 
@@ -53,7 +55,7 @@ public class CardGameTrigger : MonoBehaviour
         playerInRange = true;
         playerColliderInRange = other;
 
-        if (interactionTextObject != null)
+        if (interactionTextObject != null && !waitingForBattleToEnd)
             interactionTextObject.SetActive(true);
     }
 
@@ -66,7 +68,7 @@ public class CardGameTrigger : MonoBehaviour
         if (playerColliderInRange == null)
             playerColliderInRange = other;
 
-        if (interactionTextObject != null && !BattleData.IsBattleOpenedAdditively)
+        if (interactionTextObject != null && !BattleData.IsBattleOpenedAdditively && !waitingForBattleToEnd)
             interactionTextObject.SetActive(true);
     }
 
@@ -76,6 +78,7 @@ public class CardGameTrigger : MonoBehaviour
             return;
 
         playerInRange = false;
+        waitingForBattleToEnd = false;
         playerColliderInRange = null;
 
         if (interactionTextObject != null)
@@ -84,12 +87,26 @@ public class CardGameTrigger : MonoBehaviour
 
     void Update()
     {
+        bool isBattleOpen = BattleData.IsBattleOpenedAdditively;
+        if (wasBattleOpenLastFrame && !isBattleOpen)
+        {
+            waitingForBattleToEnd = false;
+
+            if (playerInRange && interactionTextObject != null)
+                interactionTextObject.SetActive(true);
+        }
+
+        wasBattleOpenLastFrame = isBattleOpen;
+
         if (playerInRange &&
             playerColliderInRange != null &&
-            !BattleData.IsBattleOpenedAdditively &&
+            !isBattleOpen &&
+            !waitingForBattleToEnd &&
             Keyboard.current != null &&
             Keyboard.current.qKey.wasPressedThisFrame)
         {
+            waitingForBattleToEnd = true;
+
             if (interactionTextObject != null)
                 interactionTextObject.SetActive(false);
 
