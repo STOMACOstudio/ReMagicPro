@@ -703,6 +703,14 @@ public class TurnSystem : MonoBehaviour
                                         continue;
                                     }
 
+                                    // Charge is held for AI combat only and is fired from
+                                    // ConfirmBlockers after blockers are assigned (via stack).
+                                    if (sorcery.cardName == "Charge")
+                                    {
+                                        Log("[AI] Holding Charge for own combat after blockers.");
+                                        continue;
+                                    }
+
                                     var cost = GameManager.Instance.GetManaCostBreakdown(sorcery.manaCost, sorcery.color);
                                     int tax = GameManager.Instance.GetOpponentSpellTax(ai);
                                     if (tax > 0)
