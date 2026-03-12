@@ -47,6 +47,22 @@ public class CardGameTrigger : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        // The return scene is temporarily deactivated while the battle scene is loaded.
+        // When this object is re-enabled, reset local state from the current global battle flag.
+        bool isBattleOpen = BattleData.IsBattleOpenedAdditively;
+        wasBattleOpenLastFrame = isBattleOpen;
+
+        if (!isBattleOpen)
+        {
+            waitingForBattleToEnd = false;
+
+            if (playerInRange && interactionTextObject != null)
+                interactionTextObject.SetActive(true);
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(playerTag))
@@ -152,6 +168,10 @@ public class CardGameTrigger : MonoBehaviour
         BattleData.IsBattleOpenedAdditively = true;
         BattleData.TriggeringPlatform = null;
         BattleData.PauseReturnScene();
+
+        // The trigger scene gets disabled immediately after this call, so persist the
+        // transition state now to ensure battle-end detection is correct on return.
+        wasBattleOpenLastFrame = true;
 
         SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Additive);
         Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);
