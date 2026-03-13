@@ -829,6 +829,26 @@ public static class CardDatabase
                     flavorText = "The College of Lat-Nam is often forced to expel students whose experiments grow too risky or too cruel.",
                     artwork = Resources.Load<Sprite>("Art/fugitive_wizard")
                     });
+                Add(new CardData // Archivist
+                    {
+                    cardName = "Archivist",
+                    artist = "Sora AI",
+                    rarity = "Rare",
+                    manaCost = 4,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 1,
+                    subtypes = new List<string> { "Human", "Wizard" },
+                    manaToPayToActivate = 0,
+                    cardsToDraw = 1,
+                    activatedAbilities = new List<ActivatedAbility>
+                    {
+                        ActivatedAbility.TapToDrawCards
+                    },
+                    rulesText = "Tap: Draw a card.",
+                    artwork = Resources.Load<Sprite>("Art/fugitive_wizard")
+                    });
                 Add(new CardData // Coral Eel
                     {
                     cardName = "Coral Eel",

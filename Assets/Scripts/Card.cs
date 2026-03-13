@@ -264,6 +264,12 @@ public class Card
                                 case ActivatedAbility.TapToDestroyPower4OrGreater:
                                     lines.Add("Tap: Destroy target creature with power 4 or greater.");
                                     break;
+                                case ActivatedAbility.TapToDrawCards:
+                                    if (creature.manaToPayToActivate > 0)
+                                        lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}, TAP: Draw {creature.cardsToDraw} card(s).");
+                                    else
+                                        lines.Add($"Tap: Draw {creature.cardsToDraw} card(s).");
+                                    break;
                                 case ActivatedAbility.PayToGainAbility:
                                     lines.Add($"{FormatColoredManaNumber(creature.manaToPayToActivate, creature.GetActivationColor())}: Gains {creature.abilityToGain} until end of turn.");
                                     break;
