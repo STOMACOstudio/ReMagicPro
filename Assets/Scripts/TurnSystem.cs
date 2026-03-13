@@ -2113,6 +2113,9 @@ public class TurnSystem : MonoBehaviour
                 if (!validController)
                     continue;
 
+                if (IsBeneficialAura(aura) && controller != ai)
+                    continue;
+
                 if (aura.cardName == "Pacifism" && controller == ai)
                     continue;
 
@@ -2177,6 +2180,20 @@ public class TurnSystem : MonoBehaviour
                    keyword == KeywordAbility.Defender ||
                    keyword == KeywordAbility.CantBlock ||
                    keyword == KeywordAbility.CantDealCombatDamage;
+        }
+
+        private bool IsBeneficialAura(AuraCard aura)
+        {
+            if (aura == null)
+                return false;
+
+            if (aura.gainControlOfCreature)
+                return false;
+
+            if (aura.buffPower + aura.buffToughness > 0)
+                return true;
+
+            return aura.keywordBuff != KeywordAbility.None && !IsHarmfulAuraKeyword(aura.keywordBuff);
         }
 
         private Player.ManaPool GetPotentialManaPool(Player ai)
