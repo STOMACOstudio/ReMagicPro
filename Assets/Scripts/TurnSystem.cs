@@ -1697,6 +1697,9 @@ public class TurnSystem : MonoBehaviour
                     !attacker.keywordAbilities.Contains(KeywordAbility.Flying))
                     return false;
 
+                if (attacker.keywordAbilities.Contains(KeywordAbility.CantBeBlocked))
+                    return false;
+
                 if (IsLandwalkPreventingBlock(attacker, defender))
                     return false;
 
@@ -1900,6 +1903,9 @@ public class TurnSystem : MonoBehaviour
                 .OfType<CreatureCard>()
                 .Where(b => !b.isTapped && !b.keywordAbilities.Contains(KeywordAbility.CantBlock))
                 .ToList();
+
+            if (attacker.keywordAbilities.Contains(KeywordAbility.CantBeBlocked))
+                return true;
 
             if (blockers.Count == 0)
                 return true;

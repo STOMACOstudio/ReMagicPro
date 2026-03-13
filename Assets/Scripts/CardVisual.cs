@@ -1861,7 +1861,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             Debug.Log($"{blocker.cardName} can only block flying creatures.");
                             return;
                         }
-                        // Check if attacker is unblockable due to landwalk
+                        // Check if attacker is unblockable due to landwalk or effects
+                        if (clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBeBlocked))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can't be blocked.");
+                            return;
+                        }
+
                         if (IsLandwalkPreventingBlock(clickedCreature, you))
                         {
                             Debug.Log($"{blocker.cardName} can't block {clickedCreature.cardName} due to landwalk.");
