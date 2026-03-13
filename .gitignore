@@ -40,3 +40,7 @@ sysinfo.txt
 # OS junk
 .DS_Store
 Thumbs.db
+Assets/Mesh/Materials/Tower Diffuse.mat
+Assets/Mesh/Materials/Tower Diffuse.mat.meta
+Assets/Mesh/Materials/Tower Diffuse.psd
+Assets/Mesh/Materials/Tower Diffuse.psd.meta
