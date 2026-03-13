@@ -202,6 +202,7 @@ public class Card
                         keyword == KeywordAbility.CantBlockWithoutForest ||
                         keyword == KeywordAbility.CantDealCombatDamage ||
                         keyword == KeywordAbility.MustAttackEachTurnIfAble ||
+                        keyword == KeywordAbility.CantBeBlocked ||
                         keyword == KeywordAbility.BeastCreatureSpellsCostOneLess ||
                         keyword == KeywordAbility.PotionSpellsCostOneLess ||
                         keyword.ToString().StartsWith("ProtectionFrom"))
@@ -224,6 +225,8 @@ public class Card
                     lines.Add("This creature can't deal combat damage.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.MustAttackEachTurnIfAble))
                     lines.Add("This creature attacks each turn if able.");
+                if (creature.keywordAbilities.Contains(KeywordAbility.CantBeBlocked))
+                    lines.Add("This creature can't be blocked.");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromWhite))
                     lines.Add("Protection from White");
                 if (creature.keywordAbilities.Contains(KeywordAbility.ProtectionFromBlue))

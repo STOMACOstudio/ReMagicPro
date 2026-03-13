@@ -893,6 +893,24 @@ public static class CardDatabase
                     flavorText = "Where air meets water, fish meets talon.",
                     artwork = Resources.Load<Sprite>("Art/sea_eagle")
                     });
+                Add(new CardData //Phantom warrior
+                    {
+                    cardName = "Phantom Warrior",
+                    artist = "Sora AI",
+                    rarity = "Uncommon",
+                    manaCost = 3,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 2,
+                    toughness = 2,
+                    subtypes = new List<string> { "Illusion", "Warrior" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.CantBeBlocked
+                    },
+                    rulesText = "This creature can't be blocked.",
+                    artwork = Resources.Load<Sprite>("Art/phantom_warrior")
+                    });
                 Add(new CardData //Wind drake
                     {
                     cardName = "Wind Drake",

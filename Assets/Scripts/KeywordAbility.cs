@@ -34,6 +34,7 @@ public enum KeywordAbility
     CantDealCombatDamage,
     HasteCreaturesOnlyBlockedByHaste,
     MustAttackEachTurnIfAble,
+    CantBeBlocked,
 }
 
 public enum ActivatedAbility
