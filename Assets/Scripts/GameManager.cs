@@ -2070,6 +2070,9 @@ public class GameManager : MonoBehaviour
                     Debug.LogError($"Failed to create token: {tokenName}");
                 }
                 break;
+            case ActivatedAbility.TapToDrawCards:
+                DrawCards(controller, creature.cardsToDraw);
+                break;
             case ActivatedAbility.ReturnSelfFromGraveyard:
                 ReturnCreatureFromGraveyardToBattlefield(controller, creature);
                 break;

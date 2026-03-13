@@ -1080,6 +1080,19 @@ public class TurnSystem : MonoBehaviour
                                     GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
                                 }
 
+                                // TAP TO DRAW CARDS
+                                if (creature.activatedAbilities.Contains(ActivatedAbility.TapToDrawCards))
+                                {
+                                    int cost = creature.manaToPayToActivate;
+                                    if (EnsureManaForCost(ai, new Dictionary<string, int> { {"Colorless", cost} }))
+                                    {
+                                        ai.ColoredMana.Pay(new Dictionary<string, int> { {"Colorless", cost} });
+                                        creature.isTapped = true;
+                                        GameManager.Instance.QueueCreatureActivatedAbility(creature, ActivatedAbility.TapToDrawCards, ai);
+                                        GameManager.Instance.FindCardVisual(creature)?.UpdateVisual();
+                                    }
+                                }
+
                                 // TAP TO CREATE MINER
                                 if (creature.activatedAbilities.Contains(ActivatedAbility.TapToCreateToken))
                                 {

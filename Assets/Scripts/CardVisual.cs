@@ -1356,6 +1356,51 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 return;
             }
+
+            // TAP: draw cards (creature ability)
+            if (linkedCard is CreatureCard cardDrawCreature &&
+                GameManager.Instance.humanPlayer.Battlefield.Contains(cardDrawCreature) &&
+                canHumanActivateCreatureAbilities &&
+                cardDrawCreature.activatedAbilities != null &&
+                cardDrawCreature.activatedAbilities.Contains(ActivatedAbility.TapToDrawCards) &&
+                !cardDrawCreature.isTapped &&
+                (!cardDrawCreature.hasSummoningSickness || cardDrawCreature.keywordAbilities.Contains(KeywordAbility.Haste)))
+            {
+                Player player = GameManager.Instance.humanPlayer;
+                int cost = cardDrawCreature.manaToPayToActivate;
+
+                if (player.ColoredMana.Total() >= cost)
+                {
+                    int remaining = cost;
+
+                    int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
+                    player.ColoredMana.Colorless -= useColorless;
+                    remaining -= useColorless;
+
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
+                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
+
+                    if (remaining > 0)
+                    {
+                        Debug.Log("Not enough mana for ability.");
+                        return;
+                    }
+
+                    linkedCard.isTapped = true;
+                    GameManager.Instance.QueueCreatureActivatedAbility(cardDrawCreature, ActivatedAbility.TapToDrawCards, player);
+                    GameManager.Instance.UpdateUI();
+                    UpdateVisual();
+                }
+                else
+                {
+                    Debug.Log("Not enough mana to activate ability.");
+                }
+
+                return;
+            }
             // PAY + TAP: deal damage to any target
             if (linkedCard is CreatureCard pingCreature &&
                 GameManager.Instance.humanPlayer.Battlefield.Contains(pingCreature) &&
