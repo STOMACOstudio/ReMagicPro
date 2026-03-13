@@ -274,6 +274,19 @@ public static class DeckDatabase
             AddCards(ai, "Oakenform", 3);
             AddCards(ai, "Craw Wurm", 2);
         }
+    public static void BuildPhantomWarriorDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Island", 17);
+            AddCards(ai, "Phantom Warrior", 3);
+            AddCards(ai, "Wall of Air", 4);
+            AddCards(ai, "Unsummon", 4);
+            AddCards(ai, "Dehydratation", 4);
+            AddCards(ai, "Spirit Away", 1);
+            AddCards(ai, "Air Elemental", 4);
+            AddCards(ai, "Greatsword", 2);
+            ai.StartingPermanents.Add(CardFactory.Create("Phantom Warrior"));
+        }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
     {

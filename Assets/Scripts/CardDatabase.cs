@@ -896,7 +896,7 @@ public static class CardDatabase
                 Add(new CardData //Phantom warrior
                     {
                     cardName = "Phantom Warrior",
-                    artist = "Sora AI",
+                    artist = "Greg Staples",
                     rarity = "Uncommon",
                     manaCost = 3,
                     color = new List<string> { "Blue", "Blue" },
@@ -909,6 +909,7 @@ public static class CardDatabase
                         KeywordAbility.CantBeBlocked
                     },
                     rulesText = "This creature can't be blocked.",
+                    flavorText = "It can pass though solid matter-but that doesn't mean it's harmless.",
                     artwork = Resources.Load<Sprite>("Art/phantom_warrior")
                     });
                 Add(new CardData //Wind drake
@@ -998,6 +999,25 @@ public static class CardDatabase
                         KeywordAbility.Defender
                     },
                     artwork = Resources.Load<Sprite>("Art/arcane_barrier")
+                    });
+                Add(new CardData //Wall of air
+                    {
+                    cardName = "Wall of Air",
+                    artist = "John Avon",
+                    rarity = "Uncommon",
+                    manaCost = 3,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 5,
+                    subtypes = new List<string> { "Wall" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Defender,
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "Let the air itself protect you, for it is everywhere.\n-Master Wizard",
+                    artwork = Resources.Load<Sprite>("Art/wall_of_air")
                     });
                 Add(new CardData //Deepwood owl
                     {
@@ -3029,6 +3049,21 @@ public static class CardDatabase
                     flavorText = "They've got claws as long as your arm. And they're grouchy. Really, really grouchy.",
                     artwork = Resources.Load<Sprite>("Art/grizzly_bears")
                     });
+                Add(new CardData //Moss monster
+                    {
+                    cardName = "Moss Monster",
+                    artist = "Glen Angus",
+                    rarity = "Common",
+                    manaCost = 5,
+                    color = new List<string> { "Green", "Green" },
+                    cardType = CardType.Creature,
+                    power = 3,
+                    toughness = 6,
+                    subtypes = new List<string> { "Elemental" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "After the battle, an eerie silence griped the forest. The losers' remains were lightly dusted with green.",
+                    artwork = Resources.Load<Sprite>("Art/moss_monster")
+                    });
                 Add(new CardData //Craw wurm
                     {
                     cardName = "Craw Wurm",
@@ -5031,7 +5066,23 @@ public static class CardDatabase
                         flavorText = "A sharp axe solves most problems.",
                         artwork = Resources.Load<Sprite>("Art/marauder_axe")
                     });
-
+                Add(new CardData // Greatsword
+                    {
+                        cardName = "Greatsword",
+                        artist = "Nick Klein",
+                        rarity = "Uncommon",
+                        manaCost = 3,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 3,
+                        toughnessBuff = 0,
+                        manaToPayToActivate = 3,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +3/+0.",
+                        flavorText = "The only blow that matters is the killing blow.",
+                        artwork = Resources.Load<Sprite>("Art/greatsword")
+                    });
                 // Avatar cycle gaining +1/+1 counters
                 Add(new CardData //Progress Incarnate
                     {
