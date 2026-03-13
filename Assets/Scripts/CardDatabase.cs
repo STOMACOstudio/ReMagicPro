@@ -832,7 +832,7 @@ public static class CardDatabase
                 Add(new CardData // Archivist
                     {
                     cardName = "Archivist",
-                    artist = "Sora AI",
+                    artist = "Donato Giancola",
                     rarity = "Rare",
                     manaCost = 4,
                     color = new List<string> { "Blue", "Blue" },
@@ -847,7 +847,8 @@ public static class CardDatabase
                         ActivatedAbility.TapToDrawCards
                     },
                     rulesText = "Tap: Draw a card.",
-                    artwork = Resources.Load<Sprite>("Art/fugitive_wizard")
+                    flavorText = "Knowledge is a feast for the mind. Savor every swallow.",
+                    artwork = Resources.Load<Sprite>("Art/archivist")
                     });
                 Add(new CardData // Coral Eel
                     {
