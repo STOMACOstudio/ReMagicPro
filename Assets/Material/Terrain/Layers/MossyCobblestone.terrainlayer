@@ -7,8 +7,8 @@ TerrainLayer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MossyCobblestone
-  m_DiffuseTexture: {fileID: 2800000, guid: 35bfe16100cead643a23be7075225338, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: 3a5f1f33cc6c7e0458bac731e8913ec3, type: 3}
+  m_DiffuseTexture: {fileID: 2800000, guid: 1a087a15678b138439dd9cfe4c0430c2, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: 3b9f5e5962aa95d428cde74e658b7248, type: 3}
   m_MaskMapTexture: {fileID: 0}
   m_TileSize: {x: 2, y: 2}
   m_TileOffset: {x: 0, y: 0}
