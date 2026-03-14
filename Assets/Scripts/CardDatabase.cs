@@ -5070,9 +5070,9 @@ public static class CardDatabase
                         flavorText = "To my sword I owe my glory, but to my shield I owe my life.\n-Sarlena, paladine of the Northern Verge",
                         artwork = Resources.Load<Sprite>("Art/kite_shield")
                     });
-                Add(new CardData // Marauder axe
+                Add(new CardData // Marauder's axe
                     {
-                        cardName = "Marauder Axe",
+                        cardName = "Marauder's Axe",
                         artist = "Mitchell Malloy",
                         rarity = "Common",
                         manaCost = 2,
@@ -5085,7 +5085,7 @@ public static class CardDatabase
                         activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
                         rulesText = "Equipped creature gets +2/+0.",
                         flavorText = "A sharp axe solves most problems.",
-                        artwork = Resources.Load<Sprite>("Art/marauder_axe")
+                        artwork = Resources.Load<Sprite>("Art/marauders_axe")
                     });
                 Add(new CardData // Greatsword
                     {
