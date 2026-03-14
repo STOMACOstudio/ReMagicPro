@@ -4491,6 +4491,20 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/moonfall"),
                         typeOfPermanentToDestroyAll = SorceryCard.PermanentTypeToDestroy.Land,
                     });
+                Add(new CardData //Lava Axe
+                    {
+                        cardName = "Lava Axe",
+                        artist = "Sora AI",
+                        rarity = "Common",
+                        cardType = CardType.Sorcery,
+                        manaCost = 5,
+                        color = new List<string> { "Red" },
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Player,
+                        damageToTarget = 5,
+                        rulesText = "Deal 5 damage to target player.",
+                        artwork = Resources.Load<Sprite>("Art/like_a_thunder"),
+                    });
                 Add(new CardData
                     {
                         cardName = "Fire Spirals",
