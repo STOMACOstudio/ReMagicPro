@@ -4494,7 +4494,7 @@ public static class CardDatabase
                 Add(new CardData //Lava Axe
                     {
                         cardName = "Lava Axe",
-                        artist = "Sora AI",
+                        artist = "Ray Lago",
                         rarity = "Common",
                         cardType = CardType.Sorcery,
                         manaCost = 5,
@@ -4503,7 +4503,8 @@ public static class CardDatabase
                         requiredTargetType = SorceryCard.TargetType.Player,
                         damageToTarget = 5,
                         rulesText = "Deal 5 damage to target player.",
-                        artwork = Resources.Load<Sprite>("Art/like_a_thunder"),
+                        flavorText = "Catch!",
+                        artwork = Resources.Load<Sprite>("Art/lava_axe"),
                     });
                 Add(new CardData
                     {
