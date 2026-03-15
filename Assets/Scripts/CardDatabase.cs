@@ -3404,6 +3404,25 @@ public static class CardDatabase
                     flavorText = "It doesen't think. It doesn't feel.\nIt doesen't laugh or cry.\nAll it does from dusk till dawn\nIs make the soldiers die.\n-Onean children's rhyme",
                     artwork = Resources.Load<Sprite>("Art/phyrexian_hulk")
                     });
+                Add(new CardData //Juggernaut
+                    {
+                    cardName = "Juggernaut",
+                    artist = "Anson Maddocks",
+                    rarity = "Uncommon",
+                    manaCost = 4,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 3,
+                    subtypes = new List<string> { "Juggernaut" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.MustAttackEachTurnIfAble,
+                        KeywordAbility.CantBeBlockedByWalls,
+                    },
+                    rulesText = "This creature attacks each combat if able. This creature can't be blocked by Walls.",
+                    artwork = Resources.Load<Sprite>("Art/juggernaut")
+                    });
                 Add(new CardData //Glass golem
                     {
                     cardName = "Glass Golem,

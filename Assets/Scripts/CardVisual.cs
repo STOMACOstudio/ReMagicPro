@@ -1938,6 +1938,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
 
+                        if (clickedCreature.keywordAbilities.Contains(KeywordAbility.CantBeBlockedByWalls) &&
+                            blocker.subtypes.Contains("Wall"))
+                        {
+                            Debug.Log($"{clickedCreature.cardName} can't be blocked by Walls.");
+                            return;
+                        }
+
                         if (IsLandwalkPreventingBlock(clickedCreature, you))
                         {
                             Debug.Log($"{blocker.cardName} can't block {clickedCreature.cardName} due to landwalk.");
