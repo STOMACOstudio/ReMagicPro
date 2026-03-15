@@ -1981,6 +1981,13 @@ public class GameManager : MonoBehaviour
         }
         finally
         {
+            if (ability == ActivatedAbility.DealDamageToCreature ||
+                ability == ActivatedAbility.BuffTargetCreature ||
+                ability == ActivatedAbility.TapTargetArtifactCreatureOrLand)
+            {
+                FindCardVisual(artifact)?.EnableSelectionHover(false);
+            }
+
             if (triggerVFX != null)
                 Destroy(triggerVFX);
             Destroy(stackObj);
@@ -3713,6 +3720,9 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Invalid target for equipment.");
             }
 
+            if (targetingVisual != null)
+                targetingVisual.EnableSelectionHover(false);
+
             targetingEquipment = null;
             targetingPlayer = null;
             targetingVisual = null;
@@ -3900,6 +3910,9 @@ public class GameManager : MonoBehaviour
 
     public void CancelTargeting()
         {
+            ClearEquipmentTargetingHover();
+            ClearArtifactTargetingHover();
+
             foreach (var cv in activeCardVisuals)
                 cv.EnableTargetingHighlight(false); // turn off all
 
@@ -4101,6 +4114,8 @@ public class GameManager : MonoBehaviour
 
     public void BeginTargetingWithArtifactDamage(ArtifactCard artifact, Player player, CardVisual visual)
     {
+        ClearArtifactTargetingHover();
+
         targetingArtifact = artifact; // << Store the artifact being used
         targetingSorcery = null;
         targetingPlayer = player;
@@ -4109,6 +4124,7 @@ public class GameManager : MonoBehaviour
 
         artifact.isTapped = true; // show the potion tapped while selecting target
         FindCardVisual(artifact)?.UpdateVisual();
+        visual?.EnableSelectionHover(true);
 
         Debug.Log("Targeting creature to deal damage with artifact.");
     }
@@ -4120,6 +4136,8 @@ public class GameManager : MonoBehaviour
 
     public void BeginTargetingWithArtifactBuff(ArtifactCard artifact, Player player, CardVisual visual)
     {
+        ClearArtifactTargetingHover();
+
         targetingArtifact = artifact;
         targetingSorcery = null;
         targetingAura = null;
@@ -4129,12 +4147,15 @@ public class GameManager : MonoBehaviour
 
         artifact.isTapped = true; // show the potion tapped while selecting target
         FindCardVisual(artifact)?.UpdateVisual();
+        visual?.EnableSelectionHover(true);
 
         Debug.Log("Targeting creature to buff with artifact.");
     }
 
     public void BeginTargetingWithArtifactTap(ArtifactCard artifact, Player player, CardVisual visual)
     {
+        ClearArtifactTargetingHover();
+
         targetingArtifact = artifact;
         targetingSorcery = null;
         targetingAura = null;
@@ -4145,6 +4166,7 @@ public class GameManager : MonoBehaviour
 
         artifact.isTapped = true; // show tapped state while selecting target
         FindCardVisual(artifact)?.UpdateVisual();
+        visual?.EnableSelectionHover(true);
 
         Debug.Log("Targeting artifact, creature, or land to tap with artifact.");
     }
@@ -4201,6 +4223,8 @@ public class GameManager : MonoBehaviour
 
     public void BeginEquipmentTargetSelection(EquipmentCard equipment, Player player, CardVisual visual)
     {
+        ClearEquipmentTargetingHover();
+
         targetingEquipment = equipment;
         targetingArtifact = null;
         targetingSorcery = null;
@@ -4208,6 +4232,20 @@ public class GameManager : MonoBehaviour
         targetingPlayer = player;
         targetingVisual = visual;
         isTargetingMode = true;
+
+        visual?.EnableSelectionHover(true);
+    }
+
+    private void ClearEquipmentTargetingHover()
+    {
+        if (targetingVisual != null && targetingEquipment != null)
+            targetingVisual.EnableSelectionHover(false);
+    }
+
+    private void ClearArtifactTargetingHover()
+    {
+        if (targetingVisual != null && targetingArtifact != null)
+            targetingVisual.EnableSelectionHover(false);
     }
 
     public IEnumerator ResolveArtifactDamageAfterDelay(CardVisual targetVisual, Card targetCard)
