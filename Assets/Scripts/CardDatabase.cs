@@ -3407,7 +3407,7 @@ public static class CardDatabase
                 Add(new CardData //Juggernaut
                     {
                     cardName = "Juggernaut",
-                    artist = "Anson Maddocks",
+                    artist = "Jonas De Ro",
                     rarity = "Uncommon",
                     manaCost = 4,
                     color = new List<string> { "Artifact" },
@@ -3420,7 +3420,8 @@ public static class CardDatabase
                         KeywordAbility.MustAttackEachTurnIfAble,
                         KeywordAbility.CantBeBlockedByWalls,
                     },
-                    rulesText = "This creature attacks each combat if able. This creature can't be blocked by Walls.",
+                    rulesText = "This creature attacks each combat if able.\nThis creature can't be blocked by Walls.",
+                    flavorText = "Urza's machines have a splendid habit of excavating themselves.\n-Rona, disciple of Gix",
                     artwork = Resources.Load<Sprite>("Art/juggernaut")
                     });
                 Add(new CardData //Glass golem
@@ -4976,10 +4977,10 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/mana_rock")
                     });
 
-                Add(new CardData //Metorite
+                Add(new CardData //Meteorite
                     {
-                        cardName = "Metorite",
-                        artist = "Sora AI",
+                        cardName = "Meteorite",
+                        artist = "Scott Murphy",
                         rarity = "Uncommon",
                         manaCost = 5,
                         color = new List<string>(),
@@ -5022,8 +5023,9 @@ public static class CardDatabase
                                 }
                             }
                         },
-                        rulesText = "When Metorite enters, it deals 2 damage to any target.\nTAP: Add 1 mana.",
-                        artwork = Resources.Load<Sprite>("Art/metorite")
+                        rulesText = "When this artifact enters, it deals 2 damage to any target.\nTAP: Add 1 mana.",
+                        flavorText = "'And if I'm lying,' he began...",
+                        artwork = Resources.Load<Sprite>("Art/meteorite")
                     });
 
                 Add(new CardData //Crystallium
