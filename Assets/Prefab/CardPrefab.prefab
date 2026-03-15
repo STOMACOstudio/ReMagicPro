@@ -1731,6 +1731,7 @@ MonoBehaviour:
   genericCostBG: {fileID: 1447999937406918178}
   landIcon: {fileID: 4027206160647432886}
   highlightBorder: {fileID: 7701278353075680653}
+  selectionHover: {fileID: 18160879531112616}
   titleText: {fileID: 6256048875999013832}
   sicknessText: {fileID: 5745591189577221338}
   costText: {fileID: 7155773281145799774}
