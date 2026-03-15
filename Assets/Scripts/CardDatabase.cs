@@ -4507,10 +4507,11 @@ public static class CardDatabase
                         cardType = CardType.Instant,
                         manaCost = 2,
                         color = new List<string> { "Red" },
-                        rulesText = "Target creature gains haste until the end of turn.",
+                        rulesText = "Target creature gains haste until the end of turn. Draw a card.",
                         requiresTarget = true,
                         requiredTargetType = SorceryCard.TargetType.Creature,
                         keywordToGrant = KeywordAbility.Haste,
+                        cardsToDraw = 1,
                         flavorText = "I've seen lightning move slower.\n-Nomad sentry",
                         artwork = Resources.Load<Sprite>("Art/accelerate"),
                     });
