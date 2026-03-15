@@ -3289,6 +3289,15 @@ public class GameManager : MonoBehaviour
             case "Deck_PhantomWarrior":
                 DeckDatabase.BuildPhantomWarriorDeck(ai);
                 break;
+            case "Deck_Archivist":
+                DeckDatabase.BuildArchivistDeck(ai);
+                break;
+            case "Deck_Barbarians":
+                DeckDatabase.BuildBarbariansDeck(ai);
+                break;
+            case "Deck_Scimitar":
+                DeckDatabase.BuildScimitarDeck(ai);
+                break;
             case "Deck_Boss":
                 DeckDatabase.BuildBossDeck(ai);
                 break;

@@ -261,6 +261,32 @@ public static class DeckDatabase
             AddCards(ai, "Flight", 3);
         }
 
+    public static void BuildBarbariansDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Mountain", 17);
+            AddCards(ai, "Balduvian Barbarians", 3);
+            AddCards(ai, "Wall of Earth", 4);
+            AddCards(ai, "Granite Grip", 4);
+            AddCards(ai, "Conquer", 4);
+            AddCards(ai, "Accelerate", 4);
+            AddCards(ai, "Marauder's Axe", 3);
+            ai.StartingPermanents.Add(CardFactory.Create("Balduvian Barbarians"));
+        }
+
+    public static void BuildScimitarDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Island", 17);
+            AddCards(ai, "Dancing Scimitar", 3);
+            AddCards(ai, "Short Sword", 4);
+            AddCards(ai, "Ogre's Cleaver", 4);
+            AddCards(ai, "Greatsword", 4);
+            AddCards(ai, "Yotian Soldier", 4);
+            AddCards(ai, "Kite Shield", 3);
+            ai.StartingPermanents.Add(CardFactory.Create("Dancing Scimitar"));
+        }
+
     public static void BuildOldWomanDruidDeck(Player ai)
         {
             ai.Deck.Clear();
@@ -286,6 +312,24 @@ public static class DeckDatabase
             AddCards(ai, "Air Elemental", 4);
             AddCards(ai, "Greatsword", 2);
             ai.StartingPermanents.Add(CardFactory.Create("Phantom Warrior"));
+        }
+    
+    public static void BuildArchivistDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Island", 21);
+            AddCards(ai, "Yotian Soldier", 4);
+            AddCards(ai, "Fugitive Wizard", 4);
+            AddCards(ai, "Merchant of Secrets", 4);
+            AddCards(ai, "Inertia Bubble", 3);
+            AddCards(ai, "Gilded Sentinel", 4);
+            AddCards(ai, "Glass Golem", 4);
+            AddCards(ai, "Ancient Carp", 3);
+            AddCards(ai, "Meteorite", 4);
+            AddCards(ai, "Jayemdae Tome", 2);
+            AddCards(ai, "Inspiration", 4);
+            AddCards(ai, "Wind Drake", 2);
+            ai.StartingPermanents.Add(CardFactory.Create("Archivist"));
         }
 
     public static void BuildWhiteBeginnerDeck(Player ai)
