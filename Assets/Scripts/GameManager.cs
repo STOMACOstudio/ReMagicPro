@@ -14,6 +14,20 @@ public class GameManager : MonoBehaviour
     // then clicks an attacking enemy creature to assign the block.
     public CreatureCard selectedBlockerForBlocking = null;
 
+    public void SetSelectedBlockerForBlocking(CreatureCard blocker)
+    {
+        if (selectedBlockerForBlocking == blocker)
+            return;
+
+        if (selectedBlockerForBlocking != null)
+            FindCardVisual(selectedBlockerForBlocking)?.EnableSelectionHover(false);
+
+        selectedBlockerForBlocking = blocker;
+
+        if (selectedBlockerForBlocking != null)
+            FindCardVisual(selectedBlockerForBlocking)?.EnableSelectionHover(true);
+    }
+
     public Player humanPlayer;
     public Player aiPlayer;
     public TMP_Text manaPoolText;
@@ -676,7 +690,7 @@ public class GameManager : MonoBehaviour
                 currentAttackers.Remove(deadCreature);
                 selectedAttackers.Remove(deadCreature);
                 if (selectedBlockerForBlocking == deadCreature)
-                    selectedBlockerForBlocking = null;
+                    SetSelectedBlockerForBlocking(null);
 
                 foreach (var creature in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield).OfType<CreatureCard>())
                 {
@@ -983,7 +997,7 @@ public class GameManager : MonoBehaviour
         }
 
         currentAttackers.Clear();
-        selectedBlockerForBlocking = null;
+        SetSelectedBlockerForBlocking(null);
         UpdateUI();
         CheckForGameEnd();
         return (playerDamage, aiDamage);
@@ -1075,7 +1089,7 @@ public class GameManager : MonoBehaviour
         selectedAttackers.Remove(creature);
 
         if (selectedBlockerForBlocking == creature)
-            selectedBlockerForBlocking = null;
+            SetSelectedBlockerForBlocking(null);
 
         blockingAssignments.Remove(creature);
 
@@ -4869,7 +4883,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 currentAttackers.Clear();
-                selectedBlockerForBlocking = null;
+                SetSelectedBlockerForBlocking(null);
                 UpdateUI();
                 FinalizeLifeDeltas();
             }

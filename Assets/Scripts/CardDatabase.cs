@@ -933,6 +933,25 @@ public static class CardDatabase
                     flavorText = "It can pass though solid matter-but that doesn't mean it's harmless.",
                     artwork = Resources.Load<Sprite>("Art/phantom_warrior")
                     });
+                Add(new CardData //Tidal kraken
+                    {
+                    cardName = "Tidal Kraken",
+                    artist = "Cristopher Moeller",
+                    rarity = "Rare",
+                    manaCost = 8,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 6,
+                    toughness = 6,
+                    subtypes = new List<string> { "Kraken" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.CantBeBlocked
+                    },
+                    rulesText = "This creature can't be blocked.",
+                    flavorText = "To merfolk, pirates are a nuisance. To pirates, merfolk are a threat. To the kraken, they're both appetizers.",
+                    artwork = Resources.Load<Sprite>("Art/tidal_kraken")
+                    });
                 Add(new CardData //Wind drake
                     {
                     cardName = "Wind Drake",

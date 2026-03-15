@@ -55,6 +55,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject genericCostBG;
     public GameObject landIcon;
     public GameObject highlightBorder;
+    public GameObject selectionHover;
 
     public TMP_Text titleText;
     public TMP_Text sicknessText;
@@ -105,7 +106,18 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     void Awake()
     {
+        if (selectionHover == null)
+        {
+            Transform selectionHoverTransform = transform.Find("selectionHover");
+            if (selectionHoverTransform != null)
+                selectionHover = selectionHoverTransform.gameObject;
+        }
+
+        if (selectionHover != null)
+            selectionHover.SetActive(false);
+
         DisableRaycast(highlightBorder);
+        DisableRaycast(selectionHover);
 
         if (artImage == null)
         {
@@ -1863,6 +1875,15 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             !you.Battlefield.Exists(card => card is LandCard land && land.cardName.ToLower().Contains("forest"))
                         ))
                     {
+                        // Click same creature again to cancel blocker selection.
+                        if (GameManager.Instance.selectedBlockerForBlocking == clickedCreature)
+                        {
+                            GameManager.Instance.SetSelectedBlockerForBlocking(null);
+                            Debug.Log($"Deselected blocker: {clickedCreature.cardName}");
+                            GameManager.Instance.UpdateUI();
+                            return;
+                        }
+
                         // Already blocking something -> remove block
                         if (clickedCreature.blockingThisAttacker != null)
                         {
@@ -1873,7 +1894,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             return;
                         }
 
-                        GameManager.Instance.selectedBlockerForBlocking = clickedCreature;
+                        GameManager.Instance.SetSelectedBlockerForBlocking(clickedCreature);
                         Debug.Log($"Selected blocker: {clickedCreature.cardName}");
                         return;
                     }
@@ -1936,7 +1957,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         // Assign the block
                         blocker.blockingThisAttacker = clickedCreature;
                         clickedCreature.blockedByThisBlocker.Add(blocker);
-                        GameManager.Instance.selectedBlockerForBlocking = null;
+                        GameManager.Instance.SetSelectedBlockerForBlocking(null);
 
                         Debug.Log($"{blocker.cardName} is blocking {clickedCreature.cardName}");
                         SoundManager.Instance.PlaySound(SoundManager.Instance.declareBlock);
@@ -2537,6 +2558,12 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         if (highlightBorder != null)
             highlightBorder.SetActive(enable);
+    }
+
+    public void EnableSelectionHover(bool enable)
+    {
+        if (selectionHover != null)
+            selectionHover.SetActive(enable);
     }
 
         
