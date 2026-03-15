@@ -7,7 +7,9 @@ public class AuraCard : EnchantmentCard
     public SorceryCard.TargetType requiredTargetType = SorceryCard.TargetType.Creature;
     public Card attachedTo;
     public bool targetMustBeControlledCreature = false;
+    public bool targetMustBeOpponentPermanent = false;
     public bool gainControlOfCreature = false;
+    public bool gainControlOfLand = false;
 
     public override void OnEnterPlay(Player owner)
     {
@@ -37,6 +39,13 @@ public class AuraCard : EnchantmentCard
                 attachedTo.keywordAbilities.Add(keywordBuff);
             GameManager.Instance.FindCardVisual(attachedTo)?.UpdateVisual();
         }
+
+        if (gainControlOfLand && attachedTo is LandCard land)
+        {
+            Player controller = GameManager.Instance.GetControllerOfCard(land);
+            if (controller != owner)
+                GameManager.Instance.ChangeController(land, owner);
+        }
     }
 
     public override void OnLeavePlay(Player owner)
@@ -59,6 +68,12 @@ public class AuraCard : EnchantmentCard
                 attachedTo.keywordAbilities.Remove(keywordBuff);
             GameManager.Instance.FindCardVisual(attachedTo)?.UpdateVisual();
         }
+
+        if (gainControlOfLand && attachedTo is LandCard land && GameManager.Instance.GetControllerOfCard(land) == owner)
+        {
+            GameManager.Instance.ChangeController(land, land.owner);
+        }
+
         base.OnLeavePlay(owner);
         attachedTo = null;
     }

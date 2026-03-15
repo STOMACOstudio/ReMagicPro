@@ -2122,14 +2122,16 @@ public class TurnSystem : MonoBehaviour
                 bool validType =
                     (aura.requiredTargetType == SorceryCard.TargetType.Creature && candidate is CreatureCard) ||
                     (aura.requiredTargetType == SorceryCard.TargetType.TappedCreature && candidate is CreatureCard tc && tc.isTapped) ||
-                    (aura.requiredTargetType == SorceryCard.TargetType.Artifact && GameManager.Instance.IsArtifactPermanent(candidate));
+                    (aura.requiredTargetType == SorceryCard.TargetType.Artifact && GameManager.Instance.IsArtifactPermanent(candidate)) ||
+                    (aura.requiredTargetType == SorceryCard.TargetType.Land && candidate is LandCard);
 
                 if (!validType)
                     continue;
 
                 Player controller = GameManager.Instance.GetControllerOfCard(candidate);
                 bool validController = !aura.targetMustBeControlledCreature || controller == ai;
-                if (!validController)
+                bool validOpponentController = !aura.targetMustBeOpponentPermanent || (controller != null && controller != ai);
+                if (!validController || !validOpponentController)
                     continue;
 
                 if (IsBeneficialAura(aura) && controller != ai)
@@ -2163,7 +2165,7 @@ public class TurnSystem : MonoBehaviour
             bool onOwnPermanent = targetController == ai;
             int score = 0;
 
-            if (aura.gainControlOfCreature)
+            if (aura.gainControlOfCreature || aura.gainControlOfLand)
             {
                 score += onOwnPermanent ? -25 : 80;
             }
@@ -2184,7 +2186,7 @@ public class TurnSystem : MonoBehaviour
             {
                 int creatureValue = creature.power + creature.toughness;
 
-                bool likelyHarmfulToTarget = statDelta < 0 || harmfulKeyword || aura.gainControlOfCreature;
+                bool likelyHarmfulToTarget = statDelta < 0 || harmfulKeyword || aura.gainControlOfCreature || aura.gainControlOfLand;
                 score += likelyHarmfulToTarget
                     ? (onOwnPermanent ? -creatureValue : creatureValue)
                     : (onOwnPermanent ? creatureValue : -creatureValue);
@@ -2206,7 +2208,7 @@ public class TurnSystem : MonoBehaviour
             if (aura == null)
                 return false;
 
-            if (aura.gainControlOfCreature)
+            if (aura.gainControlOfCreature || aura.gainControlOfLand)
                 return false;
 
             if (aura.buffPower + aura.buffToughness > 0)

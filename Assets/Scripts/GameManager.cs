@@ -3745,12 +3745,15 @@ public class GameManager : MonoBehaviour
             bool correctType =
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.Creature && targetCard is CreatureCard) ||
                 (targetingAura.requiredTargetType == SorceryCard.TargetType.TappedCreature && targetCard is CreatureCard tc && tc.isTapped) ||
-                (targetingAura.requiredTargetType == SorceryCard.TargetType.Artifact && IsArtifactPermanent(targetCard));
-            Player targetOwner = GetOwnerOfCard(targetCard);
-            bool isOnBattlefield = targetOwner?.Battlefield.Contains(targetCard) == true;
-            bool correctController = !targetingAura.targetMustBeControlledCreature || targetOwner == targetingPlayer;
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.Artifact && IsArtifactPermanent(targetCard)) ||
+                (targetingAura.requiredTargetType == SorceryCard.TargetType.Land && targetCard is LandCard);
+            Player targetController = GetControllerOfCard(targetCard);
+            bool isOnBattlefield = targetController?.Battlefield.Contains(targetCard) == true;
+            bool correctController = !targetingAura.targetMustBeControlledCreature || targetController == targetingPlayer;
+            bool correctOpponentController = !targetingAura.targetMustBeOpponentPermanent ||
+                (targetController != null && targetController != targetingPlayer);
 
-            if (!correctType || !isOnBattlefield || !correctController)
+            if (!correctType || !isOnBattlefield || !correctController || !correctOpponentController)
             {
                 Debug.Log("Invalid target for aura.");
                 CancelTargeting();

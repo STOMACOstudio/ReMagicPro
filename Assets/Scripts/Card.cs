@@ -183,13 +183,18 @@ public class Card
             {
                 SorceryCard.TargetType.TappedCreature => "Enchant tapped creature",
                 SorceryCard.TargetType.Artifact => "Enchant artifact",
+                SorceryCard.TargetType.Land => "Enchant land",
                 _ => "Enchant creature"
             };
             if (aura.targetMustBeControlledCreature)
                 enchantText += " you control";
+            else if (aura.targetMustBeOpponentPermanent)
+                enchantText += " an opponent controls";
             lines.Add(enchantText);
             if (aura.gainControlOfCreature)
                 lines.Add("You control enchanted creature.");
+            if (aura.gainControlOfLand)
+                lines.Add("You control enchanted land.");
         }
 
             // Keyword abilities — only for creatures

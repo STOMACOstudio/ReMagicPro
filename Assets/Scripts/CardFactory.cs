@@ -156,7 +156,9 @@ public static class CardFactory
                             ? SorceryCard.TargetType.Creature
                             : data.requiredTargetType;
                     aura.targetMustBeControlledCreature = data.targetMustBeControlledCreature;
+                    aura.targetMustBeOpponentPermanent = data.targetMustBeOpponentPermanent;
                     aura.gainControlOfCreature = data.gainControlOfCreature;
+                    aura.gainControlOfLand = data.gainControlOfLand;
                 }
                 newCard = enchantment;
                 break;
