@@ -3426,7 +3426,7 @@ public static class CardDatabase
                     });
                 Add(new CardData //Glass golem
                     {
-                    cardName = "Glass Golem,
+                    cardName = "Glass Golem",
                     artist = "Glen Angus",
                     rarity = "Uncommon",
                     manaCost = 5,
