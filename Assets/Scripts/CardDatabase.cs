@@ -4607,13 +4607,14 @@ public static class CardDatabase
                 Add(new CardData //Inferno
                     {
                         cardName = "Inferno",
-                        artist = "Sora AI",
+                        artist = "Don Hazeltine",
                         rarity = "Rare",
                         cardType = CardType.Instant,
                         manaCost = 7,
                         color = new List<string> { "Red", "Red" },
                         rulesText = "Inferno deals 6 damage to each creature and each player.",
                         damageToEachCreatureAndPlayer = 6,
+                        flavorText = "Some have said there is no subtley to destruction. You know what? They're dead.\n-Wandering mage",
                         artwork = Resources.Load<Sprite>("Art/inferno"),
                     });
                 Add(new CardData //Rolling Thunder
