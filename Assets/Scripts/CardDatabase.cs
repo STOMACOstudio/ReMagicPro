@@ -4976,6 +4976,56 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/mana_rock")
                     });
 
+                Add(new CardData //Metorite
+                    {
+                        cardName = "Metorite",
+                        artist = "Sora AI",
+                        rarity = "Uncommon",
+                        manaCost = 5,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        activatedAbilities = new List<ActivatedAbility>
+                        {
+                            ActivatedAbility.TapForMana
+                        },
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = " deal 2 damage to any target.",
+                                requiresTarget = true,
+                                requiredTargetType = SorceryCard.TargetType.CreatureOrPlayer,
+                                effect = (Player owner, Card target) =>
+                                {
+                                    Player pTarget = GameManager.Instance.optionalTargetPlayer;
+                                    if (pTarget != null)
+                                    {
+                                        pTarget.Life -= 2;
+                                        GameObject ui = (pTarget == GameManager.Instance.humanPlayer)
+                                            ? GameManager.Instance.playerLifeContainer
+                                            : GameManager.Instance.enemyLifeContainer;
+                                        GameManager.Instance.ShowFloatingDamage(2, ui);
+                                        GameManager.Instance.CheckForGameEnd();
+                                        GameManager.Instance.optionalTargetPlayer = null;
+                                    }
+                                    else if (target is CreatureCard creature)
+                                    {
+                                        creature.TakeDamage(2);
+                                        var vis = GameManager.Instance.FindCardVisual(creature);
+                                        if (vis != null)
+                                            GameManager.Instance.ShowFloatingDamage(2, vis.gameObject);
+                                        GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                                        GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                                    }
+                                    GameManager.Instance.UpdateUI();
+                                }
+                            }
+                        },
+                        rulesText = "When Metorite enters, it deals 2 damage to any target.\nTAP: Add 1 mana.",
+                        artwork = Resources.Load<Sprite>("Art/metorite")
+                    });
+
                 Add(new CardData //Crystallium
                     {
                         cardName = "Crystallium",
