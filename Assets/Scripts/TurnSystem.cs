@@ -1713,6 +1713,10 @@ public class TurnSystem : MonoBehaviour
                 if (attacker.keywordAbilities.Contains(KeywordAbility.CantBeBlocked))
                     return false;
 
+                if (attacker.keywordAbilities.Contains(KeywordAbility.CantBeBlockedByWalls) &&
+                    blocker.subtypes.Contains("Wall"))
+                    return false;
+
                 if (IsLandwalkPreventingBlock(attacker, defender))
                     return false;
 
