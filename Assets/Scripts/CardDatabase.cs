@@ -4604,6 +4604,18 @@ public static class CardDatabase
                         artwork = Resources.Load<Sprite>("Art/fire_spirals"),
                         damageToEachCreatureAndPlayer = 2
                     });
+                Add(new CardData //Inferno
+                    {
+                        cardName = "Inferno",
+                        artist = "Sora AI",
+                        rarity = "Rare",
+                        cardType = CardType.Instant,
+                        manaCost = 7,
+                        color = new List<string> { "Red", "Red" },
+                        rulesText = "Inferno deals 6 damage to each creature and each player.",
+                        damageToEachCreatureAndPlayer = 6,
+                        artwork = Resources.Load<Sprite>("Art/inferno"),
+                    });
                 Add(new CardData //Rolling Thunder
                     {
                         cardName = "Rolling Thunder",
