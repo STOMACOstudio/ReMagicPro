@@ -97,7 +97,9 @@ public class CardData
     public int lifeToGainPerCreatureAttackingYou = 0;
     public KeywordAbility keywordBuff = KeywordAbility.None;
     public bool targetMustBeControlledCreature = false;
+    public bool targetMustBeOpponentPermanent = false;
     public bool gainControlOfCreature = false;
+    public bool gainControlOfLand = false;
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;

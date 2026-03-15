@@ -6202,10 +6202,12 @@ public static class CardDatabase
                         color = new List<string> { "Red", "Red" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
+                        requiredTargetType = SorceryCard.TargetType.Land,
+                        targetMustBeOpponentPermanent = true,
                         gainControlOfLand = true,
+                        rulesText = "Enchant land an opponent controls\nYou control enchanted land.",
                         flavorText = "Why do we trade with those despicable elves? You don't live in forests, you burn them!\n-Avram Garrison,\nLeader of the Knights of Stromgald",
                         artwork = Resources.Load<Sprite>("Art/conquer")
-                        //rulesText = "You control enchanted creature.",
                     });
             }
 
