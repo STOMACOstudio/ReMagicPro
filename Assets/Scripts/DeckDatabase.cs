@@ -322,7 +322,7 @@ public static class DeckDatabase
             AddCards(ai, "Fugitive Wizard", 4);
             AddCards(ai, "Merchant of Secrets", 4);
             AddCards(ai, "Inertia Bubble", 3);
-            AddCards(ai, "Gilded Sentinel", 4);
+            AddCards(ai, "Juggernaut", 4);
             AddCards(ai, "Glass Golem", 4);
             AddCards(ai, "Ancient Carp", 3);
             AddCards(ai, "Meteorite", 4);

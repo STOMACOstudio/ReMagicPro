@@ -3404,6 +3404,21 @@ public static class CardDatabase
                     flavorText = "It doesen't think. It doesn't feel.\nIt doesen't laugh or cry.\nAll it does from dusk till dawn\nIs make the soldiers die.\n-Onean children's rhyme",
                     artwork = Resources.Load<Sprite>("Art/phyrexian_hulk")
                     });
+                Add(new CardData //Glass golem
+                    {
+                    cardName = "Glass Golem,
+                    artist = "Glen Angus",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 6,
+                    toughness = 2,
+                    subtypes = new List<string> { "Golem" },
+                    keywordAbilities = new List<KeywordAbility> { },
+                    flavorText = "Izzet artificers have learned to steer their beautiful contructs clear of Boros warhammers-and the opera house.",
+                    artwork = Resources.Load<Sprite>("Art/glass_golem")
+                    });
                 Add(new CardData //Yotian soldier
                     {
                     cardName = "Yotian Soldier",
@@ -3488,6 +3503,24 @@ public static class CardDatabase
                     },
                     flavorText = "Intruder detected.",
                     artwork = Resources.Load<Sprite>("Art/iron_skyman")
+                    });
+                Add(new CardData //Dancing scimitar
+                    {
+                    cardName = "Dancing Scimitar",
+                    artist = "Ron Spears",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "Artifact" },
+                    cardType = CardType.Creature,
+                    power = 1,
+                    toughness = 5,
+                    subtypes = new List<string> { "Spirit" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying,
+                    },
+                    flavorText = "A blade that has never known sheath, a hilt that has never known hand.",
+                    artwork = Resources.Load<Sprite>("Art/dancing_scimitar")
                     });
                 Add(new CardData //Autonomous miner
                     {
@@ -4446,6 +4479,21 @@ public static class CardDatabase
                         keywordToGrant = KeywordAbility.Haste,
                         artwork = Resources.Load<Sprite>("Art/dash"),
                     });
+                Add(new CardData //Accelerate
+                    {
+                        cardName = "Accelerate",
+                        artist = "Gary Ruddell",
+                        rarity = "Common",
+                        cardType = CardType.Instant,
+                        manaCost = 2,
+                        color = new List<string> { "Red" },
+                        rulesText = "Target creature gains haste until the end of turn.",
+                        requiresTarget = true,
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        keywordToGrant = KeywordAbility.Haste,
+                        flavorText = "I've seen lightning move slower.\n-Nomad sentry",
+                        artwork = Resources.Load<Sprite>("Art/accelerate"),
+                    });
                 Add(new CardData //thunderstrike
                     {
                         cardName = "Thunderstrike",
@@ -5120,6 +5168,23 @@ public static class CardDatabase
                         rulesText = "Equipped creature gets +2/+0.",
                         flavorText = "A sharp axe solves most problems.",
                         artwork = Resources.Load<Sprite>("Art/marauders_axe")
+                    });
+                Add(new CardData // Ogre's cleaver
+                    {
+                        cardName = "Ogre's Cleaver",
+                        artist = "Adi Granov",
+                        rarity = "Uncommon",
+                        manaCost = 2,
+                        color = new List<string>(),
+                        cardType = CardType.Artifact,
+                        subtypes = new List<string> { "Equipment" },
+                        powerBuff = 5,
+                        toughnessBuff = 0,
+                        manaToPayToActivate = 5,
+                        activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
+                        rulesText = "Equipped creature gets +5/+0.",
+                        flavorText = "She adopted the weapon of the slave-lord Kazuul, and with it, all his cruelty.",
+                        artwork = Resources.Load<Sprite>("Art/ogres_axe")
                     });
                 Add(new CardData // Greatsword
                     {
@@ -6124,7 +6189,22 @@ public static class CardDatabase
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         gainControlOfCreature = true,
-                        artwork = Resources.Load<Sprite>("Art/fascinate"),
+                        artwork = Resources.Load<Sprite>("Art/fascinate")
+                        //rulesText = "You control enchanted creature.",
+                    });
+                
+                Add(new CardData // Conquer
+                    {
+                        cardName = "Conquer",
+                        artist = "Randy Gallegos",
+                        rarity = "Uncommon",
+                        manaCost = 5,
+                        color = new List<string> { "Red", "Red" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        gainControlOfLand = true,
+                        flavorText = "Why do we trade with those despicable elves? You don't live in forests, you burn them!\n-Avram Garrison,\nLeader of the Knights of Stromgald",
+                        artwork = Resources.Load<Sprite>("Art/conquer")
                         //rulesText = "You control enchanted creature.",
                     });
             }
