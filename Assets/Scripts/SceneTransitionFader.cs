@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SceneTransitionFader : MonoBehaviour
@@ -41,24 +40,12 @@ public class SceneTransitionFader : MonoBehaviour
     }
 
 
-    public void BeginTransition(string sceneName, float fadeOutDuration, float fadeInDuration)
+    public void SetAlpha(float alpha)
     {
-        StartCoroutine(TransitionToScene(sceneName, fadeOutDuration, fadeInDuration));
-    }
+        if (overlay == null)
+            return;
 
-    public IEnumerator TransitionToScene(string sceneName, float fadeOutDuration, float fadeInDuration)
-    {
-        yield return Fade(0f, 1f, fadeOutDuration);
-
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName);
-        while (!loadOperation.isDone)
-            yield return null;
-
-        // Let first frame of the loaded scene render while still covered by black.
-        yield return null;
-
-        yield return Fade(1f, 0f, fadeInDuration);
-        Destroy(gameObject);
+        overlay.alpha = Mathf.Clamp01(alpha);
     }
 
     public IEnumerator Fade(float from, float to, float duration)

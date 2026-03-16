@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Intro Settings")]
     public string tutorialSceneName = "TutorialScene";
+    public float tutorialSceneFadeInDuration = 2f;
     public float startY = 10f;
     public float targetY = 0.6f;
     public float descentSpeed = 2f;
@@ -75,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, startY, transform.position.z);
             fixedY = targetY;
+            StartCoroutine(FadeInTutorialScene());
         }
         else
         {
@@ -87,6 +89,19 @@ public class PlayerMovement : MonoBehaviour
         // Auto-hook SubtitleManager if not assigned
         if (isTutorialScene && subtitleManager == null)
             subtitleManager = Object.FindFirstObjectByType<SubtitleManager>();
+    }
+
+
+    private IEnumerator FadeInTutorialScene()
+    {
+        SceneTransitionFader fader = SceneTransitionFader.Create(Color.black);
+        fader.SetAlpha(1f);
+
+        float fadeDuration = Mathf.Max(0.1f, tutorialSceneFadeInDuration);
+        yield return fader.Fade(1f, 0f, fadeDuration);
+
+        if (fader != null)
+            Destroy(fader.gameObject);
     }
 
     void Update()
