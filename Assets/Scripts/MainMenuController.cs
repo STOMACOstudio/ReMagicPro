@@ -6,8 +6,6 @@ public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private AudioClip startGameSound;
 
-    private bool hasStartedGame;
-
     void Start()
     {
         ClearAllSaves();
@@ -15,10 +13,6 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
-        if (hasStartedGame)
-            return;
-
-        hasStartedGame = true;
         AudioClip clip = startGameSound;
         if (clip == null && SoundManager.Instance != null)
             clip = SoundManager.Instance.buttonClick;
