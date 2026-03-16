@@ -12,7 +12,7 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("ColorSelectScene"); // Use your actual scene name here
+        SceneManager.LoadScene("TutorialScene"); // Use your actual scene name here
     }
 
     public void OpenOptions()

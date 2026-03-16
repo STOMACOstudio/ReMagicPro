@@ -10,6 +10,6 @@ public class MerchantNavigation : MonoBehaviour
 
     public void ExitMerchant()
     {
-        SceneManager.LoadScene("MapScene");
+        SceneManager.LoadScene("FarmScene");
     }
 }

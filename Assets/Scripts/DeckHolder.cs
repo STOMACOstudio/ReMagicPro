@@ -9,7 +9,7 @@ public static class DeckHolder
     public static bool IsDeckEditorOpenedAdditively;
     public static bool RestoreGameplayCursorOnDeckEditorClose;
 
-    public static string GetDeckEditorReturnScene(string fallbackSceneName = "MapScene")
+    public static string GetDeckEditorReturnScene(string fallbackSceneName = "FarmScene")
     {
         return string.IsNullOrEmpty(DeckEditorReturnSceneName) ? fallbackSceneName : DeckEditorReturnSceneName;
     }

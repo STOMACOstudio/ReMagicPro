@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public static class BattleData
 {
-    private const string DefaultReturnSceneName = "MapScene";
+    private const string DefaultReturnSceneName = "FarmScene";
 
     public static string CurrentZoneId = null;
     public static string LastCompletedZoneId = null;
