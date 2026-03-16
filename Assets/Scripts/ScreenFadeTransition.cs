@@ -5,9 +5,13 @@ using UnityEngine.UI;
 
 public class ScreenFadeTransition : MonoBehaviour
 {
+    private const string TutorialSceneName = "TutorialScene";
+
     private static ScreenFadeTransition instance;
 
-    [SerializeField] private float defaultFadeDuration = 0.65f;
+    [Header("Durations")]
+    [SerializeField] private float fadeOutDuration = 1.8f;
+    [SerializeField] private float fadeInDuration = 2.2f;
 
     private Canvas overlayCanvas;
     private Image overlayImage;
@@ -53,18 +57,25 @@ public class ScreenFadeTransition : MonoBehaviour
         EnsureOverlay();
     }
 
+    private void Start()
+    {
+        // Cover direct boot/load into tutorial (sceneLoaded callback can be missed for the very first scene).
+        if (SceneManager.GetActiveScene().name == TutorialSceneName)
+            StartFadeInFromBlack();
+    }
+
     private void OnDestroy()
     {
         if (instance == this)
             SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void FadeToScene(string sceneName, float fadeDuration = -1f)
+    public void FadeToScene(string sceneName, float customFadeOutDuration = -1f)
     {
         if (string.IsNullOrWhiteSpace(sceneName))
             return;
 
-        float duration = fadeDuration > 0f ? fadeDuration : defaultFadeDuration;
+        float duration = customFadeOutDuration > 0f ? customFadeOutDuration : fadeOutDuration;
         pendingFadeInScene = sceneName;
 
         if (activeFadeCoroutine != null)
@@ -84,18 +95,24 @@ public class ScreenFadeTransition : MonoBehaviour
 
     private void OnSceneLoaded(Scene loadedScene, LoadSceneMode mode)
     {
-        bool shouldFadeIn = loadedScene.name == pendingFadeInScene || loadedScene.name == "TutorialScene";
+        bool shouldFadeIn = loadedScene.name == pendingFadeInScene || loadedScene.name == TutorialSceneName;
         pendingFadeInScene = null;
 
         if (!shouldFadeIn)
             return;
 
+        StartFadeInFromBlack();
+    }
+
+    private void StartFadeInFromBlack()
+    {
         if (activeFadeCoroutine != null)
             StopCoroutine(activeFadeCoroutine);
 
         EnsureOverlay();
         overlayImage.color = new Color(0f, 0f, 0f, 1f);
-        activeFadeCoroutine = StartCoroutine(FadeFromBlack(defaultFadeDuration));
+        overlayImage.raycastTarget = true;
+        activeFadeCoroutine = StartCoroutine(FadeFromBlack(fadeInDuration));
     }
 
     private IEnumerator FadeFromBlack(float duration)
