@@ -17,6 +17,7 @@ public class ScreenFadeTransition : MonoBehaviour
     private Image overlayImage;
     private Coroutine activeFadeCoroutine;
     private string pendingFadeInScene;
+    private bool isTransitioning;
 
     public static ScreenFadeTransition Instance
     {
@@ -72,11 +73,12 @@ public class ScreenFadeTransition : MonoBehaviour
 
     public void FadeToScene(string sceneName, float customFadeOutDuration = -1f)
     {
-        if (string.IsNullOrWhiteSpace(sceneName))
+        if (string.IsNullOrWhiteSpace(sceneName) || isTransitioning)
             return;
 
         float duration = customFadeOutDuration > 0f ? customFadeOutDuration : fadeOutDuration;
         pendingFadeInScene = sceneName;
+        isTransitioning = true;
 
         if (activeFadeCoroutine != null)
             StopCoroutine(activeFadeCoroutine);
@@ -101,6 +103,7 @@ public class ScreenFadeTransition : MonoBehaviour
         if (!shouldFadeIn)
             return;
 
+        isTransitioning = true;
         StartCoroutine(BeginFadeInNextFrame());
     }
 
@@ -129,6 +132,7 @@ public class ScreenFadeTransition : MonoBehaviour
     {
         yield return Fade(1f, 0f, duration);
         overlayImage.raycastTarget = false;
+        isTransitioning = false;
     }
 
     private IEnumerator Fade(float from, float to, float duration)
