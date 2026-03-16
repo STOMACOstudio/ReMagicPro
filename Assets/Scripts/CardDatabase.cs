@@ -988,6 +988,24 @@ public static class CardDatabase
                     flavorText = "Scholars in their ivory towers call them 'sharks of the sky'. Scholars on the road don't call them at all.",
                     artwork = Resources.Load<Sprite>("Art/fighting_drake")
                     });
+                Add(new CardData //Air elemental
+                    {
+                    cardName = "Air Elemental",
+                    artist = "Wayne England",
+                    rarity = "Uncommon",
+                    manaCost = 5,
+                    color = new List<string> { "Blue", "Blue" },
+                    cardType = CardType.Creature,
+                    power = 5,
+                    toughness = 4,
+                    subtypes = new List<string> { "Elemental" },
+                    keywordAbilities = new List<KeywordAbility>
+                    {
+                        KeywordAbility.Flying
+                    },
+                    flavorText = "Where psycho meets cyclone.",
+                    artwork = Resources.Load<Sprite>("Art/air_elemental")
+                    });
                 Add(new CardData //Mahamoti djinn
                     {
                     cardName = "Mahamoti Djinn",
@@ -6224,13 +6242,28 @@ public static class CardDatabase
                         cardName = "Sleep",
                         artist = "Sora AI",
                         rarity = "Common",
-                        manaCost = 3,
+                        manaCost = 4,
                         color = new List<string> { "Blue" },
                         cardType = CardType.Enchantment,
                         subtypes = new List<string> { "Aura" },
                         requiredTargetType = SorceryCard.TargetType.TappedCreature,
                         keywordBuff = KeywordAbility.CantUntap,
                         artwork = Resources.Load<Sprite>("Art/sleep"),
+                        rulesText = "Enchanted creature cannot untap.",
+                    });
+                Add(new CardData // Dehydratation
+                    {
+                        cardName = "Dehydratation",
+                        artist = "Arnie Swekel",
+                        rarity = "Common",
+                        manaCost = 4,
+                        color = new List<string> { "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        requiredTargetType = SorceryCard.TargetType.Creature,
+                        keywordBuff = KeywordAbility.CantUntap,
+                        artwork = Resources.Load<Sprite>("Art/dehydratation"),
+                        flavorText = "Cry to the sun and watch as even your tears forsake you.\n-Acolyte of Marit Lage",
                         rulesText = "Enchanted creature cannot untap.",
                     });
 

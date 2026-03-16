@@ -277,12 +277,12 @@ public static class DeckDatabase
     public static void BuildScimitarDeck(Player ai)
         {
             ai.Deck.Clear();
-            AddCards(ai, "Island", 17);
+            AddCards(ai, "Plains", 17);
             AddCards(ai, "Dancing Scimitar", 3);
             AddCards(ai, "Short Sword", 4);
             AddCards(ai, "Ogre's Cleaver", 4);
             AddCards(ai, "Greatsword", 4);
-            AddCards(ai, "Yotian Soldier", 4);
+            AddCards(ai, "Wall of Swords", 4);
             AddCards(ai, "Kite Shield", 3);
             ai.StartingPermanents.Add(CardFactory.Create("Dancing Scimitar"));
         }
