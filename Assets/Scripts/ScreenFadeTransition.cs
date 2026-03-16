@@ -11,7 +11,6 @@ public class ScreenFadeTransition : MonoBehaviour
 
     [Header("Durations")]
     [SerializeField] private float fadeOutDuration = 1.8f;
-    [SerializeField] private float fadeInDuration = 2.2f;
 
     private Canvas overlayCanvas;
     private Image overlayImage;
@@ -112,7 +111,7 @@ public class ScreenFadeTransition : MonoBehaviour
         EnsureOverlay();
         overlayImage.color = new Color(0f, 0f, 0f, 1f);
         overlayImage.raycastTarget = true;
-        activeFadeCoroutine = StartCoroutine(FadeFromBlack(fadeInDuration));
+        activeFadeCoroutine = StartCoroutine(FadeFromBlack(fadeOutDuration));
     }
 
     private IEnumerator FadeFromBlack(float duration)
