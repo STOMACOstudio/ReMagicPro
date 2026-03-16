@@ -61,7 +61,7 @@ public class ScreenFadeTransition : MonoBehaviour
     {
         // Cover direct boot/load into tutorial (sceneLoaded callback can be missed for the very first scene).
         if (SceneManager.GetActiveScene().name == TutorialSceneName)
-            StartFadeInFromBlack();
+            StartCoroutine(BeginFadeInNextFrame());
     }
 
     private void OnDestroy()
@@ -101,6 +101,16 @@ public class ScreenFadeTransition : MonoBehaviour
         if (!shouldFadeIn)
             return;
 
+        StartCoroutine(BeginFadeInNextFrame());
+    }
+
+    private IEnumerator BeginFadeInNextFrame()
+    {
+        // Ensure the new scene has rendered at least one frame with black overlay before fading out.
+        EnsureOverlay();
+        overlayImage.color = new Color(0f, 0f, 0f, 1f);
+        overlayImage.raycastTarget = true;
+        yield return null;
         StartFadeInFromBlack();
     }
 
@@ -162,7 +172,7 @@ public class ScreenFadeTransition : MonoBehaviour
 
         overlayCanvas = canvasObject.GetComponent<Canvas>();
         overlayCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        overlayCanvas.sortingOrder = short.MaxValue;
+        overlayCanvas.sortingOrder = 100000;
 
         CanvasScaler canvasScaler = canvasObject.GetComponent<CanvasScaler>();
         canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
