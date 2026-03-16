@@ -96,7 +96,7 @@ public static class CardDatabase
                 Add(new CardData // Spirit Away
                     {
                         cardName = "Spirit Away",
-                        artist = "Sora AI",
+                        artist = "Greg Staples",
                         rarity = "Rare",
                         manaCost = 7,
                         color = new List<string> { "Blue", "Blue" },
@@ -107,6 +107,7 @@ public static class CardDatabase
                         toughnessBuff = 2,
                         keywordBuff = KeywordAbility.Flying,
                         artwork = Resources.Load<Sprite>("Art/spirit_away"),
+                        flavorText = "The fear of slipping from the geist's tenuous grip overwhelmed Tolo's joy at his first flight.",
                         rulesText = "You control enchanted creature. Enchanted creature gets +2/+2 and has flying."
                     });
                 Add(new CardData //Iconoclast monk
