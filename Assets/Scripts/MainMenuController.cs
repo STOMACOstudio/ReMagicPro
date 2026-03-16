@@ -7,8 +7,11 @@ public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private AudioClip startGameSound;
     [Header("Transition Fade")]
-    [SerializeField, Min(0.1f)] private float fadeToBlackDuration = 2.5f;
-    [SerializeField, Min(0.1f)] private float tutorialFadeInDuration = 1.75f;
+    [SerializeField, Min(0f)] private float fadeToBlackDuration = 2.5f;
+    [SerializeField, Min(0f)] private float tutorialFadeInDuration = 1.75f;
+
+    private const float DefaultFadeToBlackDuration = 2.5f;
+    private const float DefaultTutorialFadeInDuration = 1.75f;
 
     private bool isTransitioning;
 
@@ -38,13 +41,21 @@ public class MainMenuController : MonoBehaviour
     {
         SceneTransitionFader fader = SceneTransitionFader.Create(Color.black);
 
-        float safeFadeOutDuration = Mathf.Max(0.1f, fadeToBlackDuration);
-        float safeFadeInDuration = Mathf.Max(0.1f, tutorialFadeInDuration);
+        float safeFadeOutDuration = ResolveDurationOrDefault(fadeToBlackDuration, DefaultFadeToBlackDuration);
+        float safeFadeInDuration = ResolveDurationOrDefault(tutorialFadeInDuration, DefaultTutorialFadeInDuration);
 
         yield return fader.Fade(0f, 1f, safeFadeOutDuration);
 
         fader.ScheduleFadeInAfterSceneLoad(safeFadeInDuration);
         SceneManager.LoadScene("TutorialScene");
+    }
+
+    private float ResolveDurationOrDefault(float configuredDuration, float fallbackDuration)
+    {
+        if (configuredDuration > 0f)
+            return configuredDuration;
+
+        return fallbackDuration;
     }
 
     public void OpenOptions()
