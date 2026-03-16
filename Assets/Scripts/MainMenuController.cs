@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+    [SerializeField] private AudioClip startGameSound;
+
     void Start()
     {
         ClearAllSaves();
@@ -12,6 +14,13 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayGame()
     {
+        AudioClip clip = startGameSound;
+        if (clip == null && SoundManager.Instance != null)
+            clip = SoundManager.Instance.buttonClick;
+
+        if (clip != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlaySound(clip);
+
         SceneManager.LoadScene("TutorialScene"); // Use your actual scene name here
     }
 

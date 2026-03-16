@@ -333,7 +333,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 0}
+  targetText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDelay: 0.08
   fadeSpeed: 5
+  hoverSound: {fileID: 8300000, guid: f49b485b5daf2db45bfb8eee21b458c4, type: 3}
 --- !u!1 &242010781
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,13 +480,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242010781}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aea7ca882a575f74a91c0ad53e53d2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 0}
+  targetText: {fileID: 578114257}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDelay: 0.08
   fadeSpeed: 5
+  hoverSound: {fileID: 8300000, guid: f49b485b5daf2db45bfb8eee21b458c4, type: 3}
 --- !u!1 &257117179
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,13 +637,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 257117179}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aea7ca882a575f74a91c0ad53e53d2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 0}
+  targetText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDelay: 0.08
   fadeSpeed: 5
+  hoverSound: {fileID: 0}
 --- !u!1 &406877547
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,7 +1058,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 0}
+  targetText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hoverDelay: 0.08
   fadeSpeed: 5
+  hoverSound: {fileID: 8300000, guid: f49b485b5daf2db45bfb8eee21b458c4, type: 3}
 --- !u!1 &831938930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,6 +1968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f200063edf5441443a84152e3d5ff7b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startGameSound: {fileID: 8300000, guid: 148accef7eada7140bded6a6a46027b9, type: 3}
 --- !u!1001 &8758939357999093041
 PrefabInstance:
   m_ObjectHideFlags: 0
