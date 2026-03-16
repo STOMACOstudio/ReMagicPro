@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -21,7 +20,7 @@ public class MainMenuController : MonoBehaviour
         if (clip != null && SoundManager.Instance != null)
             SoundManager.Instance.PlaySound(clip);
 
-        SceneManager.LoadScene("TutorialScene"); // Use your actual scene name here
+        ScreenFadeTransition.Instance.FadeToScene("TutorialScene");
     }
 
     public void OpenOptions()
