@@ -44,10 +44,7 @@ public class MainMenuController : MonoBehaviour
         float safeFadeOutDuration = ResolveDurationOrDefault(fadeToBlackDuration, DefaultFadeToBlackDuration);
         float safeFadeInDuration = ResolveDurationOrDefault(tutorialFadeInDuration, DefaultTutorialFadeInDuration);
 
-        yield return fader.Fade(0f, 1f, safeFadeOutDuration);
-
-        fader.ScheduleFadeInAfterSceneLoad(safeFadeInDuration);
-        SceneManager.LoadScene("TutorialScene");
+        yield return fader.TransitionToScene("TutorialScene", safeFadeOutDuration, safeFadeInDuration);
     }
 
     private float ResolveDurationOrDefault(float configuredDuration, float fallbackDuration)

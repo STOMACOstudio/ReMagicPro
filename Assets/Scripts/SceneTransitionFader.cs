@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class SceneTransitionFader : MonoBehaviour
 {
     private CanvasGroup overlay;
-    private float fadeInDuration;
-    private bool fadeInScheduled;
 
     public static SceneTransitionFader Create(Color color)
     {
@@ -42,14 +40,19 @@ public class SceneTransitionFader : MonoBehaviour
         return fader;
     }
 
-    private void OnEnable()
+    public IEnumerator TransitionToScene(string sceneName, float fadeOutDuration, float fadeInDuration)
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
+        yield return Fade(0f, 1f, fadeOutDuration);
 
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName);
+        while (!loadOperation.isDone)
+            yield return null;
+
+        // Let first frame of the loaded scene render while still covered by black.
+        yield return null;
+
+        yield return Fade(1f, 0f, fadeInDuration);
+        Destroy(gameObject);
     }
 
     public IEnumerator Fade(float from, float to, float duration)
@@ -74,27 +77,5 @@ public class SceneTransitionFader : MonoBehaviour
         }
 
         overlay.alpha = to;
-    }
-
-    public void ScheduleFadeInAfterSceneLoad(float duration)
-    {
-        fadeInDuration = duration;
-        fadeInScheduled = true;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (!fadeInScheduled)
-            return;
-
-        fadeInScheduled = false;
-        StartCoroutine(FadeInAndDestroy());
-    }
-
-    private IEnumerator FadeInAndDestroy()
-    {
-        yield return null;
-        yield return Fade(1f, 0f, fadeInDuration);
-        Destroy(gameObject);
     }
 }
