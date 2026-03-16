@@ -846,7 +846,6 @@ public static class CardDatabase
                     {
                         ActivatedAbility.TapToDrawCards
                     },
-                    rulesText = "Tap: Draw a card.",
                     flavorText = "Knowledge is a feast for the mind. Savor every swallow.",
                     artwork = Resources.Load<Sprite>("Art/archivist")
                     });
@@ -929,7 +928,6 @@ public static class CardDatabase
                     {
                         KeywordAbility.CantBeBlocked
                     },
-                    rulesText = "This creature can't be blocked.",
                     flavorText = "It can pass though solid matter-but that doesn't mean it's harmless.",
                     artwork = Resources.Load<Sprite>("Art/phantom_warrior")
                     });
@@ -948,7 +946,6 @@ public static class CardDatabase
                     {
                         KeywordAbility.CantBeBlocked
                     },
-                    rulesText = "This creature can't be blocked.",
                     flavorText = "To merfolk, pirates are a nuisance. To pirates, merfolk are a threat. To the kraken, they're both appetizers.",
                     artwork = Resources.Load<Sprite>("Art/tidal_kraken")
                     });
@@ -3438,7 +3435,6 @@ public static class CardDatabase
                         KeywordAbility.MustAttackEachTurnIfAble,
                         KeywordAbility.CantBeBlockedByWalls,
                     },
-                    rulesText = "This creature attacks each combat if able.\nThis creature can't be blocked by Walls.",
                     flavorText = "Urza's machines have a splendid habit of excavating themselves.\n-Rona, disciple of Gix",
                     artwork = Resources.Load<Sprite>("Art/juggernaut")
                     });
