@@ -48,6 +48,8 @@ public class MainMenuController : MonoBehaviour
         fadeImage.transform.SetParent(fadeCanvas.transform, false);
         fadeImage.color = new Color(0f, 0f, 0f, 0f);
 
+        DontDestroyOnLoad(fadeCanvas.gameObject);
+
         RectTransform imageRect = fadeImage.rectTransform;
         imageRect.anchorMin = Vector2.zero;
         imageRect.anchorMax = Vector2.one;
@@ -66,6 +68,18 @@ public class MainMenuController : MonoBehaviour
         }
 
         SceneManager.LoadScene(sceneName);
+
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float alpha = Mathf.Clamp01(1f - (elapsed / duration));
+            fadeImage.color = new Color(0f, 0f, 0f, alpha);
+            yield return null;
+        }
+
+        Destroy(fadeCanvas.gameObject);
+        isTransitioning = false;
     }
 
     public void OpenOptions()
