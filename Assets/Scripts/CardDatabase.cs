@@ -93,6 +93,22 @@ public static class CardDatabase
                         flavorText = "Glory surged through her and radiance surrounded her. All things were possible with the blessing of the Divine.",
                         rulesText = "Enchanted creature gets +3/+3."
                     });
+                Add(new CardData // Spirit Away
+                    {
+                        cardName = "Spirit Away",
+                        artist = "Sora AI",
+                        rarity = "Rare",
+                        manaCost = 7,
+                        color = new List<string> { "Blue", "Blue" },
+                        cardType = CardType.Enchantment,
+                        subtypes = new List<string> { "Aura" },
+                        gainControlOfCreature = true,
+                        powerBuff = 2,
+                        toughnessBuff = 2,
+                        keywordBuff = KeywordAbility.Flying,
+                        artwork = Resources.Load<Sprite>("Art/spirit_away"),
+                        rulesText = "You control enchanted creature. Enchanted creature gets +2/+2 and has flying."
+                    });
                 Add(new CardData //Iconoclast monk
                     {
                         cardName = "Iconoclast Monk",
