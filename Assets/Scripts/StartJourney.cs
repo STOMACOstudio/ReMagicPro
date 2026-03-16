@@ -23,6 +23,6 @@ public class StartJourney : MonoBehaviour
     {
         loadingOverlay.SetActive(true); // show dark screen + text + animation
         yield return new WaitForSeconds(0.5f); // optional, so player sees it
-        SceneManager.LoadScene("DeckBuilderScene");
+        SceneManager.LoadScene("DeckEditorScene");
     }
 }
