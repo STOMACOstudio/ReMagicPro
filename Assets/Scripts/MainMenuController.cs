@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private AudioClip startGameSound;
-    [SerializeField] private float fadeDuration = 0.6f;
+    [SerializeField] private float fadeDuration = 1f;
 
     private bool isTransitioning;
 
