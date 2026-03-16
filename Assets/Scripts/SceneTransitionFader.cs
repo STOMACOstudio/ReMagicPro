@@ -78,7 +78,7 @@ public class SceneTransitionFader : MonoBehaviour
 
     public void ScheduleFadeInAfterSceneLoad(float duration)
     {
-        fadeInDuration = duration;
+        fadeInDuration = Mathf.Max(0.1f, duration);
         fadeInScheduled = true;
     }
 
