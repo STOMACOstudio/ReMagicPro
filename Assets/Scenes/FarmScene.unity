@@ -12382,7 +12382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5515462060551976636, guid: b9953978854a476478601e00abda30cf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.12246054
+      value: -0.36
       objectReference: {fileID: 0}
     - target: {fileID: 5515462060551976636, guid: b9953978854a476478601e00abda30cf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -47416,6 +47416,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11100000, guid: bc600cce01eb57a409f4e69025868a2c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -47459,8 +47463,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.450327, z: 2.4535656}
-  m_Center: {x: 0.0000000029219467, y: 0.2251632, z: 0.72678304}
+  m_Size: {x: 1, y: 1.7522849, z: 2.4535656}
+  m_Center: {x: 0.000000004818575, y: 0.3761422, z: 0.72678304}
 --- !u!114 &1362002209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49111,7 +49115,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510472566}
   m_LocalRotation: {x: 0.02431272, y: 0.6395858, z: -0.76795137, w: -0.024279572}
-  m_LocalPosition: {x: 0, y: 0, z: -0.0022090673}
+  m_LocalPosition: {x: 0, y: 0, z: 0.317}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -49119,7 +49123,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 78.861, y: -20.735, z: -200.733}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.178, y: 0.989}
+  m_AnchoredPosition: {x: -0.225, y: 1.06}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1510472568
@@ -66325,6 +66329,18 @@ PrefabInstance:
     - target: {fileID: 653690818426243751, guid: 4adfa00d9e22c764abcba5c4acc0fa93, type: 3}
       propertyPath: m_Name
       value: yotian_soldier
+      objectReference: {fileID: 0}
+    - target: {fileID: 4054022763091482595, guid: 4adfa00d9e22c764abcba5c4acc0fa93, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00512
+      objectReference: {fileID: 0}
+    - target: {fileID: 4054022763091482595, guid: 4adfa00d9e22c764abcba5c4acc0fa93, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.00158
+      objectReference: {fileID: 0}
+    - target: {fileID: 4054022763091482595, guid: 4adfa00d9e22c764abcba5c4acc0fa93, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.00523
       objectReference: {fileID: 0}
     - target: {fileID: 7395756284350327379, guid: 4adfa00d9e22c764abcba5c4acc0fa93, type: 3}
       propertyPath: m_IsTrigger

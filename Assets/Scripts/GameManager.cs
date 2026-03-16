@@ -3228,35 +3228,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(returnSceneName);
     }
 
-    void PickRandomBeginnerDeck(Player ai)
-    {
-        var decks = new System.Action<Player>[]
-        {
-                    DeckDatabase.BuildWhiteBeginnerDeck,
-                    DeckDatabase.BuildBlueBeginnerDeck,
-                    DeckDatabase.BuildBlackBeginnerDeck,
-                    DeckDatabase.BuildRedBeginnerDeck,
-                    DeckDatabase.BuildGreenBeginnerDeck,
-                    DeckDatabase.BuildRuinsDeck
-        };
-
-        decks[Random.Range(0, decks.Length)](ai);
-    }
-
-    void PickRandomAdvancedDeck(Player ai)
-    {
-        var decks = new System.Action<Player>[]
-        {
-                    DeckDatabase.BuildWhiteAdvancedDeck,
-                    DeckDatabase.BuildBlueAdvancedDeck,
-                    DeckDatabase.BuildBlackAdvancedDeck,
-                    DeckDatabase.BuildRedAdvancedDeck,
-                    DeckDatabase.BuildGreenAdvancedDeck
-        };
-
-        decks[Random.Range(0, decks.Length)](ai);
-    }
-
     void LoadDeckByKey(Player ai, string key)
     {
         switch (key)
@@ -3297,51 +3268,6 @@ public class GameManager : MonoBehaviour
                 break;
             case "Deck_Scimitar":
                 DeckDatabase.BuildScimitarDeck(ai);
-                break;
-            case "Deck_Boss":
-                DeckDatabase.BuildBossDeck(ai);
-                break;
-
-            // BEGINNER (6)
-            case "Deck_Shore":
-                DeckDatabase.BuildBlueBeginnerDeck(ai);
-                break;
-            case "Deck_Camp":
-                DeckDatabase.BuildRedBeginnerDeck(ai);
-                break;
-            case "Deck_Graveyard":
-                DeckDatabase.BuildBlackBeginnerDeck(ai);
-                break;
-            case "Deck_Thicket":
-                DeckDatabase.BuildGreenBeginnerDeck(ai);
-                break;
-            case "Deck_Village":
-                DeckDatabase.BuildWhiteBeginnerDeck(ai);
-                break;
-            case "Deck_Ruins":
-                DeckDatabase.BuildRuinsDeck(ai);
-                break;
-
-            // ADVANCED (5)
-            case "Deck_Church":
-                DeckDatabase.BuildWhiteAdvancedDeck(ai);
-                break;
-            case "Deck_Tower":
-                DeckDatabase.BuildBlueAdvancedDeck(ai);
-                break;
-            case "Deck_Hut":
-                DeckDatabase.BuildBlackAdvancedDeck(ai);
-                break;
-            case "Deck_Nest":
-                DeckDatabase.BuildRedAdvancedDeck(ai);
-                break;
-            case "Deck_Woods":
-                DeckDatabase.BuildGreenAdvancedDeck(ai);
-                break;
-
-            default:
-                Debug.LogWarning("Unknown deck key: " + key + " — using fallback.");
-                DeckDatabase.BuildStarterDeck(ai);
                 break;
         }
     }
