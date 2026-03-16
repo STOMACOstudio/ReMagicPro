@@ -40,6 +40,12 @@ public class SceneTransitionFader : MonoBehaviour
         return fader;
     }
 
+
+    public void BeginTransition(string sceneName, float fadeOutDuration, float fadeInDuration)
+    {
+        StartCoroutine(TransitionToScene(sceneName, fadeOutDuration, fadeInDuration));
+    }
+
     public IEnumerator TransitionToScene(string sceneName, float fadeOutDuration, float fadeInDuration)
     {
         yield return Fade(0f, 1f, fadeOutDuration);
