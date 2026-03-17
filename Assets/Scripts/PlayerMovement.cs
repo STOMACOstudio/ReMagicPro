@@ -16,12 +16,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement Settings")]
     public float maxSpeed = 5f;
+    public float runSpeedMultiplier = 1.75f;
     public float acceleration = 12f;
     public float deceleration = 10f;
     public float mouseSensitivity = 1f;
     public float gravity = -20f;
     public float groundedVerticalSpeed = -2f;
     public float maxFallSpeed = -50f;
+    public float walkFootstepPitch = 1f;
+    public float runFootstepPitch = 1.35f;
 
     [Header("Intro Settings")]
     public string tutorialSceneName = "TutorialScene";
@@ -48,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
     private float landingTimer = 0f;
     private bool isTutorialScene = false;
     private float verticalVelocity = 0f;
+    private bool isRunning = false;
 
     void Start()
     {
@@ -121,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
     {
         currentVelocity = Vector3.zero;
         verticalVelocity = 0f;
+        isRunning = false;
     }
 
     void HandleDeckEditorShortcut()
@@ -233,14 +238,21 @@ public class PlayerMovement : MonoBehaviour
     void Move()
     {
         if (Keyboard.current == null)
+        {
+            isRunning = false;
             return;
+        }
 
         // Calculate input
         float x = (Keyboard.current.dKey.isPressed ? 1 : 0) - (Keyboard.current.aKey.isPressed ? 1 : 0);
         float z = (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0);
+        bool hasMovementInput = Mathf.Abs(x) > 0f || Mathf.Abs(z) > 0f;
+        bool shiftHeld = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
+        isRunning = hasMovementInput && shiftHeld;
 
         Vector3 inputDir = (transform.right * x + transform.forward * z).normalized;
-        Vector3 targetVelocity = inputDir * maxSpeed;
+        float targetSpeed = isRunning ? maxSpeed * runSpeedMultiplier : maxSpeed;
+        Vector3 targetVelocity = inputDir * targetSpeed;
 
         // Apply acceleration/deceleration
         float lerpSpeed = (inputDir.magnitude > 0) ? acceleration : deceleration;
@@ -284,11 +296,16 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleFootsteps()
     {
+        if (footstepAudio == null)
+            return;
+
         if (landingTimer > 0)
         {
             landingTimer -= Time.deltaTime;
             return;
         }
+
+        footstepAudio.pitch = isRunning ? runFootstepPitch : walkFootstepPitch;
 
         if (currentVelocity.magnitude > 0.1f)
         {
@@ -304,5 +321,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (footstepAudio != null && footstepAudio.isPlaying)
             footstepAudio.Stop();
+
+        if (footstepAudio != null)
+            footstepAudio.pitch = walkFootstepPitch;
     }
 }
