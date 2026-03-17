@@ -617,8 +617,9 @@ public class TurnSystem : MonoBehaviour
                         
 
 
-                        // Use equip abilities on free equipment before casting from hand.
-                        TryEquipFreeAIEquipment(ai);
+                        // Use one equip ability at a time before casting from hand.
+                        if (TryEquipFreeAIEquipment(ai))
+                            return;
 
                         // Play as many cards as AI can afford
                         bool playedCard = true;
@@ -2270,7 +2271,7 @@ public class TurnSystem : MonoBehaviour
                 return pool;
             }
 
-        private void TryEquipFreeAIEquipment(Player ai)
+        private bool TryEquipFreeAIEquipment(Player ai)
             {
                 var creatures = ai.Battlefield
                     .OfType<CreatureCard>()
@@ -2280,7 +2281,7 @@ public class TurnSystem : MonoBehaviour
                     .ToList();
 
                 if (!creatures.Any())
-                    return;
+                    return false;
 
                 foreach (EquipmentCard equipment in ai.Battlefield.OfType<EquipmentCard>())
                 {
@@ -2306,8 +2307,13 @@ public class TurnSystem : MonoBehaviour
                     GameManager.Instance.FindCardVisual(equipment)?.UpdateVisual();
                     GameManager.Instance.FindCardVisual(target)?.UpdateVisual();
 
+                    waitingToResumeAI = true;
+                    lastPhaseBeforeStack = currentPhase;
                     Log($"AI equips {equipment.cardName} to {target.cardName}.");
+                    return true;
                 }
+
+                return false;
             }
 
         private bool TapLandForColor(Player ai, string color)
