@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
         }
         
         // Setup initial camera and position
-        xRotation = initialLookDownAngle;
+        xRotation = isTutorialScene ? initialLookDownAngle : 0f;
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         if (isTutorialScene)
