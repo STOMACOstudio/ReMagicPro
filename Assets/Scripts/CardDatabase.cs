@@ -1927,7 +1927,7 @@ public static class CardDatabase
                         activatedAbilities = new List<ActivatedAbility> { ActivatedAbility.Equip },
                         rulesText = "Equipped creature gets +5/+0.",
                         flavorText = "She adopted the weapon of the slave-lord Kazuul, and with it, all his cruelty.",
-                        artwork = Resources.Load<Sprite>("Art/ogres_axe")
+                        artwork = Resources.Load<Sprite>("Art/ogres_cleaver")
                     });
 
                 Add(new CardData // Greatsword
