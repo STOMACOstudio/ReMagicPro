@@ -226,6 +226,9 @@ public class TurnSystem : MonoBehaviour
                         case TurnPhase.ConfirmAttackers:
                             ConfirmAttackers();
                             break;
+                        case TurnPhase.ChooseBlockers:
+                            ConfirmBlockers();
+                            break;
                         case TurnPhase.ChooseAttackers:
                             waitingForPlayerInput = false;
                             HideAllConfirmButtons();
@@ -246,7 +249,10 @@ public class TurnSystem : MonoBehaviour
     {
         return waitingForPlayerInput &&
                (currentPlayer == PlayerType.Human ||
-                (currentPlayer == PlayerType.AI && currentPhase == TurnPhase.PreCombat));
+                (currentPlayer == PlayerType.AI &&
+                 (currentPhase == TurnPhase.PreCombat ||
+                  currentPhase == TurnPhase.ChooseBlockers ||
+                  currentPhase == TurnPhase.ConfirmBlockers)));
     }
 
     private static bool IsAdvanceShortcutPressedThisFrame()
