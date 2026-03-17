@@ -3232,6 +3232,23 @@ public class GameManager : MonoBehaviour
     {
         switch (key)
         {
+            // BEGINNER COLOR DECKS
+            case "Deck_Village":
+                DeckDatabase.BuildBeginnerDeck(ai, "white");
+                break;
+            case "Deck_Shore":
+                DeckDatabase.BuildBeginnerDeck(ai, "blue");
+                break;
+            case "Deck_Graveyard":
+                DeckDatabase.BuildBeginnerDeck(ai, "black");
+                break;
+            case "Deck_Camp":
+                DeckDatabase.BuildBeginnerDeck(ai, "red");
+                break;
+            case "Deck_Thicket":
+                DeckDatabase.BuildBeginnerDeck(ai, "green");
+                break;
+
             // STARTER + BOSS
             case "Deck_Starter":
                 DeckDatabase.BuildStarterDeck(ai);
@@ -3268,6 +3285,10 @@ public class GameManager : MonoBehaviour
                 break;
             case "Deck_Scimitar":
                 DeckDatabase.BuildScimitarDeck(ai);
+                break;
+            default:
+                Debug.LogWarning($"Unknown AI deck key '{key}'. Falling back to starter deck.");
+                DeckDatabase.BuildStarterDeck(ai);
                 break;
         }
     }
