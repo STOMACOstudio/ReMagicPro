@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class ResolveButtonUI : MonoBehaviour
 {
     [SerializeField] private Button resolveButton;
+    [SerializeField] private Button pauseStackButton;
 
     void Awake()
     {
@@ -12,18 +13,36 @@ public class ResolveButtonUI : MonoBehaviour
             resolveButton.onClick.AddListener(OnResolveClick);
             resolveButton.gameObject.SetActive(false);
         }
+
+        if (pauseStackButton != null)
+        {
+            pauseStackButton.onClick.AddListener(OnPauseClick);
+            pauseStackButton.gameObject.SetActive(false);
+        }
     }
 
     void Update()
     {
+        GameManager manager = GameManager.Instance;
+        bool stackActive = manager != null && manager.IsStackActive();
+
         if (resolveButton != null)
+            resolveButton.gameObject.SetActive(stackActive);
+
+        if (pauseStackButton != null)
         {
-            resolveButton.gameObject.SetActive(GameManager.Instance != null && GameManager.Instance.IsStackActive());
+            pauseStackButton.gameObject.SetActive(stackActive);
+            pauseStackButton.interactable = stackActive && !manager.IsStackTimerPaused();
         }
     }
 
     private void OnResolveClick()
     {
         GameManager.Instance?.ResolveStackNow();
+    }
+
+    private void OnPauseClick()
+    {
+        GameManager.Instance?.PauseStackTimer();
     }
 }

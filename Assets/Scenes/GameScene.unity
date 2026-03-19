@@ -2967,6 +2967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolveButton: {fileID: 250613425}
+  pauseStackButton: {fileID: 52140796}
 --- !u!1 &694764204
 GameObject:
   m_ObjectHideFlags: 0

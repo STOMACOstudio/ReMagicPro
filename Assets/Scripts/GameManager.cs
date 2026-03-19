@@ -112,6 +112,7 @@ public class GameManager : MonoBehaviour
     public bool preventAllCombatDamageThisTurn = false;
 
     private bool skipStackWait = false;
+    private bool pauseStackTimer = false;
 
     // Tracks cards already moved to the graveyard this turn to
     // prevent duplicate death triggers if CheckDeaths runs again.
@@ -163,8 +164,19 @@ public class GameManager : MonoBehaviour
         return isStackBusy || pendingStackEffects > 0;
     }
 
+    public bool IsStackTimerPaused()
+    {
+        return pauseStackTimer;
+    }
+
+    public void PauseStackTimer()
+    {
+        pauseStackTimer = true;
+    }
+
     public void ResolveStackNow()
     {
+        pauseStackTimer = false;
         skipStackWait = true;
     }
 
@@ -174,9 +186,13 @@ public class GameManager : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < seconds && !skipStackWait)
         {
-            elapsed += Time.deltaTime;
+            if (!pauseStackTimer)
+                elapsed += Time.deltaTime;
+
             yield return null;
         }
+
+        pauseStackTimer = false;
         skipStackWait = false;
     }
 
