@@ -10,6 +10,9 @@ public class SubtitleManager : MonoBehaviour
     private bool isSequencePlaying;
     private bool isInitialized;
 
+    [Header("Skip Controls")]
+    [SerializeField] private KeyCode skipKey = KeyCode.Space;
+
     [System.Serializable]
     public class SubtitleLine {
         public string text;
@@ -68,15 +71,40 @@ public class SubtitleManager : MonoBehaviour
             // Fade In
             yield return StartCoroutine(Fade(0, 1, 0.5f));
 
-            yield return new WaitForSeconds(line.displayDuration);
+            bool skipRequested = false;
+            float elapsed = 0f;
+            while (elapsed < line.displayDuration)
+            {
+                if (SkipRequested())
+                {
+                    skipRequested = true;
+                    break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
 
             // Fade Out
-            yield return StartCoroutine(Fade(1, 0, 0.5f));
-            
+            if (skipRequested)
+            {
+                canvasGroup.alpha = 0f;
+            }
+            else
+            {
+                yield return StartCoroutine(Fade(1, 0, 0.5f));
+            }
+
             subtitleText.text = ""; 
         }
 
         isSequencePlaying = false;
+    }
+
+
+    private bool SkipRequested()
+    {
+        return Input.GetKeyDown(skipKey) || Input.GetMouseButtonDown(0);
     }
 
     IEnumerator Fade(float start, float end, float duration)
