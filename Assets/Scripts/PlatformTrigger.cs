@@ -139,18 +139,21 @@ public class PlatformTrigger : MonoBehaviour
         if (!DeckHolder.IsStarterDeckRewardCollected)
             yield break;
 
-        BattleData.CurrentZoneId = null;
-        BattleData.CurrentDeckKey = deckKey;
-        BattleData.ClearRewardCards();
-        BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
-        BattleData.IsBattleOpenedAdditively = true;
-        BattleData.TriggeringPlatform = this;
-        BattleData.PauseReturnScene();
+        bool started = BattleData.TryBeginBattleTransition(
+            deckKey: deckKey,
+            zoneId: null,
+            returnSceneName: SceneManager.GetActiveScene().name,
+            rewardCards: null,
+            triggeringPlatform: this,
+            pauseReturnScene: true);
+        if (!started)
+            yield break;
 
         SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Additive);
         Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);
         if (battleScene.IsValid() && battleScene.isLoaded)
         {
+            BattleData.MarkBattleSceneLoaded();
             EventSystemUtility.EnableOnlyForScene(battleScene);
             EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
