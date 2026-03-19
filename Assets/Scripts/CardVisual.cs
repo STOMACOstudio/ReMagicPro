@@ -1239,7 +1239,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     phase == TurnSystem.TurnPhase.ConfirmBlockers);
 
             bool canHumanActivateCreatureAbilities =
-                (humanMainPhaseWindow || humanCombatPriorityWindow);
+                (humanMainPhaseWindow || humanCombatPriorityWindow || GameManager.Instance.IsStackActive());
 
             bool canActivateArtifact =
                 (
@@ -1253,7 +1253,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         (phase == TurnSystem.TurnPhase.PreCombat ||
                          phase == TurnSystem.TurnPhase.ChooseBlockers ||
                          phase == TurnSystem.TurnPhase.ConfirmBlockers))
-                );
+                ) || GameManager.Instance.IsStackActive();
 
             if (linkedCard.activatedAbilities != null &&
             linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
@@ -2052,6 +2052,16 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                     else
                     {
+                        if (GameManager.Instance.IsStackActive())
+                        {
+                            // Instant-speed response while stack is active:
+                            // allow adding this instant to the stack regardless of phase.
+                            GameManager.Instance.CancelOptionalTargeting();
+                            GameManager.Instance.PlayCard(GameManager.Instance.humanPlayer, this);
+                            UpdateVisual();
+                            return;
+                        }
+
                         bool validTime = (humansTurn && (mainPhase || preCombatPhase || combatPhase)) ||
                                          (!humansTurn && (preCombatPhase || combatPhase));
                         if (!validTime)
