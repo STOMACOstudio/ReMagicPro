@@ -161,13 +161,20 @@ public class CardGameTrigger : MonoBehaviour
     {
         string trimmedDeckKey = string.IsNullOrWhiteSpace(enemyDeckKey) ? "Deck_Starter" : enemyDeckKey.Trim();
 
-        BattleData.CurrentZoneId = null;
-        BattleData.CurrentDeckKey = trimmedDeckKey;
-        BattleData.SetRewardCards(cardRewardOptions);
-        BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
-        BattleData.IsBattleOpenedAdditively = true;
-        BattleData.TriggeringPlatform = null;
-        BattleData.PauseReturnScene();
+        bool started = BattleData.TryBeginBattleTransition(
+            deckKey: trimmedDeckKey,
+            zoneId: null,
+            returnSceneName: SceneManager.GetActiveScene().name,
+            rewardCards: cardRewardOptions,
+            triggeringPlatform: null,
+            pauseReturnScene: true);
+        if (!started)
+        {
+            waitingForBattleToEnd = false;
+            if (interactionTextObject != null && playerInRange)
+                interactionTextObject.SetActive(true);
+            return;
+        }
 
         // The trigger scene gets disabled immediately after this call, so persist the
         // transition state now to ensure battle-end detection is correct on return.
@@ -177,6 +184,7 @@ public class CardGameTrigger : MonoBehaviour
         Scene battleScene = SceneManager.GetSceneByName(BattleSceneName);
         if (battleScene.IsValid() && battleScene.isLoaded)
         {
+            BattleData.MarkBattleSceneLoaded();
             EventSystemUtility.EnableOnlyForScene(battleScene);
             EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
