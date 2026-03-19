@@ -1239,8 +1239,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     phase == TurnSystem.TurnPhase.ConfirmBlockers);
 
             bool canHumanActivateCreatureAbilities =
-                (humanMainPhaseWindow || humanCombatPriorityWindow) &&
-                !GameManager.Instance.IsStackActive();
+                (humanMainPhaseWindow || humanCombatPriorityWindow);
 
             bool canActivateArtifact =
                 (
@@ -1254,7 +1253,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         (phase == TurnSystem.TurnPhase.PreCombat ||
                          phase == TurnSystem.TurnPhase.ChooseBlockers ||
                          phase == TurnSystem.TurnPhase.ConfirmBlockers))
-                ) && !GameManager.Instance.IsStackActive();
+                );
 
             if (linkedCard.activatedAbilities != null &&
             linkedCard.activatedAbilities.Contains(ActivatedAbility.TapForMana) &&
@@ -2055,9 +2054,9 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     {
                         bool validTime = (humansTurn && (mainPhase || preCombatPhase || combatPhase)) ||
                                          (!humansTurn && (preCombatPhase || combatPhase));
-                        if (GameManager.Instance.IsStackActive() || !validTime)
+                        if (!validTime)
                         {
-                            Debug.Log("Instants can only be cast during your main phases, pre-combat priority, or combat priority when the stack is empty.");
+                            Debug.Log("Instants can only be cast during your main phases, pre-combat priority, or combat priority.");
                             return;
                         }
                     }

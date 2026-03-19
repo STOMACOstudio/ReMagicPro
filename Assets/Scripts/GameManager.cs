@@ -113,6 +113,9 @@ public class GameManager : MonoBehaviour
 
     private bool skipStackWait = false;
     private bool pauseStackTimer = false;
+    private int nextStackItemId = 1;
+    private readonly List<int> stackItemIds = new List<int>();
+    private readonly Dictionary<int, Transform> stackItemVisualRoots = new Dictionary<int, Transform>();
 
     // Tracks cards already moved to the graveyard this turn to
     // prevent duplicate death triggers if CheckDeaths runs again.
@@ -161,7 +164,67 @@ public class GameManager : MonoBehaviour
 
     public bool IsStackActive()
     {
-        return isStackBusy || pendingStackEffects > 0;
+        return stackItemIds.Count > 0;
+    }
+
+    private int RegisterStackItem(Transform visualRoot)
+    {
+        int stackItemId = nextStackItemId++;
+        stackItemIds.Add(stackItemId);
+        if (visualRoot != null)
+            stackItemVisualRoots[stackItemId] = visualRoot;
+
+        isStackBusy = true;
+        pendingStackEffects = stackItemIds.Count;
+        RefreshStackVisualLayout();
+        return stackItemId;
+    }
+
+    private void UnregisterStackItem(int stackItemId)
+    {
+        stackItemIds.Remove(stackItemId);
+        stackItemVisualRoots.Remove(stackItemId);
+        pendingStackEffects = stackItemIds.Count;
+        isStackBusy = stackItemIds.Count > 0;
+        RefreshStackVisualLayout();
+    }
+
+    private bool IsTopStackItem(int stackItemId)
+    {
+        return stackItemIds.Count > 0 && stackItemIds[stackItemIds.Count - 1] == stackItemId;
+    }
+
+    private IEnumerator WaitForStackItemTurnAndDelay(int stackItemId, float seconds)
+    {
+        skipStackWait = false;
+        float elapsed = 0f;
+
+        while (elapsed < seconds && !skipStackWait)
+        {
+            if (IsTopStackItem(stackItemId) && !pauseStackTimer)
+                elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        pauseStackTimer = false;
+        skipStackWait = false;
+    }
+
+    private void RefreshStackVisualLayout()
+    {
+        float horizontalOffset = 42f;
+        for (int i = 0; i < stackItemIds.Count; i++)
+        {
+            int stackItemId = stackItemIds[i];
+            if (!stackItemVisualRoots.TryGetValue(stackItemId, out Transform root) || root == null)
+                continue;
+
+            bool isTop = i == stackItemIds.Count - 1;
+            root.localPosition = new Vector3((i - (stackItemIds.Count - 1)) * horizontalOffset, isTop ? 0f : -12f, 0f);
+            root.localRotation = Quaternion.identity;
+            root.localScale = Vector3.one;
+        }
     }
 
     public bool IsStackTimerPaused()
@@ -346,12 +409,6 @@ public class GameManager : MonoBehaviour
 
     public void PlayCard(Player player, CardVisual visual)
     {
-        if (IsStackActive())
-        {
-            Debug.Log("A spell is already on the stack. Please wait.");
-            return;
-        }
-
         Card card = visual.linkedCard;
         if (!CanPlayCardNow(player, card))
             return;
@@ -398,6 +455,16 @@ public class GameManager : MonoBehaviour
 
     private bool CanPlayCardNow(Player player, Card card)
     {
+        CardData cardData = CardDatabase.GetCardData(card.cardName);
+        bool isInstantSpell = cardData != null && cardData.cardType == CardType.Instant;
+        bool isStackInteraction = isInstantSpell;
+
+        if (IsStackActive() && !isStackInteraction)
+        {
+            Debug.Log("Only instants and activated/triggered abilities can be added while the stack has items.");
+            return false;
+        }
+
         // MTG timing guard for non-instant card types in this project:
         // lands and permanent/sorcery spells can only be played on your own main phase.
         if (TurnSystem.Instance != null)
@@ -406,8 +473,6 @@ public class GameManager : MonoBehaviour
                                  (TurnSystem.Instance.currentPlayer == TurnSystem.PlayerType.AI && player == aiPlayer);
             bool isMainPhase = TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main1 ||
                                TurnSystem.Instance.currentPhase == TurnSystem.TurnPhase.Main2;
-            CardData cardData = CardDatabase.GetCardData(card.cardName);
-            bool isInstantSpell = cardData != null && cardData.cardType == CardType.Instant;
             bool requiresMainPhaseTiming = card is LandCard ||
                                           card is CreatureCard ||
                                           (card is SorceryCard && !isInstantSpell) ||
@@ -471,13 +536,13 @@ public class GameManager : MonoBehaviour
 
         ApplyColorlessReduction(cost, reduction);
 
-        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer, out int stackItemId))
         {
             Debug.Log("Not enough colored mana to cast this creature.");
             return;
         }
 
-        StartCoroutine(ResolveCreatureAfterDelay(creature, visual, player));
+        StartCoroutine(ResolveCreatureAfterDelay(creature, visual, player, stackItemId));
     }
 
     private void TryCastSorcery(Player player, CardVisual visual, Card card, SorceryCard sorcery)
@@ -490,13 +555,13 @@ public class GameManager : MonoBehaviour
         }
 
         var cost = BuildSpellCost(sorcery, player);
-        if (!TryMoveSpellToStack(player, visual, card, cost, true))
+        if (!TryMoveSpellToStack(player, visual, card, cost, true, out int stackItemId))
         {
             Debug.Log("Not enough colored mana to cast this sorcery.");
             return;
         }
 
-        StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player));
+        StartCoroutine(ResolveSorceryAfterDelay(sorcery, visual, player, stackItemId));
     }
 
     private void TryCastArtifact(Player player, CardVisual visual, Card card, ArtifactCard artifact)
@@ -506,25 +571,25 @@ public class GameManager : MonoBehaviour
         int reduction = (artData != null && artData.subtypes.Contains("Potion")) ? GetPotionCostReduction(player) : 0;
         ApplyColorlessReduction(cost, reduction);
 
-        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer, out int stackItemId))
         {
             Debug.Log("Not enough colored mana to play this artifact.");
             return;
         }
 
-        StartCoroutine(ResolveArtifactAfterDelay(artifact, visual, player));
+        StartCoroutine(ResolveArtifactAfterDelay(artifact, visual, player, stackItemId));
     }
 
     private void TryCastEnchantment(Player player, CardVisual visual, Card card, EnchantmentCard enchantment)
     {
         var cost = BuildSpellCost(enchantment, player);
-        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer))
+        if (!TryMoveSpellToStack(player, visual, card, cost, player == humanPlayer, out int stackItemId))
         {
             Debug.Log("Not enough colored mana to play this enchantment.");
             return;
         }
 
-        StartCoroutine(ResolveEnchantmentAfterDelay(enchantment, visual, player));
+        StartCoroutine(ResolveEnchantmentAfterDelay(enchantment, visual, player, stackItemId));
     }
 
     private Dictionary<string, int> BuildSpellCost(Card card, Player player)
@@ -548,12 +613,11 @@ public class GameManager : MonoBehaviour
             cost["Colorless"] = Mathf.Max(0, cost["Colorless"] - reduction);
     }
 
-    private bool TryMoveSpellToStack(Player player, CardVisual visual, Card card, Dictionary<string, int> cost, bool shouldUpdateUi)
+    private bool TryMoveSpellToStack(Player player, CardVisual visual, Card card, Dictionary<string, int> cost, bool shouldUpdateUi, out int stackItemId)
     {
+        stackItemId = -1;
         if (!player.ColoredMana.CanPay(cost))
             return false;
-
-        isStackBusy = true;
         player.ColoredMana.Pay(cost);
 
         if (card.hasXCost)
@@ -571,9 +635,7 @@ public class GameManager : MonoBehaviour
 
         visual.transform.SetParent(stackZone, false);
         visual.isInStack = true;
-        visual.transform.localPosition = Vector3.zero;
-        visual.transform.localRotation = Quaternion.identity;
-        visual.transform.localScale = Vector3.one;
+        stackItemId = RegisterStackItem(visual.transform);
         SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
         return true;
     }
@@ -1246,9 +1308,9 @@ public class GameManager : MonoBehaviour
         CardData data = CardDatabase.GetCardData(instant.cardName);
         visual.Setup(instant, this, data);
 
-        visual.transform.localPosition = Vector3.zero;
         visual.transform.SetParent(stackZone, false);
         visual.isInStack = true;
+        int stackItemId = RegisterStackItem(visual.transform);
 
         if (!activeCardVisuals.Contains(visual))
             activeCardVisuals.Add(visual);
@@ -1256,14 +1318,13 @@ public class GameManager : MonoBehaviour
         UpdateUI();
         SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-        isStackBusy = true;
         if (TurnSystem.Instance != null)
         {
             TurnSystem.Instance.waitingToResumeAI = true;
             TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
         }
 
-        StartCoroutine(ResolveSorceryAfterDelay(instant, visual, aiPlayer));
+        StartCoroutine(ResolveSorceryAfterDelay(instant, visual, aiPlayer, stackItemId));
         return true;
     }
 
@@ -1560,9 +1621,9 @@ public class GameManager : MonoBehaviour
         TryAICastUnsummon(creature, $"responding to {incomingSpell.cardName}");
     }
 
-    public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster)
+    public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
             // PREVENT executing if required target is missing
             if (sorcery.requiresTarget && sorcery.chosenTarget == null && sorcery.chosenPlayerTarget == null)
@@ -1576,7 +1637,7 @@ public class GameManager : MonoBehaviour
                     GameObject.Destroy(visual.gameObject);
                 }
 
-                isStackBusy = false;
+                UnregisterStackItem(stackItemId);
                 yield break;
             }
 
@@ -1604,10 +1665,10 @@ public class GameManager : MonoBehaviour
             }
 
             UpdateUI();
-            isStackBusy = false;
             CheckForGameEnd();
+            UnregisterStackItem(stackItemId);
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1615,9 +1676,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public IEnumerator ResolveCreatureAfterDelay(CreatureCard creature, CardVisual visual, Player caster)
+    public IEnumerator ResolveCreatureAfterDelay(CreatureCard creature, CardVisual visual, Player caster, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
             caster.Battlefield.Add(creature);
 
@@ -1677,10 +1738,10 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundManager.Instance.playCreature);
 
             UpdateUI();
-            isStackBusy = false;
             CheckForGameEnd();
+            UnregisterStackItem(stackItemId);
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1688,9 +1749,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public IEnumerator ResolveArtifactAfterDelay(ArtifactCard artifact, CardVisual visual, Player caster)
+    public IEnumerator ResolveArtifactAfterDelay(ArtifactCard artifact, CardVisual visual, Player caster, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
             caster.Battlefield.Add(artifact);
 
@@ -1716,10 +1777,10 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             UpdateUI();
-            isStackBusy = false;
             CheckForGameEnd();
+            UnregisterStackItem(stackItemId);
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1727,9 +1788,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    public IEnumerator ResolveEnchantmentAfterDelay(EnchantmentCard enchantment, CardVisual visual, Player caster)
+    public IEnumerator ResolveEnchantmentAfterDelay(EnchantmentCard enchantment, CardVisual visual, Player caster, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
             caster.Battlefield.Add(enchantment);
 
@@ -1755,10 +1816,10 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             UpdateUI();
-            isStackBusy = false;
             CheckForGameEnd();
+            UnregisterStackItem(stackItemId);
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1766,9 +1827,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster)
+        public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         caster.Battlefield.Add(aura);
         aura.OnEnterPlay(caster);
@@ -1780,8 +1841,8 @@ public class GameManager : MonoBehaviour
             {
                 // Aura may have destroyed itself via its effect
                 UpdateUI();
-                isStackBusy = false;
-                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+                UnregisterStackItem(stackItemId);
+                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
                 {
                     TurnSystem.Instance.waitingToResumeAI = false;
                     TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
@@ -1809,10 +1870,10 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundManager.Instance.playArtifact);
 
             UpdateUI();
-            isStackBusy = false;
             CheckForGameEnd();
+            UnregisterStackItem(stackItemId);
 
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -1827,8 +1888,6 @@ public class GameManager : MonoBehaviour
         Card target,
         Card deadCreature = null)
     {
-        yield return new WaitUntil(() => !isStackBusy);
-        isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
         GameObject stackObj = Instantiate(cardPrefab, stackZone);
@@ -1836,9 +1895,7 @@ public class GameManager : MonoBehaviour
         stackVisual.Setup(source, this);
         stackVisual.isInStack = true;
         stackVisual.UpdateVisual();
-        stackVisual.transform.localPosition = Vector3.zero;
-        stackVisual.transform.localRotation = Quaternion.identity;
-        stackVisual.transform.localScale = Vector3.one;
+        int stackItemId = RegisterStackItem(stackObj.transform);
 
         GameObject triggerVFX = null;
         if (triggerVFXPrefab != null)
@@ -1849,7 +1906,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return WaitForStackOrSkip(2f);
+        yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         Card previousDead = lastDeadCreature;
         if (deadCreature != null)
@@ -1879,11 +1936,10 @@ public class GameManager : MonoBehaviour
         if (triggerVFX != null)
             Destroy(triggerVFX);
         Destroy(stackObj);
-        isStackBusy = false;
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        UnregisterStackItem(stackItemId);
         CheckForGameEnd();
 
-        if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
         {
             Debug.Log("Resuming AI phase after stack.");
             TurnSystem.Instance.waitingToResumeAI = false;
@@ -1893,20 +1949,16 @@ public class GameManager : MonoBehaviour
 
     public void QueueArtifactActivatedAbility(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
-        pendingStackEffects++;
         StartCoroutine(ResolveArtifactActivatedAbilityOnStack(artifact, ability, controller, target));
     }
 
     public void QueueEquipmentEquipAbility(EquipmentCard equipment, CreatureCard target, Player controller)
     {
-        pendingStackEffects++;
         StartCoroutine(ResolveEquipmentEquipAbilityOnStack(equipment, target, controller));
     }
 
     public IEnumerator ResolveArtifactActivatedAbilityOnStack(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
     {
-        yield return new WaitUntil(() => !isStackBusy);
-        isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
         GameObject stackObj = Instantiate(cardPrefab, stackZone);
@@ -1914,9 +1966,7 @@ public class GameManager : MonoBehaviour
         stackVisual.Setup(artifact, this);
         stackVisual.isInStack = true;
         stackVisual.UpdateVisual();
-        stackVisual.transform.localPosition = Vector3.zero;
-        stackVisual.transform.localRotation = Quaternion.identity;
-        stackVisual.transform.localScale = Vector3.one;
+        int stackItemId = RegisterStackItem(stackObj.transform);
 
         GameObject triggerVFX = null;
         if (triggerVFXPrefab != null)
@@ -1927,7 +1977,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return WaitForStackOrSkip(2f);
+        yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         try
         {
@@ -2007,11 +2057,10 @@ public class GameManager : MonoBehaviour
             if (triggerVFX != null)
                 Destroy(triggerVFX);
             Destroy(stackObj);
-            isStackBusy = false;
-            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+            UnregisterStackItem(stackItemId);
             CheckForGameEnd();
 
-            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -2022,14 +2071,11 @@ public class GameManager : MonoBehaviour
 
     public void QueueCreatureActivatedAbility(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null, Player playerTarget = null)
     {
-        pendingStackEffects++;
         StartCoroutine(ResolveCreatureActivatedAbilityOnStack(creature, ability, controller, target, playerTarget));
     }
 
     public IEnumerator ResolveCreatureActivatedAbilityOnStack(CreatureCard creature, ActivatedAbility ability, Player controller, Card target = null, Player playerTarget = null)
     {
-        yield return new WaitUntil(() => !isStackBusy);
-        isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
         GameObject stackObj = Instantiate(cardPrefab, stackZone);
@@ -2037,9 +2083,7 @@ public class GameManager : MonoBehaviour
         stackVisual.Setup(creature, this);
         stackVisual.isInStack = true;
         stackVisual.UpdateVisual();
-        stackVisual.transform.localPosition = Vector3.zero;
-        stackVisual.transform.localRotation = Quaternion.identity;
-        stackVisual.transform.localScale = Vector3.one;
+        int stackItemId = RegisterStackItem(stackObj.transform);
 
         GameObject triggerVFX = null;
         if (triggerVFXPrefab != null)
@@ -2050,7 +2094,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return WaitForStackOrSkip(2f);
+        yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         switch (ability)
         {
@@ -2125,11 +2169,10 @@ public class GameManager : MonoBehaviour
         if (triggerVFX != null)
             Destroy(triggerVFX);
         Destroy(stackObj);
-        isStackBusy = false;
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+        UnregisterStackItem(stackItemId);
         CheckForGameEnd();
 
-        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
         {
             Debug.Log("Resuming AI phase after stack.");
             TurnSystem.Instance.waitingToResumeAI = false;
@@ -2139,8 +2182,6 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator ResolveEquipmentEquipAbilityOnStack(EquipmentCard equipment, CreatureCard target, Player controller)
     {
-        yield return new WaitUntil(() => !isStackBusy);
-        isStackBusy = true;
         TurnSystem.Instance.lastPhaseBeforeStack = TurnSystem.Instance.currentPhase;
 
         GameObject stackObj = Instantiate(cardPrefab, stackZone);
@@ -2148,9 +2189,7 @@ public class GameManager : MonoBehaviour
         stackVisual.Setup(equipment, this);
         stackVisual.isInStack = true;
         stackVisual.UpdateVisual();
-        stackVisual.transform.localPosition = Vector3.zero;
-        stackVisual.transform.localRotation = Quaternion.identity;
-        stackVisual.transform.localScale = Vector3.one;
+        int stackItemId = RegisterStackItem(stackObj.transform);
 
         GameObject triggerVFX = null;
         if (triggerVFXPrefab != null)
@@ -2161,7 +2200,7 @@ public class GameManager : MonoBehaviour
                 rt.anchoredPosition = Vector2.zero;
         }
 
-        yield return WaitForStackOrSkip(2f);
+        yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         try
         {
@@ -2192,11 +2231,10 @@ public class GameManager : MonoBehaviour
             if (triggerVFX != null)
                 Destroy(triggerVFX);
             Destroy(stackObj);
-            isStackBusy = false;
-            pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
+            UnregisterStackItem(stackItemId);
             CheckForGameEnd();
 
-            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && pendingStackEffects == 0)
+            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
             {
                 Debug.Log("Resuming AI phase after stack.");
                 TurnSystem.Instance.waitingToResumeAI = false;
@@ -3438,9 +3476,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-    private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual)
+    private IEnumerator ResolveTargetedSorceryAfterDelay(Card target, Player caster, SorceryCard sorcery, CardVisual visual, int stackItemId = -1)
     {
-        yield return WaitForStackOrSkip(2f);
+        yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
         // Give AI a chance to protect a threatened creature with Unsummon.
         TryAIDefensiveUnsummonResponse(sorcery, target, caster);
@@ -3459,7 +3497,7 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateUI();
-        isStackBusy = false;
+        UnregisterStackItem(stackItemId);
     }
 
     public void CompleteTargetSelection(CardVisual targetVisual)
@@ -3735,7 +3773,6 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            isStackBusy = true;
             targetingPlayer.ColoredMana.Pay(cost);
             targetingPlayer.Hand.Remove(targetingAura);
 
@@ -3747,14 +3784,12 @@ public class GameManager : MonoBehaviour
             {
                 targetingVisual.transform.SetParent(stackZone, false);
                 targetingVisual.isInStack = true;
-                targetingVisual.transform.localPosition = Vector3.zero;
-                targetingVisual.transform.localRotation = Quaternion.identity;
-                targetingVisual.transform.localScale = Vector3.one;
                 targetingVisual.EnableTargetingHighlight(false);
             }
+            int stackItemId = targetingVisual != null ? RegisterStackItem(targetingVisual.transform) : -1;
             SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-            StartCoroutine(ResolveAuraAfterDelay(targetingAura, targetingVisual, targetingPlayer));
+            StartCoroutine(ResolveAuraAfterDelay(targetingAura, targetingVisual, targetingPlayer, stackItemId));
 
             targetingAura = null;
             targetingPlayer = null;
@@ -3863,15 +3898,13 @@ public class GameManager : MonoBehaviour
 
                 targetingVisual.transform.SetParent(stackZone, false);
                 targetingVisual.isInStack = true;
-                targetingVisual.transform.localPosition = Vector3.zero;
-                targetingVisual.transform.localRotation = Quaternion.identity;
-                targetingVisual.transform.localScale = Vector3.one;
+                int stackItemId = RegisterStackItem(targetingVisual.transform);
                 SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
                 if (targetingVisual != null)
                     targetingVisual.EnableTargetingHighlight(false);
 
-                StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual));
+                StartCoroutine(ResolveTargetedSorceryAfterDelay(chosen, targetingPlayer, targetingSorcery, targetingVisual, stackItemId));
 
                 targetingSorcery = null;
                 targetingPlayer = null;
@@ -3912,7 +3945,7 @@ public class GameManager : MonoBehaviour
 
             targetingVisual = null;
             isTargetingMode = false;
-            isStackBusy = false;
+            isStackBusy = IsStackActive();
 
             UpdateUI();
         }
@@ -3960,7 +3993,7 @@ public class GameManager : MonoBehaviour
             isTargetingMode = false;
             targetingPlayer = null;
             targetingVisual = null;
-            isStackBusy = false;
+            isStackBusy = IsStackActive();
             UpdateUI();
             return;
         }
@@ -4004,13 +4037,11 @@ public class GameManager : MonoBehaviour
 
         // Move visual to stack
         targetingVisual.transform.SetParent(stackZone, false);
-            targetingVisual.isInStack = true;
-            targetingVisual.transform.localPosition = Vector3.zero;
-            targetingVisual.transform.localRotation = Quaternion.identity;
-            targetingVisual.transform.localScale = Vector3.one;
+        targetingVisual.isInStack = true;
+            int stackItemId = RegisterStackItem(targetingVisual.transform);
             SoundManager.Instance.PlaySound(SoundManager.Instance.cardPlay);
 
-            StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual));
+            StartCoroutine(ResolveTargetedSorceryOnPlayerAfterDelay(targetPlayer, targetingPlayer, targetingSorcery, targetingVisual, stackItemId));
 
             if (targetingPlayer == aiPlayer && targetingVisual != null)
             {
@@ -4024,7 +4055,6 @@ public class GameManager : MonoBehaviour
             targetingVisual = null;
 
             UpdateUI();
-            isStackBusy = false;
         }
 
     private bool IsProtectedFromSpell(Card card)
@@ -4038,9 +4068,9 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-    private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual)
+    private IEnumerator ResolveTargetedSorceryOnPlayerAfterDelay(Player targetPlayer, Player caster, SorceryCard sorcery, CardVisual visual, int stackItemId = -1)
         {
-            yield return WaitForStackOrSkip(2f);
+            yield return WaitForStackItemTurnAndDelay(stackItemId, 2f);
 
             sorcery.ResolveEffectOnPlayer(caster, targetPlayer);
             SendToGraveyard(sorcery, caster, fromStack: true);
@@ -4052,7 +4082,7 @@ public class GameManager : MonoBehaviour
             }
 
             UpdateUI();
-            isStackBusy = false;
+            UnregisterStackItem(stackItemId);
         }
     
     public Dictionary<string, int> GetManaCostBreakdown(int totalCost, List<string> color)
