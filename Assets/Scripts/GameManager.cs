@@ -208,16 +208,26 @@ public class GameManager : MonoBehaviour
 
         skipStackWait = false;
         float elapsed = 0f;
+        bool wasTopOnPreviousFrame = false;
 
         while (elapsed < seconds)
         {
             bool isTop = IsTopStackItem(stackItemId);
+            if (!isTop && wasTopOnPreviousFrame)
+            {
+                // If this item was about to resolve but a new response was added on top,
+                // restart its timer so each item gets a full delay once it becomes active again.
+                elapsed = 0f;
+            }
+
             bool resolveNowForThisItem = isTop && resolveNowStackItemId == stackItemId;
             if (resolveNowForThisItem)
                 break;
 
             if (!skipStackWait && isTop && !pauseStackTimer)
                 elapsed += Time.deltaTime;
+
+            wasTopOnPreviousFrame = isTop;
 
             yield return null;
         }
