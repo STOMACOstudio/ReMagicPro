@@ -6,12 +6,12 @@ TerrainLayer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WasserLayer
-  m_DiffuseTexture: {fileID: 2800000, guid: e17b76d74f656084c8d1bd2ed2abe652, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: 413eb2c32f692534695aeae9f6dd53de, type: 3}
+  m_Name: Marsh2
+  m_DiffuseTexture: {fileID: 2800000, guid: fd3517e51bf60254b9d2c824f4205e57, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: 1c1e996b576618c4f858a9804f98be1c, type: 3}
   m_MaskMapTexture: {fileID: 0}
-  m_TileSize: {x: 4, y: 4}
-  m_TileOffset: {x: 3.0470846, y: 2.6946907}
+  m_TileSize: {x: 2, y: 2}
+  m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0
   m_Smoothness: 0
@@ -19,5 +19,5 @@ TerrainLayer:
   m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
-  m_MaskMapRemapMax: {x: 0.99999994, y: 0.99999994, z: 1, w: 1}
+  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_SmoothnessSource: 1
