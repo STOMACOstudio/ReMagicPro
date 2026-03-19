@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class SubtitleManager : MonoBehaviour
 {
@@ -104,8 +107,48 @@ public class SubtitleManager : MonoBehaviour
 
     private bool SkipRequested()
     {
-        return Input.GetKeyDown(skipKey) || Input.GetMouseButtonDown(0);
+        bool skipRequested = false;
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+        skipRequested |= Input.GetKeyDown(skipKey) || Input.GetMouseButtonDown(0);
+#endif
+
+#if ENABLE_INPUT_SYSTEM
+        skipRequested |= IsInputSystemSkipPressed();
+#endif
+
+        return skipRequested;
     }
+
+#if ENABLE_INPUT_SYSTEM
+    private bool IsInputSystemSkipPressed()
+    {
+        bool keyboardSkip = false;
+        if (Keyboard.current != null)
+        {
+            Key mappedKey = MapLegacyKeyCode(skipKey);
+            keyboardSkip = mappedKey != Key.None
+                ? Keyboard.current[mappedKey].wasPressedThisFrame
+                : Keyboard.current.spaceKey.wasPressedThisFrame;
+        }
+
+        bool mouseSkip = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        return keyboardSkip || mouseSkip;
+    }
+
+    private static Key MapLegacyKeyCode(KeyCode keyCode)
+    {
+        switch (keyCode)
+        {
+            case KeyCode.Space: return Key.Space;
+            case KeyCode.Return: return Key.Enter;
+            case KeyCode.KeypadEnter: return Key.NumpadEnter;
+            case KeyCode.Escape: return Key.Escape;
+            case KeyCode.Tab: return Key.Tab;
+            default: return Key.None;
+        }
+    }
+#endif
 
     IEnumerator Fade(float start, float end, float duration)
     {
