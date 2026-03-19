@@ -87,17 +87,21 @@ public class MapZoneUIManager : MonoBehaviour
 
         Debug.Log("Engaging zone: " + selectedZone.zoneId);
         //BattleData.CurrentZone = selectedZone;
-        BattleData.CurrentZoneId = selectedZone.zoneId;
-        BattleData.CurrentDeckKey = selectedZone.deckKey;
-        BattleData.ClearRewardCards();
-        BattleData.ReturnSceneName = SceneManager.GetActiveScene().name;
-        BattleData.IsBattleOpenedAdditively = true;
-        BattleData.PauseReturnScene();
+        bool started = BattleData.TryBeginBattleTransition(
+            deckKey: selectedZone.deckKey,
+            zoneId: selectedZone.zoneId,
+            returnSceneName: SceneManager.GetActiveScene().name,
+            rewardCards: null,
+            triggeringPlatform: null,
+            pauseReturnScene: true);
+        if (!started)
+            return;
 
         SceneManager.LoadScene("GameScene", LoadSceneMode.Additive);
         Scene battleScene = SceneManager.GetSceneByName("GameScene");
         if (battleScene.IsValid() && battleScene.isLoaded)
         {
+            BattleData.MarkBattleSceneLoaded();
             EventSystemUtility.EnableOnlyForScene(battleScene);
             EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);

@@ -3190,6 +3190,7 @@ public class GameManager : MonoBehaviour
 
         if (BattleData.IsBattleOpenedAdditively)
         {
+            BattleData.TryBeginReturnToWorld();
             Scene returnScene = SceneManager.GetSceneByName(returnSceneName);
             if (returnScene.IsValid() && returnScene.isLoaded)
             {
@@ -3205,9 +3206,7 @@ public class GameManager : MonoBehaviour
                     BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
                 }
 
-                BattleData.TriggeringPlatform = null;
-                BattleData.IsBattleOpenedAdditively = false;
-                BattleData.ReturnSceneName = null;
+                BattleData.CompleteReturnToWorld();
                 SceneManager.UnloadSceneAsync("GameScene");
                 return;
             }
@@ -3222,9 +3221,7 @@ public class GameManager : MonoBehaviour
             BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
         }
 
-        BattleData.TriggeringPlatform = null;
-        BattleData.IsBattleOpenedAdditively = false;
-        BattleData.ReturnSceneName = null;
+        BattleData.CompleteReturnToWorld();
         SceneManager.LoadScene(returnSceneName);
     }
 

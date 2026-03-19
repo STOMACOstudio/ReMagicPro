@@ -6,6 +6,14 @@ public static class BattleData
 {
     private const string DefaultReturnSceneName = "FarmScene";
 
+    public enum BattleTransitionState
+    {
+        Idle,
+        EnteringBattle,
+        InBattle,
+        ReturningToWorld
+    }
+
     public static string CurrentZoneId = null;
     public static string LastCompletedZoneId = null;
 
@@ -17,6 +25,7 @@ public static class BattleData
     public static string ReturnSceneName = null;
     public static bool IsBattleOpenedAdditively = false;
     public static PlatformTrigger TriggeringPlatform = null;
+    public static BattleTransitionState TransitionState { get; private set; } = BattleTransitionState.Idle;
 
     public static readonly List<GameObject> PausedSceneRoots = new List<GameObject>();
     private static readonly List<PlayerMovement> PausedPlayerMovements = new List<PlayerMovement>();
@@ -106,5 +115,69 @@ public static class BattleData
     public static string GetReturnScene(string fallbackSceneName = DefaultReturnSceneName)
     {
         return string.IsNullOrEmpty(ReturnSceneName) ? fallbackSceneName : ReturnSceneName;
+    }
+
+    public static bool TryBeginBattleTransition(
+        string deckKey,
+        string zoneId,
+        string returnSceneName,
+        IEnumerable<string> rewardCards = null,
+        PlatformTrigger triggeringPlatform = null,
+        bool pauseReturnScene = true)
+    {
+        if (TransitionState != BattleTransitionState.Idle)
+        {
+            Debug.LogWarning($"[BattleData] Cannot start a new battle transition while state is {TransitionState}.");
+            return false;
+        }
+
+        CurrentZoneId = zoneId;
+        CurrentDeckKey = string.IsNullOrWhiteSpace(deckKey) ? "Deck_Starter" : deckKey.Trim();
+        TriggeringPlatform = triggeringPlatform;
+        ReturnSceneName = string.IsNullOrWhiteSpace(returnSceneName) ? DefaultReturnSceneName : returnSceneName;
+        IsBattleOpenedAdditively = true;
+        SetRewardCards(rewardCards);
+
+        TransitionState = BattleTransitionState.EnteringBattle;
+
+        if (pauseReturnScene)
+            PauseReturnScene();
+
+        return true;
+    }
+
+    public static void MarkBattleSceneLoaded()
+    {
+        if (TransitionState == BattleTransitionState.EnteringBattle ||
+            TransitionState == BattleTransitionState.InBattle)
+        {
+            TransitionState = BattleTransitionState.InBattle;
+            return;
+        }
+
+        Debug.LogWarning($"[BattleData] MarkBattleSceneLoaded called while state is {TransitionState}.");
+    }
+
+    public static bool TryBeginReturnToWorld()
+    {
+        if (!IsBattleOpenedAdditively)
+            return false;
+
+        if (TransitionState == BattleTransitionState.ReturningToWorld)
+            return false;
+
+        TransitionState = BattleTransitionState.ReturningToWorld;
+        return true;
+    }
+
+    public static void CompleteReturnToWorld()
+    {
+        TriggeringPlatform = null;
+        IsBattleOpenedAdditively = false;
+        ReturnSceneName = null;
+        CurrentDeckKey = null;
+        CurrentZoneId = null;
+        ClearRewardCards();
+        TransitionState = BattleTransitionState.Idle;
     }
 }
