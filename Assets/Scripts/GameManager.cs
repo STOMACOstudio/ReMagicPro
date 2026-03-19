@@ -113,6 +113,7 @@ public class GameManager : MonoBehaviour
 
     private bool skipStackWait = false;
     private bool pauseStackTimer = false;
+    private int resolveNowStackItemId = -1;
     private int nextStackItemId = 1;
     private readonly List<int> stackItemIds = new List<int>();
     private readonly Dictionary<int, Transform> stackItemVisualRoots = new Dictionary<int, Transform>();
@@ -170,10 +171,13 @@ public class GameManager : MonoBehaviour
     private int RegisterStackItem(Transform visualRoot)
     {
         int stackItemId = nextStackItemId++;
-        stackItemIds.Add(stackItemId);
+        stackItemIds.Insert(0, stackItemId);
         if (visualRoot != null)
             stackItemVisualRoots[stackItemId] = visualRoot;
 
+        pauseStackTimer = false;
+        resolveNowStackItemId = -1;
+        skipStackWait = false;
         isStackBusy = true;
         pendingStackEffects = stackItemIds.Count;
         RefreshStackVisualLayout();
@@ -191,7 +195,7 @@ public class GameManager : MonoBehaviour
 
     private bool IsTopStackItem(int stackItemId)
     {
-        return stackItemIds.Count > 0 && stackItemIds[stackItemIds.Count - 1] == stackItemId;
+        return stackItemIds.Count > 0 && stackItemIds[0] == stackItemId;
     }
 
     private IEnumerator WaitForStackItemTurnAndDelay(int stackItemId, float seconds)
@@ -205,13 +209,21 @@ public class GameManager : MonoBehaviour
         skipStackWait = false;
         float elapsed = 0f;
 
-        while (elapsed < seconds && !skipStackWait)
+        while (elapsed < seconds)
         {
-            if (IsTopStackItem(stackItemId) && !pauseStackTimer)
+            bool isTop = IsTopStackItem(stackItemId);
+            bool resolveNowForThisItem = isTop && resolveNowStackItemId == stackItemId;
+            if (resolveNowForThisItem)
+                break;
+
+            if (!skipStackWait && isTop && !pauseStackTimer)
                 elapsed += Time.deltaTime;
 
             yield return null;
         }
+
+        if (resolveNowStackItemId == stackItemId)
+            resolveNowStackItemId = -1;
 
         pauseStackTimer = false;
         skipStackWait = false;
@@ -237,10 +249,11 @@ public class GameManager : MonoBehaviour
             if (!stackItemVisualRoots.TryGetValue(stackItemId, out Transform root) || root == null)
                 continue;
 
-            bool isTop = i == stackItemIds.Count - 1;
-            root.localPosition = new Vector3((i - (stackItemIds.Count - 1)) * horizontalOffset, isTop ? 0f : -12f, 0f);
+            bool isTop = i == 0;
+            root.localPosition = new Vector3(i * horizontalOffset, isTop ? 0f : -12f, 0f);
             root.localRotation = Quaternion.identity;
             root.localScale = Vector3.one;
+            root.SetSiblingIndex(i);
         }
     }
 
@@ -257,6 +270,12 @@ public class GameManager : MonoBehaviour
     public void ResolveStackNow()
     {
         pauseStackTimer = false;
+        if (stackItemIds.Count > 0)
+        {
+            resolveNowStackItemId = stackItemIds[0];
+            return;
+        }
+
         skipStackWait = true;
     }
 
