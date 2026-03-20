@@ -18,6 +18,8 @@ public class PlatformTrigger : MonoBehaviour
     public ParticleSystem manaParticleSystem;
     [Tooltip("Optional object (for example, a light tube) to activate after the player wins the beginner battle and returns to this scene.")]
     public GameObject postBeginnerBattleWinObject;
+    [Tooltip("If true, this entire trigger object is removed after the player wins this battle.")]
+    public bool removeAfterBattle = false;
     
     [Header("Audio")]
     public AudioClip lockSound;
@@ -193,6 +195,14 @@ public class PlatformTrigger : MonoBehaviour
 
         subtitleManager.DisplaySequence(postBeginnerBattleWinLines);
         hasPlayedPostBeginnerBattleWinSubtitles = true;
+    }
+
+    public void RemoveAfterBattleIfNeeded()
+    {
+        if (!removeAfterBattle)
+            return;
+
+        Destroy(gameObject);
     }
 
     private string ResolveBeginnerDeckKeyForPlatform()
