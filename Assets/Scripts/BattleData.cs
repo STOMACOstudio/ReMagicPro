@@ -24,6 +24,7 @@ public static class BattleData
     public static readonly List<string> CurrentRewardCardNames = new List<string>();
     public static string ReturnSceneName = null;
     public static bool IsBattleOpenedAdditively = false;
+    public static CardGameTrigger TriggeringCardGameTrigger = null;
     public static PlatformTrigger TriggeringPlatform = null;
     public static BattleTransitionState TransitionState { get; private set; } = BattleTransitionState.Idle;
 
@@ -122,6 +123,7 @@ public static class BattleData
         string zoneId,
         string returnSceneName,
         IEnumerable<string> rewardCards = null,
+        CardGameTrigger triggeringCardGameTrigger = null,
         PlatformTrigger triggeringPlatform = null,
         bool pauseReturnScene = true)
     {
@@ -133,6 +135,7 @@ public static class BattleData
 
         CurrentZoneId = zoneId;
         CurrentDeckKey = string.IsNullOrWhiteSpace(deckKey) ? "Deck_Starter" : deckKey.Trim();
+        TriggeringCardGameTrigger = triggeringCardGameTrigger;
         TriggeringPlatform = triggeringPlatform;
         ReturnSceneName = string.IsNullOrWhiteSpace(returnSceneName) ? DefaultReturnSceneName : returnSceneName;
         IsBattleOpenedAdditively = true;
@@ -172,6 +175,7 @@ public static class BattleData
 
     public static void CompleteReturnToWorld()
     {
+        TriggeringCardGameTrigger = null;
         TriggeringPlatform = null;
         IsBattleOpenedAdditively = false;
         ReturnSceneName = null;
