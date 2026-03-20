@@ -15,6 +15,8 @@ public class CardGameTrigger : MonoBehaviour
     [Header("Battle")]
     [Tooltip("Deck key from GameManager.LoadDeckByKey (for example: Deck_Shore, Deck_Camp, Deck_Boss).")]
     public string enemyDeckKey = "Deck_Starter";
+    [Tooltip("If true, this trigger object is destroyed after the player wins this battle.")]
+    public bool removeAfterBattle = false;
 
     [Tooltip("Cards the player can choose from after winning this match. Only one card can be claimed.")]
     public List<string> cardRewardOptions = new List<string>();
@@ -166,6 +168,7 @@ public class CardGameTrigger : MonoBehaviour
             zoneId: null,
             returnSceneName: SceneManager.GetActiveScene().name,
             rewardCards: cardRewardOptions,
+            triggeringCardGameTrigger: this,
             triggeringPlatform: null,
             pauseReturnScene: true);
         if (!started)
@@ -189,5 +192,13 @@ public class CardGameTrigger : MonoBehaviour
             EventSystemUtility.EnsureSingleAudioListener(battleScene);
             SceneManager.SetActiveScene(battleScene);
         }
+    }
+
+    public void RemoveAfterBattleIfNeeded()
+    {
+        if (!removeAfterBattle)
+            return;
+
+        Destroy(gameObject);
     }
 }
