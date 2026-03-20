@@ -739,6 +739,9 @@ public class TurnSystem : MonoBehaviour
                                         continue;
                                     }
 
+                                    if (!ShouldAICastMassCreatureDamageSorcery(ai, sorcery))
+                                        continue;
+
                                     if (sorcery.requiredTargetType == SorceryCard.TargetType.Creature &&
                                         sorcery.destroyTargetIfTypeMatches)
                                     {
@@ -2421,6 +2424,57 @@ public class TurnSystem : MonoBehaviour
 
                 return ai.ColoredMana.CanPay(cost);
             }
+
+        private bool ShouldAICastMassCreatureDamageSorcery(Player ai, SorceryCard sorcery)
+        {
+            bool damagesAllCreatures = sorcery.damageToEachCreatureAndPlayer > 0;
+            bool damagesAllFlyingCreatures = sorcery.damageToEachFlyingCreature > 0;
+            if (!damagesAllCreatures && !damagesAllFlyingCreatures)
+                return true;
+
+            Player opponent = GameManager.Instance.GetOpponentOf(ai);
+            int opponentDeaths = CountCreaturesKilledBySorcery(opponent, sorcery);
+            int aiDeaths = CountCreaturesKilledBySorcery(ai, sorcery);
+
+            if (opponentDeaths == 0)
+            {
+                Log($"[AI] Skipping {sorcery.cardName} — it would not kill any opposing creatures.");
+                return false;
+            }
+
+            if (opponentDeaths <= aiDeaths)
+            {
+                Log($"[AI] Skipping {sorcery.cardName} — bad trade (opponent deaths: {opponentDeaths}, AI deaths: {aiDeaths}).");
+                return false;
+            }
+
+            return true;
+        }
+
+        private int CountCreaturesKilledBySorcery(Player player, SorceryCard sorcery)
+        {
+            int damage = sorcery.damageToEachFlyingCreature > 0
+                ? sorcery.damageToEachFlyingCreature
+                : sorcery.damageToEachCreatureAndPlayer;
+            bool flyingOnly = sorcery.damageToEachFlyingCreature > 0;
+            KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(sorcery.PrimaryColor);
+
+            return player.Battlefield
+                .OfType<CreatureCard>()
+                .Count(creature =>
+                {
+                    if (creature.isDead)
+                        return false;
+                    if (creature.keywordAbilities.Contains(KeywordAbility.Indestructible))
+                        return false;
+                    if (creature.keywordAbilities.Contains(protection))
+                        return false;
+                    if (flyingOnly && !creature.keywordAbilities.Contains(KeywordAbility.Flying))
+                        return false;
+
+                    return creature.toughness <= damage;
+                });
+        }
 
         public bool TryEnsureAIManaForCost(Dictionary<string, int> cost)
         {
