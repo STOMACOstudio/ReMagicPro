@@ -1158,6 +1158,36 @@ public static class CardDatabase
                     flavorText = "Everybody knows that to ward off trouble, you knock on wood. But usually it's better to make a wall out of the wood and let trouble do the knocking.",
                     artwork = Resources.Load<Sprite>("Art/wall_of_wood")
                     });
+                Add(new CardData //Wall of blossoms
+                    {
+                        cardName = "Wall of Blossoms",
+                        artist = "Heather Hudson",
+                        rarity = "Uncommon",
+                        manaCost = 2,
+                        color = new List<string> { "Green" },
+                        cardType = CardType.Creature,
+                        power = 0,
+                        toughness = 4,
+                        subtypes = new List<string> { "Plant", "Wall" },
+                        keywordAbilities = new List<KeywordAbility> {
+                            KeywordAbility.Defender,
+                        },
+                        flavorText = "Each flower identical, every leaf and petal disturbingly exact.",
+                        artwork = Resources.Load<Sprite>("Art/wall_of_blossoms"),
+                        abilities = new List<CardAbility>
+                        {
+                            new CardAbility
+                            {
+                                timing = TriggerTiming.OnEnter,
+                                description = "draw a card.",
+                                effect = (Player owner, Card unused) =>
+                                {
+                                    GameManager.Instance.DrawCard(owner);
+                                    Debug.Log("Wall of Blossom enters: draw a card.");
+                                }
+                            }
+                        }
+                    });
                 Add(new CardData //Argothian swine
                     {
                     cardName = "Argothian Swine",

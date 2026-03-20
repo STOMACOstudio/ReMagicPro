@@ -323,4 +323,16 @@ public static class DeckDatabase
             AddCards(ai, "Wind Drake", 2);
             ai.StartingPermanents.Add(CardFactory.Create("Archivist"));
         }
+    
+    public static void BuildRootsWallDeck(Player ai)
+        {
+            ai.Deck.Clear();
+            AddCards(ai, "Forest", 21);
+            AddCards(ai, "Wall of Wood", 22);
+            AddCards(ai, "Wall of Blossoms", 4);
+            AddCards(ai, "Squall", 4);
+            AddCards(ai, "Battlegrowth", 4);
+            AddCards(ai, "Oakenform", 4);
+            ai.StartingPermanents.Add(CardFactory.Create("Wall of Wood"));
+        }
 }

@@ -3378,6 +3378,9 @@ public class GameManager : MonoBehaviour
             case "Deck_OldWomanDruid":
                 DeckDatabase.BuildOldWomanDruidDeck(ai);
                 break;
+            case "Deck_RootsWall":
+                DeckDatabase.BuildRootsWallDeck(ai);
+                break;
             case "Deck_PhantomWarrior":
                 DeckDatabase.BuildPhantomWarriorDeck(ai);
                 break;
