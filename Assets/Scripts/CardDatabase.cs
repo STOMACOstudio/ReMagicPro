@@ -1763,6 +1763,18 @@ public static class CardDatabase
                     artwork = Resources.Load<Sprite>("Art/giant_growth"),
                     });
 
+                Add(new CardData { //Squall
+                    cardName = "Squall",
+                    artist = "Unknown",
+                    rarity = "Common",
+                    cardType = CardType.Sorcery,
+                    manaCost = 3,
+                    color = new List<string> { "Green" },
+                    rulesText = "Deal 2 damage to each creature with flying.",
+                    damageToEachFlyingCreature = 2,
+                    artwork = Resources.Load<Sprite>("Art/squall"),
+                });
+
                 Add(new CardData { //Might of oaks
                     cardName = "Might of Oaks",
                     artist = "Greg Staples",

@@ -12,6 +12,7 @@ public class SorceryCard : Card
     public int cardsToDiscardorDraw = 0;
     public bool drawIfOpponentCantDiscard = true;
     public int damageToEachCreatureAndPlayer = 0;
+    public int damageToEachFlyingCreature = 0;
     public int creaturesToSacrificeEachPlayerMin = 0;
     public int creaturesToSacrificeEachPlayerMax = 0;
     public int manaToGainMin = 0;
@@ -412,6 +413,28 @@ public class SorceryCard : Card
                     GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
                     GameManager.Instance.CheckForGameEnd();
                 }
+            if (damageToEachFlyingCreature > 0)
+            {
+                foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
+                {
+                    foreach (var creature in player.Battlefield.OfType<CreatureCard>()
+                                 .Where(c => c.keywordAbilities.Contains(KeywordAbility.Flying)))
+                    {
+                        KeywordAbility protection = ProtectionUtils.GetProtectionKeyword(this.PrimaryColor);
+
+                        if (creature.keywordAbilities.Contains(protection))
+                        {
+                            continue;
+                        }
+
+                        creature.TakeDamage(damageToEachFlyingCreature);
+                    }
+                }
+
+                GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+                GameManager.Instance.CheckForGameEnd();
+            }
             if (swapGraveyardAndLibrary)
                 {
                     foreach (var player in new[] { GameManager.Instance.humanPlayer, GameManager.Instance.aiPlayer })
