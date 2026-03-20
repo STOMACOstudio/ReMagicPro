@@ -48,6 +48,8 @@ public class SorceryCard : Card
     public Player chosenPlayerTarget = null;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;
+    public int plusOneCountersToAdd = 0;
+    public int minusOneCountersToAdd = 0;
     public int controlledCreaturesPowerBuff = 0;
     public int controlledCreaturesToughnessBuff = 0;
     public bool preventAllCombatDamageThisTurn = false;
@@ -665,6 +667,18 @@ public class SorceryCard : Card
                 Debug.Log($"{plusTarget.cardName} receives {xValue} +1/+1 counters.");
             }
 
+            if (plusOneCountersToAdd > 0 && target is CreatureCard fixedPlusTarget)
+            {
+                for (int i = 0; i < plusOneCountersToAdd; i++)
+                    fixedPlusTarget.AddPlusOneCounter();
+
+                var visual = GameManager.Instance.FindCardVisual(fixedPlusTarget);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                Debug.Log($"{fixedPlusTarget.cardName} receives {plusOneCountersToAdd} +1/+1 counters.");
+            }
+
             if (addXMinusOneCounters && target is CreatureCard minusTarget && xValue > 0)
             {
                 for (int i = 0; i < xValue; i++)
@@ -679,7 +693,27 @@ public class SorceryCard : Card
 
                 Debug.Log($"{minusTarget.cardName} receives {xValue} -1/-1 counters.");
             }
-            else if (!destroyTargetIfTypeMatches && dmg <= 0 && keywordToGrant == KeywordAbility.None)
+            else if (minusOneCountersToAdd > 0 && target is CreatureCard fixedMinusTarget)
+            {
+                for (int i = 0; i < minusOneCountersToAdd; i++)
+                    fixedMinusTarget.AddMinusOneCounter();
+
+                var visual = GameManager.Instance.FindCardVisual(fixedMinusTarget);
+                if (visual != null)
+                    visual.UpdateVisual();
+
+                GameManager.Instance.CheckDeaths(GameManager.Instance.humanPlayer);
+                GameManager.Instance.CheckDeaths(GameManager.Instance.aiPlayer);
+
+                Debug.Log($"{fixedMinusTarget.cardName} receives {minusOneCountersToAdd} -1/-1 counters.");
+            }
+            else if (!destroyTargetIfTypeMatches &&
+                     dmg <= 0 &&
+                     keywordToGrant == KeywordAbility.None &&
+                     buffPower == 0 &&
+                     buffToughness == 0 &&
+                     !addXPlusOneCounters &&
+                     plusOneCountersToAdd <= 0)
             {
                 Debug.LogWarning($"{cardName} resolved on {target?.cardName ?? "null"}, but did nothing.");
             }

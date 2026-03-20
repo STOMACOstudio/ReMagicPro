@@ -101,6 +101,8 @@ public static class CardFactory
                 sorcery.lifeToGainPerCreatureAttackingYou = data.lifeToGainPerCreatureAttackingYou;
                 sorcery.addXPlusOneCounters = data.addXPlusOneCounters;
                 sorcery.addXMinusOneCounters = data.addXMinusOneCounters;
+                sorcery.plusOneCountersToAdd = data.plusOneCountersToAdd;
+                sorcery.minusOneCountersToAdd = data.minusOneCountersToAdd;
                 sorcery.creaturesToSacrificeEachPlayerMin = data.creaturesToSacrificeEachPlayerMin;
                 sorcery.creaturesToSacrificeEachPlayerMax = data.creaturesToSacrificeEachPlayerMax;
                 newCard = sorcery;

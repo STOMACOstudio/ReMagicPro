@@ -1790,6 +1790,20 @@ public static class CardDatabase
                     flavorText = "Guess where I'm going to plant this!",
                     artwork = Resources.Load<Sprite>("Art/might_of_oaks"),
                     });
+
+                Add(new CardData { //Battlegrowth
+                    cardName = "Battlegrowth",
+                    artist = "Unknown",
+                    rarity = "Common",
+                    cardType = CardType.Instant,
+                    manaCost = 1,
+                    color = new List<string> { "Green" },
+                    requiresTarget = true,
+                    requiredTargetType = SorceryCard.TargetType.Creature,
+                    plusOneCountersToAdd = 1,
+                    rulesText = "Put a +1/+1 counter on target creature.",
+                    artwork = Resources.Load<Sprite>("Art/giant_growth"),
+                    });
                 
             ///MULTI
 
