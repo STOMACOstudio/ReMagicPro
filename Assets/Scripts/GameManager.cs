@@ -3309,6 +3309,7 @@ public class GameManager : MonoBehaviour
                 {
                     BattleData.TriggeringPlatform?.ApplyCrippledState();
                     BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+                    BattleData.TriggeringPlatform?.RemoveAfterBattleIfNeeded();
                 }
 
                 BattleData.CompleteReturnToWorld();
@@ -3324,6 +3325,7 @@ public class GameManager : MonoBehaviour
         {
             BattleData.TriggeringPlatform?.ApplyCrippledState();
             BattleData.TriggeringPlatform?.PlayPostBeginnerBattleWinSubtitlesIfNeeded();
+            BattleData.TriggeringPlatform?.RemoveAfterBattleIfNeeded();
         }
 
         BattleData.CompleteReturnToWorld();
