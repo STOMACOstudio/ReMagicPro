@@ -66,6 +66,7 @@ public class CardData
     public int cardsToDiscardorDraw;
     public bool drawIfOpponentCantDiscard = true;
     public int damageToEachCreatureAndPlayer;
+    public int damageToEachFlyingCreature;
     public int manaToGain;
     public int manaToGainMin = 0;
     public int manaToGainMax = 0;
