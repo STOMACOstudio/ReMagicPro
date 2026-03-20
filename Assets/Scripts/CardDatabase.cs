@@ -1765,13 +1765,14 @@ public static class CardDatabase
 
                 Add(new CardData { //Squall
                     cardName = "Squall",
-                    artist = "Unknown",
+                    artist = "Greg Staples",
                     rarity = "Common",
                     cardType = CardType.Sorcery,
                     manaCost = 3,
                     color = new List<string> { "Green" },
                     rulesText = "Deal 2 damage to each creature with flying.",
                     damageToEachFlyingCreature = 2,
+                    flavorText = "May the winds blow till they have wakened death...\n-William Shakespeare,\nOthello",
                     artwork = Resources.Load<Sprite>("Art/squall"),
                 });
 
@@ -1793,7 +1794,7 @@ public static class CardDatabase
 
                 Add(new CardData { //Battlegrowth
                     cardName = "Battlegrowth",
-                    artist = "Unknown",
+                    artist = "John Matson",
                     rarity = "Common",
                     cardType = CardType.Instant,
                     manaCost = 1,
@@ -1802,7 +1803,8 @@ public static class CardDatabase
                     requiredTargetType = SorceryCard.TargetType.Creature,
                     plusOneCountersToAdd = 1,
                     rulesText = "Put a +1/+1 counter on target creature.",
-                    artwork = Resources.Load<Sprite>("Art/giant_growth"),
+                    flavorText = "I would gladly die for the forest, but I'm much better at killing for it.",
+                    artwork = Resources.Load<Sprite>("Art/battlegrowth"),
                     });
                 
             ///MULTI
