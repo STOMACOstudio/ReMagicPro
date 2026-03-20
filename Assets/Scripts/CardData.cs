@@ -104,6 +104,8 @@ public class CardData
     public KeywordAbility keywordToGrant = KeywordAbility.None;
     public bool addXPlusOneCounters = false;
     public bool addXMinusOneCounters = false;
+    public int plusOneCountersToAdd = 0;
+    public int minusOneCountersToAdd = 0;
     public int creaturesToSacrificeEachPlayerMin = 0;
     public int creaturesToSacrificeEachPlayerMax = 0;
 
