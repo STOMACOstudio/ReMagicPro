@@ -1874,7 +1874,7 @@ public static class CardDatabase
                                 }
                             }
                         },
-                        rulesText = "When this artifact enters, it deals 2 damage to any target.\nTAP: Add 1 mana.",
+                        rulesText = string.Empty,
                         flavorText = "'And if I'm lying,' he began...",
                         artwork = Resources.Load<Sprite>("Art/meteorite")
                     });
