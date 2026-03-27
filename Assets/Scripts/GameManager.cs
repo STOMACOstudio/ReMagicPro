@@ -1103,28 +1103,28 @@ public class GameManager : MonoBehaviour
         CheckDeaths(aiPlayer);
 
         // Cleanup combat assignments
-        foreach (var card in humanPlayer.Battlefield)
-        {
-            if (card is CreatureCard c)
-            {
-                c.blockingThisAttacker = null;
-                c.blockedByThisBlocker.Clear();
-            }
-        }
-        foreach (var card in aiPlayer.Battlefield)
-        {
-            if (card is CreatureCard c)
-            {
-                c.blockingThisAttacker = null;
-                c.blockedByThisBlocker.Clear();
-            }
-        }
+        ClearCombatAssignments();
 
         currentAttackers.Clear();
         SetSelectedBlockerForBlocking(null);
         UpdateUI();
         CheckForGameEnd();
         return (playerDamage, aiDamage);
+    }
+
+    // ── Combat cleanup helper ─────────────────────────────────────────────────
+    // Clears blocking/blocked references on every creature on both battlefields.
+    // Previously duplicated verbatim in ResolveCombat and ResolveCombatWithAnimations.
+    private void ClearCombatAssignments()
+    {
+        foreach (var card in humanPlayer.Battlefield.Concat(aiPlayer.Battlefield))
+        {
+            if (card is CreatureCard c)
+            {
+                c.blockingThisAttacker = null;
+                c.blockedByThisBlocker.Clear();
+            }
+        }
     }
 
     public void CheckDeaths(Player player)
@@ -1172,20 +1172,10 @@ public class GameManager : MonoBehaviour
                 creature.blockedByThisBlocker.Clear();
             }
 
-            var visual = FindCardVisual(card);
-            if (visual != null)
-            {
-                visual.UpdateVisual(); // Just call once, it's enough
-            }
+            FindCardVisual(card)?.UpdateVisual();
         }
 
-        player.hasPlayedLandThisTurn = false; // Also reset land play
-
-        foreach (var visual in activeCardVisuals)
-        {
-            visual.UpdateVisual();
-        }
-
+        player.hasPlayedLandThisTurn = false;
     }
 
     public void ResetDamage(Player player)
@@ -1239,48 +1229,53 @@ public class GameManager : MonoBehaviour
             visual.UpdateVisual();
     }
 
-    private SorceryCard GetAIUnsummonInHand()
+    // ── AI hand lookup ────────────────────────────────────────────────────────
+    // Single generic helper replaces GetAIUnsummonInHand / GetAIGiantGrowthInHand
+    // / GetAIChargeInHand / GetAIHolyDayInHand — all four were identical except
+    // for the card name being compared.
+    private SorceryCard GetAIInstantInHand(string cardName)
     {
-        if (aiPlayer == null)
-            return null;
-
+        if (aiPlayer == null) return null;
         return aiPlayer.Hand
             .OfType<SorceryCard>()
-            .FirstOrDefault(card => card.cardName == "Unsummon" &&
-                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+            .FirstOrDefault(c => c.cardName == cardName &&
+                                 CardDatabase.GetCardData(c.cardName)?.cardType == CardType.Instant);
     }
 
-    private SorceryCard GetAIGiantGrowthInHand()
+    // ── AI cost helpers ───────────────────────────────────────────────────────
+    // Builds the mana cost dict and applies the opponent spell-tax in one place.
+    // Previously copy-pasted into every TryAICastXxx method.
+    private Dictionary<string, int> BuildAICostWithTax(Card card, Player caster)
     {
-        if (aiPlayer == null)
-            return null;
-
-        return aiPlayer.Hand
-            .OfType<SorceryCard>()
-            .FirstOrDefault(card => card.cardName == "Giant Growth" &&
-                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+        var cost = GetManaCostBreakdown(card.manaCost, card.color);
+        int tax = GetOpponentSpellTax(caster);
+        if (tax > 0)
+        {
+            if (!cost.ContainsKey("Colorless")) cost["Colorless"] = 0;
+            cost["Colorless"] += tax;
+        }
+        return cost;
     }
 
-    private SorceryCard GetAIChargeInHand()
+    // ── Unified AI instant caster ─────────────────────────────────────────────
+    // Replaces TryAICastUnsummon / TryAICastGiantGrowth / TryAICastCharge /
+    // TryAICastHolyDay — all four shared the exact same mana-check + cast body.
+    private bool TryAICastNamedInstant(string cardName, Card target, string reason)
     {
-        if (aiPlayer == null)
-            return null;
+        if (aiPlayer == null) return false;
 
-        return aiPlayer.Hand
-            .OfType<SorceryCard>()
-            .FirstOrDefault(card => card.cardName == "Charge" &&
-                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
-    }
+        SorceryCard instant = GetAIInstantInHand(cardName);
+        if (instant == null) return false;
 
-    private SorceryCard GetAIHolyDayInHand()
-    {
-        if (aiPlayer == null)
-            return null;
+        var cost = BuildAICostWithTax(instant, aiPlayer);
 
-        return aiPlayer.Hand
-            .OfType<SorceryCard>()
-            .FirstOrDefault(card => card.cardName == "Holy Day" &&
-                                    CardDatabase.GetCardData(card.cardName)?.cardType == CardType.Instant);
+        bool canPay = TurnSystem.Instance != null
+            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
+            : aiPlayer.ColoredMana.CanPay(cost);
+
+        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost)) return false;
+
+        return TryAICastInstantOnStack(instant, target, $"[AI] Casts {cardName} ({reason}).", cost);
     }
 
     private bool IsLikelyCreatureRemovalSpell(SorceryCard spell, CreatureCard target)
@@ -1302,37 +1297,9 @@ public class GameManager : MonoBehaviour
 
     public bool TryAICastUnsummon(CreatureCard target, string reason)
     {
-        if (target == null || aiPlayer == null)
-            return false;
-
-        if (GetOwnerOfCard(target) == null || GetOwnerOfCard(target).Battlefield.Contains(target) == false)
-            return false;
-
-        SorceryCard unsummon = GetAIUnsummonInHand();
-        if (unsummon == null)
-            return false;
-
-        var cost = GetManaCostBreakdown(unsummon.manaCost, unsummon.color);
-        int tax = GetOpponentSpellTax(aiPlayer);
-        if (tax > 0)
-        {
-            if (!cost.ContainsKey("Colorless"))
-                cost["Colorless"] = 0;
-            cost["Colorless"] += tax;
-        }
-
-        bool canPay = TurnSystem.Instance != null
-            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
-            : aiPlayer.ColoredMana.CanPay(cost);
-
-        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
-            return false;
-
-        return TryAICastInstantOnStack(
-            unsummon,
-            target,
-            $"[AI] Casts Unsummon targeting {target.cardName} ({reason}).",
-            cost);
+        if (target == null || aiPlayer == null) return false;
+        if (GetOwnerOfCard(target)?.Battlefield.Contains(target) != true) return false;
+        return TryAICastNamedInstant("Unsummon", target, $"targeting {target.cardName} — {reason}");
     }
 
     private bool TryAICastInstantOnStack(SorceryCard instant, Card target, string logMessage, Dictionary<string, int> cost)
@@ -1376,37 +1343,9 @@ public class GameManager : MonoBehaviour
 
     private bool TryAICastGiantGrowth(CreatureCard target, string reason)
     {
-        if (target == null || aiPlayer == null)
-            return false;
-
-        if (GetOwnerOfCard(target) != aiPlayer || !aiPlayer.Battlefield.Contains(target))
-            return false;
-
-        SorceryCard giantGrowth = GetAIGiantGrowthInHand();
-        if (giantGrowth == null)
-            return false;
-
-        var cost = GetManaCostBreakdown(giantGrowth.manaCost, giantGrowth.color);
-        int tax = GetOpponentSpellTax(aiPlayer);
-        if (tax > 0)
-        {
-            if (!cost.ContainsKey("Colorless"))
-                cost["Colorless"] = 0;
-            cost["Colorless"] += tax;
-        }
-
-        bool canPay = TurnSystem.Instance != null
-            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
-            : aiPlayer.ColoredMana.CanPay(cost);
-
-        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
-            return false;
-
-        return TryAICastInstantOnStack(
-            giantGrowth,
-            target,
-            $"[AI] Casts Giant Growth targeting {target.cardName} ({reason}).",
-            cost);
+        if (target == null || aiPlayer == null) return false;
+        if (GetOwnerOfCard(target) != aiPlayer || !aiPlayer.Battlefield.Contains(target)) return false;
+        return TryAICastNamedInstant("Giant Growth", target, $"targeting {target.cardName} — {reason}");
     }
 
     public bool TryAICastGiantGrowthForCombat(bool aiIsAttacker)
@@ -1507,68 +1446,10 @@ public class GameManager : MonoBehaviour
     }
 
     private bool TryAICastCharge(string reason)
-    {
-        if (aiPlayer == null)
-            return false;
-
-        SorceryCard charge = GetAIChargeInHand();
-        if (charge == null)
-            return false;
-
-        var cost = GetManaCostBreakdown(charge.manaCost, charge.color);
-        int tax = GetOpponentSpellTax(aiPlayer);
-        if (tax > 0)
-        {
-            if (!cost.ContainsKey("Colorless"))
-                cost["Colorless"] = 0;
-            cost["Colorless"] += tax;
-        }
-
-        bool canPay = TurnSystem.Instance != null
-            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
-            : aiPlayer.ColoredMana.CanPay(cost);
-
-        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
-            return false;
-
-        return TryAICastInstantOnStack(
-            charge,
-            null,
-            $"[AI] Casts Charge ({reason}).",
-            cost);
-    }
+        => TryAICastNamedInstant("Charge", null, reason);
 
     public bool TryAICastHolyDay(string reason)
-    {
-        if (aiPlayer == null)
-            return false;
-
-        SorceryCard holyDay = GetAIHolyDayInHand();
-        if (holyDay == null)
-            return false;
-
-        var cost = GetManaCostBreakdown(holyDay.manaCost, holyDay.color);
-        int tax = GetOpponentSpellTax(aiPlayer);
-        if (tax > 0)
-        {
-            if (!cost.ContainsKey("Colorless"))
-                cost["Colorless"] = 0;
-            cost["Colorless"] += tax;
-        }
-
-        bool canPay = TurnSystem.Instance != null
-            ? TurnSystem.Instance.TryEnsureAIManaForCost(cost)
-            : aiPlayer.ColoredMana.CanPay(cost);
-
-        if (!canPay || !aiPlayer.ColoredMana.CanPay(cost))
-            return false;
-
-        return TryAICastInstantOnStack(
-            holyDay,
-            null,
-            $"[AI] Casts Holy Day ({reason}).",
-            cost);
-    }
+        => TryAICastNamedInstant("Holy Day", null, reason);
 
     public bool TryAICastChargeForCombat(bool aiIsAttacker)
     {
@@ -1667,6 +1548,21 @@ public class GameManager : MonoBehaviour
         TryAICastUnsummon(creature, $"responding to {incomingSpell.cardName}");
     }
 
+    // ── Stack resume helper ───────────────────────────────────────────────────
+    // Previously inlined verbatim at the end of every Resolve*AfterDelay coroutine.
+    private void ResumeAIIfWaiting(Player caster)
+    {
+        if (caster == aiPlayer &&
+            TurnSystem.Instance != null &&
+            TurnSystem.Instance.waitingToResumeAI &&
+            !IsStackActive())
+        {
+            Debug.Log("Resuming AI phase after stack.");
+            TurnSystem.Instance.waitingToResumeAI = false;
+            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
+        }
+    }
+
     public IEnumerator ResolveSorceryAfterDelay(SorceryCard sorcery, CardVisual visual, Player caster, int stackItemId = -1)
         {
             int resolvedStackItemId = EnsureStackItemRegistration(stackItemId, visual != null ? visual.transform : null);
@@ -1714,13 +1610,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             CheckForGameEnd();
             UnregisterStackItem(resolvedStackItemId);
-
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(caster);
         }
 
     public IEnumerator ResolveCreatureAfterDelay(CreatureCard creature, CardVisual visual, Player caster, int stackItemId = -1)
@@ -1788,13 +1678,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             CheckForGameEnd();
             UnregisterStackItem(resolvedStackItemId);
-
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(caster);
         }
 
     public IEnumerator ResolveArtifactAfterDelay(ArtifactCard artifact, CardVisual visual, Player caster, int stackItemId = -1)
@@ -1828,13 +1712,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             CheckForGameEnd();
             UnregisterStackItem(resolvedStackItemId);
-
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(caster);
         }
 
     public IEnumerator ResolveEnchantmentAfterDelay(EnchantmentCard enchantment, CardVisual visual, Player caster, int stackItemId = -1)
@@ -1868,13 +1746,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             CheckForGameEnd();
             UnregisterStackItem(resolvedStackItemId);
-
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(caster);
         }
 
         public IEnumerator ResolveAuraAfterDelay(AuraCard aura, CardVisual visual, Player caster, int stackItemId = -1)
@@ -1893,11 +1765,7 @@ public class GameManager : MonoBehaviour
                 // Aura may have destroyed itself via its effect
                 UpdateUI();
                 UnregisterStackItem(resolvedStackItemId);
-                if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-                {
-                    TurnSystem.Instance.waitingToResumeAI = false;
-                    TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-                }
+                ResumeAIIfWaiting(caster);
                 yield break;
             }
 
@@ -1923,13 +1791,7 @@ public class GameManager : MonoBehaviour
             UpdateUI();
             CheckForGameEnd();
             UnregisterStackItem(resolvedStackItemId);
-
-            if (caster == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(caster);
         }
 
     public IEnumerator ResolveTriggeredAbilityOnStack(
@@ -1989,13 +1851,7 @@ public class GameManager : MonoBehaviour
         Destroy(stackObj);
         UnregisterStackItem(stackItemId);
         CheckForGameEnd();
-
-        if (owner == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-        {
-            Debug.Log("Resuming AI phase after stack.");
-            TurnSystem.Instance.waitingToResumeAI = false;
-            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-        }
+        ResumeAIIfWaiting(owner);
     }
 
     public void QueueArtifactActivatedAbility(ArtifactCard artifact, ActivatedAbility ability, Player controller, Card target = null)
@@ -2110,13 +1966,7 @@ public class GameManager : MonoBehaviour
             Destroy(stackObj);
             UnregisterStackItem(stackItemId);
             CheckForGameEnd();
-
-            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(controller);
         }
     }
 
@@ -2222,13 +2072,7 @@ public class GameManager : MonoBehaviour
         Destroy(stackObj);
         UnregisterStackItem(stackItemId);
         CheckForGameEnd();
-
-        if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-        {
-            Debug.Log("Resuming AI phase after stack.");
-            TurnSystem.Instance.waitingToResumeAI = false;
-            TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-        }
+        ResumeAIIfWaiting(controller);
     }
 
     public IEnumerator ResolveEquipmentEquipAbilityOnStack(EquipmentCard equipment, CreatureCard target, Player controller)
@@ -2284,13 +2128,7 @@ public class GameManager : MonoBehaviour
             Destroy(stackObj);
             UnregisterStackItem(stackItemId);
             CheckForGameEnd();
-
-            if (controller == aiPlayer && TurnSystem.Instance.waitingToResumeAI && !IsStackActive())
-            {
-                Debug.Log("Resuming AI phase after stack.");
-                TurnSystem.Instance.waitingToResumeAI = false;
-                TurnSystem.Instance.RunSpecificPhase(TurnSystem.Instance.lastPhaseBeforeStack);
-            }
+            ResumeAIIfWaiting(controller);
         }
     }
 
@@ -2338,32 +2176,19 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         tokenCard.OnEnterPlay(owner);  // Run ETB triggers (last)
-        if (tokenCard is CreatureCard)
-            NotifyCreatureEntered(tokenCard, owner);
-        if (tokenCard is LandCard)
-            NotifyLandEntered(tokenCard, owner);
-        if ((tokenCard is ArtifactCard) ||
-            (tokenCard is CreatureCard cc && cc.color.Contains("Artifact")))
-        {
-            NotifyArtifactEntered(tokenCard, owner);
-        }
-        if (tokenCard is EnchantmentCard)
-        {
-            NotifyEnchantmentEntered(tokenCard, owner);
-        }
+        NotifyEnterPlay(tokenCard, owner);
     }
     public Player GetOpponentOf(Player player)
     {
         return player == humanPlayer ? aiPlayer : humanPlayer;
     }
 
-    public void ReturnRandomLandFromGraveyard(Player player)
+    // ── Graveyard-to-hand helper ──────────────────────────────────────────────
+    // ReturnRandomLandFromGraveyard / ReturnRandomCreatureFromGraveyard /
+    // ReturnRandomNonCreatureArtifactFromGraveyard / ReturnRandomInstantOrSorcery
+    // FromGraveyard all shared the identical body after selecting 'chosen'.
+    private void AddCardFromGraveyardToHand(Player player, Card chosen)
     {
-        var lands = player.Graveyard.OfType<LandCard>().ToList();
-        if (lands.Count == 0)
-            return;
-
-        Card chosen = lands[Random.Range(0, lands.Count)];
         player.Graveyard.Remove(chosen);
         player.Hand.Add(chosen);
 
@@ -2384,31 +2209,18 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void ReturnRandomLandFromGraveyard(Player player)
+    {
+        var lands = player.Graveyard.OfType<LandCard>().ToList();
+        if (lands.Count == 0) return;
+        AddCardFromGraveyardToHand(player, lands[Random.Range(0, lands.Count)]);
+    }
+
     public void ReturnRandomCreatureFromGraveyard(Player player)
     {
         var creatures = player.Graveyard.OfType<CreatureCard>().ToList();
-        if (creatures.Count == 0)
-            return;
-
-        Card chosen = creatures[Random.Range(0, creatures.Count)];
-        player.Graveyard.Remove(chosen);
-        player.Hand.Add(chosen);
-
-        if (player == humanPlayer)
-        {
-            GameObject obj = Instantiate(cardPrefab, playerHandArea);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(chosen.cardName);
-            visual.Setup(chosen, this, data);
-            activeCardVisuals.Add(visual);
-        }
-        else if (enemyHandText != null)
-        {
-            enemyHandText.text = "Hand: " + player.Hand.Count;
-        }
-
-        RefreshGraveyardVisuals(player);
-        UpdateUI();
+        if (creatures.Count == 0) return;
+        AddCardFromGraveyardToHand(player, creatures[Random.Range(0, creatures.Count)]);
     }
 
     public void ReturnRandomNonCreatureArtifactFromGraveyard(Player player)
@@ -2416,28 +2228,8 @@ public class GameManager : MonoBehaviour
         var artifacts = player.Graveyard
             .Where(card => card is ArtifactCard && !(card is CreatureCard))
             .ToList();
-        if (artifacts.Count == 0)
-            return;
-
-        Card chosen = artifacts[Random.Range(0, artifacts.Count)];
-        player.Graveyard.Remove(chosen);
-        player.Hand.Add(chosen);
-
-        if (player == humanPlayer)
-        {
-            GameObject obj = Instantiate(cardPrefab, playerHandArea);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(chosen.cardName);
-            visual.Setup(chosen, this, data);
-            activeCardVisuals.Add(visual);
-        }
-        else if (enemyHandText != null)
-        {
-            enemyHandText.text = "Hand: " + player.Hand.Count;
-        }
-
-        RefreshGraveyardVisuals(player);
-        UpdateUI();
+        if (artifacts.Count == 0) return;
+        AddCardFromGraveyardToHand(player, artifacts[Random.Range(0, artifacts.Count)]);
     }
 
     public void ReturnRandomPotionFromGraveyardToBattlefield(Player player)
@@ -2482,14 +2274,7 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
-        if (chosen is CreatureCard)
-            NotifyCreatureEntered(chosen, player);
-        if (chosen is LandCard)
-            NotifyLandEntered(chosen, player);
-        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
-            NotifyArtifactEntered(chosen, player);
-        if (chosen is EnchantmentCard)
-            NotifyEnchantmentEntered(chosen, player);
+        NotifyEnterPlay(chosen, player);
 
         RefreshGraveyardVisuals(player);
         UpdateUI();
@@ -2615,28 +2400,27 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
-        if (chosen is CreatureCard)
-            NotifyCreatureEntered(chosen, player);
-        if (chosen is LandCard)
-            NotifyLandEntered(chosen, player);
-        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
-            NotifyArtifactEntered(chosen, player);
-        if (chosen is EnchantmentCard)
-            NotifyEnchantmentEntered(chosen, player);
+        NotifyEnterPlay(chosen, player);
 
         ShuffleDeck(player);
         UpdateUI();
     }
 
     public IEnumerator RevealUntilCreature(Player player)
+        => RevealUntilMatch(player, card => card is CreatureCard);
+
+    // ── RevealUntil shared core ───────────────────────────────────────────────
+    // RevealUntilCreature and RevealUntilLand were byte-for-byte identical except
+    // for the type check (CreatureCard vs LandCard). Collapsed into one coroutine.
+    private IEnumerator RevealUntilMatch(Player player, System.Func<Card, bool> isMatch)
     {
-        List<Card> revealedNonCreatures = new List<Card>();
+        List<Card> revealedNonMatches = new List<Card>();
         List<CardVisual> visuals = new List<CardVisual>();
-        Card creatureCard = null;
-        CardVisual creatureVisual = null;
+        Card foundCard = null;
+        CardVisual foundVisual = null;
 
         int index = 0;
-        float spacing = 150f;
+        const float spacing = 150f;
 
         while (player.Deck.Count > 0)
         {
@@ -2646,51 +2430,47 @@ public class GameManager : MonoBehaviour
             GameObject obj = Instantiate(cardPrefab, stackZone);
             obj.transform.localPosition = new Vector3(index * spacing, 0f, 0f);
             CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(top.cardName);
-            visual.Setup(top, this, data);
+            visual.Setup(top, this, CardDatabase.GetCardData(top.cardName));
             visual.isInStack = true;
             visuals.Add(visual);
 
-            if (top is CreatureCard)
+            if (isMatch(top))
             {
-                creatureCard = top;
-                creatureVisual = visual;
+                foundCard = top;
+                foundVisual = visual;
                 break;
             }
-            else
-            {
-                revealedNonCreatures.Add(top);
-            }
 
+            revealedNonMatches.Add(top);
             index++;
             yield return new WaitForSeconds(0.5f);
         }
 
         yield return new WaitForSeconds(0.5f);
 
-        if (creatureCard != null)
+        if (foundCard != null)
         {
-            player.Hand.Add(creatureCard);
+            player.Hand.Add(foundCard);
             if (player == humanPlayer)
             {
-                creatureVisual.transform.SetParent(playerHandArea, false);
-                creatureVisual.isInStack = false;
-                activeCardVisuals.Add(creatureVisual);
+                foundVisual.transform.SetParent(playerHandArea, false);
+                foundVisual.isInStack = false;
+                activeCardVisuals.Add(foundVisual);
             }
             else
             {
-                Destroy(creatureVisual.gameObject);
+                Destroy(foundVisual.gameObject);
                 if (enemyHandText != null)
                     enemyHandText.text = "Hand: " + player.Hand.Count;
             }
         }
 
-        foreach (var card in revealedNonCreatures)
+        foreach (var card in revealedNonMatches)
             player.Deck.Add(card);
 
         foreach (var visual in visuals)
         {
-            if (!(visual.linkedCard is CreatureCard))
+            if (visual.linkedCard != foundCard)
                 Destroy(visual.gameObject);
         }
 
@@ -2700,103 +2480,13 @@ public class GameManager : MonoBehaviour
     }
 
     public IEnumerator RevealUntilLand(Player player)
-    {
-        List<Card> revealedNonLands = new List<Card>();
-        List<CardVisual> visuals = new List<CardVisual>();
-        Card landCard = null;
-        CardVisual landVisual = null;
-
-        int index = 0;
-        float spacing = 150f;
-
-        while (player.Deck.Count > 0)
-        {
-            Card top = player.Deck[0];
-            player.Deck.RemoveAt(0);
-
-            GameObject obj = Instantiate(cardPrefab, stackZone);
-            obj.transform.localPosition = new Vector3(index * spacing, 0f, 0f);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(top.cardName);
-            visual.Setup(top, this, data);
-            visual.isInStack = true;
-            visuals.Add(visual);
-
-            if (top is LandCard)
-            {
-                landCard = top;
-                landVisual = visual;
-                break;
-            }
-            else
-            {
-                revealedNonLands.Add(top);
-            }
-
-            index++;
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        yield return new WaitForSeconds(0.5f);
-
-        if (landCard != null)
-        {
-            player.Hand.Add(landCard);
-            if (player == humanPlayer)
-            {
-                landVisual.transform.SetParent(playerHandArea, false);
-                landVisual.isInStack = false;
-                activeCardVisuals.Add(landVisual);
-            }
-            else
-            {
-                Destroy(landVisual.gameObject);
-                if (enemyHandText != null)
-                    enemyHandText.text = "Hand: " + player.Hand.Count;
-            }
-        }
-
-        foreach (var card in revealedNonLands)
-            player.Deck.Add(card);
-
-        foreach (var visual in visuals)
-        {
-            if (!(visual.linkedCard is LandCard))
-                Destroy(visual.gameObject);
-        }
-
-        ShuffleDeck(player);
-        UpdateUI();
-        pendingStackEffects = Mathf.Max(0, pendingStackEffects - 1);
-    }
+        => RevealUntilMatch(player, card => card is LandCard);
 
     public void ReturnRandomInstantOrSorceryFromGraveyard(Player player)
     {
-        var spells = player.Graveyard
-            .Where(card => card is SorceryCard)
-            .ToList();
-        if (spells.Count == 0)
-            return;
-
-        Card chosen = spells[Random.Range(0, spells.Count)];
-        player.Graveyard.Remove(chosen);
-        player.Hand.Add(chosen);
-
-        if (player == humanPlayer)
-        {
-            GameObject obj = Instantiate(cardPrefab, playerHandArea);
-            CardVisual visual = obj.GetComponent<CardVisual>();
-            CardData data = CardDatabase.GetCardData(chosen.cardName);
-            visual.Setup(chosen, this, data);
-            activeCardVisuals.Add(visual);
-        }
-        else if (enemyHandText != null)
-        {
-            enemyHandText.text = "Hand: " + player.Hand.Count;
-        }
-
-        RefreshGraveyardVisuals(player);
-        UpdateUI();
+        var spells = player.Graveyard.Where(card => card is SorceryCard).ToList();
+        if (spells.Count == 0) return;
+        AddCardFromGraveyardToHand(player, spells[Random.Range(0, spells.Count)]);
     }
 
     public void ReturnRandomCreatureFromGraveyardToBattlefield(Player player, int maxManaCost)
@@ -2831,14 +2521,7 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
-        if (chosen is CreatureCard)
-            NotifyCreatureEntered(chosen, player);
-        if (chosen is LandCard)
-            NotifyLandEntered(chosen, player);
-        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
-            NotifyArtifactEntered(chosen, player);
-        if (chosen is EnchantmentCard)
-            NotifyEnchantmentEntered(chosen, player);
+        NotifyEnterPlay(chosen, player);
 
         RefreshGraveyardVisuals(player);
         UpdateUI();
@@ -2876,14 +2559,7 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         chosen.OnEnterPlay(player);
-        if (chosen is CreatureCard)
-            NotifyCreatureEntered(chosen, player);
-        if (chosen is LandCard)
-            NotifyLandEntered(chosen, player);
-        if ((chosen is ArtifactCard) || (chosen is CreatureCard cc && cc.color.Contains("Artifact")))
-            NotifyArtifactEntered(chosen, player);
-        if (chosen is EnchantmentCard)
-            NotifyEnchantmentEntered(chosen, player);
+        NotifyEnterPlay(chosen, player);
 
         RefreshGraveyardVisuals(player);
         UpdateUI();
@@ -2916,9 +2592,7 @@ public class GameManager : MonoBehaviour
         visual.UpdateVisual();
 
         creature.OnEnterPlay(player);
-        NotifyCreatureEntered(creature, player);
-        if (creature.color.Contains("Artifact"))
-            NotifyArtifactEntered(creature, player);
+        NotifyEnterPlay(creature, player);
 
         RefreshGraveyardVisuals(player);
         if (graveyardViewActive && graveyardUIManager != null)
@@ -4522,27 +4196,8 @@ public class GameManager : MonoBehaviour
 
                 if (txt == null)
                 {
-                    if (floatingDamagePrefab == null)
-                    {
-                        Debug.LogError("Missing floatingDamagePrefab!");
-                        return;
-                    }
-
-                    GameObject obj = Instantiate(floatingDamagePrefab);
-                    obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
-
-                    RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
-                    RectTransform targetRect = target.GetComponent<RectTransform>();
-                    RectTransform rt = obj.GetComponent<RectTransform>();
-
-                    Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
-                    rt.anchoredPosition = localPoint;
-
-                    rt.localScale = Vector3.one;
-                    rt.sizeDelta = new Vector2(100, 40);
-
-                    txt = obj.GetComponent<TMP_Text>();
+                    txt = SpawnFloatingLabel(target);
+                    if (txt == null) return;
 
                     if (isPlayer)
                         playerLifeDeltaText = txt;
@@ -4636,87 +4291,77 @@ public class GameManager : MonoBehaviour
                 }
             }
         
-        public void ShowFloatingDamage(int amount, GameObject target)
+        // ── Floating label helper ─────────────────────────────────────────────
+        // ShowFloatingDamage and ShowFloatingHeal shared an identical 12-line
+        // prefab-spawn + canvas-position block. Extracted here so each method
+        // just sets the text/color and calls this.
+        private TMP_Text SpawnFloatingLabel(GameObject target)
+        {
+            if (floatingDamagePrefab == null)
             {
-                if (target == playerLifeContainer || target == enemyLifeContainer)
-                {
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
-                    UpdateLifeDelta(target, -amount);
-                    return;
-                }
-
-                if (floatingDamagePrefab == null)
-                {
-                    Debug.LogError("Missing floatingDamagePrefab!");
-                    return;
-                }
-
-                GameObject obj = Instantiate(floatingDamagePrefab);
-                obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
-
-                RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
-                RectTransform targetRect = target.GetComponent<RectTransform>();
-                RectTransform rt = obj.GetComponent<RectTransform>();
-
-                Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
-                rt.anchoredPosition = localPoint;
-
-                rt.localScale = Vector3.one;
-                rt.sizeDelta = new Vector2(100, 40);
-
-                TMP_Text text = obj.GetComponent<TMP_Text>();
-                text.fontSize = 48;
-                text.enableAutoSizing = false;
-                text.text = "-" + amount;
-                text.color = Color.red;
-
-                SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
-
-                StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
+                Debug.LogError("Missing floatingDamagePrefab!");
+                return null;
             }
-        
+
+            GameObject obj = Instantiate(floatingDamagePrefab);
+            Transform canvas = GameObject.Find("Canvas").transform;
+            obj.transform.SetParent(canvas, false);
+
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            RectTransform targetRect = target.GetComponent<RectTransform>();
+            RectTransform rt = obj.GetComponent<RectTransform>();
+
+            Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
+            rt.anchoredPosition = localPoint;
+            rt.localScale = Vector3.one;
+            rt.sizeDelta = new Vector2(100, 40);
+
+            TMP_Text text = obj.GetComponent<TMP_Text>();
+            text.fontSize = 48;
+            text.enableAutoSizing = false;
+            return text;
+        }
+
+        public void ShowFloatingDamage(int amount, GameObject target)
+        {
+            if (target == playerLifeContainer || target == enemyLifeContainer)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
+                UpdateLifeDelta(target, -amount);
+                return;
+            }
+
+            TMP_Text text = SpawnFloatingLabel(target);
+            if (text == null) return;
+
+            text.text = "-" + amount;
+            text.color = Color.red;
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.dealDamage);
+            StartCoroutine(FadeAndFloatText(text.gameObject, target == playerLifeContainer));
+        }
+
         public void ShowFloatingHeal(int amount, GameObject target)
         {
             Debug.Log($"ShowFloatingHeal called: amount={amount}, target={target.name}");
 
-                if (target == playerLifeContainer || target == enemyLifeContainer)
-                {
-                    SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
-                    UpdateLifeDelta(target, amount);
-                    return;
-                }
-
-                if (floatingDamagePrefab == null)
-                {
-                    Debug.LogError("Missing floatingDamagePrefab!");
-                    return;
-                }
-
-                GameObject obj = Instantiate(floatingDamagePrefab);
-                obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
-
-                RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
-                RectTransform targetRect = target.GetComponent<RectTransform>();
-                RectTransform rt = obj.GetComponent<RectTransform>();
-
-                Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, targetRect.position);
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out Vector2 localPoint);
-                rt.anchoredPosition = localPoint;
-
-                rt.localScale = Vector3.one;
-                rt.sizeDelta = new Vector2(100, 40);
-
-                TMP_Text text = obj.GetComponent<TMP_Text>();
-                text.fontSize = 48;
-                text.enableAutoSizing = false;
-                text.text = "+" + amount;
-                text.color = Color.green;
-
-                SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life); // use appropriate sound
-
-                StartCoroutine(FadeAndFloatText(obj, target == playerLifeContainer));
+            if (target == playerLifeContainer || target == enemyLifeContainer)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+                UpdateLifeDelta(target, amount);
+                return;
             }
+
+            TMP_Text text = SpawnFloatingLabel(target);
+            if (text == null) return;
+
+            text.text = "+" + amount;
+            text.color = Color.green;
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.gain_life);
+            StartCoroutine(FadeAndFloatText(text.gameObject, target == playerLifeContainer));
+        }
 
         private void ShowFavouritePopup()
         {
@@ -4724,9 +4369,10 @@ public class GameManager : MonoBehaviour
                 return;
 
             GameObject obj = Instantiate(favouritePopupPrefab);
-            obj.transform.SetParent(GameObject.Find("Canvas").transform, false);
+            Transform canvas = GameObject.Find("Canvas").transform;
+            obj.transform.SetParent(canvas, false);
 
-            RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             RectTransform targetRect = playerLifeContainer.GetComponent<RectTransform>();
             RectTransform rt = obj.GetComponent<RectTransform>();
 
@@ -4965,22 +4611,7 @@ public class GameManager : MonoBehaviour
                 CheckDeaths(humanPlayer);
                 CheckDeaths(aiPlayer);
 
-                foreach (var card in humanPlayer.Battlefield)
-                {
-                    if (card is CreatureCard c)
-                    {
-                        c.blockingThisAttacker = null;
-                        c.blockedByThisBlocker.Clear();
-                    }
-                }
-                foreach (var card in aiPlayer.Battlefield)
-                {
-                    if (card is CreatureCard c)
-                    {
-                        c.blockingThisAttacker = null;
-                        c.blockedByThisBlocker.Clear();
-                    }
-                }
+                ClearCombatAssignments();
 
                 currentAttackers.Clear();
                 SetSelectedBlockerForBlocking(null);
@@ -5112,6 +4743,22 @@ public class GameManager : MonoBehaviour
                 ShowFloatingHeal(gained,
                     player == humanPlayer ? playerLifeContainer : enemyLifeContainer);
             }
+        }
+
+        // ── Enter-play notification helper ────────────────────────────────────
+        // Fires all relevant Notify* calls for a card entering the battlefield.
+        // Previously, the four-way if-chain was copy-pasted into SummonToken,
+        // ReturnRandom*ToBattlefield, SearchLibrary*, and ReturnCreatureFromGraveyard*.
+        public void NotifyEnterPlay(Card card, Player owner)
+        {
+            if (card is CreatureCard)
+                NotifyCreatureEntered(card, owner);
+            if (card is LandCard)
+                NotifyLandEntered(card, owner);
+            if (card is ArtifactCard || (card is CreatureCard cc && cc.color.Contains("Artifact")))
+                NotifyArtifactEntered(card, owner);
+            if (card is EnchantmentCard)
+                NotifyEnchantmentEntered(card, owner);
         }
 
         public void NotifyArtifactEntered(Card artifact, Player controller)

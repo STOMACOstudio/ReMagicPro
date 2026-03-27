@@ -814,138 +814,45 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
 
     public void Setup(Card card, GameManager manager, CardData sourceData = null)
+    {
+        linkedCard = card;
+        gameManager = manager;
+        isInStack = false;
+
+        // Re-enable all UI elements (may have been disabled on battlefield)
+        if (backgroundImage != null) backgroundImage.enabled = true;
+        if (titleText != null)       titleText.enabled = true;
+        if (sicknessText != null)    sicknessText.enabled = true;
+        if (costText != null)        costText.enabled = true;
+        if (statsText != null)       statsText.enabled = true;
+        if (keywordText != null)     keywordText.enabled = true;
+        if (artistText != null)      artistText.enabled = true;
+
+        var data = CardDatabase.GetCardData(linkedCard.cardName);
+
+        titleText.text = card.cardName;
+        EnsureLineRenderer();
+        artImage.sprite = linkedCard.artwork;
+        sicknessText.text = "";
+
+        if (cardRarity != null)
         {
-            linkedCard = card;
-            gameManager = manager;
-            isInStack = false;
-
-            UpdateLandIcon();
-
-            // Re-enable everything when card is set up (e.g., for hand, stack, etc.)
-            if (backgroundImage != null) backgroundImage.enabled = true;
-            if (titleText != null) titleText.enabled = true;
-            if (sicknessText != null) sicknessText.enabled = true;
-            if (costText != null) costText.enabled = true;
-            if (statsText != null) statsText.enabled = true;
-            if (keywordText != null) keywordText.enabled = true;
-            if (artistText != null) artistText.enabled = true;
-
-            var data = CardDatabase.GetCardData(linkedCard.cardName);
-            SetTypeLine(data);
-
-            titleText.text = card.cardName;
-            EnsureLineRenderer();
-            artImage.sprite = linkedCard.artwork;
-
-            if (cardRarity != null)
+            if (data != null && data.rarity != "Token")
             {
-                if (data != null && data.rarity != "Token") // Don't show for tokens
-                {
-                    cardRarity.color = GetRarityColor(data.rarity);
-                    cardRarity.enabled = true;
-                }
-                else
-                {
-                    cardRarity.enabled = false;
-                }
-            }
-
-            SetCardBorder(data);
-
-            sicknessText.text = ""; // Clear at start
-
-            int genericCost = CalculateGenericCost();
-
-            bool isOneColoredMana = (linkedCard.manaCost == 1) &&
-                                    linkedCard.PrimaryColor != "Artifact" &&
-                                    linkedCard.PrimaryColor != "None";
-
-            if (isOneColoredMana)
-            {
-                if (genericCostBG != null) genericCostBG.SetActive(false);
+                cardRarity.color = GetRarityColor(data.rarity);
+                cardRarity.enabled = true;
             }
             else
             {
-                bool showGeneric = genericCost > 0 ||
-                                   linkedCard.PrimaryColor == "Artifact" ||
-                                   linkedCard.PrimaryColor == "None" ||
-                                   linkedCard.hasXCost;
-
-                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
-                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
+                cardRarity.enabled = false;
             }
-
-            if (linkedCard is CreatureCard creature)
-            {
-                bool showGeneric = genericCost > 0 ||
-                                   linkedCard.PrimaryColor == "Artifact" ||
-                                   linkedCard.PrimaryColor == "None";
-
-                costText.text = showGeneric ? genericCost.ToString() : "";
-                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
-
-                statsText.text = FormatStats(creature);
-                SetKeywordText(linkedCard.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(true);
-            }
-            else if (linkedCard is SorceryCard sorcery)
-            {
-                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
-                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
-                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
-
-                statsText.text = "";
-                sicknessText.text = "";
-
-                sorceryEffect(sorcery);
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is ArtifactCard artifact)
-            {
-                costText.text = GetCostDisplay(genericCost);
-                if (genericCostBG != null) genericCostBG.SetActive(true);
-                statsText.text = "";
-                SetKeywordText(artifact.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is EnchantmentCard enchantment)
-            {
-                bool showGeneric = genericCost > 0 || linkedCard.hasXCost;
-                costText.text = showGeneric ? GetCostDisplay(genericCost) : "";
-                if (genericCostBG != null) genericCostBG.SetActive(showGeneric);
-                SetKeywordText(linkedCard.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is LandCard)
-            {
-                costText.text = "";
-                statsText.text = "";
-                SetKeywordText(string.Empty);
-
-                costBackground.SetActive(false);
-                statsBackground.SetActive(false);
-            }
-            else
-            {
-                costText.text = "";
-                statsText.text = "";
-                SetKeywordText(string.Empty);
-
-                costBackground.SetActive(false);
-                statsBackground.SetActive(false);
-            }
-
-            UpdateVisual();
-
         }
+
+        SetCardBorder(data);
+
+        // UpdateVisual handles the full type-specific display (cost, stats, keywords, mana icons)
+        UpdateVisual();
+    }
 
     public void OnClick()
         {
@@ -958,44 +865,11 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Player player = GameManager.Instance.humanPlayer;
                     int cost = graveCreature.manaToPayToActivate;
                     string abilityColor = graveCreature.GetActivationColor();
+
                     if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyard))
-                    {
-                        if (player.ColoredMana.HasEnough(abilityColor, cost))
-                        {
-                            if (!player.ColoredMana.SpendColor(abilityColor, cost))
-                            {
-                                Debug.LogWarning("Graveyard activation failed to spend mana despite HasEnough check.");
-                                return;
-                            }
-                            GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyard, player);
-                        }
-                        else
-                        {
-                            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
-                                Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
-                            else
-                                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to return {graveCreature.cardName} from the graveyard.");
-                        }
-                    }
+                        TryActivateGraveyardAbility(graveCreature, player, cost, abilityColor, ActivatedAbility.ReturnSelfFromGraveyard);
                     else if (graveCreature.activatedAbilities.Contains(ActivatedAbility.ReturnSelfFromGraveyardToHand))
-                    {
-                        if (player.ColoredMana.HasEnough(abilityColor, cost))
-                        {
-                            if (!player.ColoredMana.SpendColor(abilityColor, cost))
-                            {
-                                Debug.LogWarning("Graveyard activation failed to spend mana despite HasEnough check.");
-                                return;
-                            }
-                            GameManager.Instance.QueueCreatureActivatedAbility(graveCreature, ActivatedAbility.ReturnSelfFromGraveyardToHand, player);
-                        }
-                        else
-                        {
-                            if (ManaColorUtility.NormalizeColor(abilityColor) == "Colorless")
-                                Debug.Log($"Not enough mana to return {graveCreature.cardName} from the graveyard.");
-                            else
-                                Debug.Log($"Not enough {ManaColorUtility.GetDisplayName(abilityColor)} mana to return {graveCreature.cardName} from the graveyard.");
-                        }
-                    }
+                        TryActivateGraveyardAbility(graveCreature, player, cost, abilityColor, ActivatedAbility.ReturnSelfFromGraveyardToHand);
                 }
                 return;
             }
@@ -1339,21 +1213,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 if (player.ColoredMana.Total() >= cost)
                 {
-                    int remaining = cost;
-
-                    // Spend colorless first
-                    int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                    player.ColoredMana.Colorless -= useColorless;
-                    remaining -= useColorless;
-
-                    // Spend from WUBRG
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                    if (remaining > 0)
+                    if (!TrySpendAnyMana(player, cost))
                     {
                         Debug.Log("Not enough mana to activate token creation.");
                         return;
@@ -1386,19 +1246,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 if (player.ColoredMana.Total() >= cost)
                 {
-                    int remaining = cost;
-
-                    int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                    player.ColoredMana.Colorless -= useColorless;
-                    remaining -= useColorless;
-
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                    remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                    if (remaining > 0)
+                    if (!TrySpendAnyMana(player, cost))
                     {
                         Debug.Log("Not enough mana for ability.");
                         return;
@@ -1501,36 +1349,13 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (cost > 0)
                     {
-                        if (player.ColoredMana.Total() >= cost)
-                        {
-                            int remaining = cost;
-
-                            // Spend colorless first
-                            int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                            player.ColoredMana.Colorless -= useColorless;
-                            remaining -= useColorless;
-
-                            // Spend from WUBRG
-                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                            remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                            if (remaining > 0)
-                            {
-                                Debug.Log("Not enough mana for ability.");
-                                return;
-                            }
-
-                            player.ColoredMana.Colorless += gain;
-                            Debug.Log($"{linkedCard.cardName} activated: +{gain} mana (paid {cost}).");
-                        }
-                        else
+                        if (!TrySpendAnyMana(player, cost))
                         {
                             Debug.Log("Not enough mana for paid activation.");
                             return;
                         }
+                        player.ColoredMana.Colorless += gain;
+                        Debug.Log($"{linkedCard.cardName} activated: +{gain} mana (paid {cost}).");
                     }
                     else
                     {
@@ -1562,17 +1387,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (player.ColoredMana.Total() >= remaining)
                     {
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
+                        if (!TrySpendAnyMana(player, remaining))
                         {
                             Debug.LogWarning("TapToGainLife activation failed: not enough mana after payment logic.");
                             return;
@@ -1599,17 +1414,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (player.ColoredMana.Total() >= remaining)
                     {
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
+                        if (!TrySpendAnyMana(player, remaining))
                         {
                             Debug.Log("Not enough mana for ability.");
                             return;
@@ -1739,21 +1544,7 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if (totalAvailable >= cost)
                     {
-                        int remaining = cost;
-
-                        // 1. Spend colorless first
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        // 2. Spend from WUBRG
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
+                        if (!TrySpendAnyMana(player, cost))
                         {
                             Debug.LogWarning("Draw ability: Not enough mana even though initial check passed.");
                             return;
@@ -1784,25 +1575,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Player player = GameManager.Instance.humanPlayer;
                     int cost = artifact.manaToPayToActivate;
 
-                    if (player.ColoredMana.Total() >= cost)
+                    if (TrySpendAnyMana(player, cost))
                     {
-                        int remaining = cost;
-
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
-                        {
-                            Debug.Log("Not enough mana for ability.");
-                            return;
-                        }
                         linkedCard.isTapped = true;
                         GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToPlayRandomPotion, player);
                         GameManager.Instance.UpdateUI();
@@ -1827,26 +1601,8 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Player player = GameManager.Instance.humanPlayer;
                     int cost = artifact.manaToPayToActivate;
 
-                    if (player.ColoredMana.Total() >= cost)
+                    if (TrySpendAnyMana(player, cost))
                     {
-                        int remaining = cost;
-
-                        int useColorless = Mathf.Min(player.ColoredMana.Colorless, remaining);
-                        player.ColoredMana.Colorless -= useColorless;
-                        remaining -= useColorless;
-
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red, remaining);
-                        remaining -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green, remaining);
-
-                        if (remaining > 0)
-                        {
-                            Debug.Log("Not enough mana for ability.");
-                            return;
-                        }
-
                         linkedCard.isTapped = true;
                         GameManager.Instance.QueueArtifactActivatedAbility(artifact, ActivatedAbility.TapToDrawCards, player);
                         GameManager.Instance.UpdateUI();
@@ -2102,207 +1858,159 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 return false;
         }
 
+    // Previously two near-identical methods: ResetVisualForGraveyard (called from
+    // GraveyardUIManager viewer) and PrepareForGraveyard (called before UpdateGraveyardVisual).
+    // Collapsed into one — same state, same flags, same icon cleanup.
     public void ResetVisualForGraveyard()
+    {
+        isInBattlefield = false;
+        isInGraveyard   = true;
+        isInStack        = false;
+
+        // Ensure all UI panels are visible for graveyard display
+        if (backgroundImage != null) backgroundImage.enabled = true;
+        if (titleText != null)       titleText.enabled = true;
+        if (sicknessText != null)    sicknessText.enabled = true;
+        if (costText != null)        costText.enabled = true;
+        if (statsText != null)       statsText.enabled = true;
+        if (keywordText != null)     keywordText.enabled = true;
+        if (artistText != null)      artistText.enabled = true;
+
+        if (lineRenderer != null) lineRenderer.enabled = false;
+        if (swordIcon != null)    swordIcon.SetActive(false);
+        if (shieldIcon != null)   shieldIcon.SetActive(false);
+
+        transform.rotation   = Quaternion.identity;
+        transform.localScale = Vector3.one * 0.5f;
+
+        costBackground.SetActive(false);
+        statsBackground.SetActive(false);
+
+        sicknessText.text = "";
+        SetKeywordText(string.Empty);
+        statsText.text = "";
+
+        if (artistText != null)
         {
-            isInBattlefield = false;
-            isInGraveyard = true;
-            isInStack = false;
+            artistText.text = "";
+            artistText.gameObject.SetActive(false);
+        }
+    }
 
-            if (lineRenderer != null)
-                lineRenderer.enabled = false;
-            if (swordIcon != null) swordIcon.SetActive(false);
-            if (shieldIcon != null) shieldIcon.SetActive(false);
+    // Kept as a thin alias so any callers of PrepareForGraveyard still compile.
+    public void PrepareForGraveyard() => ResetVisualForGraveyard();
 
-            transform.localScale = Vector3.one * 0.5f;
-            transform.rotation = Quaternion.identity;
+    public void UpdateGraveyardVisual()
+    {
+        // Reset all state flags and icons to a clean graveyard baseline
+        ResetVisualForGraveyard();
 
-            costBackground.SetActive(false);
-            statsBackground.SetActive(false);
+        // Re-enable artist text and rarity for full graveyard card display
+        if (artistText != null) artistText.enabled = true;
+        if (cardRarity != null) cardRarity.enabled = true;
 
-            sicknessText.text = "";
-            SetKeywordText(string.Empty);
-            statsText.text = "";
-            if (artistText != null)
+        CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
+
+        if (sourceData != null && cardTypeText != null)
+        {
+            cardTypeText.text = BuildTypeLine(sourceData);
+            FitTextToBounds(cardTypeText, ref cardTypeTextDefaultFontSize, cardTypeTextMinFontSize, cardTypeTextShrinkStep);
+            cardTypeText.enabled = true;
+        }
+
+        // Reset stats panel position in case it was repositioned on the battlefield
+        if (statsBackground != null)
+        {
+            RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
+            if (statsRect != null)
+                statsRect.anchoredPosition = defaultStatsPosition;
+        }
+
+        SetCardBorder(sourceData);
+
+        if (artistText != null)
+        {
+            if (sourceData != null && !string.IsNullOrEmpty(sourceData.artist))
             {
-                artistText.text = "";
+                artistText.text = sourceData.artist;
+                artistText.gameObject.SetActive(true);
+            }
+            else
+            {
                 artistText.gameObject.SetActive(false);
             }
         }
 
-    public void PrepareForGraveyard()
+        if (artImage != null && linkedCard.artwork != null)
+            artImage.sprite = linkedCard.artwork;
+
+        titleText.text = linkedCard.cardName;
+        UpdateLandIcon();
+
+        // Mana color icons
+        coloredManaIcon1.gameObject.SetActive(false);
+        coloredManaIcon2.gameObject.SetActive(false);
+        if (linkedCard.color != null)
         {
-            isInBattlefield = false;
-            isInGraveyard = true;
-            isInStack = false;
+            for (int i = 0; i < linkedCard.color.Count && i < 2; i++)
+            {
+                Sprite icon = GetIconForColor(linkedCard.color[i]);
+                if (i == 0 && icon != null) { coloredManaIcon1.sprite = icon; coloredManaIcon1.gameObject.SetActive(true); }
+                else if (i == 1 && icon != null) { coloredManaIcon2.sprite = icon; coloredManaIcon2.gameObject.SetActive(true); }
+            }
+        }
 
-            // Re-enable UI components in case they were disabled on battlefield
-            if (backgroundImage != null) backgroundImage.enabled = true;
-            if (titleText != null) titleText.enabled = true;
-            if (sicknessText != null) sicknessText.enabled = true;
-            if (costText != null) costText.enabled = true;
-            if (statsText != null) statsText.enabled = true;
-            if (keywordText != null) keywordText.enabled = true;
-            if (artistText != null) artistText.enabled = true;
-
+        // Card-type display
+        int genericCost = CalculateGenericCost();
+        if (linkedCard is CreatureCard creature)
+        {
+            costText.text = GetCostDisplay(genericCost);
+            statsText.text = $"{creature.power}/{creature.toughness}";
+            SetKeywordText(linkedCard.GetCardText());
             costBackground.SetActive(true);
             statsBackground.SetActive(true);
-
-            if (lineRenderer != null) lineRenderer.enabled = false;
-            if (swordIcon != null) swordIcon.SetActive(false);
-            if (shieldIcon != null) shieldIcon.SetActive(false);
-
-            // Reset rotation & scale
-            transform.rotation = Quaternion.identity;
-            transform.localScale = Vector3.one * 0.5f;
         }
-
-    public void UpdateGraveyardVisual()
+        else if (linkedCard is ArtifactCard)
         {
-            // General setup
-            isInBattlefield = false;
-            isInGraveyard = true;
-            isInStack = false;
-
-            CardData cardData = CardDatabase.GetCardData(linkedCard.cardName);
-            if (cardData != null && cardTypeText != null)
-            {
-                cardTypeText.text = BuildTypeLine(cardData);
-                FitTextToBounds(cardTypeText, ref cardTypeTextDefaultFontSize, cardTypeTextMinFontSize, cardTypeTextShrinkStep);
-                cardTypeText.enabled = !isInBattlefield;
-            }
-
-            transform.localScale = Vector3.one * 0.5f;
-            transform.rotation = Quaternion.identity;
-
-            // Reset stats position (in case it was moved on battlefield)
-            if (statsBackground != null)
-            {
-                RectTransform statsRect = statsBackground.GetComponent<RectTransform>();
-                if (statsRect != null)
-                    statsRect.anchoredPosition = defaultStatsPosition;
-            }
-
-            if (lineRenderer != null)
-                lineRenderer.enabled = false;
-
-            // Enable all UI elements
-            if (backgroundImage != null) backgroundImage.enabled = true;
-            if (titleText != null) titleText.enabled = true;
-            if (sicknessText != null) sicknessText.enabled = true;
-            if (costText != null) costText.enabled = true;
-            if (statsText != null) statsText.enabled = true;
-            if (keywordText != null) keywordText.enabled = true;
-            if (cardRarity != null) cardRarity.enabled = true;
-            if (artistText != null) artistText.enabled = true;
-
-            titleText.text = linkedCard.cardName;
-            sicknessText.text = "";
-            lineRenderer.enabled = false;
-            if (swordIcon != null) swordIcon.SetActive(false);
-            if (shieldIcon != null) shieldIcon.SetActive(false);
-
-            if (landIcon != null)
-            {
-                if (linkedCard is LandCard && !isInBattlefield)
-                {
-                    Sprite landSprite = linkedCard.PrimaryColor switch
-                    {
-                        "White" => whiteLandIcon,
-                        "Blue" => blueLandIcon,
-                        "Black" => blackLandIcon,
-                        "Red" => redLandIcon,
-                        "Green" => greenLandIcon,
-                        _ => null
-                    };
-
-                    landIcon.GetComponent<Image>().sprite = landSprite;
-                    landIcon.SetActive(landSprite != null);
-                }
-                else
-                {
-                    landIcon.SetActive(false);
-                }
-            }
-
-
-            // Load card data
-            CardData sourceData = CardDatabase.GetCardData(linkedCard.cardName);
-            SetCardBorder(sourceData);
-
-            if (artistText != null)
-            {
-                if (sourceData != null && !string.IsNullOrEmpty(sourceData.artist))
-                {
-                    artistText.text = sourceData.artist;
-                    artistText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    artistText.gameObject.SetActive(false);
-                }
-            }
-
-            if (artImage != null && linkedCard.artwork != null)
-                artImage.sprite = linkedCard.artwork;
-
-            // Show correct info by card type
-            if (linkedCard is CreatureCard creature)
-            {
-                costText.text = GetCostDisplay(CalculateGenericCost());
-                statsText.text = $"{creature.power}/{creature.toughness}";
-                SetKeywordText(linkedCard.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(true);
-            }
-            else if (linkedCard is ArtifactCard artifact)
-            {
-                costText.text = GetCostDisplay(CalculateGenericCost());
-                statsText.text = "";
-                SetKeywordText(linkedCard.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is SorceryCard sorcery)
-            {
-                costText.text = GetCostDisplay(CalculateGenericCost());
-                statsText.text = "";
-
-                sorceryEffect(sorcery);
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is EnchantmentCard enchantment)
-            {
-                costText.text = GetCostDisplay(CalculateGenericCost());
-                statsText.text = "";
-                SetKeywordText(linkedCard.GetCardText());
-
-                costBackground.SetActive(true);
-                statsBackground.SetActive(false);
-            }
-            else if (linkedCard is LandCard)
-            {
-                costText.text = "";
-                statsText.text = "";
-                SetKeywordText(string.Empty);
-
-                costBackground.SetActive(false);
-                statsBackground.SetActive(false);
-            }
-            else
-            {
-                // Unknown type — hide everything
-                costText.text = "";
-                statsText.text = "";
-                SetKeywordText(string.Empty);
-
-                costBackground.SetActive(false);
-                statsBackground.SetActive(false);
-            }
+            costText.text = GetCostDisplay(genericCost);
+            statsText.text = "";
+            SetKeywordText(linkedCard.GetCardText());
+            costBackground.SetActive(true);
+            statsBackground.SetActive(false);
         }
+        else if (linkedCard is SorceryCard sorcery)
+        {
+            costText.text = GetCostDisplay(genericCost);
+            statsText.text = "";
+            sorceryEffect(sorcery);
+            costBackground.SetActive(true);
+            statsBackground.SetActive(false);
+        }
+        else if (linkedCard is EnchantmentCard)
+        {
+            costText.text = GetCostDisplay(genericCost);
+            statsText.text = "";
+            SetKeywordText(linkedCard.GetCardText());
+            costBackground.SetActive(true);
+            statsBackground.SetActive(false);
+        }
+        else if (linkedCard is LandCard)
+        {
+            costText.text = "";
+            statsText.text = "";
+            SetKeywordText(string.Empty);
+            costBackground.SetActive(false);
+            statsBackground.SetActive(false);
+        }
+        else
+        {
+            costText.text = "";
+            statsText.text = "";
+            SetKeywordText(string.Empty);
+            costBackground.SetActive(false);
+            statsBackground.SetActive(false);
+        }
+    }
 
         private void SetCardBorder(CardData data)
             {
@@ -2587,7 +2295,52 @@ public class CardVisual : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
         
-        private Sprite GetIconForColor(string color)
+        // ── Graveyard activation helper ───────────────────────────────────────────
+    // Previously two near-identical blocks for ReturnSelfFromGraveyard and
+    // ReturnSelfFromGraveyardToHand — only the ActivatedAbility enum value differed.
+    private void TryActivateGraveyardAbility(CreatureCard creature, Player player, int cost, string color, ActivatedAbility ability)
+    {
+        if (player.ColoredMana.HasEnough(color, cost))
+        {
+            if (!player.ColoredMana.SpendColor(color, cost))
+            {
+                Debug.LogWarning("Graveyard activation failed to spend mana despite HasEnough check.");
+                return;
+            }
+            GameManager.Instance.QueueCreatureActivatedAbility(creature, ability, player);
+        }
+        else
+        {
+            string colorDisplay = ManaColorUtility.NormalizeColor(color) == "Colorless"
+                ? "mana"
+                : $"{ManaColorUtility.GetDisplayName(color)} mana";
+            Debug.Log($"Not enough {colorDisplay} to return {creature.cardName} from the graveyard.");
+        }
+    }
+
+    // ── Mana spending helper ──────────────────────────────────────────────────
+    // Spends 'amount' from the player's pool using the standard priority order:
+    // Colorless → White → Blue → Black → Red → Green.
+    // Returns true if the full amount was spent, false if pool was short.
+    // Previously this waterfall was copy-pasted 7 times inside OnClick.
+    private static bool TrySpendAnyMana(Player player, int amount)
+    {
+        if (player.ColoredMana.Total() < amount)
+            return false;
+
+        int rem = amount;
+        int useColorless = Mathf.Min(player.ColoredMana.Colorless, rem);
+        player.ColoredMana.Colorless -= useColorless;
+        rem -= useColorless;
+        rem -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.White,  rem);
+        rem -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Blue,   rem);
+        rem -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Black,  rem);
+        rem -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Red,    rem);
+        rem -= Player.ManaPool.SpendFromPool(ref player.ColoredMana.Green,  rem);
+        return rem == 0;
+    }
+
+    private Sprite GetIconForColor(string color)
             {
                 return color switch
                 {
