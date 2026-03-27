@@ -230,9 +230,7 @@ public class TurnSystem : MonoBehaviour
                             ConfirmBlockers();
                             break;
                         case TurnPhase.ChooseAttackers:
-                            waitingForPlayerInput = false;
-                            HideAllConfirmButtons();
-                            AdvancePhase();
+                            ConfirmAttackers();
                             break;
                         case TurnPhase.ConfirmBlockers:
                             ConfirmBlockers();
