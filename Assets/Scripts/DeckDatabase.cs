@@ -335,4 +335,188 @@ public static class DeckDatabase
             AddCards(ai, "Oakenform", 4);
             ai.StartingPermanents.Add(CardFactory.Create("Wall of Wood"));
         }
+
+    public static void BuildSoldiersAndGloryDeck(Player player)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Plains", 20);
+        AddCards(ai, "Eager Cadet", 4);
+        AddCards(ai, "Glory Seeker", 4);
+        AddCards(ai, "Yotian Soldier", 3);
+        AddCards(ai, "Alaborn Trooper", 4);
+        AddCards(ai, "Capashen Templar", 3);
+        AddCards(ai, "Intrepid Hero", 2);
+        AddCards(ai, "Abbey Griffin", 2);
+        AddCards(ai, "Serra Angel", 2);
+        AddCards(ai, "Charge", 4);
+        AddCards(ai, "Holy Day", 2);
+        AddCards(ai, "Sacred Nectar", 2);
+        AddCards(ai, "Pacifism", 3);
+        AddCards(ai, "Demystify", 2);
+        AddCards(ai, "Glorious Anthem", 2);
+        AddCards(ai, "Holy Strength", 1);
+    }
+
+    public static void BuildGreenMachineDeck(Player player)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Forest", 22);
+        AddCards(ai, "Wall of Wood", 3);
+        AddCards(ai, "Canopy Spider", 3);
+        AddCards(ai, "Grizzly Bears", 4);
+        AddCards(ai, "Trained Armodon", 3);
+        AddCards(ai, "Argothian Swine", 3);
+        AddCards(ai, "Giant Spider", 2);
+        AddCards(ai, "Moss Monster", 2);
+        AddCards(ai, "Craw Wurm", 1);
+        AddCards(ai, "Rampant Growth", 4);
+        AddCards(ai, "Giant Growth", 4);
+        AddCards(ai, "Battlegrowth", 3);
+        AddCards(ai, "Oakenform", 3);
+        AddCards(ai, "Squall", 2);
+        AddCards(ai, "Might of Oaks", 1);
+    }
+
+    public static void BuildRedBlackAggroDeck(Player player)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Swamp", 13);
+        AddCards(ai, "Mountain", 9);
+        AddCards(ai, "Crazed Goblin", 4);
+        AddCards(ai, "Bog Imp", 3);
+        AddCards(ai, "Goblin Raider", 3);
+        AddCards(ai, "Frozen Shade", 3);
+        AddCards(ai, "Scavenging Scarab", 3);
+        AddCards(ai, "Hill Giant", 2);
+        AddCards(ai, "Nightmare", 2);
+        AddCards(ai, "Anaba Shaman", 1);
+        AddCards(ai, "Shock", 4);
+        AddCards(ai, "Terror", 3);
+        AddCards(ai, "Raise Dead", 3);
+        AddCards(ai, "Unholy Strength", 3);
+        AddCards(ai, "Feast of the Unicorn", 2);
+        AddCards(ai, "Lava Axe", 2);
+    }
+
+    // Blue skies control deck. Bounces threats with Unsummon, locks permanents with Dehydration and
+    // Icy Manipulator, then wins through evasive flyers. Merchant of Secrets and Inspiration keep
+    // cards flowing. Air Elemental and Mahamoti Djinn close the game in the air.
+    public static void BuildBlueSkiesDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Island", 22);
+        AddCards(ai, "Fugitive Wizard", 3);
+        AddCards(ai, "Sea Eagle", 3);
+        AddCards(ai, "Merchant of Secrets", 3);
+        AddCards(ai, "Wind Drake", 4);
+        AddCards(ai, "Phantom Warrior", 2);
+        AddCards(ai, "Fighting Drake", 3);
+        AddCards(ai, "Air Elemental", 2);
+        AddCards(ai, "Mahamoti Djinn", 1);
+        AddCards(ai, "Unsummon", 4);
+        AddCards(ai, "Inspiration", 3);
+        AddCards(ai, "Flight", 2);
+        AddCards(ai, "Dehydratation", 3);
+        AddCards(ai, "Inertia Bubble", 2);
+        AddCards(ai, "Icy Manipulator", 1);
+    }
+
+    // White life gain / token engine. Voice of the Provinces and Luminous Angel flood the board with
+    // Spirit and Human tokens. Blessed Reversal punishes wide attacks. Wrath of God acts as a reset
+    // when behind; Archangel's Light refills life and reshuffles the graveyard for a late-game engine.
+    public static void BuildAngelicHostDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Plains", 22);
+        AddCards(ai, "Venerable Monk", 3);
+        AddCards(ai, "Angelic Wall", 3);
+        AddCards(ai, "Angel of Mercy", 3);
+        AddCards(ai, "Voice of the Provinces", 3);
+        AddCards(ai, "Serra Angel", 2);
+        AddCards(ai, "Luminous Angel", 1);
+        AddCards(ai, "Archangel", 1);
+        AddCards(ai, "Sacred Nectar", 3);
+        AddCards(ai, "Resupply", 2);
+        AddCards(ai, "Holy Day", 3);
+        AddCards(ai, "Blessed Reversal", 3);
+        AddCards(ai, "Pacifism", 3);
+        AddCards(ai, "Wrath of God", 2);
+        AddCards(ai, "Archangel's Light", 1);
+        AddCards(ai, "Divine Transformation", 2);
+        AddCards(ai, "Purify", 1);
+    }
+
+    // Black zombie horde with recursion. Maggot Carrier chips life on entry. Cyclopean Mummy and
+    // Scathe Zombies apply constant pressure. Terror and Unholy Strength handle threats and pump.
+    // Raise Dead recycles fallen threats repeatedly. Nightmare is the late-game bomb fed by Swamps.
+    public static void BuildZombieHordeDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Swamp", 22);
+        AddCards(ai, "Maggot Carrier", 4);
+        AddCards(ai, "Cyclopean Mummy", 4);
+        AddCards(ai, "Bog Imp", 3);
+        AddCards(ai, "Scathe Zombies", 4);
+        AddCards(ai, "Frozen Shade", 3);
+        AddCards(ai, "Giant Cockroach", 3);
+        AddCards(ai, "Phyrexian Hulk", 1);
+        AddCards(ai, "Nightmare", 2);
+        AddCards(ai, "Terror", 3);
+        AddCards(ai, "Raise Dead", 4);
+        AddCards(ai, "Unholy Strength", 3);
+        AddCards(ai, "Feast of the Unicorn", 2);
+        AddCards(ai, "Purify", 1);
+    }
+
+    // Red burn and land destruction. Shock, Lava Axe, and Inferno handle both creatures and the
+    // player's life total. Stone Rain denies mana. Goblin Raider and Balduvian Barbarians apply
+    // pressure while removal clears the way. Granite Grip rewards a Mountain-heavy mana base.
+    // Shivan Dragon is the top-end finisher that also benefits from spare mana each turn.
+    public static void BuildRedBurnDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Mountain", 22);
+        AddCards(ai, "Crazed Goblin", 4);
+        AddCards(ai, "Goblin Raider", 4);
+        AddCards(ai, "Balduvian Barbarians", 3);
+        AddCards(ai, "Goblin Sky Raider", 3);
+        AddCards(ai, "Hill Giant", 2);
+        AddCards(ai, "Anaba Shaman", 2);
+        AddCards(ai, "Shivan Dragon", 1);
+        AddCards(ai, "Shock", 4);
+        AddCards(ai, "Accelerate", 3);
+        AddCards(ai, "Stone Rain", 3);
+        AddCards(ai, "Shatter", 2);
+        AddCards(ai, "Granite Grip", 3);
+        AddCards(ai, "Lava Axe", 2);
+        AddCards(ai, "Inferno", 1);
+    }
+
+    // Green-White ramp into big creatures buffed by auras and equipment. Rampant Growth accelerates
+    // into Moss Monster, Iron Tusk Elephant, and Staunch Defenders. Short Sword and Greatsword give
+    // Trample creatures extra punch. Giant Growth and Might of Oaks are combat blowouts. Wrath of God
+    // and Pacifism provide the removal White contributes to the pairing.
+    public static void BuildGreenWhiteRampDeck(Player ai)
+    {
+        ai.Deck.Clear();
+        AddCards(ai, "Forest", 12);
+        AddCards(ai, "Plains", 10);
+        AddCards(ai, "Grizzly Bears", 3);
+        AddCards(ai, "Canopy Spider", 2);
+        AddCards(ai, "Trained Armodon", 3);
+        AddCards(ai, "Argothian Swine", 3);
+        AddCards(ai, "Iron Tusk Elephant", 2);
+        AddCards(ai, "Moss Monster", 2);
+        AddCards(ai, "Staunch Defenders", 2);
+        AddCards(ai, "Craw Wurm", 1);
+        AddCards(ai, "Rampant Growth", 4);
+        AddCards(ai, "Giant Growth", 3);
+        AddCards(ai, "Might of Oaks", 1);
+        AddCards(ai, "Oakenform", 2);
+        AddCards(ai, "Pacifism", 2);
+        AddCards(ai, "Holy Strength", 2);
+        AddCards(ai, "Wrath of God", 1);
+        AddCards(ai, "Short Sword", 2);
+        AddCards(ai, "Greatsword", 1);
+    }
 }
