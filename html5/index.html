@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReMagic Lite (HTML5 Prototype)</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>ReMagic Lite Prototype</h1>
+        <p>Choose 1-2 colors, get a starter deck, then survive as many encounters as possible.</p>
+      </header>
+
+      <section id="setup" class="panel">
+        <h2>1) Choose your color(s)</h2>
+        <div id="color-picker" class="color-grid"></div>
+        <button id="start-run" disabled>Start Run</button>
+      </section>
+
+      <section id="run" class="panel hidden">
+        <h2>Run</h2>
+        <div class="run-meta">
+          <p><strong>Wins:</strong> <span id="wins">0</span></p>
+          <p><strong>Encounter:</strong> <span id="encounter">1</span></p>
+          <p><strong>Selected Colors:</strong> <span id="selected-colors">-</span></p>
+        </div>
+        <div class="actions">
+          <button id="play-turn">Play Turn</button>
+          <button id="next-encounter" class="hidden">Next Encounter</button>
+          <button id="restart-run">Restart Run</button>
+        </div>
+      </section>
+
+      <section id="battle" class="panel hidden">
+        <h2>Battle Snapshot</h2>
+        <div class="columns">
+          <div>
+            <h3>You</h3>
+            <ul>
+              <li>Life: <span id="player-life">20</span></li>
+              <li>Deck: <span id="player-deck">0</span></li>
+              <li>Hand: <span id="player-hand">0</span></li>
+              <li>Battlefield: <span id="player-field">0</span></li>
+              <li>Lands: <span id="player-lands">0</span></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Opponent</h3>
+            <ul>
+              <li>Life: <span id="enemy-life">20</span></li>
+              <li>Deck: <span id="enemy-deck">0</span></li>
+              <li>Hand: <span id="enemy-hand">0</span></li>
+              <li>Battlefield: <span id="enemy-field">0</span></li>
+              <li>Lands: <span id="enemy-lands">0</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Log</h2>
+        <ol id="log" class="log"></ol>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
