@@ -44,6 +44,12 @@ function spendableMana(player) {
   return player.landsInPlay;
 }
 
+function canBeAttackTarget(creature) {
+  if (creature.type !== 'Creature') return false;
+  const hasProtection = (creature.tags || []).includes('Protection');
+  return creature.tapped || hasProtection;
+}
+
 function castFirstPlayable(player, opponent) {
   const mana = spendableMana(player);
   const idx = player.hand.findIndex((card) => (card.manaCost ?? 0) <= mana && card.type !== 'Land');
@@ -64,7 +70,7 @@ function castFirstPlayable(player, opponent) {
       player.life += 4;
       break;
     case 'bounce': {
-      const targetIndex = opponent.battlefield.findIndex((c) => c.type === 'Creature');
+      const targetIndex = opponent.battlefield.findIndex((c) => canBeAttackTarget(c));
       if (targetIndex >= 0) {
         const [bounced] = opponent.battlefield.splice(targetIndex, 1);
         opponent.hand.push({ ...bounced, summoningSick: false, tapped: false, damage: 0 });
@@ -72,7 +78,7 @@ function castFirstPlayable(player, opponent) {
       break;
     }
     case 'destroy': {
-      const targetIndex = opponent.battlefield.findIndex((c) => c.type === 'Creature');
+      const targetIndex = opponent.battlefield.findIndex((c) => canBeAttackTarget(c));
       if (targetIndex >= 0) {
         const [dead] = opponent.battlefield.splice(targetIndex, 1);
         opponent.graveyard.push(dead);
@@ -88,7 +94,7 @@ function castFirstPlayable(player, opponent) {
       break;
     }
     case 'pacify': {
-      const target = opponent.battlefield.find((c) => c.type === 'Creature' && !c.pacified);
+      const target = opponent.battlefield.find((c) => canBeAttackTarget(c) && !c.pacified);
       if (target) target.pacified = true;
       break;
     }
