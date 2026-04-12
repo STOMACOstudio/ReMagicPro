@@ -336,7 +336,7 @@ public static class DeckDatabase
             ai.StartingPermanents.Add(CardFactory.Create("Wall of Wood"));
         }
 
-    public static void BuildSoldiersAndGloryDeck(Player player)
+    public static void BuildSoldiersAndGloryDeck(Player ai)
     {
         ai.Deck.Clear();
         AddCards(ai, "Plains", 20);
@@ -357,7 +357,7 @@ public static class DeckDatabase
         AddCards(ai, "Holy Strength", 1);
     }
 
-    public static void BuildGreenMachineDeck(Player player)
+    public static void BuildGreenMachineDeck(Player ai)
     {
         ai.Deck.Clear();
         AddCards(ai, "Forest", 22);
@@ -377,7 +377,7 @@ public static class DeckDatabase
         AddCards(ai, "Might of Oaks", 1);
     }
 
-    public static void BuildRedBlackAggroDeck(Player player)
+    public static void BuildRedBlackAggroDeck(Player ai)
     {
         ai.Deck.Clear();
         AddCards(ai, "Swamp", 13);
